@@ -353,6 +353,173 @@ p { margin: 0 0 1em; }
   border-bottom: 1px solid var(--ys-line);
 }
 .ys-perk-wide-body { padding: 32px; }
+/* ============================================================
+   PERFORMANCE LAB page (performancelab.html)
+   Reuses .wf-hero, .ys-card, .ys-tier, .wf-section, .ys-grid.
+   Adds a couple of light-touch components below.
+   ============================================================ */
+
+/* "Best seller" badge that floats on a service card */
+.ys-best-badge {
+  position: absolute;
+  top: -10px;
+  left: 24px;
+  background: linear-gradient(135deg, var(--wf-coral), var(--wf-coral-deep));
+  color: #fff;
+  font-family: var(--ys-font-display);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  padding: 5px 12px;
+  border-radius: 999px;
+  box-shadow: 0 4px 12px rgba(250, 119, 60, 0.32);
+}
+.ys-card.featured {
+  position: relative;
+  border-color: var(--wf-coral);
+  box-shadow: 0 12px 32px rgba(250, 119, 60, 0.12);
+}
+.ys-card .ys-card-price {
+  font-family: var(--ys-font-display);
+  color: var(--wf-coral);
+  font-size: 1.5rem;
+  letter-spacing: 0.02em;
+  margin: 6px 0 14px;
+}
+.ys-card .ys-card-price small {
+  display: block;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ys-muted);
+  margin-top: 2px;
+}
+.ys-card ul.ys-card-bullets {
+  padding-left: 18px;
+  margin: 0 0 16px;
+  color: var(--ys-muted);
+  font-size: 0.95rem;
+}
+.ys-card ul.ys-card-bullets li { margin-bottom: 6px; }
+.ys-card-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: auto; }
+
+/* Two-column "category" highlight panel */
+.ys-category {
+  background: #fff;
+  border: 1px solid var(--ys-line);
+  border-radius: 14px;
+  padding: 28px;
+  box-shadow: 0 6px 24px rgba(47, 45, 86, 0.05);
+}
+.ys-category .ys-category-tag {
+  display: inline-block;
+  font-family: var(--ys-font-display);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  background: rgba(153, 102, 255, 0.12);
+  color: var(--wf-teal-deep);
+  padding: 5px 12px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+.ys-category h3 { color: var(--ys-navy); margin: 0 0 14px; }
+.ys-category dl { margin: 0; }
+.ys-category dl > div {
+  padding: 12px 0;
+  border-top: 1px solid var(--ys-line);
+}
+.ys-category dl > div:first-child { border-top: 0; padding-top: 0; }
+.ys-category dt {
+  font-family: var(--ys-font-display);
+  color: var(--ys-navy);
+  letter-spacing: 0.05em;
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+.ys-category dt .ys-price-inline {
+  color: var(--wf-coral);
+  font-weight: 600;
+  margin-left: 6px;
+  font-size: 0.92rem;
+}
+.ys-category dd {
+  margin: 0;
+  color: var(--ys-muted);
+  font-size: 0.93rem;
+}
+
+/* Numbered step cards (1, 2, 3) */
+.ys-step {
+  background: #fff;
+  border: 1px solid var(--ys-line);
+  border-radius: 14px;
+  padding: 28px 24px;
+  box-shadow: 0 6px 20px rgba(47, 45, 86, 0.05);
+  position: relative;
+}
+.ys-step .ys-step-num {
+  font-family: var(--ys-font-display);
+  font-size: 2.4rem;
+  color: var(--wf-coral);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+.ys-step h3 { color: var(--ys-navy); font-size: 1.05rem; }
+.ys-step p { color: var(--ys-muted); font-size: 0.95rem; margin: 0; }
+
+/* FAQ */
+.ys-faq-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+@media (max-width: 720px) { .ys-faq-grid { grid-template-columns: 1fr; } }
+.ys-faq {
+  background: #fff;
+  border: 1px solid var(--ys-line);
+  border-radius: 12px;
+  padding: 22px 24px;
+  box-shadow: 0 4px 16px rgba(47, 45, 86, 0.04);
+}
+.ys-faq h3 {
+  color: var(--ys-navy);
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  margin: 0 0 8px;
+}
+.ys-faq p { color: var(--ys-muted); font-size: 0.95rem; margin: 0; }
+
+/* Final CTA card (light cousin of wf-hero) */
+.ys-cta-card {
+  background: linear-gradient(160deg, var(--wf-navy) 0%, var(--wf-navy-2) 100%);
+  color: #fff;
+  border-radius: 18px;
+  padding: 44px 40px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 28px;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+.ys-cta-card::before {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(153,102,255,0.18), transparent 45%),
+    radial-gradient(circle at 80% 80%, rgba(250,119,60,0.16), transparent 45%);
+  pointer-events: none;
+}
+.ys-cta-card > * { position: relative; z-index: 1; }
+.ys-cta-card h2 { color: #fff; margin: 0 0 12px; }
+.ys-cta-card p { color: rgba(255,255,255,0.82); margin: 0; }
+.ys-cta-card .ys-btn { margin-top: 10px; }
+@media (max-width: 820px) {
+  .ys-cta-card { grid-template-columns: 1fr; padding: 32px 24px; }
+}
+
 /* Volunteer callout (Wildflower) */
 .wf-volunteer-card {
   background: linear-gradient(135deg, rgba(153,102,255,0.06), rgba(250,119,60,0.08));
