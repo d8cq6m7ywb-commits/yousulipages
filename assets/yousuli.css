@@ -617,6 +617,100 @@ p { margin: 0 0 1em; }
 }
 
 /* ============================================================
+   MEMBERSHIP page — testimonial cards + Wix widget anchor
+   ============================================================ */
+
+.ys-testimonials-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+.ys-testimonial {
+  background: #fff;
+  border: 1px solid var(--ys-line);
+  border-radius: 14px;
+  padding: 26px;
+  box-shadow: 0 4px 18px rgba(47, 45, 86, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ys-testimonial.with-photo { padding-top: 0; }
+.ys-testimonial-photo {
+  margin: 0 -26px 16px;
+  width: calc(100% + 52px);
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: var(--ys-bg-soft);
+  border-radius: 14px 14px 0 0;
+}
+.ys-testimonial blockquote {
+  margin: 0;
+  font-style: italic;
+  color: var(--ys-ink);
+  font-size: 0.96rem;
+  line-height: 1.55;
+}
+.ys-testimonial-foot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--ys-line);
+}
+.ys-testimonial-avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--ys-navy), var(--wf-teal-deep));
+  color: #fff;
+  font-family: var(--ys-font-display);
+  letter-spacing: 0.05em;
+  font-size: 1rem;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.ys-testimonial-meta strong {
+  display: block;
+  font-family: var(--ys-font-display);
+  color: var(--ys-navy);
+  letter-spacing: 0.04em;
+  font-size: 0.92rem;
+}
+.ys-testimonial-meta span {
+  display: block;
+  font-size: 0.84rem;
+  color: var(--ys-muted);
+  margin-top: 2px;
+}
+
+/* Wix widget anchor — visual cue that the pricing widget loads below */
+.ys-wix-anchor {
+  background: linear-gradient(135deg, rgba(153,102,255,0.10), rgba(250,119,60,0.10));
+  border: 2px dashed rgba(153, 102, 255, 0.5);
+  border-radius: 14px;
+  padding: 36px 32px;
+  text-align: center;
+  margin-top: 28px;
+}
+.ys-wix-anchor h3 {
+  color: var(--ys-navy);
+  font-size: 1.5rem;
+  margin: 0 0 10px;
+}
+.ys-wix-anchor .ys-wix-arrow {
+  font-size: 2.4rem;
+  color: var(--wf-coral);
+  line-height: 1;
+  margin-top: 14px;
+}
+.ys-wix-anchor p {
+  color: var(--ys-muted);
+  margin: 0 auto;
+  max-width: 540px;
+}
+
+/* ============================================================
    CALCULATORS landing page
    ============================================================ */
 
