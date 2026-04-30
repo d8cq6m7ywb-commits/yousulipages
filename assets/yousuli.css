@@ -449,6 +449,182 @@ p { margin: 0 0 1em; }
   font-size: 0.93rem;
 }
 
+/* ============================================================
+   SCIENCE page (science.html)
+   Big-stat callouts, expert-quote blocks, collapsible references
+   ============================================================ */
+
+/* Big stat — used to break up text walls with one striking number */
+.ys-bigstat-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin: 12px 0 24px;
+}
+.ys-bigstat {
+  background: #fff;
+  border: 1px solid var(--ys-line);
+  border-left: 4px solid var(--wf-coral);
+  border-radius: 10px;
+  padding: 22px 22px 18px;
+  box-shadow: 0 4px 16px rgba(47,45,86,0.05);
+}
+.ys-bigstat:nth-child(2n) { border-left-color: var(--wf-teal); }
+.ys-bigstat:nth-child(3n) { border-left-color: var(--ys-amber); }
+.ys-bigstat-num {
+  font-family: var(--ys-font-display);
+  font-size: 2.6rem;
+  letter-spacing: -0.02em;
+  color: var(--ys-navy);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.ys-bigstat-num em {
+  font-style: normal;
+  color: var(--wf-coral);
+}
+.ys-bigstat-label {
+  font-family: var(--ys-font-display);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 0.74rem;
+  color: var(--ys-muted);
+  margin-bottom: 4px;
+  display: block;
+}
+.ys-bigstat p {
+  margin: 0;
+  color: var(--ys-muted);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+/* Topic block — used per scientific topic on Science page */
+.ys-topic {
+  background: #fff;
+  border: 1px solid var(--ys-line);
+  border-radius: 14px;
+  padding: 32px;
+  box-shadow: 0 6px 24px rgba(47,45,86,0.05);
+  margin-bottom: 24px;
+}
+.ys-topic h3 {
+  color: var(--ys-navy);
+  font-size: 1.6rem;
+  margin: 0 0 6px;
+}
+.ys-topic .ys-topic-tag {
+  font-family: var(--ys-font-display);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: var(--wf-teal-deep);
+  margin-bottom: 8px;
+  display: inline-block;
+}
+.ys-topic h4 {
+  font-family: var(--ys-font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.82rem;
+  color: var(--ys-muted);
+  margin: 22px 0 8px;
+}
+.ys-topic p {
+  margin: 0 0 12px;
+  color: var(--ys-ink);
+}
+.ys-topic ul {
+  padding-left: 20px;
+  margin: 0 0 14px;
+  color: var(--ys-muted);
+  font-size: 0.95rem;
+}
+.ys-topic ul li { margin-bottom: 6px; }
+
+/* Expert quote callout */
+.ys-expert {
+  background: linear-gradient(135deg, rgba(47,45,86,0.04), rgba(153,102,255,0.06));
+  border: 1px solid rgba(153, 102, 255, 0.25);
+  border-radius: 12px;
+  padding: 22px 24px;
+  margin: 24px 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 16px;
+  align-items: center;
+}
+.ys-expert-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--ys-navy), var(--wf-teal-deep));
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--ys-font-display);
+  font-size: 1.2rem;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.ys-expert blockquote {
+  margin: 0;
+  font-style: italic;
+  color: var(--ys-ink);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.ys-expert-cite {
+  display: block;
+  margin-top: 8px;
+  font-style: normal;
+  font-family: var(--ys-font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.74rem;
+  color: var(--ys-muted);
+}
+@media (max-width: 600px) {
+  .ys-expert { grid-template-columns: 1fr; text-align: center; }
+  .ys-expert-avatar { margin: 0 auto; }
+}
+
+/* Collapsible references using <details> */
+.ys-refs {
+  margin-top: 18px;
+  border-top: 1px solid var(--ys-line);
+  padding-top: 14px;
+}
+.ys-refs > summary {
+  cursor: pointer;
+  font-family: var(--ys-font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.78rem;
+  color: var(--wf-coral);
+  list-style: none;
+  padding: 6px 0;
+  user-select: none;
+}
+.ys-refs > summary::-webkit-details-marker { display: none; }
+.ys-refs > summary::before {
+  content: "▸ ";
+  display: inline-block;
+  margin-right: 4px;
+  transition: transform 0.15s ease;
+}
+.ys-refs[open] > summary::before { transform: rotate(90deg); }
+.ys-refs ol {
+  margin: 12px 0 0;
+  padding-left: 24px;
+  color: var(--ys-muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+.ys-refs ol li { margin-bottom: 8px; }
+.ys-refs a { color: var(--wf-teal-deep); word-break: break-all; }
+
 /* Sticky quick-nav (Performance Lab) */
 .ys-quicknav {
   position: sticky;
