@@ -3,116 +3,371 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Yousuli — Embeddable Pages Preview</title>
+  <title>Yousuli — endurance performance lab, coaching, and community</title>
+  <meta name="description" content="Stop wasting effort. Start going faster. Yousuli is a Greater Los Angeles endurance performance lab and coaching ecosystem combining VO2max + RMR + CdA testing, technique work, and a low-barrier club for triathletes, runners, cyclists, swimmers, and para-athletes." />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Yousuli — Performance Lab + Coaching + Community" />
+  <meta property="og:description" content="Efficiency is the shortest path to speed. Lab testing, on-road aero, technique work, and a community for ordinary humans doing unordinary things." />
+  <meta property="og:url" content="https://www.yousuli.co/" />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
   <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
 </head>
 <body>
-  <header class="ys-header">
-    <div class="ys-container">
-      <img class="ys-logo" src="assets/yousuli-logo.png" alt="Yousuli" />
-      <span class="ys-tagline">Stop wasting effort · Start going faster</span>
-    </div>
-  </header>
 
-  <section class="ys-hero">
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero">
     <div class="ys-container">
-      <span class="ys-eyebrow">Embeddable pages · v1</span>
-      <h1>Yousuli — Wildflower &amp; Sponsors</h1>
-      <p class="lede">Two static pages built to embed in Wix (iframe) or host on GitHub Pages. Wildflower follows the spec exactly: hero · 2 test cards · booking form · YSC signup · hours · partners · footer. Sponsors is the partner showcase + become-a-partner pitch.</p>
+      <span class="wf-eyebrow">Endurance performance lab · Coaching · Community</span>
+      <h1>Stop wasting effort. Start going faster.</h1>
+      <div class="wf-subhead">Efficiency is the shortest path to speed</div>
+      <p class="lede">Yousuli is a Greater Los Angeles endurance performance lab and coaching ecosystem. We use lab testing, on-road aero work, and technique analysis to turn your training into real speed &mdash; in the pool, on the bike, and on the run.</p>
       <div class="ys-btn-row">
-        <a class="ys-btn ys-btn-primary" href="wildflower.html">Open Wildflower page</a>
-        <a class="ys-btn ys-btn-ghost" href="sponsors.html">Open Sponsors page</a>
+        <a class="ys-btn ys-btn-coral" href="performancelab.html">See the Performance Lab</a>
+        <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/pricing-plans/membership">Join the Club</a>
       </div>
     </div>
   </section>
 
-  <section class="ys-section">
+  <!-- ============ STICKY QUICK-NAV ============ -->
+  <nav class="ys-quicknav" aria-label="Section navigation">
+    <div class="ys-container ys-quicknav-row">
+      <span class="ys-quicknav-label">Jump to</span>
+      <a href="#disciplines">Swim · Bike · Run</a>
+      <a href="#system">Performance system</a>
+      <a href="#coaching">Coaching</a>
+      <a href="#club">Social Club</a>
+      <a href="#why">Why Yousuli</a>
+      <a href="#tools">Free tools</a>
+    </div>
+  </nav>
+
+  <!-- ============ THE FOUR PILLARS ============ -->
+  <section class="wf-section">
     <div class="ys-container">
       <div class="ys-section-head">
-        <h2>Brand tokens in use</h2>
+        <h2>How we make athletes faster</h2>
         <div class="ys-rule"></div>
-        <p>Pulled directly from yousuli.co — primary navy, accent orange, futura-style display, avenir-style body.</p>
+        <p>Lab-grade testing, real-world aero, technique work, and a community that doesn&rsquo;t make beginners feel small.</p>
       </div>
-
-      <div class="ys-info-row">
-        <div><div class="ys-info-label">Primary</div><div class="ys-info-value" style="color:#2F2D56">#2F2D56</div></div>
-        <div><div class="ys-info-label">Accent</div><div class="ys-info-value" style="color:#FA773C">#FA773C</div></div>
-        <div><div class="ys-info-label">Amber</div><div class="ys-info-value" style="color:#F9B233">#F9B233</div></div>
-        <div><div class="ys-info-label">Brown</div><div class="ys-info-value" style="color:#8B6755">#8B6755</div></div>
-        <div><div class="ys-info-label">Display font</div><div class="ys-info-value">Futura</div></div>
-        <div><div class="ys-info-label">Body font</div><div class="ys-info-value">Avenir / Helvetica</div></div>
-      </div>
-
-      <div class="ys-grid ys-mt-4">
-        <div class="ys-card">
-          <div class="ys-meta">Component</div>
-          <h3>Card</h3>
-          <p>Used for sponsor tiles, package summaries, and event quick-facts.</p>
-          <a class="ys-btn ys-btn-dark" href="#">Learn more</a>
-        </div>
-        <div class="ys-card">
-          <div class="ys-meta">Pricing</div>
-          <h3>Performance Lab</h3>
-          <div class="ys-price">From $120</div>
-          <p>VO2max, RMR, CdA, swim &amp; run analysis. One hour. Customer-place service.</p>
-          <a class="ys-btn ys-btn-primary" href="#">Book a session</a>
-        </div>
-        <div class="ys-card">
-          <div class="ys-meta">Event</div>
-          <h3>Wildflower</h3>
-          <p>Mobile testing, social-club lounge, swim-cap giveaways, on-site coaching.</p>
-          <a class="ys-btn ys-btn-dark" href="#">Event details</a>
-        </div>
-      </div>
-
-      <div class="ys-divider"></div>
 
       <div class="ys-grid">
-        <div class="ys-tier">
-          <div class="ys-tier-name">Friend</div>
-          <div class="ys-tier-price">$250</div>
-          <ul>
-            <li>Logo on event banner</li>
-            <li>Shout-out at race expo</li>
-            <li>5 swim-cap giveaways</li>
-          </ul>
-          <a class="ys-btn ys-btn-dark" href="#">Become a sponsor</a>
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>Metabolic &amp; VO₂ testing</h3>
+          <p>Real training zones from real gas exchange. RMR for fueling and RED-S screening. Lab-grade accuracy in a portable mobile setup.</p>
         </div>
-        <div class="ys-tier featured">
-          <span class="ys-badge">Most chosen</span>
-          <div class="ys-tier-name">Partner</div>
-          <div class="ys-tier-price">$1,000</div>
-          <ul>
-            <li>Logo on canopy + flyers</li>
-            <li>QR code in race-bag drop</li>
-            <li>One on-site testing day</li>
-            <li>Featured blog post</li>
-          </ul>
-          <a class="ys-btn ys-btn-primary" href="#">Become a sponsor</a>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>Aero &amp; equipment optimization</h3>
+          <p>Field-based CdA testing for free speed. Position, helmet, tires, hydration setup &mdash; the changes that save 10&ndash;50 watts on race day.</p>
         </div>
-        <div class="ys-tier">
-          <div class="ys-tier-name">Title</div>
-          <div class="ys-tier-price">$3,500</div>
-          <ul>
-            <li>Title billing on all assets</li>
-            <li>Lounge co-branding</li>
-            <li>Quarterly testing days</li>
-            <li>Athlete case-study feature</li>
-          </ul>
-          <a class="ys-btn ys-btn-dark" href="#">Become a sponsor</a>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>Technique &amp; movement</h3>
+          <p>Stroke mechanics, gait analysis, biomechanical fixes. Not vague advice &mdash; specific cues you can use when the coach isn&rsquo;t there.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">04</div>
+          <h3>Supportive club culture</h3>
+          <p>No &ldquo;elite-only&rdquo; barrier. Beginners and Kona-level athletes share the same space, with different plans but the same respect.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <footer class="ys-footer">
+  <!-- ============ THREE DISCIPLINES ============ -->
+  <section class="wf-section alt" id="disciplines">
     <div class="ys-container">
-      <div class="ys-foot-links">
-        <a href="https://www.yousuli.co">yousuli.co</a> ·
-        <a href="mailto:info@yousuli.co">info@yousuli.co</a>
+      <div class="ys-section-head">
+        <h2>Because triathlon is hard enough.</h2>
+        <div class="ys-rule"></div>
+        <p>Three disciplines, three different limiters. Yousuli works across all of them &mdash; and on the connections between them.</p>
       </div>
-      <div>&copy; 2025-26 Yousuli</div>
+
+      <div class="ys-grid">
+        <article class="ys-card">
+          <img class="ys-card-image photo" src="assets/swim-male-freestyle.avif" alt="Swimmer in freestyle" loading="lazy" />
+          <div class="ys-meta">Swim</div>
+          <h3>Move better in the water</h3>
+          <p>Increase propulsive power with prescriptive drills and exercises. Pacing built from real metabolic data. Drills that actually translate to open water.</p>
+          <ul class="ys-card-bullets">
+            <li>Stroke analysis + correction priorities</li>
+            <li>Open-water sighting, drafting, mass starts</li>
+            <li>On-site coaching (Slipstream-supported sessions)</li>
+          </ul>
+          <a class="ys-btn ys-btn-dark" href="swimcoaching.html">Swim coaching</a>
+        </article>
+
+        <article class="ys-card">
+          <img class="ys-card-image photo" src="assets/tt-bike.avif" alt="Athlete on TT bike" loading="lazy" />
+          <div class="ys-meta">Bike</div>
+          <h3>Free speed without more watts</h3>
+          <p>We test, prescribe training intensity, and minimize aerodynamic drag. The same effort, faster splits.</p>
+          <ul class="ys-card-bullets">
+            <li>Field-based CdA, position, equipment testing</li>
+            <li>Tire pressure, equipment, fueling dial-in</li>
+            <li>Race-specific pacing models</li>
+          </ul>
+          <a class="ys-btn ys-btn-dark" href="performancelab.html#service-cda">Bike CdA testing</a>
+        </article>
+
+        <article class="ys-card">
+          <img class="ys-card-image photo" src="assets/triathlete-running.avif" alt="Triathlete running" loading="lazy" />
+          <div class="ys-meta">Run</div>
+          <h3>Tap into your real potential</h3>
+          <p>Running form, power, and physiological analysis. Plans built around your biomechanics &mdash; not someone else&rsquo;s.</p>
+          <ul class="ys-card-bullets">
+            <li>Form, power, and physiological analysis</li>
+            <li>Integration with previous load &amp; injury history</li>
+            <li>Practical cues, drills, and workouts</li>
+          </ul>
+          <a class="ys-btn ys-btn-dark" href="performancelab.html#service-gait">Run / gait analysis</a>
+        </article>
+      </div>
     </div>
-  </footer>
+  </section>
+
+  <!-- ============ PERFORMANCE SYSTEM ============ -->
+  <section class="wf-section" id="system">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>The Yousuli Performance System</h2>
+        <div class="ys-rule"></div>
+        <p>Because no two athletes are the same.</p>
+      </div>
+
+      <article class="ys-perk-wide">
+        <img class="ys-perk-banner" src="assets/vo2master-female.avif" alt="Athlete VO2max test" loading="lazy" style="aspect-ratio: 16/6; object-fit: cover;" />
+        <div class="ys-perk-wide-body">
+          <p>We offer a wide range of cutting-edge physiological, metabolic, and efficiency tests &mdash; from RMR / RED-S screening to VO₂, lactate, and SmO₂ profiling, plus performance tests for athletes and clubs. The goal is to assess strengths and limiters correctly, then empower athletes with the right tools to drive efficiency forward.</p>
+
+          <div class="ys-tier-row" style="margin-top: 12px;">
+            <div class="ys-tier-pill"><strong>VO₂max</strong><span class="ys-tier-pill-label">From $160</span></div>
+            <div class="ys-tier-pill"><strong>RMR</strong><span class="ys-tier-pill-label">From $120</span></div>
+            <div class="ys-tier-pill"><strong>Bike CdA</strong><span class="ys-tier-pill-label">From $150</span></div>
+            <div class="ys-tier-pill"><strong>Swim analysis</strong><span class="ys-tier-pill-label">From $80</span></div>
+            <div class="ys-tier-pill"><strong>Run / Gait</strong><span class="ys-tier-pill-label">From $100</span></div>
+            <div class="ys-tier-pill"><strong>PRP</strong><span class="ys-tier-pill-label">$329</span></div>
+            <div class="ys-tier-pill"><strong>PRO Full-Stack</strong><span class="ys-tier-pill-label">$500</span></div>
+          </div>
+
+          <div class="ys-card-actions" style="margin-top: 18px;">
+            <a class="ys-btn ys-btn-coral" href="performancelab.html">Browse all assessments</a>
+            <a class="ys-btn ys-btn-dark" href="science.html">Read the science</a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ COACHING ============ -->
+  <section class="wf-section alt" id="coaching">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Groups and bespoke coaching</h2>
+        <div class="ys-rule"></div>
+        <p>The heart of the community is in greater Los Angeles, but we coach athletes in Europe, the Middle East, and Asia. Welcome to all.</p>
+      </div>
+
+      <div class="ys-grid">
+        <article class="ys-card">
+          <div class="ys-meta">1:1 · Online or offline</div>
+          <h3>Bespoke coaching</h3>
+          <p>For triathlon and endurance sport. Plans built around your real biomechanics, your real life, and your real goals. Same standard whether you&rsquo;re first-time finisher or chasing podiums.</p>
+          <ul class="ys-card-bullets">
+            <li>Event-specific plans with real testing baked in</li>
+            <li>Injury-aware progressions (life stress included)</li>
+            <li>From &ldquo;lite guidance&rdquo; to full coaching</li>
+          </ul>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/pricing-plans/membership">Coaching memberships</a>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Group · Club · Online</div>
+          <h3>Group &amp; Club training</h3>
+          <p>Weekly open sessions in Walnut, CA, plus online squads, partner gym sessions, and event-specific blocks. Train alongside athletes who are working on the same things you are.</p>
+          <ul class="ys-card-bullets">
+            <li>Local meetups + online communities</li>
+            <li>Partner facility testing days</li>
+            <li>Shared blocks for big races</li>
+          </ul>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/pricing-plans/membership">Yousuli Social Club</a>
+        </article>
+
+        <article class="ys-card">
+          <img class="ys-card-image photo" src="assets/pa-running-pair.avif" alt="Para athletes training together" loading="lazy" />
+          <div class="ys-meta">Para · Elite · Developing</div>
+          <h3>Supported athletes</h3>
+          <p>Reduced-rate spots for elite athletes targeting national or international performance, and para-athletes committed to training and racing &mdash; with help navigating grants and partner perks.</p>
+          <ul class="ys-card-bullets">
+            <li>Para-triathlon, para-cycling, para-running</li>
+            <li>Elite team coaching with peer accountability</li>
+            <li>Same standards, same data, same attention</li>
+          </ul>
+          <a class="ys-btn ys-btn-dark" href="supportedathletes.html">Supported program</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SOCIAL CLUB ============ -->
+  <section class="wf-section" id="club">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>The Yousuli Social Club</h2>
+        <div class="ys-rule"></div>
+        <p>A club for ordinary humans doing unordinary things. Low-barrier membership, high-quality support.</p>
+      </div>
+
+      <article class="ys-perk-wide">
+        <img class="ys-perk-banner" src="assets/cyclists-mountain.avif" alt="Cyclist group at mountain top" loading="lazy" style="aspect-ratio: 16/6; object-fit: cover;" />
+        <div class="ys-perk-wide-body">
+          <p>The Yousuli Club is where the numbers meet real people. Group sessions, shared challenges, long-term projects &mdash; from first 70.3 to crossing a mountain range. Membership stays accessible. You only pay extra for testing or coaching when you actually need it.</p>
+
+          <div class="ys-grid" style="margin-top: 16px;">
+            <div class="ys-step">
+              <h3>Local + online</h3>
+              <p>Weekly sessions in Walnut, CA. Online squads for athletes elsewhere.</p>
+            </div>
+            <div class="ys-step">
+              <h3>Shared epic projects</h3>
+              <p>Pick the one that fits your level &mdash; from first 70.3 to crossing a mountain range.</p>
+            </div>
+            <div class="ys-step">
+              <h3>Priority access</h3>
+              <p>Early picks on testing days, clinics, and partner discounts (Zoot trisuit, Slipstream, EO SwimBETTER, more).</p>
+            </div>
+          </div>
+
+          <div class="ys-card-actions" style="margin-top: 22px;">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/pricing-plans/membership">Join YSC</a>
+            <a class="ys-btn ys-btn-dark" href="sponsors.html">See partner perks</a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ WHY YOUSULI (3 VALUES) ============ -->
+  <section class="wf-section alt" id="why">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Why athletes pick Yousuli</h2>
+        <div class="ys-rule"></div>
+        <p>Three things athletes mention in the first message they send.</p>
+      </div>
+
+      <div class="ys-grid">
+        <article class="ys-card">
+          <div class="ys-meta">Testing without confusion</div>
+          <h3>We don&rsquo;t drown you in graphs</h3>
+          <p>You get clear training zones, pacing plans, and one-page summaries you can actually use. Numbers translated to next-step decisions, not data theatre.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Free-speed obsession</div>
+          <h3>We look at what&rsquo;s leaking energy</h3>
+          <p>Position, equipment, pacing, fueling, movement. The goal is always the same: more speed for the same cost. Add training load <em>after</em> the leaks are fixed.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Community over ego</div>
+          <h3>No &ldquo;fast or out&rdquo; culture</h3>
+          <p>Beginners and Kona-level athletes share the same space, with different plans but the same respect. The first 5 km matters as much as the third Kona qualification.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FREE TOOLS & EDUCATION ============ -->
+  <section class="wf-section" id="tools">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Free tools &amp; education</h2>
+        <div class="ys-rule"></div>
+        <p>For the triathlon community at large &mdash; whether you become a Yousuli athlete or not.</p>
+      </div>
+
+      <div class="ys-grid">
+        <article class="ys-card">
+          <div class="ys-meta">20+ tools</div>
+          <h3>Calculators</h3>
+          <p>Power-to-finish, race fueling, sweat rate, CdA estimate, gear ratios, tire pressure, RMR, critical power, RPE/RER, body comp from calipers, FIT-file compare, multisport-FIT splitter, and more.</p>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/all-in-one">Browse calculators</a>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Peer-reviewed receipts</div>
+          <h3>Science page</h3>
+          <p>VO₂max as a longevity vital sign, RMR as a RED-S front-door, the oxygen cascade limiter map, three ways to measure efficiency. Plain language, references included.</p>
+          <a class="ys-btn ys-btn-dark" href="science.html">Read the science</a>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Education &amp; content</div>
+          <h3>Blog &amp; clinics</h3>
+          <p>Articles, athlete case studies, podcast clips, and clinics for clubs, gyms, and groups. Practical material from the lab, not warmed-over generalities.</p>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/blog">Visit the blog</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MEET COACH FRED ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Meet Coach Fred</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-bio-split">
+        <img class="ys-bio-portrait" src="assets/fred-hero-portrait.avif" alt="Coach Frederic Simon" loading="lazy" />
+        <div>
+          <span class="ys-bio-tag">Founder &amp; head coach</span>
+          <h3>Frederic Simon</h3>
+          <p>I&rsquo;ve spent decades in endurance &mdash; hundreds of marathons and ultras, 101 self-supported half-Iron distance days in a row, and more time in the pain cave than I care to admit. That experience, plus formal training in coaching, strength &amp; conditioning, and testing, convinced me of one thing: most athletes work way harder than their results suggest. Yousuli exists to fix that gap between effort and outcome.</p>
+          <p style="font-size: 0.92rem; color: var(--ys-muted); margin-top: 10px;"><strong style="color: var(--ys-navy);">Certifications:</strong> USAT Level II · Ironman certified · TrainingPeaks · Strength &amp; Conditioning · Sport nutrition · Behavior change. Based in Walnut, California &mdash; working with athletes worldwide.</p>
+          <div class="ys-card-actions" style="margin-top: 14px;">
+            <a class="ys-btn ys-btn-coral" href="aboutcoachfred.html">Read Fred&rsquo;s story</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MISSION CTA ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Pick your version of epic.</h2>
+          <p>Yousuli is building a community of 1,000 people committed to doing epic things &mdash; their version of epic, not ours. The first 5 km, the first 70.3, the Kona qualifier, crossing a mountain range. Whatever it is, we&rsquo;d love to hear about your goals.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/pricing-plans/membership">Join the Club</a>
+            <a class="ys-btn ys-btn-ghost" href="mission.html">Read the mission</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);"><strong style="color:#fff;">For partners and gym owners</strong> &mdash; testing days at your facility, you keep 30%. <a href="partners.html" style="color: var(--wf-coral);">Partner program &rarr;</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </body>
 </html>
