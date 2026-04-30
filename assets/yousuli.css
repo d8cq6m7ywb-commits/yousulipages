@@ -449,6 +449,62 @@ p { margin: 0 0 1em; }
   font-size: 0.93rem;
 }
 
+/* Sticky quick-nav (Performance Lab) */
+.ys-quicknav {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: saturate(180%) blur(10px);
+  -webkit-backdrop-filter: saturate(180%) blur(10px);
+  border-bottom: 1px solid var(--ys-line);
+  padding: 10px 0;
+}
+.ys-quicknav-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 8px;
+}
+.ys-quicknav-label {
+  font-family: var(--ys-font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.7rem;
+  color: var(--ys-muted);
+  margin-right: 6px;
+}
+.ys-quicknav a {
+  font-family: var(--ys-font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.74rem;
+  color: var(--ys-navy);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--ys-line);
+  background: #fff;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  white-space: nowrap;
+}
+.ys-quicknav a:hover {
+  background: var(--wf-coral);
+  color: #fff;
+  border-color: var(--wf-coral);
+  transform: translateY(-1px);
+}
+@media (max-width: 720px) {
+  .ys-quicknav { padding: 8px 0; }
+  .ys-quicknav-label { display: none; }
+  .ys-quicknav a {
+    font-size: 0.7rem;
+    padding: 5px 10px;
+    letter-spacing: 0.06em;
+  }
+}
+
 /* Service detail card (Performance Lab All Assessments) */
 .ys-service-detail {
   position: relative;
