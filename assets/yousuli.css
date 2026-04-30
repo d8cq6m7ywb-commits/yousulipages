@@ -482,9 +482,10 @@ p { margin: 0 0 1em; }
   letter-spacing: 0.18em;
   font-size: 0.95rem;
   white-space: nowrap;
+  transition: opacity 0.15s ease;
 }
-.ys-site-brand img { width: 32px; height: 32px; }
-.ys-site-brand:hover { text-decoration: none; color: var(--wf-coral); }
+.ys-site-brand img { height: 48px; width: auto; display: block; }
+.ys-site-brand:hover { text-decoration: none; opacity: 0.78; }
 .ys-site-nav {
   display: flex;
   gap: 22px;
