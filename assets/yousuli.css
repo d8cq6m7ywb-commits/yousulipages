@@ -288,6 +288,12 @@ p { margin: 0 0 1em; }
   object-fit: cover;
   padding: 0;
 }
+.ys-card-image.photo {
+  object-fit: cover;
+  padding: 0;
+  background: var(--ys-bg-soft);
+  height: 200px;
+}
 .ys-locked-pill {
   display: inline-block;
   font-family: var(--ys-font-display);
@@ -675,7 +681,9 @@ p { margin: 0 0 1em; }
   font-size: 1.8rem;
   letter-spacing: 0.05em;
   flex-shrink: 0;
+  object-fit: cover;
 }
+img.ys-about-avatar { padding: 0; border: 2px solid var(--ys-line); }
 .ys-about-inline h3 { color: var(--ys-navy); margin: 0 0 6px; }
 .ys-about-inline p { margin: 0; color: var(--ys-muted); }
 .ys-about-creds {
