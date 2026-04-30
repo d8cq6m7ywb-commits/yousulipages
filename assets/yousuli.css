@@ -456,6 +456,173 @@ p { margin: 0 0 1em; }
 }
 
 /* ============================================================
+   ABOUT COACH FRED page (aboutcoachfred.html)
+   ============================================================ */
+
+/* Bio split block — portrait beside intro text */
+.ys-bio-split {
+  background: #fff;
+  border: 1px solid var(--ys-line);
+  border-radius: 16px;
+  padding: 32px;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 32px;
+  align-items: center;
+  box-shadow: 0 8px 28px rgba(47, 45, 86, 0.06);
+}
+.ys-bio-portrait {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 16px;
+  background: var(--ys-bg-soft);
+}
+.ys-bio-split h3 { color: var(--ys-navy); margin: 0 0 10px; font-size: 1.6rem; }
+.ys-bio-split p { margin: 0; color: var(--ys-ink); }
+.ys-bio-tag {
+  font-family: var(--ys-font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.78rem;
+  color: var(--wf-coral);
+  margin-bottom: 6px;
+  display: inline-block;
+}
+@media (max-width: 760px) {
+  .ys-bio-split {
+    grid-template-columns: 1fr;
+    text-align: center;
+    padding: 24px;
+    gap: 22px;
+  }
+  .ys-bio-portrait { max-width: 240px; margin: 0 auto; }
+}
+
+/* Story chapter — alternating image/text layout */
+.ys-story-chapter {
+  background: #fff;
+  border: 1px solid var(--ys-line);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 18px;
+  box-shadow: 0 4px 18px rgba(47, 45, 86, 0.05);
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 0;
+  align-items: stretch;
+}
+.ys-story-chapter:nth-child(even) { grid-template-columns: 1fr 280px; }
+.ys-story-chapter:nth-child(even) .ys-story-img { order: 2; }
+.ys-story-chapter:nth-child(even) .ys-story-body { order: 1; }
+.ys-story-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  background: var(--ys-bg-soft);
+  min-height: 260px;
+}
+.ys-story-body { padding: 28px 30px; }
+.ys-story-body .ys-story-step {
+  font-family: var(--ys-font-display);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.74rem;
+  color: var(--wf-coral);
+  margin-bottom: 6px;
+  display: inline-block;
+}
+.ys-story-body h3 { color: var(--ys-navy); margin: 0 0 10px; font-size: 1.3rem; }
+.ys-story-body p { color: var(--ys-ink); margin: 0 0 10px; }
+.ys-story-body p:last-child { margin-bottom: 0; }
+@media (max-width: 760px) {
+  .ys-story-chapter,
+  .ys-story-chapter:nth-child(even) {
+    grid-template-columns: 1fr;
+  }
+  .ys-story-chapter:nth-child(even) .ys-story-img,
+  .ys-story-chapter:nth-child(even) .ys-story-body { order: initial; }
+  .ys-story-img { aspect-ratio: 16/9; min-height: 0; }
+  .ys-story-body { padding: 22px 24px; }
+}
+
+/* Highlight gallery card — small media tile */
+.ys-highlight-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+.ys-highlight {
+  background: #fff;
+  border: 1px solid var(--ys-line);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(47, 45, 86, 0.05);
+  display: flex; flex-direction: column;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.ys-highlight:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(47, 45, 86, 0.10); }
+.ys-highlight-img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: var(--ys-bg-soft);
+  border-bottom: 1px solid var(--ys-line);
+}
+.ys-highlight-body { padding: 16px 18px; }
+.ys-highlight-tag {
+  font-family: var(--ys-font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.68rem;
+  color: var(--ys-muted);
+  margin-bottom: 4px;
+  display: block;
+}
+.ys-highlight-body h4 {
+  color: var(--ys-navy);
+  margin: 0 0 6px;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  font-family: var(--ys-font-display);
+}
+.ys-highlight-body p {
+  color: var(--ys-muted);
+  font-size: 0.88rem;
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* Credentials chip-grid */
+.ys-creds-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+.ys-cred {
+  background: #fff;
+  border: 1px solid var(--ys-line);
+  border-left: 4px solid var(--wf-teal);
+  border-radius: 10px;
+  padding: 18px 20px;
+}
+.ys-cred:nth-child(2n) { border-left-color: var(--wf-coral); }
+.ys-cred:nth-child(3n) { border-left-color: var(--ys-navy); }
+.ys-cred h4 {
+  font-family: var(--ys-font-display);
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--ys-navy);
+  font-size: 1rem;
+  margin: 0 0 4px;
+}
+.ys-cred p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--ys-muted);
+}
+
+/* ============================================================
    PARTNERS page (partners.html) - B2B testing-day hosts
    ============================================================ */
 
