@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Yousuli Coaching — testing-driven personal coaching for endurance athletes</title>
+  <meta name="description" content="Three coaching tiers — Structured, Bespoke Performance, and Full Performance. Testing-driven, accountability-built, designed for athletes who want a guide rather than a generic plan. Plus testing-and-coaching bundles." />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Yousuli Coaching" />
+  <meta property="og:description" content="Testing-driven coaching aimed at one thing: more speed per hour of training. Three tiers." />
+  <meta property="og:url" content="https://www.yousuli.co/coaching" />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top">
+          <img src="assets/yousuli-mountain.png" alt="" />
+          <span>YOUSULI</span>
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Coaching memberships</span>
+      <h1>When you want a guide, not just a plan.</h1>
+      <div class="wf-subhead">Testing-driven · Accountability-built · More speed per hour</div>
+      <p class="lede">Coaching is for athletes who want decision-making, accountability, and efficiency work done <em>with</em> them &mdash; not DIY. Three tiers, all anchored to lab testing, all with the same standard of attention.</p>
+      <div class="ys-btn-row">
+        <a class="ys-btn ys-btn-coral" href="#tiers">See coaching tiers</a>
+        <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/contact?subject=Coaching%20application">Apply for coaching</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STICKY QUICK-NAV ============ -->
+  <nav class="ys-quicknav" aria-label="Section navigation">
+    <div class="ys-container ys-quicknav-row">
+      <span class="ys-quicknav-label">Jump to</span>
+      <a href="#why">Why Yousuli</a>
+      <a href="#tiers">Tiers</a>
+      <a href="#perks">What you get</a>
+      <a href="#packages">Packages</a>
+      <a href="#decide">Help me decide</a>
+      <a href="#faq">FAQ</a>
+    </div>
+  </nav>
+
+  <!-- ============ WHY YOUSULI COACHING ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Why Yousuli coaching</h2>
+        <div class="ys-rule"></div>
+        <p>Three things that separate coaching with us from a generic training plan.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>Testing-driven, not template</h3>
+          <p>Plans are built off your real numbers &mdash; VO₂max, RMR, CdA, gait, swim metrics. The lab work feeds directly into the coaching, every block.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>Decision-making, not just delivery</h3>
+          <p>You get a coach for the calls that matter &mdash; the workout you should skip, the race to recommit to, the set to push, the week to recover. That&rsquo;s the work.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>Efficiency over volume</h3>
+          <p>The aim isn&rsquo;t more training. It&rsquo;s more speed per hour you train. Technique, drag, fueling, recovery &mdash; the leaks fixed before extra load goes on.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COACHING TIERS ============ -->
+  <section class="wf-section alt" id="tiers">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Three coaching tiers</h2>
+        <div class="ys-rule"></div>
+        <p>Pick the level of contact that matches the complexity of your goal &mdash; not the size of your wallet.</p>
+      </div>
+
+      <div class="ys-grid">
+        <!-- Structured Coaching -->
+        <div class="ys-tier">
+          <div class="ys-tier-name">Structured Coaching</div>
+          <div class="ys-tier-price">$200<span style="display:block; font-size: 0.9rem; color: var(--ys-muted); letter-spacing:0.06em; text-transform:none; margin-top:4px;">per month</span></div>
+          <p style="color: var(--ys-muted); font-size: 0.95rem; margin-top: 4px;">For athletes who want an individual plan and regular feedback &mdash; but don&rsquo;t need very high-touch daily contact. The entry point into real coaching.</p>
+          <ul>
+            <li>Everything in the Yousuli Social Club</li>
+            <li><strong>Monthly</strong> training schedule, customised to your goal</li>
+            <li>Monthly schedule adjustments based on how you respond</li>
+            <li>Access to lounge at Yousuli events</li>
+            <li>Member pricing on lab testing</li>
+            <li>Free training content &amp; member webinars</li>
+          </ul>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/pricing-plans/membership">Pick Structured</a>
+        </div>
+
+        <!-- Bespoke Performance (featured) -->
+        <div class="ys-tier featured">
+          <span class="ys-badge">Most chosen</span>
+          <div class="ys-tier-name">Bespoke Performance</div>
+          <div class="ys-tier-price">$350<span style="display:block; font-size: 0.9rem; color: var(--ys-muted); letter-spacing:0.06em; text-transform:none; margin-top:4px;">per month</span></div>
+          <p style="color: var(--ys-muted); font-size: 0.95rem; margin-top: 4px;">For athletes who want regular feedback and better use of every training hour. Weekly schedule, weekly check-ins, more direct contact when it matters.</p>
+          <ul>
+            <li>Everything in Structured Coaching</li>
+            <li><strong>Weekly</strong> training schedule, dynamic and adjusted</li>
+            <li>Weekly check-in &amp; session feedback</li>
+            <li>Direct coach access for race-week and key decisions</li>
+            <li>Discount vouchers for tests &amp; coaching (friends &amp; partners)</li>
+            <li>Priority booking on monthly testing days</li>
+          </ul>
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/pricing-plans/membership">Pick Bespoke Performance</a>
+        </div>
+
+        <!-- Full Performance / High-touch -->
+        <div class="ys-tier">
+          <div class="ys-tier-name">Full Performance</div>
+          <div class="ys-tier-price"><span style="font-size: 1.4rem;">By application</span><span style="display:block; font-size: 0.9rem; color: var(--ys-muted); letter-spacing:0.06em; text-transform:none; margin-top:4px;">limited spots</span></div>
+          <p style="color: var(--ys-muted); font-size: 0.95rem; margin-top: 4px;">For athletes with big performance goals, limited time, or complex constraints &mdash; and want someone to own the full process from testing to race execution.</p>
+          <ul>
+            <li>Everything in Bespoke Performance</li>
+            <li>Full ownership of the testing &amp; race plan</li>
+            <li>Race-day and travel coordination</li>
+            <li>Quarterly testing schedule built in</li>
+            <li>Direct contact &mdash; days, not weeks</li>
+            <li>Limited roster &mdash; quality over volume</li>
+          </ul>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/contact?subject=Full%20Performance%20coaching%20application">Apply</a>
+        </div>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.95rem;">Looking for community without 1:1 coaching? <a href="socialclub.html" style="color: var(--wf-coral);">Yousuli Social Club ($0 or $49/yr)</a> &mdash; the entry point into the world.</p>
+    </div>
+  </section>
+
+  <!-- ============ WHAT EVERY COACHING MEMBER GETS ============ -->
+  <section class="wf-section" id="perks">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What every coached athlete gets</h2>
+        <div class="ys-rule"></div>
+        <p>The shared toolkit across all coaching tiers.</p>
+      </div>
+
+      <div class="ys-grid">
+        <article class="ys-card">
+          <div class="ys-meta">Personalised plan</div>
+          <h3>Customised dynamic plans</h3>
+          <p>Built around your real biomechanics, your real life, your real goal. Adjusted based on data &mdash; sleep, fueling, life stress, the workout that didn&rsquo;t go to plan.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Coach access</div>
+          <h3>Frequent direct contact</h3>
+          <p>Cadence depends on tier (monthly / weekly / direct). The principle is the same: you can reach the coach when the question matters, not when there&rsquo;s a billing cycle.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Testing + analysis</div>
+          <h3>Lab work woven into the plan</h3>
+          <p>RMR, VO₂max, gait, aero, and more &mdash; used to remove wasted effort. Member pricing on every Performance Lab assessment, priority on testing days.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Yousuli Club access</div>
+          <h3>Community + group sessions</h3>
+          <p>Coached athletes get full Yousuli Social Club access automatically. Group rides, swims, runs, WhatsApp community, partner discounts, member content.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Discount vouchers</div>
+          <h3>Vouchers for friends &amp; partners</h3>
+          <p>Coached athletes get discount vouchers for tests and coaching to share with training partners and friends &mdash; bring the right people into the work.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Race &amp; event support</div>
+          <h3>Lounge access at events</h3>
+          <p>Yousuli runs lounges at race expos (Wildflower, UCSD Tritonman, IM70.3 NorCal, etc.). Coached athletes get full access &mdash; resting space, hydration, pre-race quiet.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PERFORMANCE PACKAGES ============ -->
+  <section class="wf-section alt" id="packages">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Performance packages</h2>
+        <div class="ys-rule"></div>
+        <p>Bundles that combine testing with structured coaching for a season-defining starting point. Move up within 60 days and your initial package credits toward the upgrade.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-tier">
+          <div class="ys-tier-name">Package 1 · Basic Foundation</div>
+          <div class="ys-tier-price">From $300<span style="display:block; font-size: 0.9rem; color: var(--ys-muted); letter-spacing:0.06em; text-transform:none; margin-top:4px;">testing + plan</span></div>
+          <p style="color: var(--ys-muted); font-size: 0.95rem; margin-top: 4px;">Single VO₂max ramp test to define training zones, plus a starter plan and brief consult. Good first step for athletes who want clarity before committing to ongoing coaching.</p>
+          <ul>
+            <li>Single VO₂max ramp test</li>
+            <li>Custom HR &amp; power zones</li>
+            <li>Starter plan + 30-min consult</li>
+          </ul>
+          <a class="ys-btn ys-btn-dark" href="performancelab.html#service-vo2max">See VO₂max details</a>
+        </div>
+
+        <div class="ys-tier featured">
+          <span class="ys-badge">Best value</span>
+          <div class="ys-tier-name">Package 2 · Structured Performance</div>
+          <div class="ys-tier-price">$1,100<span style="display:block; font-size: 0.9rem; color: var(--ys-muted); letter-spacing:0.06em; text-transform:none; margin-top:4px;">a $1,280 value</span></div>
+          <p style="color: var(--ys-muted); font-size: 0.95rem; margin-top: 4px;">Combines core testing with a structured coaching block. The standard option for athletes planning a season around real numbers, not vibes.</p>
+          <ul>
+            <li>VO₂max + RMR testing</li>
+            <li>3-month Structured Coaching block</li>
+            <li>Mid-block check-in + plan adjustment</li>
+            <li>Full reporting &amp; debrief</li>
+          </ul>
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/contact?subject=Structured%20Performance%20Package">Inquire</a>
+        </div>
+
+        <div class="ys-tier">
+          <div class="ys-tier-name">Package 3 · Performance Plus</div>
+          <div class="ys-tier-price">From $1,300<span style="display:block; font-size: 0.9rem; color: var(--ys-muted); letter-spacing:0.06em; text-transform:none; margin-top:4px;">testing + technique + coaching</span></div>
+          <p style="color: var(--ys-muted); font-size: 0.95rem; margin-top: 4px;">Adds biomechanical work to the Structured package &mdash; gait analysis and a poolside swim tune-up. For athletes whose technical work has the most upside.</p>
+          <ul>
+            <li>VO₂max + RMR</li>
+            <li>Advanced Gait Analysis with foot-mounted sensors</li>
+            <li>Poolside Stroke Tune-Up with live video feedback</li>
+            <li>3-month Structured Coaching block</li>
+          </ul>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/contact?subject=Performance%20Plus%20Package">Inquire</a>
+        </div>
+
+        <div class="ys-tier">
+          <div class="ys-tier-name">Package 4 · Elite Full-Stack</div>
+          <div class="ys-tier-price">$1,500<span style="display:block; font-size: 0.9rem; color: var(--ys-muted); letter-spacing:0.06em; text-transform:none; margin-top:4px;">a $1,820 value</span></div>
+          <p style="color: var(--ys-muted); font-size: 0.95rem; margin-top: 4px;">For athletes who want the full picture: aerobic capacity, recovery kinetics, biomechanical efficiency, and free-speed aerodynamics &mdash; everything needed to sharpen race execution.</p>
+          <ul>
+            <li>PRO Full-Stack Profiling (VO₂Master + multi-site SmO₂ + lactate + core temp)</li>
+            <li>Advanced Gait Analysis</li>
+            <li>Pro-level Swim Motion Analysis</li>
+            <li>Comprehensive 360° report + step-by-step plan (fueling, pacing, heat, biomech)</li>
+          </ul>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/contact?subject=Elite%20Full-Stack%20Package">Inquire</a>
+        </div>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.95rem;">Full technical details on each test &mdash; see the <a href="performancelab.html" style="color: var(--wf-coral);">Performance Lab page</a>.</p>
+    </div>
+  </section>
+
+  <!-- ============ DECISION TREE ============ -->
+  <section class="wf-section" id="decide">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Help me pick</h2>
+        <div class="ys-rule"></div>
+        <p>The five-second answer for the most common situations.</p>
+      </div>
+
+      <div class="ys-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+        <article class="ys-fit-card yes">
+          <h3>Mainly want community + structure</h3>
+          <ul>
+            <li>You can manage most decisions yourself</li>
+            <li>You want others to train with</li>
+            <li>You&rsquo;re comfortable with template plans</li>
+          </ul>
+          <p style="margin-top: 12px;"><strong>→ Pick Yousuli Social Club</strong></p>
+          <a class="ys-btn ys-btn-dark" href="socialclub.html">Yousuli Social Club</a>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>Want individual plan + regular feedback</h3>
+          <ul>
+            <li>You want a real plan, not a template</li>
+            <li>You don&rsquo;t need very high-touch daily contact</li>
+            <li>Better use of training time matters</li>
+          </ul>
+          <p style="margin-top: 12px;"><strong>→ Pick Structured Coaching</strong></p>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/pricing-plans/membership">Structured</a>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>Big performance goal + need ownership</h3>
+          <ul>
+            <li>Big goal with limited time</li>
+            <li>Complex constraints (travel, life, injuries)</li>
+            <li>Want someone to own the full process</li>
+          </ul>
+          <p style="margin-top: 12px;"><strong>→ Pick Bespoke or Full Performance</strong></p>
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/pricing-plans/membership">Coaching tiers</a>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>Just want clarity on the numbers</h3>
+          <ul>
+            <li>You don&rsquo;t need ongoing coaching</li>
+            <li>You want to know your real zones</li>
+            <li>You&rsquo;ll DIY from data</li>
+          </ul>
+          <p style="margin-top: 12px;"><strong>→ Book a Performance Lab test</strong></p>
+          <a class="ys-btn ys-btn-dark" href="performancelab.html">Performance Lab</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TESTIMONIAL ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What athletes say</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-expert" style="max-width: 760px; margin: 0 auto;">
+        <div class="ys-expert-avatar">SH</div>
+        <div>
+          <blockquote>&ldquo;I had a great experience. Knowing I could always contact directly and get a quick answer from someone I trust entirely made the difference. I always felt I was challenged in the exact amount &mdash; nothing was easy and I saw the improvement accordingly. With that being said, I also felt great care and awareness around injuries, encouraged to listen to my body and be flexible with the plan when needed.&rdquo;</blockquote>
+          <span class="ys-expert-cite">Sahar &middot; finished his first IRONMAN and a sub-3-hour marathon</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="wf-section" id="faq">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>FAQ</h2>
+        <div class="ys-rule"></div>
+        <p>What athletes ask before signing up.</p>
+      </div>
+
+      <div class="ys-faq-grid">
+        <article class="ys-faq">
+          <h3>Do I need to join the Club to use the Yousuli Lab?</h3>
+          <p>No. The Lab is open to non-members. Club and coaching athletes get member pricing and priority booking, but anyone can book testing directly.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>Can I be in the Club without coaching?</h3>
+          <p>Yes. Many athletes start with Club membership only and add coaching or testing later when the timing makes sense.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>Can I upgrade from Club to Coaching?</h3>
+          <p>Yes. You can move into Structured or Bespoke Coaching at any time, subject to available coaching slots. We keep the roster small on purpose.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>Do you coach beginners?</h3>
+          <p>Yes. The Club and the Basic Foundation package are especially suitable for beginners and returning athletes. Coaching tiers are matched to your current level and goals &mdash; not the other way around.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>Do you coach only triathletes?</h3>
+          <p>No. We work across triathlon, running, cycling, and swimming. Run-only and bike-only blocks are common. Our calculator library and lab work apply across endurance sports.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>Do you offer discounts for para-athletes and elites?</h3>
+          <p>Yes &mdash; the <a href="supportedathletes.html" style="color: var(--wf-coral);">Supported Athletes program</a> reserves limited reduced-rate spots for committed para-athletes and elite athletes targeting national or international performance.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>Can I move up between coaching tiers?</h3>
+          <p>Yes. If you start at Structured and decide you need more contact, you can move to Bespoke or Full Performance at any time &mdash; we credit any unused portion of the current tier toward the upgrade.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>Is there a minimum commitment?</h3>
+          <p>For Structured and Bespoke, we typically work in 3-month blocks &mdash; long enough to actually see adaptation. Full Performance starts with a quarterly commitment given the testing schedule built in.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FINAL CTA ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Pick a tier. Or send a quick note.</h2>
+          <p>Coaching tiers and the Yousuli Social Club share one membership flow at yousuli.co. If you&rsquo;d rather start with a conversation, send a note &mdash; tell me your sport, your level, your race goals over the next 12&ndash;18 months. I reply within 1&ndash;2 business days.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/pricing-plans/membership">Pick a tier</a>
+            <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/contact?subject=Coaching%20application">Apply for coaching</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Para or elite athlete who can&rsquo;t carry the standard rate? See the <a href="supportedathletes.html" style="color: var(--wf-coral);">Supported Athletes program</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-mountain.png" alt="" />
+          <strong>YOUSULI</strong>
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/all-in-one" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
