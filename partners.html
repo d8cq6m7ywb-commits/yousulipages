@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Yousuli Partner Program — turn testing days into facility revenue</title>
+  <meta name="description" content="Host a Yousuli Performance Lab testing day at your gym, studio, or club. Zero CAPEX, you keep 30%, up to 8 tests per day, next-day payout. We bring the equipment, the coach, and the marketing kit." />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Yousuli Partner Program" />
+  <meta property="og:description" content="Turn testing days into recurring facility revenue. We bring the lab. You keep 30%." />
+  <meta property="og:url" content="https://www.yousuli.co/partners" />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Smooth scroll
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+
+      // Calculator
+      var calcBtn = document.getElementById('calcBtn');
+      if (calcBtn) {
+        calcBtn.addEventListener('click', function () {
+          var rows = document.querySelectorAll('#calcRows tr');
+          var gross = 0;
+          rows.forEach(function (row) {
+            var price = parseFloat(row.getAttribute('data-price')) || 0;
+            var qty = parseInt(row.querySelector('input[type="number"]').value, 10) || 0;
+            gross += price * qty;
+          });
+          var share = Math.round(gross * 0.30);
+          document.getElementById('calcGross').textContent = '$' + gross.toLocaleString();
+          document.getElementById('calcShare').textContent = '$' + share.toLocaleString();
+          document.getElementById('calcResult').style.display = 'grid';
+        });
+        // Reset button
+        document.getElementById('calcReset').addEventListener('click', function () {
+          document.querySelectorAll('#calcRows input[type="number"]').forEach(function (i) { i.value = 0; });
+          document.getElementById('calcResult').style.display = 'none';
+        });
+      }
+    });
+  </script>
+</head>
+<body>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Partner program · B2B</span>
+      <h1>Turn testing days into facility revenue.</h1>
+      <div class="wf-subhead">Zero CAPEX · You keep 30% · Up to 8 tests/day</div>
+      <p class="lede">We roll in with VO₂max, lactate, NIRS, RMR, and full-stack profiling. You provide ~40 ft² of floor space. We do the rest &mdash; testing, reports, billing, payouts. New high-value service for your members. Recurring revenue with no equipment to buy.</p>
+      <div class="ys-btn-row">
+        <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/contact?subject=Partner%20program%20call">Book a discovery call</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">How it works</a>
+      </div>
+      <p style="margin-top: 16px; font-size: 0.85rem; color: rgba(255,255,255,0.65); letter-spacing: 0.04em;">USAT-certified · Liability insured · ISO-calibrated devices · Next-day ACH payout</p>
+    </div>
+  </section>
+
+  <!-- ============ STICKY QUICK-NAV ============ -->
+  <nav class="ys-quicknav" aria-label="Section navigation">
+    <div class="ys-container ys-quicknav-row">
+      <span class="ys-quicknav-label">Jump to</span>
+      <a href="#how">How it works</a>
+      <a href="#what">What we bring</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#calc">Calculator</a>
+      <a href="#fits">Right fit?</a>
+      <a href="#faq">FAQ</a>
+    </div>
+  </nav>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="wf-section" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How it works</h2>
+        <div class="ys-rule"></div>
+        <p>Four steps from first call to first paid testing day. We&rsquo;ve done the operational work so your team doesn&rsquo;t have to.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>Pick a testing day</h3>
+          <p>Weekly, monthly, or quarterly cadence. We help you pick a day that maximises slot fill and creates urgency among your members. Most partners run one day per month.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>We set up in &lt; 2 minutes</h3>
+          <p>We arrive, calibrate the equipment, and are ready for the first session in under two minutes. No cabling, no special venting, no infrastructure changes to your space.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>We promote</h3>
+          <p>We promote the day to your clientele and bring outside members to come get tested at your facility. Marketing is done both online and in your space &mdash; templates, posters, QR flyers all in the kit we hand you.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">04</div>
+          <h3>We test, you get paid</h3>
+          <p>We run the assessments and produce the reports. For every booking made through Yousuli, your facility keeps a 30% flat share &mdash; paid the next business day via ACH.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHAT WE BRING / YOU PROVIDE ============ -->
+  <section class="wf-section alt" id="what">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What each side brings</h2>
+        <div class="ys-rule"></div>
+        <p>The whole point: you provide ~40 ft² and a member base. Yousuli brings everything else.</p>
+      </div>
+
+      <div class="ys-grid" style="grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));">
+        <article class="ys-card">
+          <div class="ys-meta">Yousuli brings</div>
+          <h3>Lab-grade kit + a USAT-certified coach</h3>
+          <ul class="ys-card-bullets">
+            <li><strong>VO₂Master Pro</strong> portable metabolic cart</li>
+            <li><strong>Multi-site NIRS (Moxy)</strong> for SmO₂ on key muscle groups</li>
+            <li><strong>Lactate analyzers</strong> and <strong>CORE temperature sensors</strong></li>
+            <li><strong>Ventilated hood</strong> for RMR with calibration gases &amp; disposables</li>
+            <li>Same-day session summaries plus 72-hour PDF consult reports</li>
+            <li><strong>Frederic Simon</strong> &mdash; USAT Level II, Ironman-certified coach, liability insured</li>
+            <li>Marketing kit (posters, flyers, QR codes, social templates, email copy)</li>
+          </ul>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">You provide</div>
+          <h3>Space, access, and a contact</h3>
+          <ul class="ys-card-bullets">
+            <li><strong>~40 ft²</strong> of open floor space (no special outlet required)</li>
+            <li>Access to a treadmill, indoor bike, or your studio floor</li>
+            <li><strong>One staff contact</strong> to receive the promo kit and coordinate the day</li>
+            <li>Wi-Fi (optional, for instant report uploads)</li>
+            <li>Your member list to promote to (optional &mdash; we bring our own audience too)</li>
+          </ul>
+          <p style="color: var(--ys-muted); font-size: 0.9rem; margin-top: 16px;">No equipment to buy. No protocols to learn. No staff time to commit beyond a single point of contact.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SERVICES & PRICING ============ -->
+  <section class="wf-section" id="pricing">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Services &amp; pricing &mdash; with your 30%</h2>
+        <div class="ys-rule"></div>
+        <p>Five revenue lines. Includes single-use filters, session calibration, and full PDF reporting.</p>
+      </div>
+
+      <div class="ys-service-pricing">
+        <table>
+          <thead>
+            <tr>
+              <th>Service</th>
+              <th class="num">Duration</th>
+              <th class="num">Client price</th>
+              <th class="num">You keep (30%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>VO₂max &amp; Zones</strong></td>
+              <td class="num">~45 min</td>
+              <td class="num">$260</td>
+              <td class="share">$78</td>
+            </tr>
+            <tr>
+              <td><strong>Resting Metabolic Rate (RMR)</strong></td>
+              <td class="num">~25 min</td>
+              <td class="num">$120</td>
+              <td class="share">$36</td>
+            </tr>
+            <tr>
+              <td><strong>Performance Recovery Profile</strong></td>
+              <td class="num">~45 min</td>
+              <td class="num">$329</td>
+              <td class="share">$99</td>
+            </tr>
+            <tr>
+              <td><strong>3-min &ldquo;DARK&rdquo; Test (CP / W&prime;)</strong></td>
+              <td class="num">~30 min</td>
+              <td class="num">$150</td>
+              <td class="share">$45</td>
+            </tr>
+            <tr>
+              <td><strong>PRO Full-Stack Profiling</strong></td>
+              <td class="num">~75 min</td>
+              <td class="num">$500</td>
+              <td class="share">$150</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); margin-top: 18px; font-size: 0.92rem;">Throughput cap: <strong style="color: var(--ys-navy);">up to 8 tests / day</strong> per device. Most partners run one day per month or quarter to give time to promote and create urgency.</p>
+    </div>
+  </section>
+
+  <!-- ============ CALCULATOR ============ -->
+  <section class="wf-section alt" id="calc">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What you earn in one testing day</h2>
+        <div class="ys-rule"></div>
+        <p>Type in your expected mix. We calculate gross + your 30% share.</p>
+      </div>
+
+      <div class="ys-calculator" style="max-width: 720px; margin: 0 auto;">
+        <h3>Estimate your share</h3>
+        <p class="lede">Enter quantities below. Tap Calculate to see the day&rsquo;s revenue and your share.</p>
+
+        <table class="ys-calc-table">
+          <thead>
+            <tr>
+              <th>Service</th>
+              <th class="num">Price</th>
+              <th class="qty">Qty</th>
+            </tr>
+          </thead>
+          <tbody id="calcRows">
+            <tr data-price="500"><td>PRO Full-Stack Profiling</td><td class="num">$500</td><td class="qty"><input type="number" min="0" value="0" /></td></tr>
+            <tr data-price="329"><td>Performance Recovery Profile</td><td class="num">$329</td><td class="qty"><input type="number" min="0" value="0" /></td></tr>
+            <tr data-price="260"><td>VO₂max &amp; Zones</td><td class="num">$260</td><td class="qty"><input type="number" min="0" value="0" /></td></tr>
+            <tr data-price="150"><td>3-min DARK Test</td><td class="num">$150</td><td class="qty"><input type="number" min="0" value="0" /></td></tr>
+            <tr data-price="120"><td>Resting Metabolic Rate</td><td class="num">$120</td><td class="qty"><input type="number" min="0" value="0" /></td></tr>
+          </tbody>
+        </table>
+
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <button id="calcBtn" type="button" class="ys-btn ys-btn-coral" style="border:0; cursor:pointer;">Calculate</button>
+          <button id="calcReset" type="button" class="ys-btn ys-btn-ghost" style="border-color: rgba(255,255,255,0.3); cursor:pointer;">Reset</button>
+        </div>
+
+        <div id="calcResult" class="ys-calc-result" style="display:none;">
+          <div>
+            <div class="label">Gross revenue</div>
+            <div class="value" id="calcGross">$0</div>
+          </div>
+          <div>
+            <div class="label">Your 30% share (next-day)</div>
+            <div class="value share" id="calcShare">$0</div>
+          </div>
+        </div>
+
+        <div class="ys-calc-examples">
+          <h4>Quick reference examples</h4>
+          <ul>
+            <li><strong>8 mixed tests at avg $375</strong> → $3,000 gross → <strong>$900 to you</strong></li>
+            <li><strong>4 VO₂max tests at $260</strong> → $1,040 gross → <strong>$312 to you</strong></li>
+            <li><strong>1 PRO ($500) + 3 VO₂max ($260)</strong> → $1,280 gross → <strong>$384 to you</strong></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCIENCE THAT SELLS ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Science that sells</h2>
+        <div class="ys-rule"></div>
+        <p>The numbers your members already trust &mdash; and the credibility that justifies the price tag.</p>
+      </div>
+
+      <div class="ys-bigstat-grid">
+        <div class="ys-bigstat">
+          <span class="ys-bigstat-label">Per +1 MET in VO₂max</span>
+          <div class="ys-bigstat-num"><em>−13%</em></div>
+          <p>All-cause mortality risk reduction. VO₂max is one of the strongest independent predictors of longevity, period.</p>
+        </div>
+        <div class="ys-bigstat">
+          <span class="ys-bigstat-label">RMR vs. doubly-labelled water</span>
+          <div class="ys-bigstat-num"><em>±3%</em></div>
+          <p>Indirect calorimetry is validated within ±3% of the gold standard. Hospital-grade accuracy in a 25-minute hood test.</p>
+        </div>
+        <div class="ys-bigstat">
+          <span class="ys-bigstat-label">LEA prevalence</span>
+          <div class="ys-bigstat-num"><em>~47%</em></div>
+          <p>Of competitive athletes show low energy availability at some point in their season. RMR catches it before injuries do.</p>
+        </div>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.95rem;">Full breakdown with peer-reviewed references on the <a href="science.html" style="color: var(--wf-coral);">Science page</a>.</p>
+    </div>
+  </section>
+
+  <!-- ============ ABOUT FREDERIC ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Who runs your testing day</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-about-inline">
+        <div class="ys-about-avatar">FS</div>
+        <div>
+          <h3>Frederic Simon</h3>
+          <p>Founder &amp; head coach at Yousuli. USAT Level II coach, Ironman certified, with credentials across endurance sport, biomechanics, sport nutrition, and behavior change. Devices ISO-calibrated on schedule. Liability insured. Sessions run with the same protocols and reporting standards used at the consumer Performance Lab.</p>
+          <div class="ys-about-creds">USAT Level II · Ironman certified · TrainingPeaks · Liability insured · ISO-calibrated devices</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TESTIMONIAL / CASE STUDY ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What athletes say</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-expert" style="max-width: 760px; margin: 0 auto;">
+        <div class="ys-expert-avatar">CS</div>
+        <div>
+          <blockquote>&ldquo;In three months I raised my VO₂max from 43 to 48 and knocked 90 seconds off my 10 k. The numbers showed exactly where to push, not just &lsquo;run more.&rsquo;&rdquo;</blockquote>
+          <span class="ys-expert-cite">Case study · age-group triathlete</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MARKETING KIT ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>The marketing kit</h2>
+        <div class="ys-rule"></div>
+        <p>Everything you need to fill the calendar and look professional doing it. Handed over before your first testing day.</p>
+      </div>
+
+      <div class="ys-grid">
+        <article class="ys-card">
+          <div class="ys-meta">Social</div>
+          <h3>Templates &amp; scripts</h3>
+          <p>Instagram posts, Stories, Reels scripts &mdash; ready to drop into your queue with your branding.</p>
+        </article>
+        <article class="ys-card">
+          <div class="ys-meta">Email</div>
+          <h3>Announce, last-call, post-results</h3>
+          <p>Three-email sequence with copy you can send through your existing list with minimal editing.</p>
+        </article>
+        <article class="ys-card">
+          <div class="ys-meta">In-gym</div>
+          <h3>Posters &amp; QR flyers</h3>
+          <p>A4 and US Letter sizes, ready to print. QR codes route bookings through Yousuli so the 30% share tracks automatically.</p>
+        </article>
+        <article class="ys-card">
+          <div class="ys-meta">Newsletter</div>
+          <h3>Copy blocks &amp; app inserts</h3>
+          <p>Drop-in paragraphs for your newsletter, member app, or website &mdash; written so they feel native to your brand voice.</p>
+        </article>
+        <article class="ys-card">
+          <div class="ys-meta">Compliance</div>
+          <h3>Consent &amp; data-privacy forms</h3>
+          <p>Pre-built, e-sign-ready forms covering testing consent and data handling. Saves you the legal review.</p>
+        </article>
+        <article class="ys-card">
+          <div class="ys-meta">On-site</div>
+          <h3>QR signup at the booth</h3>
+          <p>Physical signage and digital landing pages so walk-ups can self-book or join your member list during the testing day.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FITS ============ -->
+  <section class="wf-section" id="fits">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Is this the right fit?</h2>
+        <div class="ys-rule"></div>
+        <p>Honest read so we don&rsquo;t waste each other&rsquo;s time.</p>
+      </div>
+
+      <div class="ys-fits-grid">
+        <article class="ys-fit-card yes">
+          <h3>Perfect fit</h3>
+          <ul>
+            <li>Gyms &amp; studios with performance or longevity-minded members</li>
+            <li>Endurance clubs, triathlon groups, run/strength studios</li>
+            <li>Physical therapy &amp; physio practices wanting baseline data</li>
+            <li>Bike shops with a fit / performance angle</li>
+            <li>Universities with athletic programs</li>
+            <li>Facilities wanting high-value services without buying gear</li>
+          </ul>
+        </article>
+
+        <article class="ys-fit-card no">
+          <h3>Probably not a fit</h3>
+          <ul>
+            <li>No room to host ~40 ft² for one day</li>
+            <li>No interest in scientific testing or follow-up coaching</li>
+            <li>Expecting more than 8 tests/day from a single cart</li>
+            <li>Looking for a one-time stunt rather than recurring days</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="wf-section alt" id="faq">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>FAQ</h2>
+        <div class="ys-rule"></div>
+        <p>Questions hosts ask before booking the first day.</p>
+      </div>
+
+      <div class="ys-faq-grid">
+        <article class="ys-faq">
+          <h3>How much staff time do we need to give you?</h3>
+          <p>Close to zero. We handle testing, reports, billing, and payouts. Your role is one staff contact for coordination and your member list (if you want to promote internally).</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>Do you need power or special ventilation?</h3>
+          <p>No special outlet, no special venting. Standard 120 V if available, but the metabolic cart is fully portable. ~40 ft² of open floor with normal indoor airflow is enough.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>How fast do we get paid?</h3>
+          <p>Next business day via ACH for any booking that came through Yousuli. If you prefer to handle billing yourself (useful for upselling testing into your existing programs), we can structure that too.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>Can we white-label the reports?</h3>
+          <p>Yes &mdash; co-branded PDFs are available for partners running recurring days. Your logo lockup alongside Yousuli&rsquo;s on every report.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>Can we set a different revenue split?</h3>
+          <p>The 30% flat share is the default and what most partners run on. Higher splits are possible when you handle billing, drive 100% of the bookings, or commit to multi-day cadence. Talk to us.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>What happens if we can&rsquo;t fill all 8 slots?</h3>
+          <p>We bring outside athletes. Yousuli has a member list and event presence (Wildflower, UCSD Tritonman, Stanford Treeathlon, etc.) we can route to your day. Empty slots are usually a planning issue, not a demand issue.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>Who owns the data?</h3>
+          <p>The athlete owns their data. We provide them the report. Aggregated, anonymized data may be used for Yousuli research and content with consent. Your facility doesn&rsquo;t own member testing data unless we set up a separate data-sharing agreement.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>Are there contraindications?</h3>
+          <p>Standard exclusions for maximal exercise testing apply (uncontrolled cardiovascular conditions, recent acute illness, etc.). We screen pre-test and follow USAT and ACSM safety protocols. Insurance covers all sessions.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>What if I want to handle billing or upsell?</h3>
+          <p>Plenty of partners use testing as a lead-in for coaching, programs, or memberships. We can hand you the booking flow, you handle payment and upsell. Revenue split adjusts when you run billing.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>Do I have to sell assessments to my clients?</h3>
+          <p>Not at all. Many partners simply host the day and let Yousuli promote to its own audience. Your members benefit by having on-site access. Anything beyond &ldquo;here&rsquo;s a flyer&rdquo; is optional.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>How many partners are you taking on?</h3>
+          <p>We&rsquo;re geographic-density-limited. One partner per zip code area for monthly cadence, or two for quarterly. Greater LA is the current focus, with plans to expand SoCal.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>What&rsquo;s the main benefit to Yousuli of bringing outside clients to your facility?</h3>
+          <p>Testing days work best with full calendars. Your members make the day reliable; outside clients bring volume. Your facility wins reputation and revenue; we win throughput. It&rsquo;s genuinely a both-ways exchange.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>Do you offer free demos?</h3>
+          <p>Yes &mdash; we can run a single complimentary VO₂max for you and one staff member during the first scheduled testing day. Useful for talking to clients afterward from direct experience.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>Clinics or workshops?</h3>
+          <p>Available. We can pair a testing day with a 60&ndash;90 min education clinic on zones, fueling, or recovery for your members. Run as part of the day, separately, or virtually.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>Are there discounts for veterans or disabled athletes?</h3>
+          <p>Yes. Yousuli&rsquo;s Supported Athletes program covers reduced-rate testing and coaching for committed para-athletes and elite athletes facing higher participation costs. Email us for current criteria.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>Can we take pictures and use them for promotion?</h3>
+          <p>Yes &mdash; we encourage it, with athlete consent. Photos of the testing day, your space, and our equipment can run on your site, social, or printed materials. We can also share photos taken during the day.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FINAL CTA ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want to host the next testing day?</h2>
+          <p>The fastest path is a 15-minute discovery call. We confirm the fit, walk through your member base, and pick a first date. Or send a message &mdash; we reply same-day.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/contact?subject=Partner%20program%20call">Book a discovery call</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Partner%20program%20inquiry">Email instead</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Already a Yousuli partner? Reach out for next-day cadence, expanded services, or co-branded clinic dates.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>

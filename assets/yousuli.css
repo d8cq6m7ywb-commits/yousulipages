@@ -450,6 +450,244 @@ p { margin: 0 0 1em; }
 }
 
 /* ============================================================
+   PARTNERS page (partners.html) - B2B testing-day hosts
+   ============================================================ */
+
+/* Pricing service row — for the "Services & pricing with 30%" table */
+.ys-service-pricing {
+  background: #fff;
+  border: 1px solid var(--ys-line);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 18px rgba(47,45,86,0.05);
+}
+.ys-service-pricing table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.ys-service-pricing th,
+.ys-service-pricing td {
+  padding: 14px 18px;
+  text-align: left;
+  font-size: 0.95rem;
+  border-bottom: 1px solid var(--ys-line);
+}
+.ys-service-pricing th {
+  background: var(--wf-navy);
+  color: #fff;
+  font-family: var(--ys-font-display);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  border-bottom: 0;
+}
+.ys-service-pricing td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.ys-service-pricing td.share {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--wf-coral);
+  font-weight: 700;
+  font-family: var(--ys-font-display);
+}
+.ys-service-pricing tr:last-child td { border-bottom: 0; }
+.ys-service-pricing tr:nth-child(even) td { background: var(--ys-bg-soft); }
+
+/* Calculator widget */
+.ys-calculator {
+  background: linear-gradient(135deg, var(--wf-navy) 0%, var(--wf-navy-2) 100%);
+  color: #fff;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 12px 40px rgba(11, 31, 42, 0.18);
+  position: relative;
+  overflow: hidden;
+}
+.ys-calculator::before {
+  content: ""; position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(153,102,255,0.16), transparent 45%),
+    radial-gradient(circle at 80% 80%, rgba(250,119,60,0.14), transparent 45%);
+  pointer-events: none;
+}
+.ys-calculator > * { position: relative; z-index: 1; }
+.ys-calculator h3 { color: #fff; margin: 0 0 6px; font-size: 1.5rem; }
+.ys-calculator p.lede { color: rgba(255,255,255,0.78); margin: 0 0 22px; font-size: 0.95rem; }
+
+.ys-calc-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 18px;
+  font-size: 0.95rem;
+}
+.ys-calc-table thead tr {
+  border-bottom: 1px solid rgba(255,255,255,0.18);
+}
+.ys-calc-table th {
+  text-align: left;
+  padding: 10px 8px;
+  font-family: var(--ys-font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.7);
+}
+.ys-calc-table th.num,
+.ys-calc-table td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.ys-calc-table th.qty,
+.ys-calc-table td.qty {
+  text-align: center;
+}
+.ys-calc-table td {
+  padding: 12px 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.ys-calc-table tr:last-child td { border-bottom: 0; }
+.ys-calc-table input[type="number"] {
+  width: 64px;
+  text-align: center;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  color: #fff;
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 0.95rem;
+  font-family: var(--ys-font-body);
+}
+.ys-calc-table input[type="number"]:focus {
+  outline: none;
+  border-color: var(--wf-coral);
+  background: rgba(255,255,255,0.14);
+}
+
+.ys-calc-result {
+  background: rgba(255,255,255,0.06);
+  border-left: 4px solid var(--wf-coral);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 600px) { .ys-calc-result { grid-template-columns: 1fr; } }
+.ys-calc-result .label {
+  font-family: var(--ys-font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 4px;
+}
+.ys-calc-result .value {
+  font-family: var(--ys-font-display);
+  font-size: 1.8rem;
+  letter-spacing: -0.01em;
+}
+.ys-calc-result .share { color: var(--wf-coral); }
+
+.ys-calc-examples {
+  margin-top: 18px;
+  font-size: 0.92rem;
+  color: rgba(255,255,255,0.85);
+}
+.ys-calc-examples h4 {
+  font-family: var(--ys-font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.78rem;
+  color: var(--wf-coral);
+  margin: 0 0 10px;
+}
+.ys-calc-examples ul {
+  margin: 0;
+  padding-left: 20px;
+  list-style: disc;
+}
+.ys-calc-examples ul li { margin-bottom: 6px; }
+.ys-calc-examples strong { color: #fff; }
+
+/* Pros / Not-a-fit two-column */
+.ys-fits-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr 1fr;
+}
+@media (max-width: 720px) { .ys-fits-grid { grid-template-columns: 1fr; } }
+.ys-fit-card {
+  background: #fff;
+  border: 1px solid var(--ys-line);
+  border-radius: 14px;
+  padding: 26px 28px;
+}
+.ys-fit-card.yes { border-left: 4px solid var(--wf-teal); }
+.ys-fit-card.no { border-left: 4px solid var(--ys-muted); opacity: 0.96; }
+.ys-fit-card h3 {
+  color: var(--ys-navy);
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.ys-fit-card.yes h3::before {
+  content: "✓ ";
+  color: var(--wf-teal-deep);
+  margin-right: 4px;
+}
+.ys-fit-card.no h3::before {
+  content: "✗ ";
+  color: var(--ys-muted);
+  margin-right: 4px;
+}
+.ys-fit-card ul {
+  padding-left: 18px;
+  margin: 0;
+  color: var(--ys-muted);
+  font-size: 0.95rem;
+}
+.ys-fit-card ul li { margin-bottom: 6px; }
+
+/* "About" inline block (Fred bio) */
+.ys-about-inline {
+  background: #fff;
+  border: 1px solid var(--ys-line);
+  border-radius: 14px;
+  padding: 28px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 22px;
+  align-items: center;
+  box-shadow: 0 4px 18px rgba(47,45,86,0.05);
+}
+@media (max-width: 600px) { .ys-about-inline { grid-template-columns: 1fr; text-align: center; } }
+.ys-about-avatar {
+  width: 96px; height: 96px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--ys-navy), var(--wf-teal-deep));
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--ys-font-display);
+  font-size: 1.8rem;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.ys-about-inline h3 { color: var(--ys-navy); margin: 0 0 6px; }
+.ys-about-inline p { margin: 0; color: var(--ys-muted); }
+.ys-about-creds {
+  margin-top: 8px;
+  font-family: var(--ys-font-display);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: var(--wf-coral);
+}
+
+/* ============================================================
    SCIENCE page (science.html)
    Big-stat callouts, expert-quote blocks, collapsible references
    ============================================================ */
