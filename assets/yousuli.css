@@ -617,6 +617,75 @@ p { margin: 0 0 1em; }
 }
 
 /* ============================================================
+   CALCULATORS landing page
+   ============================================================ */
+
+.ys-calc-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+.ys-calc {
+  background: #fff;
+  border: 1px solid var(--ys-line);
+  border-left: 4px solid var(--wf-coral);
+  border-radius: 10px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-left-color 0.15s ease;
+}
+.ys-calc:nth-child(2n) { border-left-color: var(--wf-teal); }
+.ys-calc:nth-child(3n) { border-left-color: var(--ys-navy); }
+.ys-calc:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(47, 45, 86, 0.10);
+  text-decoration: none;
+  color: inherit;
+}
+.ys-calc h4 {
+  font-family: var(--ys-font-display);
+  color: var(--ys-navy);
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  margin: 0 0 2px;
+}
+.ys-calc p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--ys-muted);
+  line-height: 1.45;
+}
+.ys-calc-arrow {
+  color: var(--wf-coral);
+  font-size: 0.78rem;
+  font-family: var(--ys-font-display);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+.ys-calc-flag {
+  font-size: 0.8rem;
+  color: var(--wf-teal-deep);
+  font-style: italic;
+  margin-top: 4px;
+}
+
+.ys-calc-cat-head {
+  font-family: var(--ys-font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.82rem;
+  color: var(--wf-coral);
+  margin: 0 0 6px;
+  display: block;
+}
+
+/* ============================================================
    ABOUT COACH FRED page (aboutcoachfred.html)
    ============================================================ */
 
