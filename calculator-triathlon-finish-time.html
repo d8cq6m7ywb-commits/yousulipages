@@ -1,0 +1,855 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Triathlon finish time predictor — Yousuli calculators</title>
+  <meta name="description" content="Plan your sprint, olympic, 70.3 or full Ironman finish time. Set realistic pace targets for swim, T1, bike, T2, and run — and see if you'll make the cut-offs." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+  <script src="https://code.jquery.com/jquery-3.6.1.slim.min.js"
+    integrity="sha256-w8CvhFs7iHNVUtnSP0YKEg00p9Ih13rlL9zGqvLdePA="
+    crossorigin="anonymous"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED CALCULATOR STYLES ============ -->
+  <style>
+    .tri-calc-host { width: 100%; }
+    .tri-calc-host .container__calc { width: 100%; max-width: 1024px; margin: 0 auto; }
+
+    .tri-calc-host #navTab {
+      list-style: none; display: flex; padding: 0; margin: 0 0 18px;
+      border-bottom: 1px solid var(--ys-line);
+    }
+    .tri-calc-host #navTab li { flex: 1 1 50%; text-align: center; }
+    .tri-calc-host .nav-link {
+      display: block; padding: 10px 14px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.12em; text-transform: uppercase;
+      font-size: 0.78rem; font-weight: 600;
+      color: var(--ys-muted); text-decoration: none;
+      cursor: pointer; border-bottom: 4px solid transparent;
+      transition: color 0.15s ease, border-color 0.15s ease;
+    }
+    .tri-calc-host .nav-link:hover { color: var(--ys-navy); }
+    .tri-calc-host .nav-link.active {
+      color: var(--ys-navy); border-bottom-color: var(--wf-coral);
+    }
+
+    .tri-calc-host .header__calc { padding: 0; }
+    .tri-calc-host .input__container { padding: 0; }
+    .tri-calc-host .section__calc { padding: 14px 0; }
+    .tri-calc-host .row__calc { padding: 6px 0; }
+
+    .tri-calc-host .label__calc {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.74rem;
+      color: var(--ys-navy);
+      margin-bottom: 6px;
+    }
+
+    .tri-calc-host .heading__secondary--calc {
+      font-family: var(--ys-font-display);
+      color: var(--ys-navy);
+      font-size: 1.1rem;
+      margin: 0 0 10px;
+      letter-spacing: 0.04em;
+    }
+
+    .tri-calc-host .dropdown__input,
+    .tri-calc-host .input__calc,
+    .tri-calc-host .input__calc__diff {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      font-size: 1rem;
+      font-family: var(--ys-font-body);
+      background: #fff;
+      color: var(--ys-navy);
+      box-sizing: border-box;
+      text-align: center;
+    }
+    .tri-calc-host .dropdown__input { text-align: left; }
+    .tri-calc-host .input__calc:focus,
+    .tri-calc-host .input__calc__diff:focus,
+    .tri-calc-host .dropdown__input:focus {
+      outline: none;
+      border-color: var(--wf-coral);
+      box-shadow: 0 0 0 3px rgba(250, 119, 60, 0.18);
+    }
+
+    .tri-calc-host .col3x3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .tri-calc-host .combined__calc {
+      width: 100%; display: flex; align-items: stretch;
+    }
+    .tri-calc-host .unit__calc,
+    .tri-calc-host .unit__calc__diff {
+      padding: 0 12px;
+      background: var(--ys-navy);
+      color: #fff;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em;
+      font-size: 0.78rem;
+      display: flex; align-items: center;
+      border-radius: 0 6px 6px 0;
+    }
+    .tri-calc-host .combined__calc .input__calc,
+    .tri-calc-host .combined__calc .input__calc__diff {
+      border-radius: 6px 0 0 6px;
+    }
+
+    .tri-calc-host .bgcolor {
+      background: var(--ys-bg-soft);
+      border-radius: 12px;
+      padding: 18px;
+      margin-top: 14px;
+    }
+
+    .tri-calc-host .col5x5 {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 18px;
+      width: 100%;
+    }
+    .tri-calc-host .box__calc {
+      background: #fff;
+      border: 1px solid var(--ys-line);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex; flex-direction: column; align-items: stretch;
+    }
+    .tri-calc-host .label__calc--center {
+      text-align: center;
+      display: block;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.12em; text-transform: uppercase;
+      font-size: 0.78rem;
+      color: var(--ys-navy);
+      border-bottom: 3px solid var(--wf-coral);
+      padding: 6px 0 10px;
+      margin-bottom: 14px;
+      font-weight: 600;
+    }
+
+    /* Vertical slider housing — keep the rotated slider trick */
+    .tri-calc-host .range__box--calc {
+      position: relative; width: 100%; min-height: 240px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .tri-calc-host .slider {
+      -webkit-appearance: none;
+      width: 200px; height: 7px;
+      border-radius: 5px;
+      background: #d3d3d3;
+      outline: none;
+      opacity: 0.85;
+      transition: opacity 0.2s;
+      margin: 0;
+      transform: rotate(270deg);
+    }
+    .tri-calc-host .slider:hover { opacity: 1; }
+    .tri-calc-host .slider::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: #fff;
+      border: 3px solid var(--wf-coral);
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(47, 45, 86, 0.25);
+    }
+    .tri-calc-host .slider::-moz-range-thumb {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--wf-coral);
+      cursor: pointer;
+      border: none;
+    }
+
+    .tri-calc-host .result__box { padding: 12px 0 0; }
+    .tri-calc-host .result__value {
+      text-align: center;
+      display: block;
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--ys-navy);
+      background: rgba(250, 119, 60, 0.12);
+      padding: 8px 6px;
+      border-radius: 6px;
+    }
+    .tri-calc-host .result__label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.8rem;
+      color: var(--ys-navy);
+      padding: 6px 0;
+      text-align: center;
+    }
+
+    .tri-calc-host .total__result {
+      margin-top: 18px;
+      background: var(--ys-navy);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+    .tri-calc-host .total__result .result__label { color: #fff; }
+    .tri-calc-host .total__result #total-time {
+      background: transparent;
+      color: #fff;
+      font-size: 1.7rem;
+      letter-spacing: 0.04em;
+    }
+
+    .tri-calc-host .red-background {
+      background-color: #ffe4e4 !important;
+      border-color: #c93939 !important;
+      color: #c93939 !important;
+      font-weight: 600;
+    }
+
+    @media (max-width: 1024px) {
+      .tri-calc-host .col5x5 { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 700px) {
+      .tri-calc-host .col5x5 { grid-template-columns: 1fr; }
+      .tri-calc-host .col3x3 { grid-template-columns: 1fr; }
+      .tri-calc-host .range__box--calc { min-height: 70px; }
+      .tri-calc-host .slider { width: 100%; transform: rotate(0deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 56px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Triathlon</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">Triathlon finish time predictor.</h1>
+      <div class="wf-subhead">Sprint &middot; Olympic &middot; 70.3 &middot; Ironman</div>
+      <p class="lede" style="max-width: 660px;">Build your race day on five sliders &mdash; swim pace, T1, bike speed, T2, run pace. See your projected finish time, check it against the official cut-offs, and stress-test your assumptions before race week.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">How to use it</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 32px 0 48px;">
+    <div class="ys-container">
+      <div class="ys-tool" style="max-width: 1080px; padding: 26px;">
+        <h3>Build your race</h3>
+        <p class="ys-tool-pre">Pick a distance &mdash; we&rsquo;ll prefill the swim/bike/run distances. Then drag the five sliders to set your pace targets. Total time updates live; cut-off rows turn red if you&rsquo;d be timed out.</p>
+
+        <!-- Calculator (existing widget, restyled & scoped) -->
+        <div class="tri-calc-host">
+          <div class="container__calc">
+            <header class="header__calc">
+              <ul id="navTab" class="nav nav-tabs nav-justified" role="tablist">
+                <li class="nav-item" id="metricTab">
+                  <a class="nav-link tab-link active" data-unit="metric" data-toggle="tab" href="#!" role="tab">Metric</a>
+                </li>
+                <li class="nav-item" id="usTab">
+                  <a class="nav-link tab-link" data-unit="imperial" data-toggle="tab" href="#!" role="tab">Imperial</a>
+                </li>
+              </ul>
+            </header>
+
+            <div class="input__container">
+              <div class="section__calc">
+                <div class="row__calc">
+                  <label class="label__calc">Race distance</label>
+                  <select id="ddlPaceType" class="dropdown__input">
+                    <option value="sprint">Sprint</option>
+                    <option value="olympic">Olympic</option>
+                    <option value="half_iron">Half Ironman (70.3)</option>
+                    <option value="ironman">Ironman (140.6)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="section__calc">
+                <h2 class="heading__secondary--calc">Distance</h2>
+                <div class="col3x3">
+                  <div class="row__calc">
+                    <label class="label__calc">Swim</label>
+                    <div class="combined__calc">
+                      <input type="text" valueinmeters="750" inputmode="numeric"
+                        class="input__calc input__calc__diff distance-meters"
+                        id="swim-distance" value="750" />
+                      <span class="unit__calc unit__calc__diff meters-or-yards">m</span>
+                    </div>
+                  </div>
+                  <div class="row__calc">
+                    <label class="label__calc">Bike</label>
+                    <div class="combined__calc">
+                      <input type="text" inputmode="numeric"
+                        class="input__calc input__calc__diff distance-kms"
+                        id="bike-distance" value="20" valueinmeters="20000" />
+                      <span class="unit__calc unit__calc__diff km-or-miles">km</span>
+                    </div>
+                  </div>
+                  <div class="row__calc">
+                    <label class="label__calc">Run</label>
+                    <div class="combined__calc">
+                      <input type="text" inputmode="numeric"
+                        class="input__calc input__calc__diff distance-kms"
+                        id="run-distance" value="5" valueinmeters="5000" />
+                      <span class="unit__calc unit__calc__diff km-or-miles">km</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section__calc bgcolor">
+                <h2 class="heading__secondary--calc">Pace targets</h2>
+                <div class="col5x5">
+                  <div class="box__calc">
+                    <label class="label__calc--center">Pace swim</label>
+                    <div class="range__box--calc">
+                      <input orient="vertical" type="range" id="paceSwim"
+                        min="45" max="180" value="120" step="5"
+                        class="input_calc slider" oninput="calculate(this)" />
+                    </div>
+                    <div class="combined__calc">
+                      <input type="text" inputmode="numeric" class="input__calc" id="swim-pace" disabled />
+                      <span class="unit__calc">min/100<span class="meters-or-yards">m</span></span>
+                    </div>
+                    <div class="result__box">
+                      <span class="result__value" id="swim-time">00:09:00</span>
+                    </div>
+                  </div>
+                  <div class="box__calc">
+                    <label class="label__calc--center">T1</label>
+                    <div class="range__box--calc">
+                      <input orient="vertical" type="range" id="t1"
+                        min="30" max="900" value="120" step="5"
+                        class="input_calc slider" oninput="calculate(this)" />
+                    </div>
+                    <div class="combined__calc">
+                      <input type="text" inputmode="numeric" class="input__calc" id="t1-time-input" disabled />
+                    </div>
+                    <div class="result__box">
+                      <span class="result__value" id="t1-time">00:02:00</span>
+                    </div>
+                  </div>
+                  <div class="box__calc">
+                    <label class="label__calc--center">Bike</label>
+                    <div class="range__box--calc">
+                      <input orient="vertical" type="range" id="bike"
+                        min="10" max="50" value="25" step="0.5"
+                        class="input_calc slider" oninput="calculate(this)" />
+                    </div>
+                    <div class="combined__calc">
+                      <input type="text" inputmode="numeric" class="input__calc" id="bike-pace" valueinmeters="25" disabled />
+                      <span class="unit__calc km-or-miles1">km/h</span>
+                    </div>
+                    <div class="result__box">
+                      <span class="result__value" id="bike-time">00:48:00</span>
+                    </div>
+                  </div>
+                  <div class="box__calc">
+                    <label class="label__calc--center">T2</label>
+                    <div class="range__box--calc">
+                      <input orient="vertical" type="range" id="t2"
+                        min="30" max="900" value="120" step="5"
+                        class="input_calc slider" oninput="calculate(this)" />
+                    </div>
+                    <div class="combined__calc">
+                      <input type="text" inputmode="numeric" class="input__calc" id="t2-time-input" disabled />
+                    </div>
+                    <div class="result__box">
+                      <span class="result__value" id="t2-time">00:02:00</span>
+                    </div>
+                  </div>
+                  <div class="box__calc">
+                    <label class="label__calc--center">Run</label>
+                    <div class="range__box--calc">
+                      <input orient="vertical" type="range" id="run"
+                        min="170" max="780" value="300" step="5"
+                        class="input_calc slider" oninput="calculate(this)" />
+                    </div>
+                    <div class="combined__calc">
+                      <input type="text" inputmode="numeric" class="input__calc" id="run-pace" disabled />
+                      <span class="unit__calc">min/<span class="km-or-miles">km</span></span>
+                    </div>
+                    <div class="result__box">
+                      <span class="result__value" id="run-time">00:25:00</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="section__calc" style="padding-top: 20px;">
+                  <h2 class="heading__secondary--calc">Cut-off times</h2>
+                  <div class="col3x3">
+                    <div class="row__calc">
+                      <label class="label__calc">Swim cut-off</label>
+                      <div class="combined__calc">
+                        <input type="text" class="input__calc input__calc__diff" id="swim-cutoff" value="" disabled />
+                      </div>
+                    </div>
+                    <div class="row__calc">
+                      <label class="label__calc">Swim + Bike cut-off</label>
+                      <div class="combined__calc">
+                        <input type="text" class="input__calc input__calc__diff" id="swim-bike-cutoff" value="" disabled />
+                      </div>
+                    </div>
+                    <div class="row__calc">
+                      <label class="label__calc">Triathlon cut-off</label>
+                      <div class="combined__calc">
+                        <input type="text" class="input__calc input__calc__diff" id="triathlon-cutoff" value="" disabled />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="total__result">
+                  <span class="result__label">Projected finish time</span>
+                  <span class="result__value" id="total-time">01:26:00</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW TO READ THE RESULTS ============ -->
+  <section class="wf-section alt" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How to use it</h2>
+        <div class="ys-rule"></div>
+        <p>Three knobs that change everything: realism on pace, honesty on transitions, awareness of cut-offs.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>Pace targets, not training paces</h3>
+          <p>Use <em>race</em> pace, not Zone 2 training pace. For longer races (70.3 / Ironman), drop intensity vs. open-water swim time and 40 km TT &mdash; you&rsquo;re saving legs for the run.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>T1 / T2 are slower than you think</h3>
+          <p>Most age-groupers spend 2&ndash;5 min in transition. Add wetsuit strip, sunscreen, helmet/glasses, gel stash, run shoes. World-class athletes hit sub-1 min &mdash; you probably won&rsquo;t.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>Cut-offs turn red when you miss</h3>
+          <p>Each cut-off field flips red if your projected pace would put you outside the official window for that race format. If anything&rsquo;s red, slow the next leg or rethink the day.</p>
+        </div>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.92rem; max-width: 720px; margin-left: auto; margin-right: auto;">Cut-offs shown are typical for the format (Sprint 3:00, Olympic 4:30, 70.3 8:30, Ironman 17:00). Your specific event may differ &mdash; always check the race website for the official cut-offs and aid station closures.</p>
+    </div>
+  </section>
+
+  <!-- ============ COACH NOTE ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
+        <h2 style="margin-top: 4px;">A finish time is a story you tell with three legs.</h2>
+        <p>The most common mistake we see at the lab: athletes pick the bike split that <em>their bike fitness</em> can do &mdash; not the bike split that leaves enough in the tank for the run. Half Ironman especially: ride 5 watts too hot, run 12 minutes too slow, lose 8 minutes overall. The maths punish greed on the bike.</p>
+        <p style="margin-top: 10px;">Three sanity checks before you trust your projection:</p>
+        <ul class="ys-card-bullets" style="margin-top: 8px;">
+          <li><strong>Swim pace</strong> &mdash; use your <em>open water</em> 1500 m time, not pool. Add 5&ndash;10 s/100 m for chop and sighting.</li>
+          <li><strong>Bike speed</strong> &mdash; flat-course race speed, not Zwift. Subtract 1&ndash;3 km/h for honest hills, headwind, or 70.3+.</li>
+          <li><strong>Run pace</strong> &mdash; off-the-bike pace, not standalone 5K/10K pace. Most athletes run 20&ndash;40 s/km slower off the bike.</li>
+        </ul>
+        <p style="margin-top: 12px;">If you want pacing zones grounded in <strong>your</strong> physiology &mdash; lactate threshold, FTP, VO<sub>2</sub>max, fat/carb crossover &mdash; come into the lab. The triathlon protocol tests all three disciplines on the same day.</p>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED CALCULATORS ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Related calculators</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card" href="calculator-running-time-predictor.html">
+          <span class="ys-calc-card-title">Running time predictor</span>
+          <p>One running effort in &mdash; finish times across 1.6 km to marathon. Three columns for the realistic range.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="https://www.yousuli.co/calculators/ironman-pace-calculator" target="_top">
+          <span class="ys-calc-card-title">Ironman pace calculator</span>
+          <p>Detailed splits for 140.6 &mdash; bike normalized power targets, run pacing strategy, fuel planning.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="calculators.html">
+          <span class="ys-calc-card-title">All calculators</span>
+          <p>Back to the full catalog &mdash; 28 endurance calculators across performance, fueling, swim, bike, run.</p>
+          <span class="ys-calc-card-arrow">Browse &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want pace targets that hold on race day?</h2>
+          <p>The triathlon protocol at Yousuli Performance Lab tests swim, bike, and run on the same morning &mdash; one clean physiological picture, three sport-specific zone sets, and a pacing brief for your A-race.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Book triathlon protocol</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Triathlon%20finish%20time">Send feedback</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Spotted a bug or want a feature? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Triathlon%20finish%20time" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ CALCULATOR LOGIC ============ -->
+  <script>
+    function calculate(ele) {
+      ele.style.background = `linear-gradient(to right, #FA773C 0%, #FA773C ${
+        ((ele.value - ele.min) / (ele.max - ele.min)) * 100
+      }%, #DEE2E6 ${
+        ((ele.value - ele.min) / (ele.max - ele.min)) * 100
+      }%, #DEE2E6 100%)`;
+      if (ele.id != "bike")
+        ele.parentNode.parentNode.children[2].children[0].value = formatTime(ele.value);
+      else {
+        ele.parentNode.parentNode.children[2].children[0].value = ele.value;
+      }
+      calculatePaces();
+    }
+
+    function changeSlider(ele, val) {
+      ele.value = val;
+      ele.style.background = `linear-gradient(to right, #FA773C 0%, #FA773C ${
+        ((val - ele.min) / (ele.max - ele.min)) * 100
+      }%, #DEE2E6 ${
+        ((val - ele.min) / (ele.max - ele.min)) * 100
+      }%, #DEE2E6 100%)`;
+    }
+
+    var defaultValues = {
+      sprint: {
+        metric:   { Swim: 750,  Bike: 20000,  Run: 5000  },
+        imperial: { Swim: 820,  Bike: 12.4,   Run: 3.1   }
+      },
+      olympic: {
+        metric:   { Swim: 1500, Bike: 40000,  Run: 10000 },
+        imperial: { Swim: 1640, Bike: 24.8,   Run: 6.2   }
+      },
+      half_iron: {
+        metric:   { Swim: 1900, Bike: 90000,  Run: 21100 },
+        imperial: { Swim: 2112, Bike: 56,     Run: 13.1  }
+      },
+      ironman: {
+        metric:   { Swim: 3800, Bike: 180000, Run: 42200 },
+        imperial: { Swim: 4224, Bike: 112,    Run: 26.2  }
+      }
+    };
+
+    var cutOffTimes = {
+      sprint:    { swim: "00:30:00", swim_bike: "02:00:00", triathlon: "03:00:00" },
+      olympic:   { swim: "01:10:00", swim_bike: "02:30:00", triathlon: "04:30:00" },
+      half_iron: { swim: "01:10:00", swim_bike: "05:30:00", triathlon: "08:30:00" },
+      ironman:   { swim: "02:20:00", swim_bike: "10:30:00", triathlon: "17:00:00" }
+    };
+
+    var currentUnit = "metric";
+
+    jQuery(document).ready(function () {
+      jQuery(".distance-kms").bind("change", handleDistanceInputChangeEvent);
+      jQuery(".distance-meters").bind("change", handleDistanceInputChangeEvent);
+
+      updateCutOffTimes(jQuery("#ddlPaceType").val());
+      calculatePaces();
+
+      calculate(document.getElementById("paceSwim"));
+      calculate(document.getElementById("t1"));
+      calculate(document.getElementById("bike"));
+      calculate(document.getElementById("t2"));
+      calculate(document.getElementById("run"));
+    });
+
+    jQuery("#ddlPaceType").change(function () {
+      var raceType = this.value;
+      updateDistances(raceType);
+      updateCutOffTimes(raceType);
+      calculatePaces();
+    });
+
+    jQuery("#navTab .nav-link").click(function () {
+      jQuery("#navTab .nav-link").removeClass("active");
+      jQuery(this).addClass("active");
+      currentUnit = jQuery(this).attr("data-unit");
+
+      updateDistances(jQuery("#ddlPaceType").val());
+      updateUnits();
+      calculatePaces();
+    });
+
+    function handleDistanceInputChangeEvent(e) {
+      calculatePaces();
+    }
+
+    function updateDistances(raceType) {
+      var raceDistances = defaultValues[raceType][currentUnit];
+      if (currentUnit === "metric") {
+        jQuery("#swim-distance").val(raceDistances.Swim);
+        jQuery("#swim-distance").attr("valueInMeters", raceDistances.Swim);
+        jQuery("#bike-distance").val(raceDistances.Bike / 1000);
+        jQuery("#bike-distance").attr("valueInMeters", raceDistances.Bike);
+        jQuery("#run-distance").val(raceDistances.Run / 1000);
+        jQuery("#run-distance").attr("valueInMeters", raceDistances.Run);
+      } else {
+        jQuery("#swim-distance").val(raceDistances.Swim);
+        jQuery("#swim-distance").attr("valueInMeters", raceDistances.Swim);
+        jQuery("#bike-distance").val(raceDistances.Bike);
+        jQuery("#bike-distance").attr("valueInMiles", raceDistances.Bike);
+        jQuery("#run-distance").val(raceDistances.Run);
+        jQuery("#run-distance").attr("valueInMiles", raceDistances.Run);
+      }
+    }
+
+    function updateUnits() {
+      if (currentUnit === "imperial") {
+        jQuery(".km-or-miles").text("mile");
+        jQuery(".km-or-miles1").text("mph");
+        jQuery(".meters-or-yards").text("yd");
+      } else {
+        jQuery(".km-or-miles").text("km");
+        jQuery(".km-or-miles1").text("km/h");
+        jQuery(".meters-or-yards").text("m");
+      }
+    }
+
+    function calculatePaces() {
+      var swimPace = timeToSeconds(jQuery("#swim-pace").val());
+      var swimDistance, bikeDistance, runDistance;
+      if (currentUnit === "metric") {
+        swimDistance = Number(jQuery("#swim-distance").val());
+        bikeDistance = Number(jQuery("#bike-distance").val()) * 1000;
+        runDistance = Number(jQuery("#run-distance").val()) * 1000;
+      } else {
+        swimDistance = Number(jQuery("#swim-distance").val());
+        bikeDistance = Number(jQuery("#bike-distance").val()) * 1609.34;
+        runDistance = Number(jQuery("#run-distance").val()) * 1609.34;
+      }
+
+      var swimTime = Math.round((swimDistance / 100) * swimPace);
+      jQuery("#swim-time").text(formatTime(swimTime));
+
+      var bikeSpeed = Number(jQuery("#bike-pace").val());
+      var bikeTime;
+      if (currentUnit === "metric") {
+        bikeTime = ((bikeDistance / 1000) / bikeSpeed) * 3600;
+      } else {
+        bikeTime = ((bikeDistance / 1609.34) / bikeSpeed) * 3600;
+      }
+      jQuery("#bike-time").text(formatTime(bikeTime));
+
+      var runPace = timeToSeconds(jQuery("#run-pace").val());
+      var runTime;
+      if (currentUnit === "metric") {
+        runTime = (runDistance / 1000) * runPace;
+      } else {
+        runTime = (runDistance / 1609.34) * runPace;
+      }
+      jQuery("#run-time").text(formatTime(runTime));
+
+      var t1Time = timeToSeconds(jQuery("#t1-time-input").val());
+      var t2Time = timeToSeconds(jQuery("#t2-time-input").val());
+      var totalTime = swimTime + bikeTime + runTime + t1Time + t2Time;
+
+      jQuery("#t1-time").text(formatTime(t1Time));
+      jQuery("#t2-time").text(formatTime(t2Time));
+      jQuery("#total-time").text(formatTime(totalTime));
+
+      var swimBikeTime = swimTime + t1Time + bikeTime;
+      checkCutOffTimes(swimTime, swimBikeTime, totalTime);
+    }
+
+    function padToTwoDigits(value) {
+      value = Math.round(value);
+      return value < 10 ? "0" + value : value;
+    }
+
+    function formatTime(secs) {
+      var hours = Math.floor(secs / 3600);
+      var minutes = Math.floor((secs % 3600) / 60);
+      var seconds = secs % 60;
+      return padToTwoDigits(hours) + ":" + padToTwoDigits(minutes) + ":" + padToTwoDigits(seconds);
+    }
+
+    function timeToSeconds(time) {
+      var result = 0;
+      if (!time) return 0;
+      var timeArray = String(time).split(":");
+      if (timeArray.length == 3) {
+        result = parseInt(timeArray[0], 10) * 3600 + parseInt(timeArray[1], 10) * 60 + parseInt(timeArray[2], 10);
+      } else if (timeArray.length == 2) {
+        result = parseInt(timeArray[0], 10) * 60 + parseInt(timeArray[1], 10);
+      } else if (timeArray.length == 1) {
+        result = parseInt(timeArray[0], 10);
+      }
+      return result || 0;
+    }
+
+    function updateCutOffTimes(raceType) {
+      var cutOff = cutOffTimes[raceType];
+      jQuery("#swim-cutoff").val(cutOff.swim);
+      jQuery("#swim-bike-cutoff").val(cutOff.swim_bike);
+      jQuery("#triathlon-cutoff").val(cutOff.triathlon);
+    }
+
+    function checkCutOffTimes(swimTime, swimBikeTime, totalTime) {
+      var raceType = jQuery("#ddlPaceType").val();
+      var cutOff = cutOffTimes[raceType];
+      var swimCutOffSec = timeToSeconds(cutOff.swim);
+      var swimBikeCutOffSec = timeToSeconds(cutOff.swim_bike);
+      var triathlonCutOffSec = timeToSeconds(cutOff.triathlon);
+
+      jQuery("#swim-cutoff").removeClass("red-background");
+      jQuery("#swim-bike-cutoff").removeClass("red-background");
+      jQuery("#triathlon-cutoff").removeClass("red-background");
+
+      if (swimTime > swimCutOffSec) {
+        jQuery("#swim-cutoff").addClass("red-background");
+        jQuery("#swim-bike-cutoff").addClass("red-background");
+        jQuery("#triathlon-cutoff").addClass("red-background");
+      }
+      if (swimBikeTime > swimBikeCutOffSec) {
+        jQuery("#swim-bike-cutoff").addClass("red-background");
+        jQuery("#triathlon-cutoff").addClass("red-background");
+      }
+      if (totalTime > triathlonCutOffSec) {
+        jQuery("#triathlon-cutoff").addClass("red-background");
+      }
+    }
+
+    function initializeInputs() {
+      var swimPaceSec = document.getElementById("paceSwim").value;
+      document.getElementById("swim-pace").value = formatTime(swimPaceSec);
+
+      var t1Sec = document.getElementById("t1").value;
+      document.getElementById("t1-time-input").value = formatTime(t1Sec);
+
+      var bikePace = document.getElementById("bike").value;
+      document.getElementById("bike-pace").value = bikePace;
+
+      var t2Sec = document.getElementById("t2").value;
+      document.getElementById("t2-time-input").value = formatTime(t2Sec);
+
+      var runPaceSec = document.getElementById("run").value;
+      document.getElementById("run-pace").value = formatTime(runPaceSec);
+    }
+
+    initializeInputs();
+  </script>
+
+</body>
+</html>
