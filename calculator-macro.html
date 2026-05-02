@@ -1,0 +1,801 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Macros &amp; TDEE — Yousuli calculators</title>
+  <meta name="description" content="From RMR to total daily energy and macro split — protein by sport / life stage, fat % preference, carbs as the remainder. Visual breakdown of where your day's calories actually go (RMR, TEF, NEAT, EAT)." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED CALCULATOR STYLES ============ -->
+  <style>
+    .mac-calc-host { width: 100%; }
+
+    .mac-calc-host .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      background: var(--ys-bg-soft);
+      padding: 18px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 600px) { .mac-calc-host .field-grid { grid-template-columns: 1fr; } }
+    .mac-calc-host .field-grid .full { grid-column: 1 / -1; }
+
+    .mac-calc-host label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.7rem;
+      color: var(--ys-navy);
+      margin-bottom: 6px;
+    }
+    .mac-calc-host .row { display: flex; align-items: stretch; }
+    .mac-calc-host input[type="number"],
+    .mac-calc-host select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      font-size: 0.96rem;
+      font-family: var(--ys-font-body);
+      background: #fff;
+      color: var(--ys-navy);
+      box-sizing: border-box;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .mac-calc-host input:focus,
+    .mac-calc-host select:focus {
+      outline: none;
+      border-color: var(--wf-coral);
+      box-shadow: 0 0 0 3px rgba(250, 119, 60, 0.18);
+    }
+    .mac-calc-host .row input { border-radius: 6px 0 0 6px; }
+    .mac-calc-host .row .unit {
+      padding: 0 12px;
+      background: var(--ys-navy); color: #fff;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em; font-size: 0.74rem;
+      display: flex; align-items: center;
+      border-radius: 0 6px 6px 0;
+      min-width: 50px; justify-content: center;
+    }
+    .mac-calc-host .field-help {
+      font-size: 0.78rem; color: var(--ys-muted); margin-top: 6px;
+    }
+
+    .mac-calc-host .unit-toggle {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 14px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.72rem; color: var(--ys-muted);
+    }
+    .mac-calc-host .unit-toggle .switch {
+      display: inline-flex;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px; overflow: hidden;
+    }
+    .mac-calc-host .unit-toggle .switch button {
+      background: #fff; border: 0; padding: 6px 12px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.7rem; font-weight: 600;
+      color: var(--ys-muted); cursor: pointer;
+    }
+    .mac-calc-host .unit-toggle .switch button.active {
+      background: var(--ys-navy); color: #fff;
+    }
+
+    .mac-calc-host .err {
+      color: #c93939;
+      background: rgba(201, 57, 57, 0.08);
+      border-left: 4px solid #c93939;
+      padding: 10px 14px;
+      margin-top: 12px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      display: none;
+    }
+    .mac-calc-host .err.active { display: block; }
+
+    .mac-calc-host .totals-row {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+      margin-top: 18px;
+    }
+    @media (max-width: 600px) { .mac-calc-host .totals-row { grid-template-columns: 1fr; } }
+    .mac-calc-host .total-tile {
+      background: var(--ys-navy);
+      color: #fff;
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+    .mac-calc-host .total-tile.featured {
+      background: var(--wf-coral);
+    }
+    .mac-calc-host .total-label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 6px;
+    }
+    .mac-calc-host .total-value {
+      display: block;
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: #fff;
+      letter-spacing: 0.02em;
+    }
+    .mac-calc-host .total-aux {
+      display: block;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.7);
+      margin-top: 4px;
+    }
+
+    /* TDEE breakdown bar */
+    .mac-calc-host .breakdown {
+      margin-top: 22px;
+      padding: 18px;
+      background: var(--ys-bg-soft);
+      border-radius: 10px;
+    }
+    .mac-calc-host .breakdown h4 {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.78rem;
+      color: var(--ys-navy);
+      margin: 0 0 12px;
+    }
+    .mac-calc-host .h-bar {
+      height: 36px;
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .mac-calc-host .h-bar .seg {
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em;
+      font-size: 0.74rem;
+      font-weight: 700;
+      transition: width 0.4s ease;
+      overflow: hidden; white-space: nowrap;
+    }
+    .mac-calc-host .seg-rmr  { background: var(--ys-navy); }
+    .mac-calc-host .seg-tef  { background: #f4b942; color: #2F2D56; }
+    .mac-calc-host .seg-neat { background: #6B8FB5; }
+    .mac-calc-host .seg-eat  { background: var(--wf-coral); }
+    .mac-calc-host .h-legend {
+      display: flex; flex-wrap: wrap; gap: 12px 18px;
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: var(--ys-navy);
+    }
+    .mac-calc-host .h-legend-item {
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .mac-calc-host .h-legend-swatch {
+      width: 14px; height: 14px;
+      border-radius: 3px;
+    }
+
+    /* Macro scenario card */
+    .mac-calc-host .scenario {
+      margin-top: 22px;
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--ys-line);
+      border-radius: 10px;
+    }
+    .mac-calc-host .scenario-head {
+      display: flex; justify-content: space-between; align-items: baseline;
+      flex-wrap: wrap; gap: 12px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--ys-line);
+    }
+    .mac-calc-host .scenario-name {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.04em;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--ys-navy);
+    }
+    .mac-calc-host .scenario-prot {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em;
+      font-size: 0.82rem;
+      color: var(--wf-coral);
+    }
+    .mac-calc-host .macro-bar {
+      height: 30px;
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      margin-bottom: 14px;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .mac-calc-host .macro-bar .mseg {
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em;
+      font-size: 0.72rem;
+      font-weight: 700;
+      transition: width 0.3s ease;
+    }
+    .mac-calc-host .mseg-carb    { background: #6B8FB5; }
+    .mac-calc-host .mseg-protein { background: var(--ys-navy); }
+    .mac-calc-host .mseg-fat     { background: var(--wf-coral); }
+
+    .mac-calc-host table.scen-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    .mac-calc-host table.scen-table th {
+      background: var(--ys-bg-soft);
+      color: var(--ys-navy);
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em; text-transform: uppercase;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 8px 10px;
+      text-align: center;
+    }
+    .mac-calc-host table.scen-table td {
+      padding: 10px;
+      text-align: center;
+      border-top: 1px solid var(--ys-line);
+      color: var(--ys-navy);
+    }
+    .mac-calc-host table.scen-table td:first-child {
+      text-align: left;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.04em;
+      font-weight: 600;
+    }
+    .mac-calc-host table.scen-table td.macro-carb    { color: #6B8FB5; }
+    .mac-calc-host table.scen-table td.macro-protein { color: var(--ys-navy); }
+    .mac-calc-host table.scen-table td.macro-fat     { color: var(--wf-coral); }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 56px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Fueling</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">Macros &amp; TDEE.</h1>
+      <div class="wf-subhead">From RMR to daily fueling targets &mdash; protein, fat, carbs</div>
+      <p class="lede" style="max-width: 660px;">Plug in your RMR and activity level. We compute total daily energy expenditure and break it into where the calories actually go &mdash; resting metabolism, thermic effect of food, non-exercise movement, and exercise. Then split the budget into protein, fat, and carbs based on your sport, training stage, and preferences.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="calculator-rmr.html">Need RMR? Calc here</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 32px 0 48px;">
+    <div class="ys-container">
+      <div class="ys-tool" style="max-width: 920px;">
+        <h3>Plug in the inputs</h3>
+        <p class="ys-tool-pre">If you don&rsquo;t know your RMR, use the <a href="calculator-rmr.html" style="color: var(--wf-coral);">RMR calculator</a> first &mdash; or use any rough population estimate as a placeholder.</p>
+
+        <div class="mac-calc-host">
+
+          <div class="unit-toggle">
+            <span>Mass</span>
+            <span class="switch">
+              <button type="button" class="active" data-unit="metric">kg</button>
+              <button type="button" data-unit="imperial">lb</button>
+            </span>
+          </div>
+
+          <div class="field-grid">
+            <div>
+              <label>Body weight</label>
+              <div class="row">
+                <input type="number" id="weight" step="0.1" min="0" value="75" />
+                <span class="unit unit-mass">kg</span>
+              </div>
+            </div>
+            <div>
+              <label>RMR (kcal/day)</label>
+              <div class="row">
+                <input type="number" id="rmr" min="0" step="10" value="1700" />
+                <span class="unit">kcal</span>
+              </div>
+              <div class="field-help">From a measurement, the <a href="calculator-rmr.html" style="color: var(--wf-coral);">RMR calc</a>, or a rough estimate.</div>
+            </div>
+            <div>
+              <label>Activity level</label>
+              <select id="activity">
+                <option value="1.2">Sedentary (desk, no training)</option>
+                <option value="1.375">Slightly active (1–3 sessions/wk)</option>
+                <option value="1.55" selected>Moderately active (3–5 sessions/wk)</option>
+                <option value="1.725">Very active (6–7 sessions/wk)</option>
+                <option value="1.9">Extremely active (2× daily, hard block)</option>
+              </select>
+            </div>
+            <div>
+              <label>Fat intake target</label>
+              <select id="fatIntake">
+                <option value="0.20">Low (20% of TDEE)</option>
+                <option value="0.25" selected>Moderate (25%)</option>
+                <option value="0.30">Higher (30%)</option>
+                <option value="0.35">High (35%)</option>
+              </select>
+              <div class="field-help">Carbs fill what&rsquo;s left after protein and fat.</div>
+            </div>
+            <div class="full">
+              <label>Protein priority</label>
+              <select id="proteinPriority">
+                <option value="0.8|0.8">Minimum recommended (0.8 g/kg)</option>
+                <option value="1.0|1.5">Adolescent (1.0–1.5 g/kg)</option>
+                <option value="1.2|2.0" selected>Endurance athlete (1.2–2.0 g/kg)</option>
+                <option value="1.6|2.0">Strength athlete (1.6–2.0 g/kg)</option>
+                <option value="1.5|2.0">Injury / repair (1.5–2.0 g/kg)</option>
+                <option value="2.0|2.2">Older athlete (2.0–2.2 g/kg)</option>
+                <option value="2.0|2.5">Severe thermal injury (2.0–2.5 g/kg)</option>
+                <option value="2.0|2.0">Infant reference (2.0 g/kg)</option>
+              </select>
+              <div class="field-help">Two scenarios will show if the option is a range.</div>
+            </div>
+          </div>
+
+          <div class="ys-btn-row" style="margin: 4px 0 0;">
+            <button class="ys-btn ys-btn-coral" type="button" id="calcBtn">Calculate</button>
+            <button class="ys-btn ys-btn-ghost" type="button" id="resetBtn">Reset</button>
+          </div>
+
+          <div class="err" id="errorMsg"></div>
+
+          <div id="resultsBlock" style="display: none;">
+
+            <div class="totals-row">
+              <div class="total-tile">
+                <span class="total-label">RMR</span>
+                <span class="total-value"><span id="outRmr">—</span></span>
+                <span class="total-aux">kcal · resting</span>
+              </div>
+              <div class="total-tile featured">
+                <span class="total-label">TDEE</span>
+                <span class="total-value"><span id="outTdee">—</span></span>
+                <span class="total-aux">kcal / day total</span>
+              </div>
+              <div class="total-tile">
+                <span class="total-label">Activity (TEF + NEAT + EAT)</span>
+                <span class="total-value"><span id="outActivity">—</span></span>
+                <span class="total-aux">kcal beyond resting</span>
+              </div>
+            </div>
+
+            <div class="breakdown">
+              <h4>Where your day&rsquo;s calories go</h4>
+              <div class="h-bar">
+                <div class="seg seg-rmr"  id="segRMR">RMR</div>
+                <div class="seg seg-tef"  id="segTEF">TEF</div>
+                <div class="seg seg-neat" id="segNEAT">NEAT</div>
+                <div class="seg seg-eat"  id="segEAT">EAT</div>
+              </div>
+              <div class="h-legend">
+                <span class="h-legend-item"><span class="h-legend-swatch" style="background: var(--ys-navy);"></span><strong>RMR</strong> &mdash; resting metabolism (~60-70%)</span>
+                <span class="h-legend-item"><span class="h-legend-swatch" style="background: #f4b942;"></span><strong>TEF</strong> &mdash; thermic effect of food</span>
+                <span class="h-legend-item"><span class="h-legend-swatch" style="background: #6B8FB5;"></span><strong>NEAT</strong> &mdash; non-exercise movement</span>
+                <span class="h-legend-item"><span class="h-legend-swatch" style="background: var(--wf-coral);"></span><strong>EAT</strong> &mdash; exercise activity</span>
+              </div>
+            </div>
+
+            <div id="scenariosWrap"></div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW THE BREAKDOWN WORKS ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What the four buckets mean</h2>
+        <div class="ys-rule"></div>
+        <p>TDEE isn&rsquo;t just &ldquo;your calorie burn at the gym.&rdquo; Four sources, very different sizes.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>RMR · 60–70%</h3>
+          <p>The energy your body burns just being alive — heart, brain, kidneys, organ tissue, basic cellular function. The biggest single bucket of TDEE for almost everyone, even ultra-endurance athletes.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>TEF · 7–12%</h3>
+          <p>Thermic effect of food — the energy cost of digesting and storing what you eat. Highest for protein (~20–30% of protein calories), low for fat (0–3%). This calculator scales TEF with RMR as a population approximation.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>NEAT · variable</h3>
+          <p>Non-exercise activity thermogenesis. Walking around, fidgeting, standing desk, dog walks. Can vary by 1500+ kcal/day between sedentary and active lifestyles &mdash; <strong>often the biggest practical lever</strong> outside the gym.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">04</div>
+          <h3>EAT · 50–1000+ kcal</h3>
+          <p>Exercise activity thermogenesis. The structured training calories. Smaller than people think for most age-groupers; larger than RMR only for elite multi-session days.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COACH NOTE ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
+        <h2 style="margin-top: 4px;">Three things this calculator gets right &mdash; and three it can&rsquo;t.</h2>
+        <p><strong>What the math does well:</strong></p>
+        <ul class="ys-card-bullets" style="margin-top: 8px;">
+          <li><strong>Protein g/kg targets</strong> are well-evidenced — endurance athletes need 1.4–1.8 g/kg as a working range, with higher (1.8–2.2 g/kg) when in a deficit, recovering from injury, or older.</li>
+          <li><strong>Fat 20–35%</strong> is a safe band for most athletes; below 20% costs hormone production, above 35% can crowd out carbs you need on big days.</li>
+          <li><strong>Carbs as the remainder</strong> works because endurance carb needs scale with training volume, not a fixed g/kg — letting them flex with TDEE matches the load.</li>
+        </ul>
+        <p style="margin-top: 12px;"><strong>What it can&rsquo;t do:</strong></p>
+        <ul class="ys-card-bullets" style="margin-top: 8px;">
+          <li><strong>Distribute the protein</strong> &mdash; daily total is necessary but not sufficient. Aim for 0.3–0.4 g/kg per meal, 4–5 meals/day, including a feed within 2 h post-training.</li>
+          <li><strong>Periodize carbs</strong> &mdash; race week vs. base week need different carb volumes. The calculator gives you an average; coaching gives you the day-by-day plan.</li>
+          <li><strong>Replace measured RMR or sweat data</strong> &mdash; population estimates are guides; the lab measurement is the real number.</li>
+        </ul>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Metabolic profiling</a>
+          <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED CALCULATORS ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Related calculators</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card redesigned" href="calculator-rmr.html">
+          <span class="ys-calc-card-title">RMR &amp; energy availability</span>
+          <p>The first input above — and the energy-availability check this number doesn&rsquo;t do.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card redesigned" href="calculator-calipers-body-comp.html">
+          <span class="ys-calc-card-title">Calipers → body composition</span>
+          <p>Lean mass for protein-per-kg targets — and the metric that matters for endurance athletes long-term.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card redesigned" href="calculator-intraworkout-fueling.html">
+          <span class="ys-calc-card-title">Intra-workout fueling</span>
+          <p>The race-day side &mdash; how to fuel the EAT bucket on the move.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want a fueling plan, not just numbers?</h2>
+          <p>Coaching builds the meal-by-meal protein distribution, periodized carbs, and weight-management strategy on top of these targets &mdash; specific to your race calendar and life. The calc is the foundation; the plan is the building.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Macros">Send feedback</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Spotted a bug or want a feature? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Macros" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ CALCULATOR LOGIC ============ -->
+  <script>
+    (function () {
+      const $ = id => document.getElementById(id);
+      const weightEl   = $('weight');
+      const rmrEl      = $('rmr');
+      const activityEl = $('activity');
+      const proteinEl  = $('proteinPriority');
+      const fatEl      = $('fatIntake');
+      const errEl      = $('errorMsg');
+      const resBlock   = $('resultsBlock');
+
+      let unit = 'metric';
+
+      // unit toggle
+      document.querySelectorAll('.mac-calc-host .unit-toggle button').forEach(b => {
+        b.addEventListener('click', () => {
+          if (b.classList.contains('active')) return;
+          const newUnit = b.getAttribute('data-unit');
+          const w = parseFloat(weightEl.value);
+          if (Number.isFinite(w)) {
+            if (newUnit === 'imperial') weightEl.value = (w * 2.20462).toFixed(1);
+            else                        weightEl.value = (w / 2.20462).toFixed(1);
+          }
+          unit = newUnit;
+          document.querySelectorAll('.mac-calc-host .unit-toggle button').forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          document.querySelectorAll('.unit-mass').forEach(el => el.textContent = unit === 'metric' ? 'kg' : 'lb');
+          if (resBlock.style.display !== 'none') calc();
+        });
+      });
+
+      function showError(msg) { errEl.textContent = msg; errEl.classList.add('active'); resBlock.style.display = 'none'; }
+      function clearError() { errEl.classList.remove('active'); errEl.textContent = ''; }
+
+      function tefFromRmr(rmr, tdee) {
+        // 7% if RMR <= 1500, 12% if RMR >= 1800, linear in between
+        let pct;
+        if (rmr <= 1500) pct = 0.07;
+        else if (rmr >= 1800) pct = 0.12;
+        else pct = 0.07 + ((rmr - 1500) / 300) * 0.05;
+        return tdee * pct;
+      }
+      function eatFromActivity(actVal) {
+        if (actVal === 1.375) return 200;
+        if (actVal === 1.55)  return 400;
+        if (actVal === 1.725) return 600;
+        if (actVal === 1.9)   return 1000;
+        return 50; // sedentary
+      }
+
+      function calc() {
+        clearError();
+
+        let weight = parseFloat(weightEl.value);
+        const rmr  = parseFloat(rmrEl.value);
+        const act  = parseFloat(activityEl.value);
+        const fatPct = parseFloat(fatEl.value);
+        const protPair = proteinEl.value.split('|').map(parseFloat);
+
+        if (!Number.isFinite(weight) || weight <= 0) return showError('Enter a valid body weight.');
+        if (!Number.isFinite(rmr)    || rmr    <= 0) return showError('Enter a valid RMR (kcal/day).');
+        if (!Number.isFinite(act)    || act    <= 0) return showError('Pick an activity level.');
+        if (!Number.isFinite(fatPct))                return showError('Pick a fat intake.');
+        if (!protPair.every(Number.isFinite))        return showError('Pick a protein priority.');
+
+        // Normalize weight to kg internally
+        const weightKg = unit === 'imperial' ? weight / 2.20462 : weight;
+
+        const tdee = rmr * act;
+        if (tdee <= rmr) return showError('TDEE not greater than RMR — pick a higher activity level.');
+
+        const tef  = tefFromRmr(rmr, tdee);
+        let   eat  = eatFromActivity(act);
+        let   neat = (tdee - rmr) - tef - eat;
+        if (neat < 0) {
+          // reduce EAT 15% then clamp NEAT to 0
+          eat *= 0.85;
+          neat = (tdee - rmr) - tef - eat;
+          if (neat < 0) neat = 0;
+        }
+
+        const totals = rmr + tef + neat + eat;
+        const pct = v => 100 * v / totals;
+
+        // ---- render TDEE tiles
+        $('outRmr').textContent  = Math.round(rmr).toLocaleString();
+        $('outTdee').textContent = Math.round(tdee).toLocaleString();
+        $('outActivity').textContent = Math.round(tdee - rmr).toLocaleString();
+
+        // ---- render breakdown bar (4 segments)
+        const setSeg = (id, p, label) => {
+          const el = $(id);
+          el.style.width = p.toFixed(2) + '%';
+          el.textContent = p > 7 ? (label + ' ' + p.toFixed(0) + '%') : '';
+        };
+        setSeg('segRMR',  pct(rmr),  'RMR');
+        setSeg('segTEF',  pct(tef),  'TEF');
+        setSeg('segNEAT', pct(neat), 'NEAT');
+        setSeg('segEAT',  pct(eat),  'EAT');
+
+        // ---- macro scenarios
+        const scenarios = (protPair[0] === protPair[1]) ? [protPair[0]] : [protPair[0], protPair[1]];
+        const wrap = $('scenariosWrap');
+        wrap.innerHTML = '';
+
+        scenarios.forEach((protFactor, idx) => {
+          const proteinG = weightKg * protFactor;
+          const proteinCal = proteinG * 4;
+          const fatCal = tdee * fatPct;
+          const fatG = fatCal / 9;
+          let carbCal = tdee - proteinCal - fatCal;
+          if (carbCal < 0) carbCal = 0;
+          const carbG = carbCal / 4;
+
+          const protPctTdee = (proteinCal / tdee) * 100;
+          const fatPctTdee  = (fatCal / tdee) * 100;
+          const carbPctTdee = (carbCal / tdee) * 100;
+
+          // per-unit g
+          const wDivisor = unit === 'metric' ? weightKg : (weightKg * 2.20462);
+          const protGperU = proteinG / wDivisor;
+          const carbGperU = carbG / wDivisor;
+          const fatGperU  = fatG  / wDivisor;
+          const unitLabel = unit === 'metric' ? 'g/kg' : 'g/lb';
+
+          const scenName = scenarios.length === 1 ? 'Macro split' : `Scenario ${idx + 1}`;
+          const protTag = scenarios.length === 1
+            ? `${protFactor.toFixed(2)} g/kg protein`
+            : `${protFactor.toFixed(2)} g/kg protein`;
+
+          const setMSeg = (p, label) => p > 7 ? `<div class="mseg ${label.cls}" style="width:${p.toFixed(2)}%;">${label.text} ${p.toFixed(0)}%</div>`
+                                              : `<div class="mseg ${label.cls}" style="width:${p.toFixed(2)}%;"></div>`;
+
+          const card = document.createElement('div');
+          card.className = 'scenario';
+          card.innerHTML = `
+            <div class="scenario-head">
+              <span class="scenario-name">${scenName}</span>
+              <span class="scenario-prot">${protTag}</span>
+            </div>
+            <div class="macro-bar">
+              ${setMSeg(carbPctTdee,    { cls: 'mseg-carb',    text: 'Carb' })}
+              ${setMSeg(protPctTdee,    { cls: 'mseg-protein', text: 'Protein' })}
+              ${setMSeg(fatPctTdee,     { cls: 'mseg-fat',     text: 'Fat' })}
+            </div>
+            <table class="scen-table">
+              <thead>
+                <tr><th>Macro</th><th>g</th><th>${unitLabel}</th><th>kcal</th><th>% TDEE</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="macro-carb">Carbohydrate</td>
+                  <td>${carbG.toFixed(1)}</td>
+                  <td>${carbGperU.toFixed(2)}</td>
+                  <td>${Math.round(carbCal)}</td>
+                  <td>${carbPctTdee.toFixed(1)}%</td>
+                </tr>
+                <tr>
+                  <td class="macro-protein">Protein</td>
+                  <td>${proteinG.toFixed(1)}</td>
+                  <td>${protGperU.toFixed(2)}</td>
+                  <td>${Math.round(proteinCal)}</td>
+                  <td>${protPctTdee.toFixed(1)}%</td>
+                </tr>
+                <tr>
+                  <td class="macro-fat">Fat</td>
+                  <td>${fatG.toFixed(1)}</td>
+                  <td>${fatGperU.toFixed(2)}</td>
+                  <td>${Math.round(fatCal)}</td>
+                  <td>${fatPctTdee.toFixed(1)}%</td>
+                </tr>
+              </tbody>
+            </table>
+          `;
+          wrap.appendChild(card);
+        });
+
+        resBlock.style.display = 'block';
+      }
+
+      $('calcBtn').addEventListener('click', calc);
+      $('resetBtn').addEventListener('click', () => {
+        weightEl.value = unit === 'metric' ? 75 : (75 * 2.20462).toFixed(1);
+        rmrEl.value = 1700;
+        activityEl.value = '1.55';
+        proteinEl.value = '1.2|2.0';
+        fatEl.value = '0.25';
+        clearError();
+        resBlock.style.display = 'none';
+      });
+
+      [weightEl, rmrEl, activityEl, proteinEl, fatEl].forEach(el => {
+        el.addEventListener('input', () => { if (resBlock.style.display !== 'none') calc(); });
+        el.addEventListener('change', () => { if (resBlock.style.display !== 'none') calc(); });
+      });
+
+    })();
+  </script>
+
+</body>
+</html>
