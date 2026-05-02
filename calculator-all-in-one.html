@@ -1,0 +1,1075 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>All-in-one converter — Yousuli calculators</title>
+  <meta name="description" content="One stop for the conversions endurance athletes actually use — pace, speed, distance, temperature, weight, height, fluid, RPE, and carb concentration." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED CALCULATOR STYLES ============ -->
+  <style>
+    .aio-calc-host { width: 100%; }
+
+    .aio-calc-host label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.72rem;
+      color: var(--ys-navy);
+      margin: 6px 0 4px;
+    }
+    .aio-calc-host input[type="text"],
+    .aio-calc-host input[type="number"],
+    .aio-calc-host select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      font-size: 0.96rem;
+      font-family: var(--ys-font-body);
+      background: #fff;
+      color: var(--ys-navy);
+      box-sizing: border-box;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .aio-calc-host input:focus,
+    .aio-calc-host select:focus {
+      outline: none;
+      border-color: var(--wf-coral);
+      box-shadow: 0 0 0 3px rgba(250, 119, 60, 0.18);
+    }
+    .aio-calc-host input[readonly] {
+      background: var(--ys-bg-soft);
+      color: var(--ys-muted);
+    }
+
+    .aio-calc-host .converter-section {
+      margin-top: 22px;
+      padding: 22px;
+      background: var(--ys-bg-soft);
+      border-radius: 12px;
+      border: 1px solid var(--ys-line);
+      display: none;
+    }
+    .aio-calc-host .converter-section.active { display: block; }
+
+    .aio-calc-host .converter-section h2 {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 12px;
+      margin: 0 0 10px;
+      font-family: var(--ys-font-display);
+      color: var(--ys-navy);
+      font-size: 1.1rem;
+      letter-spacing: 0.04em;
+    }
+    .aio-calc-host .converter-section h2 button {
+      background: var(--wf-coral);
+      color: #fff;
+      border: none;
+      padding: 9px 20px;
+      border-radius: 999px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 0.74rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+    .aio-calc-host .converter-section h2 button:hover {
+      background: var(--ys-navy);
+      transform: translateY(-1px);
+    }
+    .aio-calc-host .converter-section > p em {
+      color: var(--ys-muted);
+      font-style: normal;
+      font-size: 0.9rem;
+    }
+    .aio-calc-host .converter-section h3 {
+      font-family: var(--ys-font-display);
+      color: var(--ys-navy);
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+      margin: 18px 0 8px;
+    }
+    .aio-calc-host .converter-section h4 {
+      font-family: var(--ys-font-display);
+      color: var(--wf-coral);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 0.74rem;
+      margin: 18px 0 8px;
+    }
+
+    .aio-calc-host .row {
+      display: flex; flex-wrap: wrap; gap: 12px;
+      margin-bottom: 6px;
+    }
+    .aio-calc-host .col {
+      flex: 1 1 200px;
+      min-width: 0;
+    }
+
+    .aio-calc-host table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 6px;
+      overflow: hidden;
+      font-size: 0.9rem;
+      margin-top: 6px;
+    }
+    .aio-calc-host table td {
+      border-bottom: 1px solid var(--ys-line);
+      padding: 8px 10px;
+      color: var(--ys-navy);
+    }
+    .aio-calc-host table tr:last-child td { border-bottom: 0; }
+    .aio-calc-host table tr:nth-child(even) td { background: var(--ys-bg-soft); }
+
+    .aio-calc-host .rpe-description {
+      margin-top: 14px;
+      padding: 14px 16px;
+      background: #fff;
+      border-left: 4px solid var(--wf-coral);
+      border-radius: 6px;
+      color: var(--ys-navy);
+      font-size: 0.95rem;
+      line-height: 1.55;
+    }
+    .aio-calc-host .rpe-level {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.04em;
+      color: var(--wf-coral);
+      font-weight: 700;
+    }
+
+    .aio-calc-host #carbRec {
+      margin-top: 14px;
+      padding: 14px 16px;
+      background: rgba(250, 119, 60, 0.08);
+      border-left: 4px solid var(--wf-coral);
+      border-radius: 6px;
+      color: var(--ys-navy);
+      font-size: 0.93rem;
+      line-height: 1.5;
+    }
+    .aio-calc-host #carbRec strong {
+      font-family: var(--ys-font-display);
+      color: var(--wf-coral);
+      letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 56px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Utility</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">All-in-one converter.</h1>
+      <div class="wf-subhead">Pace &middot; speed &middot; temp &middot; weight &middot; height &middot; fluid &middot; RPE &middot; concentration</div>
+      <p class="lede" style="max-width: 660px;">Nine converters under one roof. Swim, bike, run pace and speed conversions; temperature guidance for what to wear; weight and height in any unit; fluid volumes; RPE descriptions; and the carb-concentration calculator that tells you whether your bottle is going to wreck your stomach.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Open the converter &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">When to reach for it</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 32px 0 48px;">
+    <div class="ys-container">
+      <div class="ys-tool" style="max-width: 920px;">
+        <h3>Pick a converter</h3>
+        <p class="ys-tool-pre">Choose the type from the dropdown. Type a value into the field you want as the source, then hit <strong>Calculate</strong> &mdash; the rest of the fields fill in.</p>
+
+        <div class="aio-calc-host">
+          <label for="conversionType">Conversion type</label>
+          <select id="conversionType" onchange="showSection()">
+            <option value="">— Select —</option>
+            <option value="swim">Swim &mdash; pace / speed / set distances</option>
+            <option value="bike">Bike &mdash; speed / set distances</option>
+            <option value="run">Run &mdash; pace / speed / set distances</option>
+            <option value="temperature">Temperature &mdash; °C / °F + apparel guidance</option>
+            <option value="weight">Weight &mdash; kg / g / lb / oz / st</option>
+            <option value="height">Height &mdash; m / cm / ft / in</option>
+            <option value="fluid">Fluid &mdash; L / mL / gal / fl oz</option>
+            <option value="effort">Effort &mdash; RPE 1&ndash;10 description</option>
+            <option value="concentration">Concentration &mdash; carb % in a bottle</option>
+          </select>
+
+          <!-- SWIM -->
+          <div id="swimSection" class="converter-section">
+            <h2>Swim conversions <button onclick="calcSwim()">Calculate</button></h2>
+            <p><em>Click in one field, type your data, press Calculate to fill the others.</em></p>
+            <div class="row">
+              <div class="col"><label>Pace / 25 m (mm:ss.xx)</label><input type="text" id="swPace25m" onfocus="swLastFocus='25m'"></div>
+              <div class="col"><label>Pace / 50 m (mm:ss)</label><input type="text" id="swPace50m" onfocus="swLastFocus='50m'"></div>
+              <div class="col"><label>Pace / 100 m (mm:ss)</label><input type="text" id="swPace100m" onfocus="swLastFocus='100m'"></div>
+            </div>
+            <div class="row">
+              <div class="col"><label>Pace / 25 yd (mm:ss.xx)</label><input type="text" id="swPace25y" onfocus="swLastFocus='25y'"></div>
+              <div class="col"><label>Pace / 50 yd (mm:ss)</label><input type="text" id="swPace50y" onfocus="swLastFocus='50y'"></div>
+              <div class="col"><label>Pace / 100 yd (mm:ss)</label><input type="text" id="swPace100y" onfocus="swLastFocus='100y'"></div>
+            </div>
+            <div class="row">
+              <div class="col"><label>Time / km (mm:ss)</label><input type="text" id="swTimeKm" onfocus="swLastFocus='km'"></div>
+              <div class="col"><label>Time / mile (mm:ss)</label><input type="text" id="swTimeMi" onfocus="swLastFocus='mi'"></div>
+            </div>
+            <div class="row">
+              <div class="col"><label>Speed (m/s)</label><input type="text" id="swMps" onfocus="swLastFocus='mps'"></div>
+              <div class="col"><label>Speed (km/h)</label><input type="text" id="swKmh" onfocus="swLastFocus='kmh'"></div>
+              <div class="col"><label>Speed (mph)</label><input type="text" id="swMph" onfocus="swLastFocus='mph'"></div>
+            </div>
+            <h4>Set distances</h4>
+            <div class="row">
+              <div class="col"><label>400 m (mm:ss)</label><input type="text" id="swTime400" onfocus="swLastFocus='dist400'"></div>
+              <div class="col"><label>750 m (mm:ss)</label><input type="text" id="swTime750" onfocus="swLastFocus='dist750'"></div>
+            </div>
+            <div class="row">
+              <div class="col"><label>1500 m (mm:ss)</label><input type="text" id="swTime1500" onfocus="swLastFocus='dist1500'"></div>
+              <div class="col"><label>1900 m (mm:ss)</label><input type="text" id="swTime1900" onfocus="swLastFocus='dist1900'"></div>
+            </div>
+            <div class="row">
+              <div class="col"><label>2000 m (HH:MM:SS)</label><input type="text" id="swTime2000" onfocus="swLastFocus='dist2000'"></div>
+              <div class="col"><label>3800 m (HH:MM:SS)</label><input type="text" id="swTime3800" onfocus="swLastFocus='dist3800'"></div>
+            </div>
+          </div>
+
+          <!-- BIKE -->
+          <div id="bikeSection" class="converter-section">
+            <h2>Bike conversions <button onclick="calcBike()">Calculate</button></h2>
+            <p><em>Click in the field you want as &ldquo;driver,&rdquo; then press Calculate.</em></p>
+            <div class="row">
+              <div class="col"><label>Speed (km/h)</label><input type="text" id="bikeKmh" onfocus="bikeLastFocus='kmh'"></div>
+              <div class="col"><label>Speed (mph)</label><input type="text" id="bikeMph" onfocus="bikeLastFocus='mph'"></div>
+            </div>
+            <h4>Set distances (HH:MM:SS)</h4>
+            <div class="row">
+              <div class="col"><label>10 km</label><input type="text" id="bikeTime10" onfocus="bikeLastFocus='dist10'"></div>
+              <div class="col"><label>20 km</label><input type="text" id="bikeTime20" onfocus="bikeLastFocus='dist20'"></div>
+            </div>
+            <div class="row">
+              <div class="col"><label>40 km</label><input type="text" id="bikeTime40" onfocus="bikeLastFocus='dist40'"></div>
+              <div class="col"><label>80 km</label><input type="text" id="bikeTime80" onfocus="bikeLastFocus='dist80'"></div>
+            </div>
+            <div class="row">
+              <div class="col"><label>90 km</label><input type="text" id="bikeTime90" onfocus="bikeLastFocus='dist90'"></div>
+              <div class="col"><label>100 km</label><input type="text" id="bikeTime100" onfocus="bikeLastFocus='dist100'"></div>
+            </div>
+            <div class="row">
+              <div class="col"><label>100 mi</label><input type="text" id="bikeTime100mi" onfocus="bikeLastFocus='dist100mi'"></div>
+              <div class="col"><label>180 km</label><input type="text" id="bikeTime180" onfocus="bikeLastFocus='dist180'"></div>
+            </div>
+          </div>
+
+          <!-- RUN -->
+          <div id="runSection" class="converter-section">
+            <h2>Run conversions <button onclick="calcRun()">Calculate</button></h2>
+            <p><em>Click in one field, then press Calculate.</em></p>
+            <div class="row">
+              <div class="col"><label>Pace (min/km)</label><input type="text" id="runMinKm" onfocus="runLastFocus='minKm'"></div>
+              <div class="col"><label>Pace (min/mile)</label><input type="text" id="runMinMi" onfocus="runLastFocus='minMi'"></div>
+            </div>
+            <div class="row">
+              <div class="col"><label>Speed (m/s)</label><input type="text" id="runMps" onfocus="runLastFocus='mps'"></div>
+              <div class="col"><label>Speed (km/h)</label><input type="text" id="runKmh" onfocus="runLastFocus='kmh'"></div>
+              <div class="col"><label>Speed (mph)</label><input type="text" id="runMph" onfocus="runLastFocus='mph'"></div>
+            </div>
+            <h4>Set distances</h4>
+            <div class="row">
+              <div class="col"><label>400 m (mm:ss)</label><input type="text" id="runTime400" onfocus="runLastFocus='dist400'"></div>
+              <div class="col"><label>800 m (mm:ss)</label><input type="text" id="runTime800" onfocus="runLastFocus='dist800'"></div>
+            </div>
+            <div class="row">
+              <div class="col"><label>1600 m (mm:ss)</label><input type="text" id="runTime1600" onfocus="runLastFocus='dist1600'"></div>
+              <div class="col"><label>3500 m (mm:ss)</label><input type="text" id="runTime3500" onfocus="runLastFocus='dist3500'"></div>
+            </div>
+            <div class="row">
+              <div class="col"><label>5 km (mm:ss)</label><input type="text" id="runTime5000" onfocus="runLastFocus='dist5000'"></div>
+              <div class="col"><label>10 km (mm:ss)</label><input type="text" id="runTime10000" onfocus="runLastFocus='dist10000'"></div>
+            </div>
+            <div class="row">
+              <div class="col"><label>Half marathon (HH:MM:SS)</label><input type="text" id="runTime21097" onfocus="runLastFocus='dist21097'"></div>
+              <div class="col"><label>Marathon (HH:MM:SS)</label><input type="text" id="runTime42195" onfocus="runLastFocus='dist42195'"></div>
+            </div>
+          </div>
+
+          <!-- TEMPERATURE -->
+          <div id="temperatureSection" class="converter-section">
+            <h2>Temperature conversions <button onclick="calcTemperature()">Calculate</button></h2>
+            <p><em>Type Celsius or Fahrenheit, press Calculate to update + show what to wear.</em></p>
+            <div class="row">
+              <div class="col"><label>Celsius (°C)</label><input type="text" id="tempC" onfocus="tempLastFocus='C'"></div>
+              <div class="col"><label>Fahrenheit (°F)</label><input type="text" id="tempF" onfocus="tempLastFocus='F'"></div>
+            </div>
+            <h3>Swim temperature guidance</h3>
+            <table id="tempSwimTable"></table>
+            <h3>Bike temperature guidance</h3>
+            <table id="tempBikeTable"></table>
+            <h3>Run temperature guidance</h3>
+            <table id="tempRunTable"></table>
+          </div>
+
+          <!-- WEIGHT -->
+          <div id="weightSection" class="converter-section">
+            <h2>Weight conversions <button onclick="calcWeight()">Calculate</button></h2>
+            <p><em>Pick one field, type a number, press Calculate.</em></p>
+            <div class="row">
+              <div class="col"><label>Kilograms (kg)</label><input type="text" id="weightKg" onfocus="wLastFocus='kg'"></div>
+              <div class="col"><label>Grams (g)</label><input type="text" id="weightG" onfocus="wLastFocus='g'"></div>
+            </div>
+            <div class="row">
+              <div class="col"><label>Pounds (lb)</label><input type="text" id="weightLb" onfocus="wLastFocus='lb'"></div>
+              <div class="col"><label>Ounces (oz)</label><input type="text" id="weightOz" onfocus="wLastFocus='oz'"></div>
+              <div class="col"><label>Stones (st)</label><input type="text" id="weightSt" onfocus="wLastFocus='st'"></div>
+            </div>
+          </div>
+
+          <!-- HEIGHT -->
+          <div id="heightSection" class="converter-section">
+            <h2>Height conversions <button onclick="calcHeight()">Calculate</button></h2>
+            <p><em>Focus one field, type a number, press Calculate.</em></p>
+            <div class="row">
+              <div class="col"><label>Meters (m)</label><input type="text" id="heightM" onfocus="hLastFocus='m'"></div>
+              <div class="col"><label>Centimeters (cm)</label><input type="text" id="heightCm" onfocus="hLastFocus='cm'"></div>
+            </div>
+            <div class="row">
+              <div class="col"><label>Feet (ft)</label><input type="text" id="heightFt" onfocus="hLastFocus='ft'"></div>
+              <div class="col"><label>Inches (in)</label><input type="text" id="heightIn" onfocus="hLastFocus='in'"></div>
+            </div>
+          </div>
+
+          <!-- FLUID -->
+          <div id="fluidSection" class="converter-section">
+            <h2>Fluid conversions <button onclick="calcFluid()">Calculate</button></h2>
+            <p><em>Type a number in one field, press Calculate.</em></p>
+            <div class="row">
+              <div class="col"><label>Liters (L)</label><input type="text" id="fluidL" onfocus="fLastFocus='l'"></div>
+              <div class="col"><label>Milliliters (mL)</label><input type="text" id="fluidMl" onfocus="fLastFocus='ml'"></div>
+            </div>
+            <div class="row">
+              <div class="col"><label>US gallons (gal)</label><input type="text" id="fluidGal" onfocus="fLastFocus='gal'"></div>
+              <div class="col"><label>US fluid ounces (fl oz)</label><input type="text" id="fluidOz" onfocus="fLastFocus='oz'"></div>
+            </div>
+          </div>
+
+          <!-- EFFORT -->
+          <div id="effortSection" class="converter-section">
+            <h2>Effort conversions <button onclick="calcEffort()">Calculate</button></h2>
+            <p><em>Enter RPE (1&ndash;10), then click Calculate.</em></p>
+            <label>RPE scale (1&ndash;10)</label>
+            <input type="text" id="effortRpe" onfocus="effLastFocus='rpe'">
+            <div class="rpe-description" id="rpeDescription"></div>
+          </div>
+
+          <!-- CONCENTRATION -->
+          <div id="concentrationSection" class="converter-section">
+            <h2>Concentration calculator <button onclick="calcConcentration()">Calculate</button></h2>
+            <p>Compute the concentration (by weight) of a solution &mdash; carbs, salt, anything &mdash; plus the approximate %. Useful for checking whether your custom drink mix is going to sit in your stomach.</p>
+            <label>Liquid volume</label>
+            <div class="row">
+              <div class="col">
+                <select id="concVolUnit">
+                  <option value="L">Liters (L)</option>
+                  <option value="mL">Milliliters (mL)</option>
+                  <option value="gal">US gallons (gal)</option>
+                  <option value="oz">US fluid ounces (fl oz)</option>
+                </select>
+              </div>
+              <div class="col"><input type="number" step="any" id="concVolume" placeholder="Volume"></div>
+            </div>
+            <label>Weight of product</label>
+            <div class="row">
+              <div class="col">
+                <select id="concWeightUnit">
+                  <option value="g">Grams (g)</option>
+                  <option value="oz">Ounces (oz)</option>
+                </select>
+              </div>
+              <div class="col"><input type="number" step="any" id="concWeight" placeholder="Weight"></div>
+            </div>
+            <div class="row" style="margin-top: 12px;">
+              <div class="col"><label>Concentration (g/L)</label><input type="text" id="concGL" readonly></div>
+              <div class="col"><label>Concentration (oz/gal)</label><input type="text" id="concOzGal" readonly></div>
+            </div>
+            <div class="row">
+              <div class="col"><label>Approx. % (g per 100 mL)</label><input type="text" id="concPercent" readonly></div>
+            </div>
+            <div id="carbRec"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW TO USE IT ============ -->
+  <section class="wf-section alt" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>When to reach for it</h2>
+        <div class="ys-rule"></div>
+        <p>Three real moments where this saves you a calculator app and a unit-conversion screw-up.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>Coach gave you a metric pace; race is in miles</h3>
+          <p>Plug 4:30/km into the run section, hit Calculate &mdash; you get min/mile, m/s, km/h, mph, and finish times for 5K, 10K, half, and marathon at that pace. No mental math at the start line.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>Wetsuit-legal? &middot; What do I wear?</h3>
+          <p>Type the water temp in the temperature section to see wetsuit rules. Same panel covers what to wear on the bike and run from heat-stress hot to balaclava-cold.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>Mixing your own bottle</h3>
+          <p>The concentration calculator tells you the % carb of a custom mix &mdash; under 4% is too dilute, over 8% will sit in your stomach. Your race-day fueling depends on getting this right.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COACH NOTE ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
+        <h2 style="margin-top: 4px;">A converter is a translator &mdash; not a coach.</h2>
+        <p>This tool is good at one thing: making the same number readable in any unit. It will <em>not</em> tell you whether 4:00/km is your pace today, whether 28 °C means you should change race-day fueling, or whether your 10% carb drink is the right call for a 70.3.</p>
+        <p style="margin-top: 10px;">For those calls, you need a coach who knows you and a lab measurement that grounds the targets &mdash; threshold, FTP, fat-oxidation rate, sweat rate. Without that, you&rsquo;re converting numbers in a vacuum.</p>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED CALCULATORS ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Related calculators</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card" href="calculator-running-time-predictor.html">
+          <span class="ys-calc-card-title">Running time predictor</span>
+          <p>One running effort in &mdash; finish times across 1.6 km to marathon.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="calculator-intraworkout-fueling.html">
+          <span class="ys-calc-card-title">Intra-workout fueling</span>
+          <p>Pairs with the concentration tab &mdash; total carbs/hour, food equivalents, DIY ratios.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="calculators.html">
+          <span class="ys-calc-card-title">All calculators</span>
+          <p>Back to the full catalog &mdash; 28 endurance calculators across performance, fueling, swim, bike, run.</p>
+          <span class="ys-calc-card-arrow">Browse &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want the numbers behind the numbers?</h2>
+          <p>Conversions tell you 4:30/km in another unit. Lab testing tells you whether 4:30/km is sustainable, what fuel you need at that intensity, and where your physiology breaks. Skip the guessing.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Book lab testing</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20All-in-one%20converter">Send feedback</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Spotted a bug or want a feature? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20All-in-one%20converter" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ CALCULATOR LOGIC ============ -->
+  <script>
+    let swLastFocus = null;
+    let bikeLastFocus = null;
+    let runLastFocus = null;
+    let tempLastFocus = null;
+    let wLastFocus = null;
+    let hLastFocus = null;
+    let fLastFocus = null;
+    let effLastFocus = null;
+
+    function showSection() {
+      const sections = ['swim','bike','run','temperature','weight','height','fluid','effort','concentration'];
+      sections.forEach(id => {
+        const el = document.getElementById(id + 'Section');
+        if (el) el.classList.remove('active');
+      });
+      const val = document.getElementById('conversionType').value;
+      if (val) {
+        const el = document.getElementById(val + 'Section');
+        if (el) el.classList.add('active');
+      }
+    }
+
+    function parseTime(str) {
+      if (str == null) return NaN;
+      str = String(str).trim();
+      if (!str) return NaN;
+      if (/^\d+(\.\d+)?$/.test(str)) return parseFloat(str);
+      const parts = str.split(':').map(p => p.trim());
+      if (parts.length === 3) {
+        const h = parseFloat(parts[0]); const m = parseFloat(parts[1]); const s = parseFloat(parts[2]);
+        if ([h,m,s].some(v => isNaN(v))) return NaN;
+        return h * 3600 + m * 60 + s;
+      }
+      if (parts.length === 2) {
+        const m = parseFloat(parts[0]); const s = parseFloat(parts[1]);
+        if ([m,s].some(v => isNaN(v))) return NaN;
+        return m * 60 + s;
+      }
+      return NaN;
+    }
+
+    function formatTime(sec, decimals = 0) {
+      if (isNaN(sec) || sec <= 0) return '';
+      const factor = Math.pow(10, decimals);
+      sec = Math.round(sec * factor) / factor;
+      const h = Math.floor(sec / 3600);
+      const rem = sec - h * 3600;
+      const m = Math.floor(rem / 60);
+      const s = rem - m * 60;
+      let sStr;
+      if (decimals > 0) { sStr = s.toFixed(decimals); if (s < 10) sStr = '0' + sStr; }
+      else { sStr = String(Math.floor(s)).padStart(2, '0'); }
+      if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${sStr}`;
+      return `${m}:${sStr}`;
+    }
+
+    function mpsToKmh(mps) { return mps * 3.6; }
+    function kmhToMps(kmh) { return kmh / 3.6; }
+    function kmhToMph(kmh) { return kmh / 1.60934; }
+    function mphToKmh(mph) { return mph * 1.60934; }
+
+    function calcSwim() {
+      const v = {
+        '25m':  parseTime(document.getElementById('swPace25m').value),
+        '50m':  parseTime(document.getElementById('swPace50m').value),
+        '100m': parseTime(document.getElementById('swPace100m').value),
+        '25y':  parseTime(document.getElementById('swPace25y').value),
+        '50y':  parseTime(document.getElementById('swPace50y').value),
+        '100y': parseTime(document.getElementById('swPace100y').value),
+        'km':   parseTime(document.getElementById('swTimeKm').value),
+        'mi':   parseTime(document.getElementById('swTimeMi').value),
+        'mps':  parseFloat(document.getElementById('swMps').value),
+        'kmh':  parseFloat(document.getElementById('swKmh').value),
+        'mph':  parseFloat(document.getElementById('swMph').value),
+        'dist400':  parseTime(document.getElementById('swTime400').value),
+        'dist750':  parseTime(document.getElementById('swTime750').value),
+        'dist1500': parseTime(document.getElementById('swTime1500').value),
+        'dist1900': parseTime(document.getElementById('swTime1900').value),
+        'dist2000': parseTime(document.getElementById('swTime2000').value),
+        'dist3800': parseTime(document.getElementById('swTime3800').value)
+      };
+
+      function p2s(meters, paceSec) { return (isNaN(paceSec) || paceSec <= 0) ? NaN : meters / paceSec; }
+      function speedFrom(key) {
+        switch(key) {
+          case '25m':  return p2s(25,  v['25m']);
+          case '50m':  return p2s(50,  v['50m']);
+          case '100m': return p2s(100, v['100m']);
+          case '25y':  return p2s(25 * 0.9144,  v['25y']);
+          case '50y':  return p2s(50 * 0.9144,  v['50y']);
+          case '100y': return p2s(100 * 0.9144, v['100y']);
+          case 'km':   return (!isNaN(v['km']) && v['km'] > 0) ? 1000 / v['km'] : NaN;
+          case 'mi':   return (!isNaN(v['mi']) && v['mi'] > 0) ? 1609.34 / v['mi'] : NaN;
+          case 'mps':  return (!isNaN(v['mps']) && v['mps'] > 0) ? v['mps'] : NaN;
+          case 'kmh':  return (!isNaN(v['kmh']) && v['kmh'] > 0) ? v['kmh'] / 3.6 : NaN;
+          case 'mph':  return (!isNaN(v['mph']) && v['mph'] > 0) ? (v['mph'] * 1.60934) / 3.6 : NaN;
+          case 'dist400':  return (!isNaN(v['dist400'])  && v['dist400']  > 0) ?  400 / v['dist400']  : NaN;
+          case 'dist750':  return (!isNaN(v['dist750'])  && v['dist750']  > 0) ?  750 / v['dist750']  : NaN;
+          case 'dist1500': return (!isNaN(v['dist1500']) && v['dist1500'] > 0) ? 1500 / v['dist1500'] : NaN;
+          case 'dist1900': return (!isNaN(v['dist1900']) && v['dist1900'] > 0) ? 1900 / v['dist1900'] : NaN;
+          case 'dist2000': return (!isNaN(v['dist2000']) && v['dist2000'] > 0) ? 2000 / v['dist2000'] : NaN;
+          case 'dist3800': return (!isNaN(v['dist3800']) && v['dist3800'] > 0) ? 3800 / v['dist3800'] : NaN;
+          default: return NaN;
+        }
+      }
+
+      let speedMps = speedFrom(swLastFocus);
+      if (isNaN(speedMps) || speedMps <= 0) {
+        const order = ['100m','50m','25m','100y','50y','25y','km','mi','mps','kmh','mph',
+                       'dist400','dist750','dist1500','dist1900','dist2000','dist3800'];
+        for (const k of order) {
+          speedMps = speedFrom(k);
+          if (!isNaN(speedMps) && speedMps > 0) { swLastFocus = k; break; }
+        }
+      }
+      if (isNaN(speedMps) || speedMps <= 0) {
+        alert('Enter a valid swim pace, speed, or distance time.');
+        return;
+      }
+
+      const finalKmh = speedMps * 3.6;
+      const finalMph = finalKmh / 1.60934;
+      const p100m = 100 / speedMps;
+      const p100y = (100 * 0.9144) / speedMps;
+      const distTime = m => m / speedMps;
+
+      document.getElementById('swMps').value  = speedMps.toFixed(2);
+      document.getElementById('swKmh').value  = finalKmh.toFixed(2);
+      document.getElementById('swMph').value  = finalMph.toFixed(2);
+      document.getElementById('swPace25m').value  = formatTime(p100m / 4, 2);
+      document.getElementById('swPace50m').value  = formatTime(p100m / 2, 2);
+      document.getElementById('swPace100m').value = formatTime(p100m, 2);
+      document.getElementById('swPace25y').value  = formatTime(p100y / 4, 2);
+      document.getElementById('swPace50y').value  = formatTime(p100y / 2, 2);
+      document.getElementById('swPace100y').value = formatTime(p100y, 2);
+      document.getElementById('swTimeKm').value   = formatTime(1000 / speedMps);
+      document.getElementById('swTimeMi').value   = formatTime(1609.34 / speedMps);
+      document.getElementById('swTime400').value  = formatTime(distTime(400));
+      document.getElementById('swTime750').value  = formatTime(distTime(750));
+      document.getElementById('swTime1500').value = formatTime(distTime(1500));
+      document.getElementById('swTime1900').value = formatTime(distTime(1900));
+      document.getElementById('swTime2000').value = formatTime(distTime(2000));
+      document.getElementById('swTime3800').value = formatTime(distTime(3800));
+    }
+
+    function calcBike() {
+      const valKmh = parseFloat(document.getElementById('bikeKmh').value);
+      const valMph = parseFloat(document.getElementById('bikeMph').value);
+      const t = {
+        '10':    parseTime(document.getElementById('bikeTime10').value),
+        '20':    parseTime(document.getElementById('bikeTime20').value),
+        '40':    parseTime(document.getElementById('bikeTime40').value),
+        '80':    parseTime(document.getElementById('bikeTime80').value),
+        '90':    parseTime(document.getElementById('bikeTime90').value),
+        '100':   parseTime(document.getElementById('bikeTime100').value),
+        '100mi': parseTime(document.getElementById('bikeTime100mi').value),
+        '180':   parseTime(document.getElementById('bikeTime180').value)
+      };
+
+      function timeToSpeed(km, tSec) { return (isNaN(tSec) || tSec <= 0) ? NaN : km / (tSec / 3600); }
+
+      let speedKmh = NaN;
+      switch (bikeLastFocus) {
+        case 'kmh': if (!isNaN(valKmh) && valKmh > 0) speedKmh = valKmh; break;
+        case 'mph': if (!isNaN(valMph) && valMph > 0) speedKmh = mphToKmh(valMph); break;
+        case 'dist10':    speedKmh = timeToSpeed(10,  t[10]); break;
+        case 'dist20':    speedKmh = timeToSpeed(20,  t[20]); break;
+        case 'dist40':    speedKmh = timeToSpeed(40,  t[40]); break;
+        case 'dist80':    speedKmh = timeToSpeed(80,  t[80]); break;
+        case 'dist90':    speedKmh = timeToSpeed(90,  t[90]); break;
+        case 'dist100':   speedKmh = timeToSpeed(100, t[100]); break;
+        case 'dist100mi': speedKmh = timeToSpeed(160.934, t['100mi']); break;
+        case 'dist180':   speedKmh = timeToSpeed(180, t[180]); break;
+        default: return;
+      }
+      if (isNaN(speedKmh) || speedKmh <= 0) return;
+
+      document.getElementById('bikeKmh').value = speedKmh.toFixed(2);
+      document.getElementById('bikeMph').value = kmhToMph(speedKmh).toFixed(2);
+
+      const dts = km => formatTime((km / speedKmh) * 3600);
+      document.getElementById('bikeTime10').value    = dts(10);
+      document.getElementById('bikeTime20').value    = dts(20);
+      document.getElementById('bikeTime40').value    = dts(40);
+      document.getElementById('bikeTime80').value    = dts(80);
+      document.getElementById('bikeTime90').value    = dts(90);
+      document.getElementById('bikeTime100').value   = dts(100);
+      document.getElementById('bikeTime100mi').value = dts(160.934);
+      document.getElementById('bikeTime180').value   = dts(180);
+    }
+
+    function calcRun() {
+      const valMinKm = parseTime(document.getElementById('runMinKm').value);
+      const valMinMi = parseTime(document.getElementById('runMinMi').value);
+      const valMps = parseFloat(document.getElementById('runMps').value);
+      const valKmh = parseFloat(document.getElementById('runKmh').value);
+      const valMph = parseFloat(document.getElementById('runMph').value);
+      const d = {
+        400:   parseTime(document.getElementById('runTime400').value),
+        800:   parseTime(document.getElementById('runTime800').value),
+        1600:  parseTime(document.getElementById('runTime1600').value),
+        3500:  parseTime(document.getElementById('runTime3500').value),
+        5000:  parseTime(document.getElementById('runTime5000').value),
+        10000: parseTime(document.getElementById('runTime10000').value),
+        21097: parseTime(document.getElementById('runTime21097').value),
+        42195: parseTime(document.getElementById('runTime42195').value)
+      };
+
+      function p2s(m, t) { return (isNaN(t) || t <= 0) ? NaN : m / t; }
+
+      let speedMps = NaN;
+      switch (runLastFocus) {
+        case 'minKm': if (!isNaN(valMinKm) && valMinKm > 0) speedMps = 1000 / valMinKm; break;
+        case 'minMi': if (!isNaN(valMinMi) && valMinMi > 0) speedMps = 1609.34 / valMinMi; break;
+        case 'mps':   if (!isNaN(valMps) && valMps > 0) speedMps = valMps; break;
+        case 'kmh':   if (!isNaN(valKmh) && valKmh > 0) speedMps = kmhToMps(valKmh); break;
+        case 'mph':   if (!isNaN(valMph) && valMph > 0) speedMps = kmhToMps(mphToKmh(valMph)); break;
+        case 'dist400':   speedMps = p2s(400,   d[400]); break;
+        case 'dist800':   speedMps = p2s(800,   d[800]); break;
+        case 'dist1600':  speedMps = p2s(1600,  d[1600]); break;
+        case 'dist3500':  speedMps = p2s(3500,  d[3500]); break;
+        case 'dist5000':  speedMps = p2s(5000,  d[5000]); break;
+        case 'dist10000': speedMps = p2s(10000, d[10000]); break;
+        case 'dist21097': speedMps = p2s(21097.5, d[21097]); break;
+        case 'dist42195': speedMps = p2s(42195, d[42195]); break;
+        default: return;
+      }
+      if (isNaN(speedMps) || speedMps <= 0) return;
+
+      document.getElementById('runMps').value   = speedMps.toFixed(2);
+      document.getElementById('runKmh').value   = mpsToKmh(speedMps).toFixed(2);
+      document.getElementById('runMph').value   = kmhToMph(mpsToKmh(speedMps)).toFixed(2);
+      document.getElementById('runMinKm').value = formatTime(1000 / speedMps);
+      document.getElementById('runMinMi').value = formatTime(1609.34 / speedMps);
+
+      const dt = m => formatTime(m / speedMps);
+      document.getElementById('runTime400').value   = dt(400);
+      document.getElementById('runTime800').value   = dt(800);
+      document.getElementById('runTime1600').value  = dt(1600);
+      document.getElementById('runTime3500').value  = dt(3500);
+      document.getElementById('runTime5000').value  = dt(5000);
+      document.getElementById('runTime10000').value = dt(10000);
+      document.getElementById('runTime21097').value = dt(21097.5);
+      document.getElementById('runTime42195').value = dt(42195);
+    }
+
+    function calcTemperature() {
+      const cVal = parseFloat(document.getElementById('tempC').value);
+      const fVal = parseFloat(document.getElementById('tempF').value);
+      switch (tempLastFocus) {
+        case 'C':
+          if (!isNaN(cVal)) {
+            const fOut = (cVal * 9 / 5) + 32;
+            document.getElementById('tempF').value = fOut.toFixed(2);
+            buildSwimTable(cVal, fOut); buildBikeTable(); buildRunTable();
+          }
+          break;
+        case 'F':
+          if (!isNaN(fVal)) {
+            const cOut = (fVal - 32) * 5 / 9;
+            document.getElementById('tempC').value = cOut.toFixed(2);
+            buildSwimTable(cOut, fVal); buildBikeTable(); buildRunTable();
+          }
+          break;
+        default: return;
+      }
+    }
+
+    function buildSwimTable(cVal, fVal) {
+      const table = document.getElementById('tempSwimTable');
+      table.innerHTML = '';
+      if (isNaN(cVal)) return;
+      let msg;
+      if (cVal >= 28.8) msg = 'Wetsuit forbidden';
+      else if (cVal >= 25.5) msg = 'Average swimming pool temperature';
+      else if (cVal >= 24.5) msg = 'Wetsuit legal in USAT (<25.5°C)';
+      else if (cVal >= 22)   msg = 'Wetsuit legal in most races (<24.5°C)';
+      else if (cVal >= 20)   msg = 'Wetsuit legal for pro (<22°C). Possibly chilly';
+      else if (cVal >= 16)   msg = 'Cold (<20°C). Wetsuit recommended';
+      else if (cVal >= 10)   msg = 'Wetsuit mandatory (<16°C)';
+      else                   msg = 'Severe hypothermia risk (<10°C)';
+      const row = document.createElement('tr');
+      row.innerHTML = `<td>${cVal.toFixed(1)}°C / ${fVal.toFixed(1)}°F</td><td>${msg}</td>`;
+      table.appendChild(row);
+    }
+
+    function buildBikeTable() {
+      const table = document.getElementById('tempBikeTable');
+      table.innerHTML = '';
+      const data = [
+        { range: '≥30°C (≥86°F)',     key: 'Jersey, bib shorts',                over: 'Cap/sun',                  extra: 'Sunscreen' },
+        { range: '15–30°C (59–86°F)', key: 'Jersey, bib shorts',                over: 'Base/windbreaker if <15°C', extra: 'Sunglasses, sunscreen' },
+        { range: '5–15°C (41–59°F)',  key: 'Long-sleeve or short + arm warmers', over: 'Windbreaker, base layer', extra: 'Cap, warm socks' },
+        { range: '0–5°C (32–41°F)',   key: 'Long-sleeve jersey, bib pants',     over: 'Jacket, ear coverage',     extra: 'Balaclava, lip balm' },
+        { range: '<0°C (<32°F)',      key: 'Not recommended if icy',            over: '2-layer gloves, shoe covers', extra: 'Balaclava' }
+      ];
+      data.forEach(d => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${d.range}</td><td>${d.key}</td><td>${d.over}</td><td>${d.extra}</td>`;
+        table.appendChild(tr);
+      });
+    }
+
+    function buildRunTable() {
+      const table = document.getElementById('tempRunTable');
+      table.innerHTML = '';
+      const data = [
+        { range: '≥40°C',           main: 'Bright short sleeve',         other: 'Arm sleeves',          acc: 'Cap, SPF 30+' },
+        { range: '≥35°C & <40°C',   main: 'Short sleeve, shorts',        other: 'Optional sun sleeves', acc: 'Cap, sunglasses' },
+        { range: '≥30°C & <35°C',   main: 'Bright short sleeve',         other: 'Optional arm sleeves', acc: 'Cap, SPF 30+' },
+        { range: '≤-15°C (≤5°F)',   main: '2× long sleeve, thick shoes', other: 'Fleece, 2 socks, balaclava', acc: 'Hat, 2× gloves, SPF 30+' }
+      ];
+      data.forEach(d => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${d.range}</td><td>${d.main}</td><td>${d.other}</td><td>${d.acc}</td>`;
+        table.appendChild(tr);
+      });
+    }
+
+    function calcWeight() {
+      const wKg = parseFloat(document.getElementById('weightKg').value);
+      const wG  = parseFloat(document.getElementById('weightG').value);
+      const wLb = parseFloat(document.getElementById('weightLb').value);
+      const wOz = parseFloat(document.getElementById('weightOz').value);
+      const wSt = parseFloat(document.getElementById('weightSt').value);
+      switch (wLastFocus) {
+        case 'kg': if (!isNaN(wKg)) {
+          document.getElementById('weightG').value  = (wKg * 1000).toFixed(2);
+          document.getElementById('weightLb').value = (wKg * 2.20462).toFixed(2);
+          document.getElementById('weightOz').value = (wKg * 35.274).toFixed(2);
+          document.getElementById('weightSt').value = (wKg * 0.157473).toFixed(3);
+        } break;
+        case 'g': if (!isNaN(wG)) {
+          const kg = wG / 1000;
+          document.getElementById('weightKg').value = kg.toFixed(3);
+          document.getElementById('weightLb').value = (kg * 2.20462).toFixed(2);
+          document.getElementById('weightOz').value = (kg * 35.274).toFixed(2);
+          document.getElementById('weightSt').value = (kg * 0.157473).toFixed(3);
+        } break;
+        case 'lb': if (!isNaN(wLb)) {
+          const kg = wLb / 2.20462;
+          document.getElementById('weightKg').value = kg.toFixed(3);
+          document.getElementById('weightG').value  = (kg * 1000).toFixed(2);
+          document.getElementById('weightOz').value = (wLb * 16).toFixed(2);
+          document.getElementById('weightSt').value = (wLb / 14).toFixed(3);
+        } break;
+        case 'oz': if (!isNaN(wOz)) {
+          const lb = wOz / 16; const kg = lb / 2.20462;
+          document.getElementById('weightLb').value = lb.toFixed(3);
+          document.getElementById('weightKg').value = kg.toFixed(3);
+          document.getElementById('weightG').value  = (kg * 1000).toFixed(2);
+          document.getElementById('weightSt').value = (lb / 14).toFixed(3);
+        } break;
+        case 'st': if (!isNaN(wSt)) {
+          const lb = wSt * 14; const kg = lb / 2.20462;
+          document.getElementById('weightLb').value = lb.toFixed(2);
+          document.getElementById('weightKg').value = kg.toFixed(3);
+          document.getElementById('weightG').value  = (kg * 1000).toFixed(2);
+          document.getElementById('weightOz').value = (lb * 16).toFixed(2);
+        } break;
+        default: return;
+      }
+    }
+
+    function calcHeight() {
+      const hM  = parseFloat(document.getElementById('heightM').value);
+      const hCm = parseFloat(document.getElementById('heightCm').value);
+      const hFt = parseFloat(document.getElementById('heightFt').value);
+      const hIn = parseFloat(document.getElementById('heightIn').value);
+      switch (hLastFocus) {
+        case 'm': if (!isNaN(hM)) {
+          const ft = hM / 0.3048;
+          document.getElementById('heightCm').value = (hM * 100).toFixed(2);
+          document.getElementById('heightFt').value = ft.toFixed(2);
+          document.getElementById('heightIn').value = (ft * 12).toFixed(2);
+        } break;
+        case 'cm': if (!isNaN(hCm)) {
+          const m = hCm / 100; const ft = m / 0.3048;
+          document.getElementById('heightM').value  = m.toFixed(3);
+          document.getElementById('heightFt').value = ft.toFixed(2);
+          document.getElementById('heightIn').value = (ft * 12).toFixed(2);
+        } break;
+        case 'ft': if (!isNaN(hFt)) {
+          const m = hFt * 0.3048;
+          document.getElementById('heightM').value  = m.toFixed(3);
+          document.getElementById('heightCm').value = (m * 100).toFixed(2);
+          document.getElementById('heightIn').value = (hFt * 12).toFixed(2);
+        } break;
+        case 'in': if (!isNaN(hIn)) {
+          const ft = hIn / 12; const m = ft * 0.3048;
+          document.getElementById('heightFt').value = ft.toFixed(3);
+          document.getElementById('heightM').value  = m.toFixed(3);
+          document.getElementById('heightCm').value = (m * 100).toFixed(2);
+        } break;
+        default: return;
+      }
+    }
+
+    function calcFluid() {
+      const valL  = parseFloat(document.getElementById('fluidL').value);
+      const valMl = parseFloat(document.getElementById('fluidMl').value);
+      const valGal= parseFloat(document.getElementById('fluidGal').value);
+      const valOz = parseFloat(document.getElementById('fluidOz').value);
+      switch (fLastFocus) {
+        case 'l': if (!isNaN(valL) && valL >= 0) {
+          document.getElementById('fluidMl').value  = (valL * 1000).toFixed(2);
+          document.getElementById('fluidGal').value = (valL / 3.78541).toFixed(3);
+          document.getElementById('fluidOz').value  = ((valL * 1000) / 29.5735).toFixed(2);
+        } break;
+        case 'ml': if (!isNaN(valMl) && valMl >= 0) {
+          const L = valMl / 1000;
+          document.getElementById('fluidL').value   = L.toFixed(3);
+          document.getElementById('fluidGal').value = (L / 3.78541).toFixed(3);
+          document.getElementById('fluidOz').value  = (valMl / 29.5735).toFixed(2);
+        } break;
+        case 'gal': if (!isNaN(valGal) && valGal >= 0) {
+          const L = valGal * 3.78541;
+          document.getElementById('fluidL').value  = L.toFixed(3);
+          document.getElementById('fluidMl').value = (L * 1000).toFixed(1);
+          document.getElementById('fluidOz').value = ((L * 1000) / 29.5735).toFixed(2);
+        } break;
+        case 'oz': if (!isNaN(valOz) && valOz >= 0) {
+          const ml = valOz * 29.5735; const L = ml / 1000;
+          document.getElementById('fluidL').value   = L.toFixed(3);
+          document.getElementById('fluidMl').value  = ml.toFixed(1);
+          document.getElementById('fluidGal').value = (L / 3.78541).toFixed(3);
+        } break;
+        default: return;
+      }
+    }
+
+    function calcEffort() {
+      if (effLastFocus !== 'rpe') return;
+      const val = parseFloat(document.getElementById('effortRpe').value);
+      if (isNaN(val)) return;
+      let desc;
+      if (val <= 1) desc = "<span class='rpe-level'>RPE 1</span> &mdash; Very light, can maintain all day.";
+      else if (val <= 2) desc = "<span class='rpe-level'>RPE 2</span> &mdash; Light effort, easy conversation.";
+      else if (val <= 3) desc = "<span class='rpe-level'>RPE 3</span> &mdash; Moderate, comfortable but more focus.";
+      else if (val <= 4) desc = "<span class='rpe-level'>RPE 4</span> &mdash; Somewhat hard, conversation possible but not easy.";
+      else if (val <= 5) desc = "<span class='rpe-level'>RPE 5</span> &mdash; Hard effort, breathing heavy.";
+      else if (val <= 6) desc = "<span class='rpe-level'>RPE 6</span> &mdash; Moderately hard, quite fatiguing.";
+      else if (val <= 7) desc = "<span class='rpe-level'>RPE 7</span> &mdash; Very hard, short phrases only.";
+      else if (val <= 8) desc = "<span class='rpe-level'>RPE 8</span> &mdash; Intense, near impossible conversation.";
+      else if (val <= 9) desc = "<span class='rpe-level'>RPE 9</span> &mdash; Very intense, near max, no talking.";
+      else               desc = "<span class='rpe-level'>RPE 10</span> &mdash; Maximal, unsustainable more than a few seconds.";
+      document.getElementById('rpeDescription').innerHTML = desc;
+    }
+
+    function calcConcentration() {
+      const volUnit = document.getElementById('concVolUnit').value;
+      const volVal  = parseFloat(document.getElementById('concVolume').value) || 0;
+      const wtUnit  = document.getElementById('concWeightUnit').value;
+      const wtVal   = parseFloat(document.getElementById('concWeight').value) || 0;
+
+      let liters = 0;
+      if (volUnit === 'L')   liters = volVal;
+      else if (volUnit === 'mL')  liters = volVal / 1000;
+      else if (volUnit === 'gal') liters = volVal * 3.78541;
+      else if (volUnit === 'oz')  liters = volVal * 0.0295735;
+
+      let grams = 0;
+      if (wtUnit === 'g')  grams = wtVal;
+      else if (wtUnit === 'oz') grams = wtVal * 28.3495;
+
+      const gPerL = liters > 0 ? grams / liters : 0;
+      document.getElementById('concGL').value = gPerL > 0 ? gPerL.toFixed(3) : '';
+
+      const gallons = liters / 3.78541;
+      const ounces  = grams / 28.3495;
+      const ozPerGal = gallons > 0 ? ounces / gallons : 0;
+      document.getElementById('concOzGal').value = ozPerGal > 0 ? ozPerGal.toFixed(3) : '';
+
+      let carbPct = 0;
+      if (liters > 0) carbPct = (grams / (liters * 1000)) * 100;
+      document.getElementById('concPercent').value = carbPct > 0 ? carbPct.toFixed(1) + '%' : '';
+
+      let msg;
+      if (carbPct < 4)        msg = '<strong>&lt; 4%:</strong> Too dilute &mdash; not enough carb to maintain glucose metabolism on hard efforts.';
+      else if (carbPct < 8)   msg = '<strong>4&ndash;8%:</strong> Optimal isotonic range &mdash; multiple carb sources + a pinch of sodium recommended.';
+      else if (carbPct < 14)  msg = '<strong>&gt; 8%:</strong> Hypertonic &mdash; may cause GI distress and slow gastric emptying. Chase with water.';
+      else if (carbPct <= 18) msg = '<strong>14&ndash;18%:</strong> Concentrated fuel mix &mdash; not for hydration but can rapidly deliver carbs alongside separate water.';
+      else                    msg = '<strong>&gt; 18%:</strong> Very high concentration. GI risk &mdash; not typical for normal fueling.';
+      document.getElementById('carbRec').innerHTML = msg;
+    }
+  </script>
+
+</body>
+</html>
