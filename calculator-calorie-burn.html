@@ -1,0 +1,728 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Triathlon calorie burn — Yousuli calculators</title>
+  <meta name="description" content="Estimate calories burned across swim, bike (with or without power), and run. Quick energy estimate for fueling planning — pair with metabolic testing for exact numbers." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED CALCULATOR STYLES ============ -->
+  <style>
+    .cal-calc-host { width: 100%; }
+
+    .cal-calc-host .sport-tabs {
+      display: flex; gap: 0;
+      border-bottom: 1px solid var(--ys-line);
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    .cal-calc-host .sport-tab {
+      flex: 1 1 auto; padding: 10px 14px;
+      background: transparent; border: 0;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.74rem; font-weight: 600;
+      color: var(--ys-muted);
+      cursor: pointer;
+      border-bottom: 4px solid transparent;
+      transition: color 0.15s ease, border-color 0.15s ease;
+      min-width: 0;
+    }
+    .cal-calc-host .sport-tab:hover { color: var(--ys-navy); }
+    .cal-calc-host .sport-tab.active {
+      color: var(--ys-navy);
+      border-bottom-color: var(--wf-coral);
+    }
+
+    .cal-calc-host .unit-toggle {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 16px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-size: 0.74rem;
+      color: var(--ys-muted);
+    }
+    .cal-calc-host .unit-toggle .switch {
+      display: inline-flex;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .cal-calc-host .unit-toggle .switch button {
+      background: #fff; border: 0; padding: 7px 14px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.72rem; font-weight: 600;
+      color: var(--ys-muted);
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .cal-calc-host .unit-toggle .switch button.active {
+      background: var(--ys-navy);
+      color: #fff;
+    }
+
+    .cal-calc-host .sport-section { display: none; }
+    .cal-calc-host .sport-section.active { display: block; }
+
+    .cal-calc-host .field-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+      background: var(--ys-bg-soft);
+      padding: 18px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 600px) { .cal-calc-host .field-grid { grid-template-columns: 1fr; } }
+    .cal-calc-host .field-grid .full { grid-column: 1 / -1; }
+
+    .cal-calc-host label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.72rem;
+      color: var(--ys-navy);
+      margin-bottom: 6px;
+    }
+    .cal-calc-host input,
+    .cal-calc-host select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      font-size: 0.96rem;
+      font-family: var(--ys-font-body);
+      background: #fff;
+      color: var(--ys-navy);
+      box-sizing: border-box;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .cal-calc-host input:focus,
+    .cal-calc-host select:focus {
+      outline: none;
+      border-color: var(--wf-coral);
+      box-shadow: 0 0 0 3px rgba(250, 119, 60, 0.18);
+    }
+
+    .cal-calc-host .calc-btn-row {
+      display: flex; gap: 10px; flex-wrap: wrap;
+      margin: 4px 0 0;
+    }
+
+    .cal-calc-host .result-card {
+      margin-top: 18px;
+      background: var(--ys-navy);
+      color: #fff;
+      padding: 22px 24px;
+      border-radius: 12px;
+      text-align: center;
+      display: none;
+    }
+    .cal-calc-host .result-card.active { display: block; }
+    .cal-calc-host .result-card .result-label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 8px;
+    }
+    .cal-calc-host .result-card .result-main {
+      display: block;
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      font-size: 2.2rem;
+      letter-spacing: 0.02em;
+      color: #fff;
+    }
+    .cal-calc-host .result-card .result-aux {
+      display: block;
+      margin-top: 8px;
+      font-size: 0.92rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .cal-calc-host .err {
+      color: #c93939;
+      background: rgba(201, 57, 57, 0.08);
+      border-left: 4px solid #c93939;
+      padding: 10px 14px;
+      margin-top: 12px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      display: none;
+    }
+    .cal-calc-host .err.active { display: block; }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 56px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Fueling</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">Triathlon calorie burn.</h1>
+      <div class="wf-subhead">Swim &middot; bike &middot; bike (power) &middot; run</div>
+      <p class="lede" style="max-width: 660px;">Quick estimate of how much energy you burn across each discipline. Pick the sport, plug in distance and intensity, get the calorie figure. Useful for fueling planning &mdash; not a substitute for a metabolic profile.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">How accurate is this?</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 32px 0 48px;">
+    <div class="ys-container">
+      <div class="ys-tool" style="max-width: 720px;">
+        <h3>Pick a sport</h3>
+        <p class="ys-tool-pre">Each sport has its own input set. Switch between metric and imperial as needed &mdash; conversions happen behind the scenes, so the formulas always run on metric.</p>
+
+        <div class="cal-calc-host">
+
+          <div class="sport-tabs" role="tablist" aria-label="Sport">
+            <button class="sport-tab active" type="button" data-sport="swim">Swim</button>
+            <button class="sport-tab" type="button" data-sport="bike">Bike</button>
+            <button class="sport-tab" type="button" data-sport="bike-power">Bike (power)</button>
+            <button class="sport-tab" type="button" data-sport="run">Run</button>
+          </div>
+
+          <div class="unit-toggle" id="unitToggleWrap">
+            <span>Units</span>
+            <span class="switch">
+              <button type="button" class="active" data-unit="metric">Metric</button>
+              <button type="button" data-unit="imperial">Imperial</button>
+            </span>
+          </div>
+
+          <!-- SWIM -->
+          <div class="sport-section active" id="swimSection">
+            <div class="field-grid">
+              <div>
+                <label>Weight</label>
+                <input type="number" id="swimWeight" min="0" step="0.1" value="75" />
+              </div>
+              <div>
+                <label>Gender</label>
+                <select id="swimGender">
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </div>
+              <div>
+                <label>Distance</label>
+                <input type="number" id="swimDistance" step="0.01" value="1.5" />
+              </div>
+              <div>
+                <label>Pace (sec / 100m)</label>
+                <input type="number" id="swimPace" step="0.1" value="100" />
+              </div>
+              <div>
+                <label>Conditions</label>
+                <select id="swimEnvironment">
+                  <option value="0">Perfect (pool / glass-flat OW)</option>
+                  <option value="0.1">Mild current against</option>
+                  <option value="-0.1">Mild current with</option>
+                  <option value="0.2">Strong current against</option>
+                  <option value="-0.2">Strong current with</option>
+                  <option value="0.3">Very strong current against</option>
+                  <option value="-0.3">Very strong current with</option>
+                </select>
+              </div>
+              <div>
+                <label>Effort</label>
+                <select id="swimDifficulty">
+                  <option value="-0.2">Easy</option>
+                  <option value="0" selected>Endurance</option>
+                  <option value="0.1">Tempo</option>
+                  <option value="0.2">CSS</option>
+                  <option value="0.3">Anaerobic</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- BIKE -->
+          <div class="sport-section" id="bikeSection">
+            <div class="field-grid">
+              <div>
+                <label>Weight</label>
+                <input type="number" id="bikeWeight" step="0.1" value="75" />
+              </div>
+              <div>
+                <label>Distance</label>
+                <input type="number" id="bikeDistance" step="0.01" value="40" />
+              </div>
+              <div>
+                <label>Riding style</label>
+                <select id="ridingStyle">
+                  <option value="urban">Urban (stop-go)</option>
+                  <option value="normal" selected>Normal (road)</option>
+                  <option value="aero">Aero (TT / triathlon position)</option>
+                </select>
+              </div>
+              <div>
+                <label>Effort</label>
+                <select id="bikeDifficulty">
+                  <option value="-0.02">Easy</option>
+                  <option value="0" selected>Endurance</option>
+                  <option value="0.01">Tempo</option>
+                  <option value="0.015">Threshold</option>
+                  <option value="0.02">Anaerobic</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- BIKE POWER -->
+          <div class="sport-section" id="bike-powerSection">
+            <div class="field-grid">
+              <div>
+                <label>Average power (watts)</label>
+                <input type="number" id="power" min="0" value="200" />
+              </div>
+              <div>
+                <label>Duration (minutes)</label>
+                <input type="number" id="duration" min="0" value="60" />
+              </div>
+            </div>
+          </div>
+
+          <!-- RUN -->
+          <div class="sport-section" id="runSection">
+            <div class="field-grid">
+              <div>
+                <label>Weight</label>
+                <input type="number" id="runWeight" step="0.1" value="75" />
+              </div>
+              <div>
+                <label>Distance</label>
+                <input type="number" id="runDistance" step="0.01" value="10" />
+              </div>
+              <div class="full">
+                <label>Effort</label>
+                <select id="runDifficulty">
+                  <option value="-0.02">Easy</option>
+                  <option value="0" selected>Endurance</option>
+                  <option value="0.01">Tempo</option>
+                  <option value="0.015">Threshold</option>
+                  <option value="0.02">Anaerobic</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="calc-btn-row">
+            <button class="ys-btn ys-btn-coral" type="button" id="calculateButton">Calculate calories</button>
+            <button class="ys-btn ys-btn-ghost" type="button" id="resetButton">Reset</button>
+          </div>
+
+          <div class="err" id="errorMsg"></div>
+
+          <div class="result-card" id="result">
+            <span class="result-label" id="resultLabel">Estimated calories</span>
+            <span class="result-main"><span id="resultMain">0</span> kcal</span>
+            <span class="result-aux" id="resultAux"></span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW ACCURATE ============ -->
+  <section class="wf-section alt" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How accurate is this?</h2>
+        <div class="ys-rule"></div>
+        <p>It&rsquo;s an estimate. The order of magnitude is right; the last 20&ndash;30% takes lab data.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>Body-mass &times; distance models</h3>
+          <p>Run, bike (no power), and swim use simple body-mass &times; distance multiplied by an effort coefficient. Ignores wind, hills, drafting, fitness. Population-average estimates.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>Power-based bike is tighter</h3>
+          <p>If you have a power meter, the <strong>Bike (power)</strong> tab is materially better &mdash; based on actual joules at the crank, divided by ~24% gross efficiency. Within ~10% of metabolic-cart truth for most cyclists.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>Lab measurement is exact</h3>
+          <p>Indirect calorimetry (mask + gas analysis) measures your oxygen uptake and respiratory exchange ratio &mdash; turns into a precise kcal/min for your physiology, not a population average.</p>
+        </div>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.92rem; max-width: 720px; margin-left: auto; margin-right: auto;">Use this calculator to <strong>plan fueling</strong> (rough total to target on race day). Don&rsquo;t use it to set weight-loss budgets &mdash; the error band is too wide for that.</p>
+    </div>
+  </section>
+
+  <!-- ============ COACH NOTE ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
+        <h2 style="margin-top: 4px;">A calorie counter is not a fueling plan.</h2>
+        <p>Total calories burned is one number. What actually matters race-week is <em>when</em> you burn them, what fuel mix (fat vs. carb) at each intensity, and how much of that you can replace with what you can stomach &mdash; usually 60&ndash;90 g carbs/h for most athletes.</p>
+        <p style="margin-top: 10px;">A typical Ironman athlete burns 7 000&ndash;10 000 kcal over the day &mdash; and replaces 30&ndash;40% of it with on-course fueling. The rest comes from glycogen and fat stores. <strong>Plan to replace what your gut can absorb, not what you burn.</strong></p>
+        <p style="margin-top: 10px;">Two ways to make this real:</p>
+        <ul class="ys-card-bullets" style="margin-top: 8px;">
+          <li><strong>Metabolic profiling</strong> &mdash; measures fat-vs-carb crossover, so you know exactly how many g/h carb you actually need at race intensity</li>
+          <li><strong>Fuel-rate practice</strong> in long sessions &mdash; train your gut to handle 80&ndash;100 g/h before race day, not on it</li>
+        </ul>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Metabolic profiling</a>
+          <a class="ys-btn ys-btn-ghost" href="calculator-intraworkout-fueling.html">Fueling calculator</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED CALCULATORS ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Related calculators</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card redesigned" href="calculator-intraworkout-fueling.html">
+          <span class="ys-calc-card-title">Intra-workout fueling</span>
+          <p>Total calorie estimate &rarr; carb target &rarr; food equivalents.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card redesigned" href="calculator-sweat-rate.html">
+          <span class="ys-calc-card-title">Sweat rate</span>
+          <p>Pair calorie burn with fluid + sodium loss for a complete fueling picture.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="calculators.html">
+          <span class="ys-calc-card-title">All calculators</span>
+          <p>Back to the full catalog &mdash; 28 endurance calculators across performance, fueling, swim, bike, run.</p>
+          <span class="ys-calc-card-arrow">Browse &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want exact kcal/min for your physiology?</h2>
+          <p>Indirect calorimetry at the lab measures the gases you breathe &mdash; gives you a precise calorie burn rate by intensity, plus your fat/carb crossover. Worth its weight in gold for long-course fueling.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Book metabolic test</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Calorie%20burn">Send feedback</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Spotted a bug or want a feature? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Calorie%20burn" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ CALCULATOR LOGIC ============ -->
+  <script>
+    (function () {
+      let currentSport = 'swim';
+      let currentUnit = 'metric';
+
+      const sectionMap = {
+        'swim':       document.getElementById('swimSection'),
+        'bike':       document.getElementById('bikeSection'),
+        'bike-power': document.getElementById('bike-powerSection'),
+        'run':        document.getElementById('runSection')
+      };
+
+      const tabs   = document.querySelectorAll('.sport-tab');
+      const unitTg = document.querySelectorAll('#unitToggleWrap .switch button');
+      const errEl  = document.getElementById('errorMsg');
+      const resEl  = document.getElementById('result');
+      const resMain = document.getElementById('resultMain');
+      const resLabel = document.getElementById('resultLabel');
+      const resAux = document.getElementById('resultAux');
+      const btnGo  = document.getElementById('calculateButton');
+      const btnRst = document.getElementById('resetButton');
+
+      // Sport tabs
+      tabs.forEach(t => {
+        t.addEventListener('click', () => {
+          tabs.forEach(x => x.classList.remove('active'));
+          t.classList.add('active');
+          currentSport = t.getAttribute('data-sport');
+          Object.values(sectionMap).forEach(s => s.classList.remove('active'));
+          sectionMap[currentSport].classList.add('active');
+          hideResult();
+        });
+      });
+
+      // Unit toggle
+      unitTg.forEach(b => {
+        b.addEventListener('click', () => {
+          if (b.classList.contains('active')) return;
+          unitTg.forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          currentUnit = b.getAttribute('data-unit');
+          updateUnitLabels();
+        });
+      });
+
+      function updateUnitLabels() {
+        // Bike-power has no unit-dependent labels
+        const massLabel = currentUnit === 'metric' ? 'Weight (kg)' : 'Weight (lb)';
+        const distLabel = currentUnit === 'metric' ? 'Distance (km)' : 'Distance (mi)';
+        const swimPaceLabel = currentUnit === 'metric' ? 'Pace (sec / 100 m)' : 'Pace (sec / 100 yd)';
+
+        // swim
+        sectionMap['swim'].querySelectorAll('label')[0].textContent = massLabel;
+        sectionMap['swim'].querySelectorAll('label')[2].textContent = distLabel;
+        sectionMap['swim'].querySelectorAll('label')[3].textContent = swimPaceLabel;
+        // bike
+        sectionMap['bike'].querySelectorAll('label')[0].textContent = massLabel;
+        sectionMap['bike'].querySelectorAll('label')[1].textContent = distLabel;
+        // run
+        sectionMap['run'].querySelectorAll('label')[0].textContent = massLabel;
+        sectionMap['run'].querySelectorAll('label')[1].textContent = distLabel;
+      }
+
+      function hideResult() {
+        resEl.classList.remove('active');
+        errEl.classList.remove('active');
+        errEl.textContent = '';
+      }
+      function showError(msg) {
+        errEl.textContent = msg;
+        errEl.classList.add('active');
+        resEl.classList.remove('active');
+      }
+      function showResult(label, kcal, aux) {
+        resLabel.textContent = label;
+        resMain.textContent = Math.round(kcal).toLocaleString();
+        const kj = Math.round(kcal * 4.184).toLocaleString();
+        resAux.textContent = aux ? `${kj} kJ · ${aux}` : `${kj} kJ`;
+        resEl.classList.add('active');
+        errEl.classList.remove('active');
+      }
+
+      // SWIM pace modifier — non-linear ramp from 2.4 (fast) to 4.0 (slow)
+      function getSwimPaceModifier(paceSecPer100m) {
+        if (paceSecPer100m < 70) return 2.4;
+        if (paceSecPer100m < 120) {
+          const r = (paceSecPer100m - 70) / 50;
+          return 2.4 + (3.0 - 2.4) * (r * r);
+        }
+        if (paceSecPer100m < 180) {
+          const r = (paceSecPer100m - 120) / 60;
+          return 3.0 + (4.0 - 3.0) * (r * r);
+        }
+        return 4.0;
+      }
+
+      function calc() {
+        hideResult();
+
+        if (currentSport === 'swim') {
+          let weight   = parseFloat(document.getElementById('swimWeight').value);
+          let distance = parseFloat(document.getElementById('swimDistance').value);
+          let pace     = parseFloat(document.getElementById('swimPace').value);
+          const env    = parseFloat(document.getElementById('swimEnvironment').value);
+          const diff   = parseFloat(document.getElementById('swimDifficulty').value);
+          const gender = document.getElementById('swimGender').value;
+
+          if ([weight, distance, pace, env, diff].some(isNaN)) {
+            return showError('Fill out all swim fields with numbers.');
+          }
+          if (weight <= 0 || distance <= 0 || pace <= 0) {
+            return showError('Weight, distance, and pace must be positive.');
+          }
+
+          if (currentUnit === 'imperial') {
+            weight   *= 0.45359237;        // lb → kg
+            distance *= 1.609344;          // mi → km
+            pace     *= (100 / 91.44);     // sec/100yd → sec/100m
+          }
+
+          const genderMod = gender === 'female' ? -0.1 : 0;
+          const paceMod = getSwimPaceModifier(pace);
+          const kcal = weight * distance * (paceMod + env + diff + genderMod);
+
+          if (kcal <= 0) return showError('Result is non-positive — check your inputs (very fast pace + extreme negative effort).');
+
+          const totalSec = (distance * 1000 / 100) * pace;
+          const aux = `${(kcal / (totalSec / 60)).toFixed(1)} kcal/min · ${formatHMS(totalSec)} duration`;
+          showResult('Estimated swim calories', kcal, aux);
+        }
+        else if (currentSport === 'bike') {
+          let weight   = parseFloat(document.getElementById('bikeWeight').value);
+          let distance = parseFloat(document.getElementById('bikeDistance').value);
+          const style  = document.getElementById('ridingStyle').value;
+          const diff   = parseFloat(document.getElementById('bikeDifficulty').value);
+
+          if ([weight, distance, diff].some(isNaN)) return showError('Fill out all bike fields.');
+          if (weight <= 0 || distance <= 0) return showError('Weight and distance must be positive.');
+
+          if (currentUnit === 'imperial') {
+            weight   *= 0.45359237;
+            distance *= 1.609344;
+          }
+
+          let styleFactor = 0.20;
+          if (style === 'urban') styleFactor = 0.30;
+          else if (style === 'aero') styleFactor = 0.16;
+
+          const kcal = (styleFactor + diff) * weight * distance;
+          if (kcal <= 0) return showError('Result is non-positive — check your inputs.');
+          showResult('Estimated bike calories', kcal, 'Use the power tab for ±10% accuracy');
+        }
+        else if (currentSport === 'bike-power') {
+          const power    = parseFloat(document.getElementById('power').value);
+          const duration = parseFloat(document.getElementById('duration').value);
+
+          if ([power, duration].some(isNaN)) return showError('Fill in power and duration.');
+          if (power <= 0 || duration <= 0)  return showError('Power and duration must be positive.');
+
+          const hours = duration / 60;
+          const kcal = power * hours * 3.6;  // assumes ~24% gross efficiency
+          const kcalPerMin = kcal / duration;
+          showResult('Estimated bike calories (from power)', kcal, `${kcalPerMin.toFixed(1)} kcal/min · ~24% gross efficiency`);
+        }
+        else if (currentSport === 'run') {
+          let weight   = parseFloat(document.getElementById('runWeight').value);
+          let distance = parseFloat(document.getElementById('runDistance').value);
+          const diff   = parseFloat(document.getElementById('runDifficulty').value);
+
+          if ([weight, distance, diff].some(isNaN)) return showError('Fill out all run fields.');
+          if (weight <= 0 || distance <= 0) return showError('Weight and distance must be positive.');
+
+          if (currentUnit === 'imperial') {
+            weight   *= 0.45359237;
+            distance *= 1.609344;
+          }
+
+          const kcal = distance * weight * (1 + diff);
+          showResult('Estimated run calories', kcal, '~1 kcal per kg per km');
+        }
+      }
+
+      function formatHMS(sec) {
+        const h = Math.floor(sec / 3600);
+        const m = Math.floor((sec % 3600) / 60);
+        const s = Math.round(sec % 60);
+        if (h > 0) return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        return `${m}:${String(s).padStart(2, '0')}`;
+      }
+
+      function reset() {
+        document.querySelectorAll('.cal-calc-host input').forEach(i => { i.value = i.defaultValue; });
+        document.querySelectorAll('.cal-calc-host select').forEach(s => {
+          for (let i = 0; i < s.options.length; i++) {
+            if (s.options[i].defaultSelected) { s.selectedIndex = i; break; }
+          }
+        });
+        hideResult();
+      }
+
+      btnGo.addEventListener('click', calc);
+      btnRst.addEventListener('click', reset);
+
+      // initialize
+      updateUnitLabels();
+    })();
+  </script>
+
+</body>
+</html>
