@@ -738,6 +738,186 @@ p { margin: 0 0 1em; }
 }
 
 /* ============================================================
+   CALCULATOR TOOL WIDGET — white card with form + results
+   Used inside individual calculator pages
+   ============================================================ */
+
+.ys-tool {
+  background: #fff;
+  border: 1px solid var(--ys-line);
+  border-radius: 14px;
+  padding: 32px;
+  box-shadow: 0 8px 28px rgba(47, 45, 86, 0.06);
+  margin: 0 auto;
+  max-width: 860px;
+}
+.ys-tool h3 {
+  color: var(--ys-navy);
+  margin: 0 0 6px;
+  font-size: 1.3rem;
+}
+.ys-tool .ys-tool-pre {
+  font-size: 0.95rem;
+  color: var(--ys-muted);
+  margin: 0 0 20px;
+}
+
+.ys-tool-fields {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 16px;
+}
+@media (max-width: 600px) { .ys-tool-fields { grid-template-columns: 1fr; } }
+.ys-tool-fields .full { grid-column: 1 / -1; }
+
+.ys-tool-fields label {
+  display: block;
+  font-family: var(--ys-font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.74rem;
+  color: var(--ys-navy);
+  margin-bottom: 6px;
+}
+.ys-tool-fields input,
+.ys-tool-fields select {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--ys-line);
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: var(--ys-font-body);
+  background: #fff;
+  color: var(--ys-navy);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+}
+.ys-tool-fields input:focus,
+.ys-tool-fields select:focus {
+  outline: none;
+  border-color: var(--wf-coral);
+  box-shadow: 0 0 0 3px rgba(250, 119, 60, 0.18);
+}
+
+.ys-tool-error {
+  color: #c93939;
+  font-size: 0.92rem;
+  margin: 8px 0;
+  min-height: 1.2em;
+}
+
+.ys-tool-results {
+  margin-top: 22px;
+  overflow-x: auto;
+}
+.ys-tool-results table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+  background: #fff;
+}
+.ys-tool-results th,
+.ys-tool-results td {
+  padding: 12px 14px;
+  text-align: center;
+  border-bottom: 1px solid var(--ys-line);
+}
+.ys-tool-results th {
+  background: var(--wf-navy);
+  color: #fff;
+  font-family: var(--ys-font-display);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.74rem;
+  border-bottom: 0;
+}
+.ys-tool-results tr:last-child td { border-bottom: 0; }
+.ys-tool-results tr:nth-child(even) td { background: var(--ys-bg-soft); }
+.ys-tool-results td small {
+  display: block;
+  color: var(--ys-muted);
+  font-size: 0.78rem;
+  margin-top: 5px;
+  line-height: 1.45;
+}
+.ys-tool-results td:first-child {
+  text-align: left;
+  font-family: var(--ys-font-display);
+  letter-spacing: 0.04em;
+  color: var(--ys-navy);
+  font-weight: 600;
+}
+
+/* Calculator catalog card on /calculators landing */
+.ys-calc-card {
+  background: #fff;
+  border: 1px solid var(--ys-line);
+  border-radius: 12px;
+  padding: 20px 22px;
+  box-shadow: 0 4px 14px rgba(47, 45, 86, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  text-decoration: none;
+  color: inherit;
+}
+.ys-calc-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(47, 45, 86, 0.10);
+  border-color: var(--wf-coral);
+  text-decoration: none;
+  color: inherit;
+}
+.ys-calc-card .ys-calc-card-title {
+  font-family: var(--ys-font-display);
+  color: var(--ys-navy);
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+.ys-calc-card p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--ys-muted);
+  line-height: 1.45;
+}
+.ys-calc-card .ys-calc-card-arrow {
+  font-family: var(--ys-font-display);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: var(--wf-coral);
+  margin-top: 6px;
+}
+.ys-calc-card.redesigned {
+  border-left: 4px solid var(--wf-coral);
+}
+.ys-calc-card.redesigned .ys-calc-card-arrow::before {
+  content: "✓ Redesigned · ";
+  color: var(--wf-teal-deep);
+}
+
+.ys-calc-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.ys-calc-cat-head {
+  font-family: var(--ys-font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.82rem;
+  color: var(--wf-coral);
+  margin: 32px 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--ys-line);
+}
+.ys-calc-cat-head:first-child { margin-top: 0; }
+
+/* ============================================================
    CALCULATORS landing page
    ============================================================ */
 

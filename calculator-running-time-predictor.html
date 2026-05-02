@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Running time predictor — Yousuli calculators</title>
+  <meta name="description" content="Plug in one running effort. Get estimated finish times across 1.6 km to a marathon — three columns (Perfect / Normal / Poor) for the realistic range, plus per-400m, per-km, and per-mile pace." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 56px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Running</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">Running time predictor.</h1>
+      <div class="wf-subhead">One effort in &middot; finish times out &middot; 1.6 km to marathon</div>
+      <p class="lede" style="max-width: 640px;">Plug in one recent running effort and we&rsquo;ll estimate finish times across every standard distance from 1600 m to the full marathon. Three columns &mdash; Perfect, Normal, Poor &mdash; show the realistic range based on race-day execution, terrain, and weather.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">How it works</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 32px 0 48px;">
+    <div class="ys-container">
+
+      <div class="ys-tool">
+        <h3>Enter one effort</h3>
+        <p class="ys-tool-pre">Pick the distance you ran, then enter <strong>either</strong> a finish time <strong>or</strong> a pace &mdash; the other two fields will fill in automatically.</p>
+
+        <div class="ys-tool-fields">
+          <div class="full">
+            <label for="distance">Distance ran</label>
+            <select id="distance">
+              <option value="1600">1600 m (mile)</option>
+              <option value="3500">3500 m</option>
+              <option value="5000" selected>5000 m (5 km)</option>
+              <option value="10000">10 000 m (10 km)</option>
+              <option value="21096">21 096 m (half marathon)</option>
+              <option value="42195">42 195 m (marathon)</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="time">Finish time (HH:MM:SS)</label>
+            <input id="time" type="text" placeholder="00:22:30" />
+          </div>
+
+          <div>
+            <label for="pace_metric">Pace (MM:SS / km)</label>
+            <input id="pace_metric" type="text" placeholder="04:30" />
+          </div>
+
+          <div class="full">
+            <label for="pace_imperial">Pace (MM:SS / mile)</label>
+            <input id="pace_imperial" type="text" placeholder="07:14" />
+          </div>
+        </div>
+
+        <div class="ys-tool-error" id="tool-error" aria-live="polite"></div>
+
+        <div class="ys-btn-row" style="justify-content: flex-start; margin: 6px 0 0;">
+          <button class="ys-btn ys-btn-coral" type="button" id="predict-btn">Predict times</button>
+          <button class="ys-btn ys-btn-ghost" type="button" id="reset-btn">Reset</button>
+        </div>
+
+        <div class="ys-tool-results" id="results" hidden>
+          <table>
+            <thead>
+              <tr>
+                <th>Distance</th>
+                <th>Perfect day</th>
+                <th>Normal day</th>
+                <th>Poor day</th>
+              </tr>
+            </thead>
+            <tbody id="results-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ HOW TO READ THE RESULTS ============ -->
+  <section class="wf-section alt" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How to read the results</h2>
+        <div class="ys-rule"></div>
+        <p>Three columns, three different days. Same fitness underneath &mdash; different execution on top.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>Perfect day</h3>
+          <p>Cool weather, flat course, fresh legs, well-fueled, even pacing, race-rested. Best 5&ndash;10% of your race outcomes &mdash; the day everything clicks.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>Normal day</h3>
+          <p>What you should expect on most race days &mdash; reasonable conditions, decent fueling, a little wind or hills, slightly off pacing. Plan around this column.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>Poor day</h3>
+          <p>Heat, hills, headwind, cramps, stomach issues, started too fast, undertrained for the distance. Not a disaster &mdash; just the rough end of the curve.</p>
+        </div>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.92rem; max-width: 720px; margin-left: auto; margin-right: auto;">Each cell shows the projected finish time, plus the average pace per <strong>400 m</strong>, per <strong>km</strong>, and per <strong>mile</strong>. The 400 m split is your interval-track reference. Per-km and per-mile are your race-day watch references.</p>
+    </div>
+  </section>
+
+  <!-- ============ COACH NOTE ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
+        <h2 style="margin-top: 4px;">It&rsquo;s a power-law projection &mdash; not a coaching plan.</h2>
+        <p>The math behind this calculator is a Riegel-style power law: <code style="background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px;">T<sub>2</sub> = T<sub>1</sub> &times; (D<sub>2</sub>/D<sub>1</sub>)<sup>k</sup></code>. The exponent <em>k</em> reflects how much you slow down as the distance grows. We use <strong>1.03</strong> for a perfect day, <strong>1.06</strong> for normal, and <strong>1.12</strong> for poor &mdash; bracketing the 1.05&ndash;1.07 range that fits most well-trained endurance athletes.</p>
+        <p style="margin-top: 10px;">A few things this <em>doesn&rsquo;t</em> know:</p>
+        <ul class="ys-card-bullets" style="margin-top: 8px;">
+          <li>Your aerobic base &mdash; a sub-3:00 marathoner&rsquo;s 5K projects very differently from a sprinter&rsquo;s</li>
+          <li>How specifically you&rsquo;ve trained for the target distance (long runs, fueling practice, threshold volume)</li>
+          <li>Course profile, weather, altitude, your gut on the day</li>
+        </ul>
+        <p style="margin-top: 12px;">Use it as a sanity check and a pacing target, not a guarantee. For numbers grounded in <strong>your</strong> physiology &mdash; lactate threshold, VO<sub>2</sub>max, fat/carb crossover &mdash; come into the lab.</p>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Performance Lab testing</a>
+          <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED CALCULATORS ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Related calculators</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card" href="https://www.yousuli.co/calculators/advanced-running-predictor" target="_top">
+          <span class="ys-calc-card-title">Advanced running predictor</span>
+          <p>Same idea, more inputs &mdash; brings VO<sub>2</sub>max, weekly volume, and recent training into the projection.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="https://www.yousuli.co/calculators/boston-qualifier" target="_top">
+          <span class="ys-calc-card-title">Boston Qualifier check</span>
+          <p>Marathon time vs. age-graded BQ standard &mdash; see how much margin you actually need.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="calculators.html">
+          <span class="ys-calc-card-title">All calculators</span>
+          <p>Back to the full catalog &mdash; 28 endurance calculators across performance, fueling, swim, bike, run, strength.</p>
+          <span class="ys-calc-card-arrow">Browse &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want the actual numbers?</h2>
+          <p>Predictions are educated guesses from one effort. Threshold testing, VO<sub>2</sub>max, and metabolic profiling give you pacing zones grounded in your physiology &mdash; the kind of numbers that hold up on race day.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Book lab testing</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Running%20time%20predictor">Send feedback</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Spotted a bug or want a feature? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Running%20time%20predictor" style="color: var(--wf-coral);">info@yousuli.co</a> &mdash; we read every reply.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ CALCULATOR LOGIC ============ -->
+  <script>
+    (function () {
+      var distEl   = document.getElementById('distance');
+      var timeEl   = document.getElementById('time');
+      var paceMEl  = document.getElementById('pace_metric');
+      var paceIEl  = document.getElementById('pace_imperial');
+      var errEl    = document.getElementById('tool-error');
+      var btnGo    = document.getElementById('predict-btn');
+      var btnReset = document.getElementById('reset-btn');
+      var resWrap  = document.getElementById('results');
+      var resBody  = document.getElementById('results-body');
+
+      var DISTANCES = [
+        { m: 1600,  label: '1600 m (mile)' },
+        { m: 3500,  label: '3500 m' },
+        { m: 5000,  label: '5 km' },
+        { m: 10000, label: '10 km' },
+        { m: 21096, label: 'Half marathon' },
+        { m: 42195, label: 'Marathon' }
+      ];
+
+      // ---------- helpers ----------
+      function pad(n) { n = Math.floor(n); return (n < 10 ? '0' : '') + n; }
+
+      function timeToSeconds(str) {
+        if (!str) return null;
+        var p = String(str).trim().split(':').map(function (x) { return parseInt(x, 10); });
+        if (p.some(isNaN)) return null;
+        if (p.length === 3) return p[0] * 3600 + p[1] * 60 + p[2];
+        if (p.length === 2) return p[0] * 60 + p[1];
+        if (p.length === 1) return p[0];
+        return null;
+      }
+
+      function formatTime(totalSec) {
+        if (!isFinite(totalSec) || totalSec < 0) return '—';
+        var h = Math.floor(totalSec / 3600);
+        var m = Math.floor((totalSec % 3600) / 60);
+        var s = Math.round(totalSec % 60);
+        if (s === 60) { s = 0; m += 1; }
+        if (m === 60) { m = 0; h += 1; }
+        if (h > 0) return h + ':' + pad(m) + ':' + pad(s);
+        return pad(m) + ':' + pad(s);
+      }
+
+      function formatPace(secPerUnit) {
+        if (!isFinite(secPerUnit) || secPerUnit <= 0) return '—';
+        var m = Math.floor(secPerUnit / 60);
+        var s = Math.round(secPerUnit % 60);
+        if (s === 60) { s = 0; m += 1; }
+        return m + ':' + pad(s);
+      }
+
+      function pacePerUnit(totalSec, totalMeters, unitMeters) {
+        if (!totalSec || !totalMeters) return null;
+        return (totalSec / totalMeters) * unitMeters;
+      }
+
+      // ---------- auto-fill the other two fields ----------
+      function syncFromTime() {
+        var distM = parseInt(distEl.value, 10);
+        var sec = timeToSeconds(timeEl.value);
+        if (!sec || !distM) return;
+        paceMEl.value = formatPace(pacePerUnit(sec, distM, 1000));
+        paceIEl.value = formatPace(pacePerUnit(sec, distM, 1609.344));
+      }
+
+      function syncFromPaceMetric() {
+        var distM = parseInt(distEl.value, 10);
+        var paceSec = timeToSeconds(paceMEl.value);
+        if (!paceSec || !distM) return;
+        var totalSec = paceSec * (distM / 1000);
+        timeEl.value  = formatTime(totalSec);
+        paceIEl.value = formatPace(paceSec * 1.609344);
+      }
+
+      function syncFromPaceImperial() {
+        var distM = parseInt(distEl.value, 10);
+        var paceSec = timeToSeconds(paceIEl.value);
+        if (!paceSec || !distM) return;
+        var totalSec = paceSec * (distM / 1609.344);
+        timeEl.value = formatTime(totalSec);
+        paceMEl.value = formatPace(paceSec / 1.609344);
+      }
+
+      timeEl.addEventListener('blur', syncFromTime);
+      paceMEl.addEventListener('blur', syncFromPaceMetric);
+      paceIEl.addEventListener('blur', syncFromPaceImperial);
+      distEl.addEventListener('change', function () { if (timeEl.value) syncFromTime(); });
+
+      // ---------- predict ----------
+      function predict() {
+        errEl.textContent = '';
+        var distM = parseInt(distEl.value, 10);
+        var t = timeToSeconds(timeEl.value);
+        if (!t) {
+          // try pace fallbacks
+          var pm = timeToSeconds(paceMEl.value);
+          var pi = timeToSeconds(paceIEl.value);
+          if (pm) t = pm * (distM / 1000);
+          else if (pi) t = pi * (distM / 1609.344);
+        }
+        if (!t || !distM) {
+          errEl.textContent = 'Enter a finish time or a pace, then pick the distance.';
+          resWrap.hidden = true;
+          return;
+        }
+
+        var exponents = { perfect: 1.03, normal: 1.06, poor: 1.12 };
+        resBody.innerHTML = '';
+
+        DISTANCES.forEach(function (d) {
+          var ratio = d.m / distM;
+          var times = {
+            perfect: t * Math.pow(ratio, exponents.perfect),
+            normal:  t * Math.pow(ratio, exponents.normal),
+            poor:    t * Math.pow(ratio, exponents.poor)
+          };
+
+          function cell(secs) {
+            var p400  = formatPace(pacePerUnit(secs, d.m, 400));
+            var pkm   = formatPace(pacePerUnit(secs, d.m, 1000));
+            var pmile = formatPace(pacePerUnit(secs, d.m, 1609.344));
+            return '<td><strong>' + formatTime(secs) + '</strong>'
+                 + '<small>' + p400 + ' / 400 m<br>'
+                 + pkm + ' / km &middot; ' + pmile + ' / mile</small></td>';
+          }
+
+          var row = '<tr>'
+            + '<td>' + d.label + '</td>'
+            + cell(times.perfect)
+            + cell(times.normal)
+            + cell(times.poor)
+            + '</tr>';
+          resBody.insertAdjacentHTML('beforeend', row);
+        });
+
+        resWrap.hidden = false;
+        resWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      function reset() {
+        timeEl.value = '';
+        paceMEl.value = '';
+        paceIEl.value = '';
+        errEl.textContent = '';
+        resWrap.hidden = true;
+        resBody.innerHTML = '';
+        timeEl.focus();
+      }
+
+      btnGo.addEventListener('click', predict);
+      btnReset.addEventListener('click', reset);
+      [timeEl, paceMEl, paceIEl].forEach(function (el) {
+        el.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') { e.preventDefault(); predict(); }
+        });
+      });
+    })();
+  </script>
+
+</body>
+</html>
