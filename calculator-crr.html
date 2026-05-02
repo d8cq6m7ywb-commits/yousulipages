@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Crr (rolling resistance) — Yousuli calculators</title>
+  <meta name="description" content="Estimate your tire's rolling resistance coefficient (Crr) from a single steady-power ride with a known CdA. Includes the field-test protocol — you only get useful numbers if the test is done right." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED CALCULATOR STYLES ============ -->
+  <style>
+    .crr-calc-host { width: 100%; }
+
+    .crr-calc-host .group {
+      background: var(--ys-bg-soft);
+      padding: 18px;
+      border-radius: 10px;
+      margin-bottom: 14px;
+    }
+    .crr-calc-host .group-head {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.12em; text-transform: uppercase;
+      font-size: 0.78rem;
+      color: var(--wf-coral);
+      margin-bottom: 12px;
+    }
+    .crr-calc-host .field-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;
+    }
+    @media (max-width: 760px) { .crr-calc-host .field-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { .crr-calc-host .field-grid { grid-template-columns: 1fr; } }
+
+    .crr-calc-host label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.7rem;
+      color: var(--ys-navy);
+      margin-bottom: 6px;
+    }
+    .crr-calc-host .row { display: flex; align-items: stretch; }
+    .crr-calc-host .row.split {
+      display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: center; gap: 4px;
+    }
+    .crr-calc-host .row.split .colon {
+      font-family: var(--ys-font-display); color: var(--wf-coral);
+      font-weight: 700; font-size: 1.2rem; text-align: center;
+    }
+    .crr-calc-host input[type="number"],
+    .crr-calc-host select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      font-size: 0.96rem;
+      font-family: var(--ys-font-body);
+      background: #fff;
+      color: var(--ys-navy);
+      box-sizing: border-box;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .crr-calc-host input:focus, .crr-calc-host select:focus {
+      outline: none;
+      border-color: var(--wf-coral);
+      box-shadow: 0 0 0 3px rgba(250, 119, 60, 0.18);
+    }
+    .crr-calc-host .row > input:first-child { border-radius: 6px 0 0 6px; }
+    .crr-calc-host .row > .unit {
+      padding: 0 12px;
+      background: var(--ys-navy); color: #fff;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em; font-size: 0.74rem;
+      display: flex; align-items: center;
+      border-radius: 0 6px 6px 0;
+      min-width: 50px; justify-content: center;
+    }
+    .crr-calc-host .field-help { font-size: 0.78rem; color: var(--ys-muted); margin-top: 4px; }
+
+    .crr-calc-host .err {
+      color: #c93939;
+      background: rgba(201, 57, 57, 0.08);
+      border-left: 4px solid #c93939;
+      padding: 10px 14px;
+      margin-top: 12px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      display: none;
+    }
+    .crr-calc-host .err.active { display: block; }
+
+    .crr-calc-host .results-block {
+      margin-top: 18px;
+      padding: 22px;
+      background: var(--ys-navy);
+      color: #fff;
+      border-radius: 12px;
+      display: none;
+    }
+    .crr-calc-host .results-block.active { display: block; }
+    .crr-calc-host .results-block h4 {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.12em; text-transform: uppercase;
+      font-size: 0.78rem;
+      color: var(--wf-coral);
+      margin: 0 0 14px;
+    }
+    .crr-calc-host .crr-headline {
+      text-align: center;
+      padding: 18px 0 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+      margin-bottom: 14px;
+    }
+    .crr-calc-host .crr-value {
+      display: block;
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      font-size: 2.6rem;
+      color: var(--wf-coral);
+      letter-spacing: 0.04em;
+    }
+    .crr-calc-host .crr-rating {
+      display: block;
+      margin-top: 6px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.86rem;
+      color: rgba(255,255,255,0.85);
+    }
+    .crr-calc-host .out-row {
+      display: flex; justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.92rem;
+    }
+    .crr-calc-host .out-row:last-of-type { border-bottom: 0; }
+    .crr-calc-host .out-label { color: rgba(255,255,255,0.7); }
+    .crr-calc-host .out-value { color: #fff; font-weight: 700; font-family: var(--ys-font-display); letter-spacing: 0.02em; }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 56px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Bike</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">Crr (rolling resistance).</h1>
+      <div class="wf-subhead">Field test &middot; reverse-solve from steady-power ride</div>
+      <p class="lede" style="max-width: 660px;">Plug in a steady, flat ride with known CdA &mdash; we reverse-solve for your tire&rsquo;s rolling-resistance coefficient. Get the test protocol right and you&rsquo;ll have a number you can act on. Skip the protocol and the answer is noise.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#protocol">Read the protocol &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#tool">Skip to calculator</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROTOCOL ============ -->
+  <section class="wf-section alt" id="protocol">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Field-test protocol</h2>
+        <div class="ys-rule"></div>
+        <p>Crr is sensitive. Skip a step and your answer is off by 50%+.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>Conditions</h3>
+          <ul style="margin: 8px 0 0 18px; font-size: 0.92rem; color: var(--ys-navy);">
+            <li><strong>Calm wind</strong> &mdash; under 10 km/h ideal, under 5 km/h preferred</li>
+            <li><strong>Flat road</strong> &mdash; gradient under 1%, or use a known out-and-back loop</li>
+            <li><strong>Smooth surface</strong> &mdash; same surface for the entire test</li>
+            <li><strong>Dry, mid-day</strong> &mdash; consistent surface temp, no overnight moisture</li>
+          </ul>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>Equipment</h3>
+          <ul style="margin: 8px 0 0 18px; font-size: 0.92rem; color: var(--ys-navy);">
+            <li><strong>Power meter</strong> &mdash; calibrated, zero-offset done before ride</li>
+            <li><strong>Known CdA</strong> &mdash; from wind-tunnel, field aero test, or a Ghibli sensor</li>
+            <li><strong>Tire pressure logged</strong> &mdash; pump to target, write it down</li>
+            <li><strong>Same kit you race in</strong> &mdash; or your CdA reference is wrong</li>
+          </ul>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>Execution</h3>
+          <ul style="margin: 8px 0 0 18px; font-size: 0.92rem; color: var(--ys-navy);">
+            <li><strong>Steady power</strong> &mdash; ±5% of target, no surges</li>
+            <li><strong>Steady position</strong> &mdash; never sit up, never change grip</li>
+            <li><strong>15+ min duration</strong> &mdash; longer averages out micro-variability</li>
+            <li><strong>Out-and-back if windy</strong> &mdash; cancels asymmetric wind effects</li>
+            <li><strong>Pre-weigh in full kit</strong> &mdash; rider + clothes + bike + bottles, on a calibrated scale</li>
+          </ul>
+        </div>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.92rem; max-width: 720px; margin-left: auto; margin-right: auto;"><strong>Reality check:</strong> Crr field-tests are noisy. Run the protocol twice and average. If the two answers disagree by more than 10% (e.g. 0.0035 vs 0.0042), one or both tests had a problem. Re-test, don&rsquo;t average bad data.</p>
+    </div>
+  </section>
+
+  <!-- ============ THE TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 32px 0 48px;">
+    <div class="ys-container">
+      <div class="ys-tool" style="max-width: 920px;">
+        <h3>Plug in your test ride</h3>
+        <p class="ys-tool-pre">All fields are required except the optional humidity / pressure override. Power should be your <em>steady-state average</em> for the test segment, not the whole ride.</p>
+
+        <div class="crr-calc-host">
+
+          <!-- Rider/bike weights + drivetrain -->
+          <div class="group">
+            <div class="group-head">Rider, bike &amp; drivetrain</div>
+            <div class="field-grid">
+              <div>
+                <label>Rider weight</label>
+                <div class="row"><input type="number" id="riderKg" step="0.1" min="0" value="70" /><span class="unit">kg</span></div>
+              </div>
+              <div>
+                <label>Clothes &amp; gear</label>
+                <div class="row"><input type="number" id="gearKg" step="0.1" min="0" value="1" /><span class="unit">kg</span></div>
+                <div class="field-help">Helmet, shoes, bottles.</div>
+              </div>
+              <div>
+                <label>Bike weight</label>
+                <div class="row"><input type="number" id="bikeKg" step="0.1" min="0" value="9" /><span class="unit">kg</span></div>
+              </div>
+
+              <div>
+                <label>Power meter location</label>
+                <select id="pmLoc">
+                  <option value="crank" selected>Crank / pedals</option>
+                  <option value="hub">Rear hub / smart trainer</option>
+                </select>
+              </div>
+              <div>
+                <label>Drivetrain efficiency</label>
+                <div class="row"><input type="number" id="driveEff" step="0.1" min="80" max="100" value="98" /><span class="unit">%</span></div>
+                <div class="field-help">Crank power × this %. Hub/trainer = 100%.</div>
+              </div>
+              <div>
+                <label>Known CdA</label>
+                <div class="row"><input type="number" id="cda" step="0.001" min="0.1" max="0.6" value="0.250" /><span class="unit">m²</span></div>
+                <div class="field-help">From wind tunnel, field aero, or Ghibli avg.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Environment -->
+          <div class="group">
+            <div class="group-head">Environment</div>
+            <div class="field-grid">
+              <div>
+                <label>Altitude</label>
+                <div class="row"><input type="number" id="altitude" step="10" min="0" value="100" /><span class="unit">m</span></div>
+              </div>
+              <div>
+                <label>Temperature</label>
+                <div class="row"><input type="number" id="tempC" step="0.1" min="-30" max="50" value="20" /><span class="unit">°C</span></div>
+              </div>
+              <div>
+                <label>Wind</label>
+                <div class="row"><input type="number" id="windKmh" step="0.1" value="0" /><span class="unit">km/h</span></div>
+                <div class="field-help">+ headwind, − tailwind.</div>
+              </div>
+              <div>
+                <label>Relative humidity (optional)</label>
+                <div class="row"><input type="number" id="rhPct" step="1" min="0" max="100" placeholder="e.g. 50" /><span class="unit">%</span></div>
+              </div>
+              <div>
+                <label>Pressure override (optional)</label>
+                <div class="row"><input type="number" id="pHpa" step="1" placeholder="station" /><span class="unit">hPa</span></div>
+                <div class="field-help">Skip to use altitude-derived pressure.</div>
+              </div>
+              <div></div>
+            </div>
+          </div>
+
+          <!-- Ride summary -->
+          <div class="group">
+            <div class="group-head">Test ride</div>
+            <div class="field-grid">
+              <div>
+                <label>Avg power (steady)</label>
+                <div class="row"><input type="number" id="power" step="1" min="0" value="200" /><span class="unit">W</span></div>
+              </div>
+              <div>
+                <label>Distance</label>
+                <div class="row"><input type="number" id="distKm" step="0.01" min="0" value="30" /><span class="unit">km</span></div>
+              </div>
+              <div>
+                <label>Total climb</label>
+                <div class="row"><input type="number" id="climbM" step="1" min="0" value="0" /><span class="unit">m</span></div>
+                <div class="field-help">Net up; flat = 0.</div>
+              </div>
+              <div style="grid-column: 1 / -1;">
+                <label>Time (HH:MM:SS)</label>
+                <div class="row split">
+                  <input type="number" id="hh" min="0" step="1" value="1" />
+                  <span class="colon">:</span>
+                  <input type="number" id="mm" min="0" max="59" step="1" value="0" />
+                  <span class="colon">:</span>
+                  <input type="number" id="ss" min="0" max="59" step="1" value="0" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ys-btn-row" style="margin: 4px 0 0;">
+            <button class="ys-btn ys-btn-coral" type="button" id="calcBtn">Calculate Crr</button>
+            <button class="ys-btn ys-btn-ghost" type="button" id="resetBtn">Reset</button>
+          </div>
+
+          <div class="err" id="errorMsg"></div>
+
+          <div class="results-block" id="resultsBlock">
+            <h4>Result</h4>
+            <div class="crr-headline">
+              <span class="crr-value" id="outCrr">—</span>
+              <span class="crr-rating" id="outRating">—</span>
+            </div>
+            <div class="out-row"><span class="out-label">Speed</span><span class="out-value" id="outSpeed">—</span></div>
+            <div class="out-row"><span class="out-label">Slope grade</span><span class="out-value" id="outSlope">—</span></div>
+            <div class="out-row"><span class="out-label">Power → aero</span><span class="out-value" id="outPaero">—</span></div>
+            <div class="out-row"><span class="out-label">Power → rolling</span><span class="out-value" id="outProll">—</span></div>
+            <div class="out-row"><span class="out-label">Power → climbing</span><span class="out-value" id="outPclimb">—</span></div>
+            <div class="out-row"><span class="out-label">Air density used</span><span class="out-value" id="outRho">—</span></div>
+            <div class="out-row"><span class="out-label">Pressure used</span><span class="out-value" id="outPress">—</span></div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ INTERPRETING THE NUMBER ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Interpreting the Crr number</h2>
+        <div class="ys-rule"></div>
+        <p>Where your number sits and what it tells you.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-card">
+          <div class="ys-meta">&lt; 0.0030</div>
+          <h3>Excellent</h3>
+          <p>Top-tier road tires (Continental GP5000 latex, Vittoria Corsa Speed) on smooth tarmac at proper pressure. Few setups achieve this in real-world conditions.</p>
+        </div>
+        <div class="ys-card featured">
+          <div class="ys-meta" style="color: var(--wf-coral);">0.0030 – 0.0040</div>
+          <h3>Very good</h3>
+          <p>Quality road tires (28mm GP5000, Pirelli P Zero, Vittoria Corsa) on chip-seal-grade tarmac. <strong>Where most well-set-up TT/road bikes land.</strong></p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">0.0040 – 0.0055</div>
+          <h3>Average</h3>
+          <p>Training tires, slightly worn rubber, or rougher tarmac. Or properly-set-up gravel tires on smooth surfaces. Worth investigating tire choice.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">0.0055 – 0.008</div>
+          <h3>High</h3>
+          <p>Gravel / cyclocross tires on hardpack, or road tires badly under-pressurized. Real cost — can be 30+ watts at race pace vs. proper road setup.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">&gt; 0.008</div>
+          <h3>Very high</h3>
+          <p>MTB on hardpack or road tires on chip-seal/cobbles. Surface or pressure choice is dominating; consider whether your gear matches the course.</p>
+        </div>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.92rem; max-width: 720px; margin-left: auto; margin-right: auto;"><strong>Watt impact at 40 km/h, 75 kg system:</strong> dropping Crr by 0.001 saves ≈ 8 watts. Going from 0.005 to 0.003 = ~16 watts. Real money in a TT.</p>
+    </div>
+  </section>
+
+  <!-- ============ COACH NOTE ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
+        <h2 style="margin-top: 4px;">Single-point Crr is noisy &mdash; the protocol is what makes it useful.</h2>
+        <p>Even with everything done right, a single-effort field Crr has ±10% error. Three things that move the answer more than people expect:</p>
+        <ul class="ys-card-bullets" style="margin-top: 12px;">
+          <li><strong>CdA accuracy.</strong> If your reference CdA is off by 0.020 m², your Crr will be off by ~0.001. Lock CdA down first.</li>
+          <li><strong>Wind.</strong> 5 km/h shift mid-test changes aero power by 10%+, which dumps directly into the Crr estimate. Out-and-back loops are mandatory above 5 km/h average wind.</li>
+          <li><strong>Mass.</strong> Forgetting to include water bottles full vs empty (1.5 kg) shifts Crr by ~0.0005 on a flat. Weigh the actual race configuration.</li>
+        </ul>
+        <p style="margin-top: 12px;">The rigorous version (Chung coast-down method, FIT-file lap-by-lap analysis) sits inside our coaching platform &mdash; that&rsquo;s how we test athletes for race prep. The single-effort version here gets you 80% of the way for 20% of the work; the lab/coaching version closes the loop on the last 20%.</p>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Lab field-test</a>
+          <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED CALCULATORS ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Related calculators</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card redesigned" href="calculator-gear-speed-power.html">
+          <span class="ys-calc-card-title">Gear &times; Speed &times; Power</span>
+          <p>Plug your measured Crr into the power equation to project speed at race power.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card redesigned" href="calculator-tire-pressure.html">
+          <span class="ys-calc-card-title">Tire pressure guide</span>
+          <p>Optimal pressure changes Crr more than most riders realize.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="calculators.html">
+          <span class="ys-calc-card-title">All calculators</span>
+          <p>Back to the full catalog &mdash; 28 endurance calculators across performance, fueling, swim, bike, run.</p>
+          <span class="ys-calc-card-arrow">Browse &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want the Chung coast-down + lap-by-lap analysis?</h2>
+          <p>Our coaching platform supports FIT-file lap analysis and the Chung coast-down method &mdash; solves CdA and Crr simultaneously, no prior CdA test needed. That&rsquo;s how we set up athletes for race-day equipment decisions. Available with coaching.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/coaching" target="_top">Talk to a coach</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Crr">Send feedback</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Spotted a bug or want a feature? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Crr" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ CALCULATOR LOGIC ============ -->
+  <script>
+    (function () {
+      const G = 9.80665;
+      const $ = id => document.getElementById(id);
+
+      // Standard barometric formula → station pressure (hPa) at altitude (m)
+      function pressureAtAltitude(altM) {
+        const p0 = 1013.25, T0 = 288.15, L = 0.0065, R = 287.05;
+        return p0 * Math.pow(1 - (L * altM) / T0, (G) / (R * L));
+      }
+
+      // Saturation vapor pressure (hPa) by Tetens
+      function pSat(tempC) {
+        return 6.1078 * Math.pow(10, (7.5 * tempC) / (237.3 + tempC));
+      }
+
+      // Air density kg/m³ from pressure (hPa), tempC, optional RH%
+      function airDensity(pHpa, tempC, rhPct) {
+        const T = tempC + 273.15;
+        const Rd = 287.05, Rv = 461.495;
+        let pPa = pHpa * 100;
+        if (Number.isFinite(rhPct) && rhPct > 0) {
+          const e = (rhPct / 100) * pSat(tempC) * 100; // partial vapor pressure (Pa)
+          const pd = pPa - e;
+          return pd / (Rd * T) + e / (Rv * T);
+        }
+        return pPa / (Rd * T);
+      }
+
+      const errEl = $('errorMsg');
+      const resBlock = $('resultsBlock');
+
+      function showError(msg) { errEl.textContent = msg; errEl.classList.add('active'); resBlock.classList.remove('active'); }
+      function clearError() { errEl.classList.remove('active'); errEl.textContent = ''; }
+
+      function rateCrr(crr) {
+        if (crr < 0.0030) return 'Excellent';
+        if (crr < 0.0040) return 'Very good';
+        if (crr < 0.0055) return 'Average';
+        if (crr < 0.0080) return 'High';
+        return 'Very high';
+      }
+
+      function calc() {
+        clearError();
+
+        const rider  = parseFloat($('riderKg').value);
+        const gear   = parseFloat($('gearKg').value);
+        const bike   = parseFloat($('bikeKg').value);
+        const pmLoc  = $('pmLoc').value;
+        const drv    = parseFloat($('driveEff').value) / 100;
+        const cda    = parseFloat($('cda').value);
+        const altM   = parseFloat($('altitude').value);
+        const tempC  = parseFloat($('tempC').value);
+        const windKmh= parseFloat($('windKmh').value);
+        const rhPct  = parseFloat($('rhPct').value);
+        const pOver  = parseFloat($('pHpa').value);
+        const power  = parseFloat($('power').value);
+        const distKm = parseFloat($('distKm').value);
+        const climbM = parseFloat($('climbM').value);
+        const hh = parseInt($('hh').value, 10) || 0;
+        const mm = parseInt($('mm').value, 10) || 0;
+        const ss = parseInt($('ss').value, 10) || 0;
+        const totalSec = hh * 3600 + mm * 60 + ss;
+
+        if (![rider, gear, bike, drv, cda, altM, tempC, power, distKm].every(Number.isFinite)) {
+          return showError('Fill all required fields with valid numbers.');
+        }
+        if (rider <= 0 || bike <= 0)  return showError('Rider and bike weight must be positive.');
+        if (drv <= 0 || drv > 1)      return showError('Drivetrain efficiency must be 80–100%.');
+        if (cda <= 0 || cda > 1)      return showError('CdA out of plausible range (0.10–0.60 m²).');
+        if (power <= 0)               return showError('Power must be positive.');
+        if (distKm <= 0)              return showError('Distance must be positive.');
+        if (totalSec <= 0)            return showError('Time must be positive.');
+
+        // Air density
+        const pHpa = Number.isFinite(pOver) && pOver > 0 ? pOver : pressureAtAltitude(altM);
+        const rho = airDensity(pHpa, tempC, rhPct);
+
+        // Speeds (m/s)
+        const v = (distKm * 1000) / totalSec;             // ground speed
+        const windMs = (windKmh || 0) / 3.6;
+        const vAir = Math.max(0, v + windMs);              // headwind = + wind, tailwind = − wind
+
+        // Mass
+        const mass = rider + gear + bike;
+
+        // Slope (small-angle approximation)
+        const grade = (climbM > 0 && distKm > 0) ? (climbM / 1000) / distKm : 0;
+
+        // Power at the wheel (apply drivetrain only if pm at crank)
+        const pWheel = pmLoc === 'crank' ? power * drv : power;
+
+        // Component powers
+        const pAero  = 0.5 * rho * cda * Math.pow(vAir, 3);
+        const pClimb = mass * G * v * grade;
+        const pRoll  = pWheel - pAero - pClimb;
+
+        if (pRoll <= 0) {
+          return showError('Computed rolling power is non-positive — likely too much wind cancellation, too steep a downhill, or CdA too high. Re-check the test conditions.');
+        }
+        const crr = pRoll / (mass * G * v);
+        if (crr < 0.0005 || crr > 0.025) {
+          return showError('Computed Crr ' + crr.toFixed(4) + ' is out of plausible range (0.0005–0.025). Re-check inputs and protocol.');
+        }
+
+        // Render
+        $('outCrr').textContent = crr.toFixed(4);
+        $('outRating').textContent = rateCrr(crr);
+        $('outSpeed').textContent = (v * 3.6).toFixed(1) + ' km/h';
+        $('outSlope').textContent = (grade * 100).toFixed(2) + ' %';
+        $('outPaero').textContent = pAero.toFixed(1) + ' W';
+        $('outProll').textContent = pRoll.toFixed(1) + ' W';
+        $('outPclimb').textContent = pClimb.toFixed(1) + ' W';
+        $('outRho').textContent = rho.toFixed(3) + ' kg/m³';
+        $('outPress').textContent = pHpa.toFixed(0) + ' hPa';
+
+        resBlock.classList.add('active');
+      }
+
+      $('calcBtn').addEventListener('click', calc);
+      $('resetBtn').addEventListener('click', () => {
+        $('riderKg').value = 70; $('gearKg').value = 1; $('bikeKg').value = 9;
+        $('pmLoc').value = 'crank'; $('driveEff').value = 98; $('cda').value = 0.250;
+        $('altitude').value = 100; $('tempC').value = 20; $('windKmh').value = 0;
+        $('rhPct').value = ''; $('pHpa').value = '';
+        $('power').value = 200; $('distKm').value = 30; $('climbM').value = 0;
+        $('hh').value = 1; $('mm').value = 0; $('ss').value = 0;
+        clearError();
+        resBlock.classList.remove('active');
+      });
+
+      // Live recalc
+      ['riderKg','gearKg','bikeKg','pmLoc','driveEff','cda','altitude','tempC','windKmh','rhPct','pHpa','power','distKm','climbM','hh','mm','ss'].forEach(id => {
+        $(id).addEventListener('input', () => { if (resBlock.classList.contains('active')) calc(); });
+        $(id).addEventListener('change', () => { if (resBlock.classList.contains('active')) calc(); });
+      });
+    })();
+  </script>
+
+</body>
+</html>
