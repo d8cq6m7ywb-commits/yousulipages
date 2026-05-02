@@ -1,0 +1,871 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Strength training intensity guide — Yousuli calculators</title>
+  <meta name="description" content="Estimate 1RM from a working set, get phase-specific sets, reps, rest, and intensity bands — NSCA fixed-% or RPE auto-regulated. Plus a 49-exercise reference library." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED CALCULATOR STYLES ============ -->
+  <style>
+    .str-calc-host { width: 100%; }
+
+    .str-calc-host .header-row {
+      display: grid; grid-template-columns: 1fr 1fr auto; gap: 14px;
+      background: var(--ys-bg-soft);
+      padding: 18px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      align-items: end;
+    }
+    @media (max-width: 700px) { .str-calc-host .header-row { grid-template-columns: 1fr; } }
+
+    .str-calc-host label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.7rem;
+      color: var(--ys-navy);
+      margin-bottom: 6px;
+    }
+    .str-calc-host select,
+    .str-calc-host input[type="number"],
+    .str-calc-host input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      font-size: 0.96rem;
+      font-family: var(--ys-font-body);
+      background: #fff;
+      color: var(--ys-navy);
+      box-sizing: border-box;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .str-calc-host input:focus,
+    .str-calc-host select:focus {
+      outline: none;
+      border-color: var(--wf-coral);
+      box-shadow: 0 0 0 3px rgba(250, 119, 60, 0.18);
+    }
+
+    .str-calc-host .unit-toggle {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.7rem; color: var(--ys-muted);
+    }
+    .str-calc-host .unit-toggle .switch {
+      display: inline-flex;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px; overflow: hidden;
+    }
+    .str-calc-host .unit-toggle .switch button {
+      background: #fff; border: 0; padding: 8px 14px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.7rem; font-weight: 600;
+      color: var(--ys-muted); cursor: pointer;
+    }
+    .str-calc-host .unit-toggle .switch button.active {
+      background: var(--ys-navy); color: #fff;
+    }
+
+    .str-calc-host .ex-card {
+      background: #fff;
+      border: 1px solid var(--ys-line);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    @media (max-width: 820px) { .str-calc-host .ex-card { grid-template-columns: 1fr; } }
+
+    .str-calc-host .ex-input-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    }
+    .str-calc-host .ex-input-grid .full { grid-column: 1 / -1; }
+
+    .str-calc-host .ex-output {
+      background: var(--ys-navy);
+      border-radius: 10px;
+      padding: 14px 16px;
+      color: #fff;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .str-calc-host .ex-output-head {
+      display: flex; justify-content: space-between; align-items: baseline;
+      gap: 12px; flex-wrap: wrap;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+    }
+    .str-calc-host .ex-name {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.04em;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .str-calc-host .ex-1rm {
+      font-family: var(--ys-font-display);
+      color: var(--wf-coral);
+      font-size: 0.86rem;
+      letter-spacing: 0.06em;
+    }
+    .str-calc-host .ex-1rm strong { font-size: 1.1rem; }
+    .str-calc-host .ex-warn {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(250, 119, 60, 0.18);
+      color: var(--wf-coral);
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-size: 0.74rem;
+      cursor: help;
+    }
+    .str-calc-host .ex-warn:not(.active) { display: none; }
+
+    .str-calc-host .ex-phase {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.12em; text-transform: uppercase;
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.7);
+      text-align: center;
+    }
+
+    .str-calc-host .prescription {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+    }
+    @media (max-width: 540px) { .str-calc-host .prescription { grid-template-columns: 1fr 1fr; } }
+    .str-calc-host .pres-tile {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 10px 6px;
+      text-align: center;
+    }
+    .str-calc-host .pres-value {
+      display: block;
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      font-size: 0.96rem;
+      color: #fff;
+    }
+    .str-calc-host .pres-label {
+      display: block;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em; text-transform: uppercase;
+      font-size: 0.62rem;
+      color: rgba(255,255,255,0.6);
+      margin-top: 4px;
+    }
+    .str-calc-host .pres-tile.intensity {
+      background: rgba(250, 119, 60, 0.18);
+    }
+    .str-calc-host .pres-tile.intensity .pres-value { color: var(--wf-coral); }
+    .str-calc-host .pres-pct {
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.5);
+      display: block;
+      margin-top: 2px;
+    }
+
+    /* Exercise library */
+    .ex-lib-tabs {
+      display: flex; flex-wrap: wrap; gap: 4px;
+      margin-bottom: 14px;
+    }
+    .ex-lib-tab {
+      padding: 8px 14px;
+      background: #fff;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 999px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em; text-transform: uppercase;
+      font-size: 0.72rem; font-weight: 600;
+      color: var(--ys-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .ex-lib-tab:hover { color: var(--ys-navy); border-color: var(--ys-navy); }
+    .ex-lib-tab.active {
+      background: var(--ys-navy);
+      border-color: var(--ys-navy);
+      color: #fff;
+    }
+    .ex-lib-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
+    .ex-lib-card {
+      background: #fff;
+      border: 1px solid var(--ys-line);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .ex-lib-card h4 {
+      font-family: var(--ys-font-display);
+      color: var(--ys-navy);
+      letter-spacing: 0.04em;
+      font-size: 1rem;
+      margin: 0 0 4px;
+    }
+    .ex-lib-card .ex-type {
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.66rem;
+      color: var(--wf-coral);
+      margin-bottom: 8px;
+    }
+    .ex-lib-card p {
+      font-size: 0.88rem;
+      color: var(--ys-navy);
+      margin: 6px 0;
+      line-height: 1.5;
+    }
+    .ex-lib-card p strong {
+      color: var(--ys-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.74rem;
+      font-family: var(--ys-font-display);
+      font-weight: 600;
+    }
+    .ex-lib-cat { display: none; }
+    .ex-lib-cat.active { display: block; }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 56px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Strength</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">Strength training intensity.</h1>
+      <div class="wf-subhead">1RM from a working set &middot; phase &middot; sets/reps/rest/load</div>
+      <p class="lede" style="max-width: 660px;">Plug in a working set &mdash; weight you used and reps you got &mdash; and we&rsquo;ll estimate your 1RM (Epley) and prescribe sets, reps, rest, and intensity bands appropriate for your training phase. Switch on auto-regulation if you want to adjust load by RPE for the day.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">How it works</a>
+        <a class="ys-btn ys-btn-ghost" href="#library">Exercise library</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 32px 0 48px;">
+    <div class="ys-container">
+      <div class="ys-tool" style="max-width: 1080px; padding: 24px;">
+
+        <div class="str-calc-host">
+
+          <div class="header-row">
+            <div>
+              <label>Model</label>
+              <select id="modelSelect">
+                <option value="NSCA" selected>NSCA % 1RM (fixed bands)</option>
+                <option value="AutoReg">Auto-regulated (RPE adjusts ±5%)</option>
+              </select>
+            </div>
+            <div>
+              <label>Number of exercises</label>
+              <select id="noOfExercises">
+                <option value="1" selected>1 exercise</option>
+                <option value="2">2 exercises</option>
+                <option value="3">3 exercises</option>
+                <option value="4">4 exercises</option>
+                <option value="5">5 exercises</option>
+                <option value="6">6 exercises</option>
+                <option value="7">7 exercises</option>
+                <option value="8">8 exercises</option>
+                <option value="9">9 exercises</option>
+                <option value="10">10 exercises</option>
+              </select>
+            </div>
+            <div class="unit-toggle">
+              <label style="text-align: center;">Load</label>
+              <span class="switch">
+                <button type="button" class="active" data-unit="kg">kg</button>
+                <button type="button" data-unit="lb">lb</button>
+              </span>
+            </div>
+          </div>
+
+          <div id="exercisesContainer"></div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="wf-section alt" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How it works</h2>
+        <div class="ys-rule"></div>
+        <p>One formula for 1RM, two models for prescription.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>Epley 1RM</h3>
+          <p><code style="background: var(--ys-bg-soft); padding: 2px 8px; border-radius: 4px;">1RM = weight × (1 + 0.0333 × reps)</code></p>
+          <p style="margin-top: 8px;">Most accurate at 1–12 reps (the ACE / NSCA validity band). We accept 1–20 to cover endurance-strength work, but flag a <strong>warning chip</strong> past 12 — the estimate typically over-predicts by 5–15% in higher-rep sets. Past 20 reps the estimate is meaningless.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>NSCA fixed bands</h3>
+          <p>The classical NSCA recommendation: training phase determines load %. <strong>General/early prep 60–70% · Hypertrophy 70–80% · Late prep + Competition 80–90% · Transition flexible.</strong> Same prescription every session.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>Auto-regulated (RPE)</h3>
+          <p>Reads how you feel today. Last warm-up RPE ≤ 7 → <strong>+5%</strong> on the day&rsquo;s load (you&rsquo;re fresh). RPE ≥ 9 → <strong>−5%</strong> (cooked, preserve quality). RPE 8 → keep the standard band. Smarter for in-season blocks.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PHASES OF TRAINING ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Phases of training</h2>
+        <div class="ys-rule"></div>
+        <p>Five phases. Use the one that matches where you are in your annual plan.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-card">
+          <div class="ys-meta">Off-season</div>
+          <h3>General / early specific</h3>
+          <p>Foundation strength, movement patterns. <strong>2–3 sets · 12+ reps · &lt;30 s rest · 60–70% 1RM.</strong> Build the base before chasing numbers.</p>
+        </div>
+        <div class="ys-card featured">
+          <div class="ys-meta" style="color: var(--wf-coral);">Build</div>
+          <h3>Hypertrophy</h3>
+          <p>Muscle mass, work capacity. <strong>3–6 sets · 6–12 reps · 30–90 s rest · 70–80% 1RM.</strong> Most endurance-athlete strength blocks live here.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">Pre-season</div>
+          <h3>Late specific</h3>
+          <p>Sport-specific strength. <strong>2–6 sets · ≤6 reps · 2–5 min rest · 80–90% 1RM.</strong> Heavier loads, fewer reps, longer rests.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">Race</div>
+          <h3>Competition</h3>
+          <p>Peak strength + power. <strong>3 sets · ≤6 reps · 2–5 min rest · 80–90% 1RM.</strong> Minimal volume, maximal output. Don&rsquo;t accumulate fatigue.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">Recovery</div>
+          <h3>Transition</h3>
+          <p>Active recovery, maintenance, movement quality. <strong>1–2 sets · 8–15 reps · 30–90 s rest · flexible load.</strong> Keep moving without accumulating cost.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TEMPO & POWER ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Tempo &amp; movement speed</div>
+        <h2 style="margin-top: 4px;">Tempo controls the stimulus &mdash; same load, different result.</h2>
+        <p>Tempo notation has 4 numbers: <strong>Eccentric – Pause – Concentric – Pause</strong> (in seconds). <code>X</code> means &ldquo;as fast as possible.&rdquo;</p>
+        <ul class="ys-card-bullets" style="margin-top: 12px;">
+          <li><code>3-1-1-0</code> &mdash; 3 s lowering, 1 s pause at the bottom, 1 s up, no pause at the top. Hypertrophy bias.</li>
+          <li><code>2-0-2-0</code> &mdash; even, controlled. General strength / hypertrophy.</li>
+          <li><code>2-1-1-1</code> &mdash; deliberate, slight pauses. Max strength.</li>
+          <li><code>2-0-X-1</code> &mdash; controlled lowering, explosive push, brief reset. Power / speed.</li>
+        </ul>
+        <p style="margin-top: 12px;"><strong>Power, simplified:</strong> <code>P = (mass × distance) / time</code>. A 60 kg bar moved 0.6 m in 1.2 s vs. 0.6 s &mdash; the faster rep produces roughly <strong>double the power</strong>. Same load, same range. <em>Speed of intent</em> is why athletes train explosive concentrics even at sub-maximal loads.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EXERCISE LIBRARY ============ -->
+  <section class="wf-section" id="library">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Exercise library</h2>
+        <div class="ys-rule"></div>
+        <p>49 exercises across 7 movement patterns. Tap a category.</p>
+      </div>
+
+      <div class="ex-lib-tabs" id="exLibTabs">
+        <button class="ex-lib-tab active" data-cat="bendAndLift">Bend &amp; Lift</button>
+        <button class="ex-lib-tab" data-cat="hinge">Hinge</button>
+        <button class="ex-lib-tab" data-cat="push">Push</button>
+        <button class="ex-lib-tab" data-cat="pull">Pull</button>
+        <button class="ex-lib-tab" data-cat="rotate">Rotate</button>
+        <button class="ex-lib-tab" data-cat="singleLeg">Single-leg</button>
+        <button class="ex-lib-tab" data-cat="miscCoreStability">Core &amp; stability</button>
+      </div>
+
+      <!-- BEND & LIFT -->
+      <div class="ex-lib-cat active" id="bendAndLift">
+        <div class="ex-lib-grid">
+          <div class="ex-lib-card"><h4>Goblet squat</h4><div class="ex-type">Bend-and-lift</div><p><strong>Do</strong> Hold a DB / KB at chest, squat with upright torso, drive through heels.</p><p><strong>Cue</strong> &ldquo;Chest tall, knees out, drive through heels.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Front squat</h4><div class="ex-type">Bend-and-lift</div><p><strong>Do</strong> Bar on front delts. Maintain upright torso, squat, drive up through mid-foot/heels.</p><p><strong>Cue</strong> &ldquo;Elbows high, chest up, push through heels.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Back squat</h4><div class="ex-type">Bend-and-lift</div><p><strong>Do</strong> Bar on upper traps. Sit back/down, knees track toes. Drive up through heels.</p><p><strong>Cue</strong> &ldquo;Hips back, knees tracking, spine neutral.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Trap-bar deadlift</h4><div class="ex-type">Bend-and-lift</div><p><strong>Do</strong> Stand inside trap bar. Bend, grab, drive to stand, chest up.</p><p><strong>Cue</strong> &ldquo;Chest proud, push through legs, hips forward.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Sumo deadlift</h4><div class="ex-type">Bend-and-lift</div><p><strong>Do</strong> Wide stance, toes out. Grip inside thighs, drive up keeping knees out.</p><p><strong>Cue</strong> &ldquo;Wide stance, knees out, strong hip drive.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Medicine ball toss</h4><div class="ex-type">Bend-and-lift &middot; power</div><p><strong>Do</strong> Squat quickly, explode up, toss the ball.</p><p><strong>Cue</strong> &ldquo;Squat fast, explode, follow through.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Jump squats</h4><div class="ex-type">Bend-and-lift &middot; plyo</div><p><strong>Do</strong> Lower to squat, jump explosively, land softly.</p><p><strong>Cue</strong> &ldquo;Jump high, land soft.&rdquo;</p></div>
+        </div>
+      </div>
+
+      <!-- HINGE -->
+      <div class="ex-lib-cat" id="hinge">
+        <div class="ex-lib-grid">
+          <div class="ex-lib-card"><h4>Romanian deadlift (RDL)</h4><div class="ex-type">Hinge</div><p><strong>Do</strong> Slight knee bend, hinge at hips, lower to mid-shin, stand by extending hips.</p><p><strong>Cue</strong> &ldquo;Hips back, back straight, feel hamstrings.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Kettlebell swing</h4><div class="ex-type">Hinge &middot; power</div><p><strong>Do</strong> Hike bell, snap hips to chest height.</p><p><strong>Cue</strong> &ldquo;Hinge, snap, squeeze glutes.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Good morning</h4><div class="ex-type">Hinge</div><p><strong>Do</strong> Bar on traps, hinge forward, then stand.</p><p><strong>Cue</strong> &ldquo;Chest proud, hinge, control lower.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Single-leg RDL</h4><div class="ex-type">Hinge &middot; single-leg</div><p><strong>Do</strong> Balance, hinge forward flat back, return by extending hip.</p><p><strong>Cue</strong> &ldquo;Balance, hinge, square hips.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Hip thrust</h4><div class="ex-type">Hinge &middot; glute</div><p><strong>Do</strong> Upper back on bench, drive hips up.</p><p><strong>Cue</strong> &ldquo;Chin tucked, hips up, squeeze.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Cable / band pull-through</h4><div class="ex-type">Hinge</div><p><strong>Do</strong> Hinge forward, then extend hips forcefully.</p><p><strong>Cue</strong> &ldquo;Neutral spine, drive through glutes.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>45° back extension</h4><div class="ex-type">Hinge</div><p><strong>Do</strong> Flex at hips, extend to align body.</p><p><strong>Cue</strong> &ldquo;Control down, squeeze at top.&rdquo;</p></div>
+        </div>
+      </div>
+
+      <!-- PUSH -->
+      <div class="ex-lib-cat" id="push">
+        <div class="ex-lib-grid">
+          <div class="ex-lib-card"><h4>Push-ups</h4><div class="ex-type">Push &middot; bodyweight</div><p><strong>Do</strong> Hands slightly wider than shoulders, lower chest, push up.</p><p><strong>Cue</strong> &ldquo;Core tight, elbows tucked, press.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Bench press</h4><div class="ex-type">Horizontal push</div><p><strong>Do</strong> Lower bar to chest, drive up.</p><p><strong>Cue</strong> &ldquo;Shoulders down, chest up, smooth.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Overhead press</h4><div class="ex-type">Vertical push</div><p><strong>Do</strong> Press overhead, lock out.</p><p><strong>Cue</strong> &ldquo;Core braced, straight path.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Incline DB press</h4><div class="ex-type">Push &middot; upper chest</div><p><strong>Do</strong> Press up/in, lower controlled.</p><p><strong>Cue</strong> &ldquo;Control down, chest up.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Dips</h4><div class="ex-type">Vertical push</div><p><strong>Do</strong> Lower to ~90°, press back up.</p><p><strong>Cue</strong> &ldquo;Torso upright, elbows close.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Landmine press</h4><div class="ex-type">Angled push</div><p><strong>Do</strong> Press forward/up in arc.</p><p><strong>Cue</strong> &ldquo;Slight lean, drive up.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Plyo push-ups</h4><div class="ex-type">Push &middot; plyo</div><p><strong>Do</strong> Explode off ground, land softly.</p><p><strong>Cue</strong> &ldquo;Explode, soft landing.&rdquo;</p></div>
+        </div>
+      </div>
+
+      <!-- PULL -->
+      <div class="ex-lib-cat" id="pull">
+        <div class="ex-lib-grid">
+          <div class="ex-lib-card"><h4>Pull-ups / chin-ups</h4><div class="ex-type">Vertical pull</div><p><strong>Do</strong> Pull chest to bar, control down.</p><p><strong>Cue</strong> &ldquo;Shoulders down, elbows drive.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Single-arm DB row</h4><div class="ex-type">Horizontal pull</div><p><strong>Do</strong> Row dumbbell by driving elbow to hip.</p><p><strong>Cue</strong> &ldquo;Back neutral, squeeze scap.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Seated cable row</h4><div class="ex-type">Horizontal pull</div><p><strong>Do</strong> Pull to abdomen upright.</p><p><strong>Cue</strong> &ldquo;Chest up, smooth pull.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>TRX / inverted row</h4><div class="ex-type">Bodyweight pull</div><p><strong>Do</strong> Pull chest to handles, plank body.</p><p><strong>Cue</strong> &ldquo;Plank, elbows close.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Face pull</h4><div class="ex-type">Upper back / shoulders</div><p><strong>Do</strong> Pull to forehead, elbows high.</p><p><strong>Cue</strong> &ldquo;Lead elbows, retract.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Bent-over row</h4><div class="ex-type">Horizontal pull</div><p><strong>Do</strong> Hinge, pull to lower chest.</p><p><strong>Cue</strong> &ldquo;Hinge set, avoid rounding.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Inverted row (under bar)</h4><div class="ex-type">Bodyweight pull</div><p><strong>Do</strong> Pull chest to bar, control down.</p><p><strong>Cue</strong> &ldquo;Core tight, smooth.&rdquo;</p></div>
+        </div>
+      </div>
+
+      <!-- ROTATE -->
+      <div class="ex-lib-cat" id="rotate">
+        <div class="ex-lib-grid">
+          <div class="ex-lib-card"><h4>Russian twists</h4><div class="ex-type">Rotational core</div><p><strong>Do</strong> Rotate torso side-to-side.</p><p><strong>Cue</strong> &ldquo;Twist from core, controlled.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Cable woodchops</h4><div class="ex-type">Diagonal rotation</div><p><strong>Do</strong> Pull diagonally down, pivot feet.</p><p><strong>Cue</strong> &ldquo;Rotate hips, fluid pull.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Pallof press w/ rotation</h4><div class="ex-type">Anti-rotation + rotation</div><p><strong>Do</strong> Press out, rotate slightly, resist pull.</p><p><strong>Cue</strong> &ldquo;Brace abs, control.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Rotational med-ball throw</h4><div class="ex-type">Power</div><p><strong>Do</strong> Load hips, rotate and throw.</p><p><strong>Cue</strong> &ldquo;Twist from hips, snap.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Windmill</h4><div class="ex-type">Rotation + hinge</div><p><strong>Do</strong> KB overhead, hinge / rotate.</p><p><strong>Cue</strong> &ldquo;Look up, hinge sideways.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Landmine twist</h4><div class="ex-type">Core / rotation</div><p><strong>Do</strong> Arc the bar side-to-side.</p><p><strong>Cue</strong> &ldquo;Arms straight, rotate hips.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Standing cable / band rotation</h4><div class="ex-type">Core / rotation</div><p><strong>Do</strong> Rotate upper body, stable base.</p><p><strong>Cue</strong> &ldquo;Engage core, fluid rotate.&rdquo;</p></div>
+        </div>
+      </div>
+
+      <!-- SINGLE-LEG -->
+      <div class="ex-lib-cat" id="singleLeg">
+        <div class="ex-lib-grid">
+          <div class="ex-lib-card"><h4>Single-leg RDL</h4><div class="ex-type">Hinge &middot; single-leg</div><p><strong>Do</strong> Balance, hinge, return.</p><p><strong>Cue</strong> &ldquo;Hips level, flat back.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Bulgarian split squat</h4><div class="ex-type">Single-leg squat</div><p><strong>Do</strong> Rear foot elevated, drop hips, drive up.</p><p><strong>Cue</strong> &ldquo;Chest tall, knee stable.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Step-ups</h4><div class="ex-type">Single-leg</div><p><strong>Do</strong> Step on box, control down.</p><p><strong>Cue</strong> &ldquo;Stable knee, heel drive.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Pistol squat</h4><div class="ex-type">Single-leg &middot; advanced</div><p><strong>Do</strong> Squat on one leg, other leg extended.</p><p><strong>Cue</strong> &ldquo;Balance centered, control.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Reverse lunge</h4><div class="ex-type">Lunge</div><p><strong>Do</strong> Step back, drop knee, step forward.</p><p><strong>Cue</strong> &ldquo;Knee aligned, firm push.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Skater squat</h4><div class="ex-type">Single-leg</div><p><strong>Do</strong> Lower rear knee behind, stand up.</p><p><strong>Cue</strong> &ldquo;Control, torso upright.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Lateral lunge</h4><div class="ex-type">Lateral single-leg</div><p><strong>Do</strong> Step sideways, push back up.</p><p><strong>Cue</strong> &ldquo;Hips back, strong foot.&rdquo;</p></div>
+        </div>
+      </div>
+
+      <!-- CORE & STABILITY -->
+      <div class="ex-lib-cat" id="miscCoreStability">
+        <div class="ex-lib-grid">
+          <div class="ex-lib-card"><h4>Plank</h4><div class="ex-type">Core stability</div><p><strong>Do</strong> Hold a straight-line posture.</p><p><strong>Cue</strong> &ldquo;Tight core, neutral spine.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Side plank</h4><div class="ex-type">Lateral stability</div><p><strong>Do</strong> Hips up, body straight.</p><p><strong>Cue</strong> &ldquo;Stack shoulders, hips high.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Dead bug</h4><div class="ex-type">Anti-extension</div><p><strong>Do</strong> Lower opposite arm/leg, back flat.</p><p><strong>Cue</strong> &ldquo;Back pressed down, slow.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Bird dog</h4><div class="ex-type">Core / stability</div><p><strong>Do</strong> Extend opposite arm/leg, switch.</p><p><strong>Cue</strong> &ldquo;Stable trunk, avoid rotation.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Single-leg glute bridge</h4><div class="ex-type">Hip stability</div><p><strong>Do</strong> Drive hips up, pelvis level.</p><p><strong>Cue</strong> &ldquo;Even lift, squeeze glutes.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Crab walk</h4><div class="ex-type">Shoulder / hip stability</div><p><strong>Do</strong> Hips up, walk forward / back.</p><p><strong>Cue</strong> &ldquo;Hips up, shoulders back.&rdquo;</p></div>
+          <div class="ex-lib-card"><h4>Lateral band walk</h4><div class="ex-type">Hip stability</div><p><strong>Do</strong> Band tension, step laterally.</p><p><strong>Cue</strong> &ldquo;Knees stable, tension on band.&rdquo;</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COACH NOTE ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
+        <h2 style="margin-top: 4px;">Strength is a small input that returns big interest.</h2>
+        <p>Most endurance athletes under-strength-train and over-cardio. <strong>Two 30-minute sessions a week</strong>, year-round, returns more than the third easy run you cut to fit them in. The gains compound: better economy, fewer injuries, more durable late-race watts.</p>
+        <ul class="ys-card-bullets" style="margin-top: 12px;">
+          <li><strong>Start with patterns, not numbers</strong> &mdash; goblet squat, RDL, push-up, row, plank. Movement quality before load.</li>
+          <li><strong>2–3 weeks of general/early prep</strong> first, then progress to hypertrophy. Don&rsquo;t skip the on-ramp.</li>
+          <li><strong>Lift heavy in the off-season, lift to maintain in-season</strong>. The race-week strength session is 1 set × 5 reps × 80–85%, not failure work.</li>
+          <li><strong>Auto-regulate when training load is high</strong> &mdash; the RPE model exists because hard endurance days fatigue you for hard strength days.</li>
+        </ul>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/performancelab" target="_top">Lab testing</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED CALCULATORS ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Related calculators</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card redesigned" href="calculator-rsi.html">
+          <span class="ys-calc-card-title">Reactive strength index (RSI)</span>
+          <p>The plyo-readiness number — pair with your strength training plan.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card redesigned" href="calculator-rmr.html">
+          <span class="ys-calc-card-title">RMR &amp; energy availability</span>
+          <p>Strength training adds calorie cost — make sure you&rsquo;re fueling for it.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="calculators.html">
+          <span class="ys-calc-card-title">All calculators</span>
+          <p>Back to the full catalog &mdash; 28 endurance calculators across performance, fueling, swim, bike, run.</p>
+          <span class="ys-calc-card-arrow">Browse &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want a strength plan built for your sport?</h2>
+          <p>Coaching gets you a periodized strength plan integrated with your endurance training &mdash; right intensities, right volume, right phasing. The block that doesn&rsquo;t cost your run pace.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/coaching" target="_top">Book a call</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Strength">Send feedback</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Spotted a bug or want a feature? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Strength" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ CALCULATOR LOGIC ============ -->
+  <script>
+    (function () {
+
+      const PHASE_BANDS = {
+        'general':       { name: 'General / early specific', sets: '2–3', reps: '12+',  rest: '<30 s',   pctLo: 0.60, pctHi: 0.70 },
+        'hypertrophy':   { name: 'Hypertrophy',              sets: '3–6', reps: '6–12', rest: '30–90 s', pctLo: 0.70, pctHi: 0.80 },
+        'late':          { name: 'Late specific',            sets: '2–6', reps: '≤6',   rest: '2–5 min', pctLo: 0.80, pctHi: 0.90 },
+        'competition':   { name: 'Competition',              sets: '3',   reps: '≤6',   rest: '2–5 min', pctLo: 0.80, pctHi: 0.90 },
+        'transition':    { name: 'Transition',               sets: '1–2', reps: '8–15', rest: '30–90 s', pctLo: null, pctHi: null }
+      };
+
+      const container = document.getElementById('exercisesContainer');
+      const modelEl   = document.getElementById('modelSelect');
+      const countEl   = document.getElementById('noOfExercises');
+      let unit = 'kg';
+
+      // ---- unit toggle
+      document.querySelectorAll('.str-calc-host .unit-toggle button').forEach(b => {
+        b.addEventListener('click', () => {
+          if (b.classList.contains('active')) return;
+          document.querySelectorAll('.str-calc-host .unit-toggle button').forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          unit = b.getAttribute('data-unit');
+          recalcAll();
+        });
+      });
+
+      // ---- model toggle reveals/hides RPE on each card
+      modelEl.addEventListener('change', () => { rebuildExercises(); });
+      countEl.addEventListener('change', () => { rebuildExercises(); });
+
+      // ---- build n cards
+      function rebuildExercises() {
+        const n = parseInt(countEl.value, 10);
+        const showRPE = modelEl.value === 'AutoReg';
+        // preserve existing input values where possible
+        const prev = [];
+        container.querySelectorAll('.ex-card').forEach(card => {
+          prev.push({
+            name: card.querySelector('.in-name').value,
+            reps: card.querySelector('.in-reps').value,
+            weight: card.querySelector('.in-weight').value,
+            phase: card.querySelector('.in-phase').value,
+            rpe: card.querySelector('.in-rpe').value
+          });
+        });
+
+        container.innerHTML = '';
+        for (let i = 0; i < n; i++) {
+          const p = prev[i] || {};
+          const card = document.createElement('div');
+          card.className = 'ex-card';
+          card.dataset.idx = i;
+          card.innerHTML = `
+            <div class="ex-input-grid">
+              <div class="full">
+                <label>Exercise name</label>
+                <input type="text" class="in-name" value="${(p.name || '').replace(/"/g,'&quot;')}" placeholder="e.g. Back squat" />
+              </div>
+              <div>
+                <label>Reps performed</label>
+                <input type="number" class="in-reps" min="1" max="20" value="${p.reps || 5}" />
+              </div>
+              <div>
+                <label>Weight used (<span class="unit-mass-text">${unit}</span>)</label>
+                <input type="number" class="in-weight" step="0.5" min="0" value="${p.weight || 80}" />
+              </div>
+              <div class="full">
+                <label>Training phase</label>
+                <select class="in-phase">
+                  <option value="general"${p.phase==='general'?' selected':''}>General / early specific prep</option>
+                  <option value="hypertrophy"${(!p.phase||p.phase==='hypertrophy')?' selected':''}>Hypertrophy / build</option>
+                  <option value="late"${p.phase==='late'?' selected':''}>Late specific prep</option>
+                  <option value="competition"${p.phase==='competition'?' selected':''}>Competition / peak</option>
+                  <option value="transition"${p.phase==='transition'?' selected':''}>Transition / recovery</option>
+                </select>
+              </div>
+              <div class="full" style="display: ${showRPE ? 'block' : 'none'};">
+                <label>Last warm-up set RPE (6–10)</label>
+                <input type="number" class="in-rpe" min="6" max="10" value="${p.rpe || 8}" />
+              </div>
+            </div>
+            <div class="ex-output">
+              <div class="ex-output-head">
+                <span class="ex-name">Exercise</span>
+                <span class="ex-1rm">1RM <strong class="out-1rm">—</strong> <span class="unit-mass-text">${unit}</span> <span class="ex-warn"></span></span>
+              </div>
+              <div class="ex-phase out-phase">Phase</div>
+              <div class="prescription">
+                <div class="pres-tile"><span class="pres-value out-sets">—</span><span class="pres-label">Sets</span></div>
+                <div class="pres-tile"><span class="pres-value out-reps">—</span><span class="pres-label">Reps</span></div>
+                <div class="pres-tile"><span class="pres-value out-rest">—</span><span class="pres-label">Rest</span></div>
+                <div class="pres-tile intensity"><span class="pres-value out-lo">—</span><span class="pres-label">Lower</span><span class="pres-pct out-pctLo">—</span></div>
+                <div class="pres-tile intensity"><span class="pres-value out-hi">—</span><span class="pres-label">Upper</span><span class="pres-pct out-pctHi">—</span></div>
+              </div>
+            </div>
+          `;
+          container.appendChild(card);
+
+          // wire inputs to recalc
+          ['.in-name','.in-reps','.in-weight','.in-phase','.in-rpe'].forEach(sel => {
+            const el = card.querySelector(sel);
+            if (el) {
+              el.addEventListener('input', () => calcCard(card));
+              el.addEventListener('change', () => calcCard(card));
+            }
+          });
+          calcCard(card);
+        }
+      }
+
+      function recalcAll() {
+        document.querySelectorAll('.unit-mass-text').forEach(el => el.textContent = unit);
+        container.querySelectorAll('.ex-card').forEach(c => calcCard(c));
+      }
+
+      function calcCard(card) {
+        const repsEl = card.querySelector('.in-reps');
+        const weightEl = card.querySelector('.in-weight');
+        const phaseEl = card.querySelector('.in-phase');
+        const rpeEl = card.querySelector('.in-rpe');
+        const nameEl = card.querySelector('.in-name');
+        const warn = card.querySelector('.ex-warn');
+
+        let reps = parseInt(repsEl.value, 10);
+        const weight = parseFloat(weightEl.value);
+        const phase = phaseEl.value;
+        const rpe = parseFloat(rpeEl.value) || 8;
+
+        // Clamp reps to 1–20 (hard limit). Show warning whenever reps > 12 (Epley accuracy drops).
+        let clamped = false;
+        if (Number.isFinite(reps)) {
+          if (reps < 1) { reps = 1; clamped = true; repsEl.value = 1; }
+          else if (reps > 20) { reps = 20; clamped = true; repsEl.value = 20; }
+        }
+        if (clamped) {
+          warn.classList.add('active');
+          warn.textContent = '⚠ clamped';
+          warn.title = 'Reps clamped to 1–20. Beyond 20 reps Epley 1RM becomes meaningless.';
+        } else if (Number.isFinite(reps) && reps > 12) {
+          warn.classList.add('active');
+          warn.textContent = '⚠ degraded';
+          warn.title = 'Epley 1RM is most accurate at 1–12 reps. Past 12 the estimate becomes approximate (typically over-predicts by 5–15%). Treat as a ballpark.';
+        } else {
+          warn.classList.remove('active');
+          warn.textContent = '';
+          warn.title = '';
+        }
+
+        // Epley 1RM
+        let oneRM = NaN;
+        if (Number.isFinite(reps) && reps >= 1 && Number.isFinite(weight) && weight > 0) {
+          oneRM = reps === 1 ? weight : weight * (1 + 0.0333 * reps);
+        }
+
+        // Display name + 1RM
+        card.querySelector('.ex-name').textContent = (nameEl.value || 'Exercise');
+        card.querySelector('.out-1rm').textContent = Number.isFinite(oneRM) ? oneRM.toFixed(1) : '—';
+
+        // Phase prescription
+        const band = PHASE_BANDS[phase];
+        card.querySelector('.out-phase').textContent = band.name;
+        card.querySelector('.out-sets').textContent = band.sets;
+        card.querySelector('.out-reps').textContent = band.reps;
+        card.querySelector('.out-rest').textContent = band.rest;
+
+        // Intensity bands
+        const loEl  = card.querySelector('.out-lo');
+        const hiEl  = card.querySelector('.out-hi');
+        const loPct = card.querySelector('.out-pctLo');
+        const hiPct = card.querySelector('.out-pctHi');
+
+        if (band.pctLo == null) {
+          loEl.textContent = 'Flexible';
+          hiEl.textContent = 'Flexible';
+          loPct.textContent = '—';
+          hiPct.textContent = '—';
+        } else if (Number.isFinite(oneRM) && oneRM > 0) {
+          let pctLo = band.pctLo;
+          let pctHi = band.pctHi;
+          if (modelEl.value === 'AutoReg') {
+            let mult = 1.0;
+            if (rpe <= 7) mult = 1.05;
+            else if (rpe >= 9) mult = 0.95;
+            pctLo *= mult;
+            pctHi *= mult;
+          }
+          loEl.textContent = (oneRM * pctLo).toFixed(1);
+          hiEl.textContent = (oneRM * pctHi).toFixed(1);
+          loPct.textContent = Math.round(pctLo * 100) + '%';
+          hiPct.textContent = Math.round(pctHi * 100) + '%';
+        } else {
+          loEl.textContent = '—';
+          hiEl.textContent = '—';
+          loPct.textContent = '—';
+          hiPct.textContent = '—';
+        }
+      }
+
+      // ---- exercise library tabs
+      document.querySelectorAll('.ex-lib-tab').forEach(t => {
+        t.addEventListener('click', () => {
+          document.querySelectorAll('.ex-lib-tab').forEach(x => x.classList.remove('active'));
+          t.classList.add('active');
+          const cat = t.getAttribute('data-cat');
+          document.querySelectorAll('.ex-lib-cat').forEach(c => c.classList.remove('active'));
+          document.getElementById(cat).classList.add('active');
+        });
+      });
+
+      // initial build
+      rebuildExercises();
+    })();
+  </script>
+
+</body>
+</html>
