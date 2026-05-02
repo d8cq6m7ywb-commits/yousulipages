@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VO₂ → Cycling Power — Yousuli calculators</title>
+  <meta name="description" content="Estimate cycling target power from VO₂max, efficiency, RER, and duration. Includes VO₂ on-kinetics correction, calibration from known FTP, uncertainty band, and Coggan power-profile lookup." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED CALCULATOR STYLES ============ -->
+  <style>
+    .vp-calc-host { width: 100%; }
+
+    .vp-calc-host .field-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;
+      background: var(--ys-bg-soft);
+      padding: 18px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 760px) { .vp-calc-host .field-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { .vp-calc-host .field-grid { grid-template-columns: 1fr; } }
+
+    .vp-calc-host label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.7rem;
+      color: var(--ys-navy);
+      margin-bottom: 6px;
+    }
+    .vp-calc-host .row { display: flex; align-items: stretch; }
+    .vp-calc-host input[type="number"],
+    .vp-calc-host select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      font-size: 0.96rem;
+      font-family: var(--ys-font-body);
+      background: #fff;
+      color: var(--ys-navy);
+      box-sizing: border-box;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .vp-calc-host input:focus, .vp-calc-host select:focus {
+      outline: none;
+      border-color: var(--wf-coral);
+      box-shadow: 0 0 0 3px rgba(250, 119, 60, 0.18);
+    }
+    .vp-calc-host .row > input:first-child { border-radius: 6px 0 0 6px; }
+    .vp-calc-host .row > .unit {
+      padding: 0 12px;
+      background: var(--ys-navy); color: #fff;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em; font-size: 0.74rem;
+      display: flex; align-items: center;
+      border-radius: 0 6px 6px 0;
+      min-width: 60px; justify-content: center;
+    }
+    .vp-calc-host .field-help { font-size: 0.78rem; color: var(--ys-muted); margin-top: 4px; }
+
+    .vp-calc-host .checkbox-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px;
+      background: #fff;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .vp-calc-host .checkbox-row input { width: 18px; height: 18px; accent-color: var(--wf-coral); cursor: pointer; }
+    .vp-calc-host .checkbox-row label { margin: 0; font-family: var(--ys-font-body); font-size: 0.92rem; text-transform: none; letter-spacing: 0; color: var(--ys-navy); cursor: pointer; }
+
+    .vp-calc-host .accordion {
+      background: var(--ys-bg-soft);
+      border: 1px solid var(--ys-line);
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+    }
+    .vp-calc-host .accordion summary {
+      cursor: pointer;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.78rem;
+      color: var(--wf-coral);
+      list-style: none;
+    }
+    .vp-calc-host .accordion summary::-webkit-details-marker { display: none; }
+    .vp-calc-host .accordion summary::before { content: '▸ '; color: var(--wf-coral); }
+    .vp-calc-host .accordion[open] summary::before { content: '▾ '; }
+    .vp-calc-host .accordion .acc-body { margin-top: 12px; }
+
+    .vp-calc-host .results-block {
+      margin-top: 18px;
+      padding: 22px;
+      background: var(--ys-navy);
+      color: #fff;
+      border-radius: 12px;
+    }
+    .vp-calc-host .results-block h4 {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.12em; text-transform: uppercase;
+      font-size: 0.78rem;
+      color: var(--wf-coral);
+      margin: 0 0 12px;
+    }
+    .vp-calc-host .res-headline {
+      text-align: center;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      margin-bottom: 12px;
+    }
+    .vp-calc-host .res-headline .res-power {
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      font-size: 2.4rem;
+      color: var(--wf-coral);
+      letter-spacing: 0.04em;
+    }
+    .vp-calc-host .res-headline .res-wkg {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em;
+      font-size: 0.92rem;
+      color: rgba(255,255,255,0.85);
+      margin-top: 4px;
+      display: block;
+    }
+    .vp-calc-host .res-row {
+      display: flex; justify-content: space-between;
+      padding: 7px 0;
+      font-size: 0.9rem;
+    }
+    .vp-calc-host .res-row .res-label { color: rgba(255,255,255,0.7); }
+    .vp-calc-host .res-row .res-value { color: #fff; font-family: var(--ys-font-display); font-weight: 700; letter-spacing: 0.02em; }
+    .vp-calc-host .tau-note {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,0.12);
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.7);
+    }
+    .vp-calc-host .band-block {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.12);
+    }
+    .vp-calc-host .band-head {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.74rem;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 8px;
+    }
+
+    /* Coggan table */
+    .vp-calc-host .coggan-wrap {
+      margin-top: 22px;
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--ys-line);
+      border-radius: 10px;
+      overflow-x: auto;
+    }
+    .vp-calc-host .coggan-wrap h4 {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.12em; text-transform: uppercase;
+      font-size: 0.8rem;
+      color: var(--wf-coral);
+      margin: 0 0 12px;
+    }
+    .vp-calc-host table.coggan {
+      width: 100%; border-collapse: collapse; font-size: 0.92rem;
+    }
+    .vp-calc-host table.coggan th, .vp-calc-host table.coggan td {
+      padding: 8px 10px; text-align: center;
+      border-bottom: 1px solid var(--ys-line);
+    }
+    .vp-calc-host table.coggan th {
+      background: var(--ys-navy); color: #fff;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em; text-transform: uppercase;
+      font-size: 0.72rem; font-weight: 600;
+      border-bottom: 0;
+    }
+    .vp-calc-host table.coggan td:first-child {
+      text-align: left;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.04em;
+      color: var(--ys-navy);
+      font-weight: 600;
+    }
+    .vp-calc-host table.coggan tr.athlete-row td {
+      background: rgba(250, 119, 60, 0.12);
+      color: var(--wf-coral);
+      font-weight: 700;
+    }
+    .vp-calc-host table.coggan tr.athlete-row td:first-child { color: var(--wf-coral); }
+    .vp-calc-host .coggan-match {
+      margin-top: 10px;
+      font-size: 0.92rem;
+      color: var(--ys-navy);
+    }
+    .vp-calc-host .coggan-match strong { color: var(--wf-coral); }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 56px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Bike</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">VO₂ → Cycling Power.</h1>
+      <div class="wf-subhead">Target power from VO<sub>2</sub>max &middot; with kinetics, RER &amp; calibration</div>
+      <p class="lede" style="max-width: 680px;">Estimate the cycling power you should be able to sustain for any duration from your VO<sub>2</sub>max. Includes VO<sub>2</sub> on-kinetics correction for short efforts, gross-efficiency input (default 20%), RER substrate adjustment, an uncertainty band, and a calibration mode that back-solves efficiency from a known FTP. Coggan profile shows where your number sits.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">How it&rsquo;s built</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 32px 0 48px;">
+    <div class="ys-container">
+      <div class="ys-tool" style="max-width: 1000px;">
+        <h3>Plug in your numbers</h3>
+        <p class="ys-tool-pre">VO<sub>2</sub>max comes from a lab test (gold) or a 5–6 min all-out effort with HR (proxy). Pick a duration; we&rsquo;ll preset a fraction-of-VO<sub>2</sub>max and efficiency that match. Override any field to explore.</p>
+
+        <div class="vp-calc-host">
+
+          <div class="field-grid">
+            <div>
+              <label>Gender</label>
+              <select id="gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </div>
+            <div>
+              <label>Body mass</label>
+              <div class="row">
+                <input type="number" id="mass" min="30" max="200" step="0.1" value="75" />
+                <span class="unit">kg</span>
+              </div>
+            </div>
+            <div>
+              <label>VO<sub>2</sub>max</label>
+              <div class="row">
+                <input type="number" id="vo2" min="15" max="100" step="0.1" value="55" />
+                <span class="unit">ml/kg/min</span>
+              </div>
+            </div>
+
+            <div>
+              <label>Duration</label>
+              <select id="duration">
+                <option value="5">5 min</option>
+                <option value="6">6 min</option>
+                <option value="8">8 min</option>
+                <option value="20" selected>20 min (FTP test)</option>
+                <option value="40">40 min</option>
+                <option value="60">60 min</option>
+                <option value="90">90 min</option>
+                <option value="180">180 min (Ironman)</option>
+                <option value="custom">Custom (seconds)</option>
+              </select>
+            </div>
+            <div id="customDurField" style="display: none;">
+              <label>Custom duration</label>
+              <div class="row">
+                <input type="number" id="customDur" min="60" step="1" value="1200" />
+                <span class="unit">sec</span>
+              </div>
+            </div>
+            <div>
+              <label>Fraction of VO<sub>2</sub>max</label>
+              <div class="row">
+                <input type="number" id="fraction" min="50" max="120" step="1" value="85" />
+                <span class="unit">%</span>
+              </div>
+              <div class="field-help">Auto-set by duration; override if needed.</div>
+            </div>
+
+            <div>
+              <label>Gross efficiency</label>
+              <div class="row">
+                <input type="number" id="efficiency" min="10" max="30" step="0.1" value="20" />
+                <span class="unit">%</span>
+              </div>
+              <div class="field-help">Typical 18–24%. Use calibration below for your value.</div>
+            </div>
+            <div>
+              <label>RER</label>
+              <div class="row">
+                <input type="number" id="rer" min="0.70" max="1.10" step="0.01" value="0.95" />
+                <span class="unit">—</span>
+              </div>
+              <div class="field-help">0.70 fat &rarr; 1.00 carb. Race pace ≈ 0.92–0.98.</div>
+            </div>
+            <div>
+              <label>Uncertainty band</label>
+              <div class="checkbox-row">
+                <input type="checkbox" id="showBand" />
+                <label for="showBand">Show low/high estimates</label>
+              </div>
+              <div class="field-help">Eff 18–22%, RER 0.85–1.00.</div>
+            </div>
+          </div>
+
+          <details class="accordion" id="calibAcc">
+            <summary>Calibration — back-solve efficiency from your known 20-min power</summary>
+            <div class="acc-body">
+              <p style="font-size: 0.92rem; color: var(--ys-muted); margin-bottom: 12px;">If you know your FTP or 20-min mean max power from a real test, we&rsquo;ll work backward to find the gross efficiency that matches. That value gets pushed into the main calculator.</p>
+              <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px; align-items: end;">
+                <div>
+                  <label>Known 20-min power</label>
+                  <div class="row">
+                    <input type="number" id="calPower" min="0" step="1" placeholder="e.g. 250" />
+                    <span class="unit">W</span>
+                  </div>
+                </div>
+                <div>
+                  <label>Implied efficiency</label>
+                  <div class="row">
+                    <input type="text" id="calResult" readonly placeholder="—" style="background: var(--ys-bg-soft);" />
+                    <span class="unit">%</span>
+                  </div>
+                </div>
+                <button class="ys-btn ys-btn-coral" type="button" id="calBtn" style="white-space: nowrap;">Calibrate</button>
+              </div>
+            </div>
+          </details>
+
+          <div class="results-block">
+            <h4>Result</h4>
+            <div class="res-headline">
+              <span class="res-power"><span id="outPower">—</span> W</span>
+              <span class="res-wkg"><span id="outWkg">—</span> W/kg</span>
+            </div>
+            <div class="res-row"><span class="res-label">Efficiency used</span><span class="res-value" id="outEff">—</span></div>
+            <div class="res-row"><span class="res-label">RER &middot; kJ per L O₂</span><span class="res-value" id="outRer">—</span></div>
+            <div class="res-row"><span class="res-label">Effective fraction (after kinetics)</span><span class="res-value" id="outFracEff">—</span></div>
+
+            <div class="tau-note" id="tauNote" style="display: none;">VO<sub>2</sub> kinetics applied: τ = 30 s (typical 20–40 s for trained athletes). Short-duration estimates are sensitive to this.</div>
+
+            <div class="band-block" id="bandBlock" style="display: none;">
+              <div class="band-head">Uncertainty band</div>
+              <div class="res-row"><span class="res-label">Low (18% eff, RER 0.85)</span><span class="res-value" id="outBandLow">—</span></div>
+              <div class="res-row"><span class="res-label">High (22% eff, RER 1.00)</span><span class="res-value" id="outBandHigh">—</span></div>
+            </div>
+          </div>
+
+          <div class="coggan-wrap">
+            <h4>Coggan power profile (W/kg)</h4>
+            <table class="coggan">
+              <thead>
+                <tr><th>Level</th><th>5 s</th><th>1 min</th><th>5 min</th><th>FTP</th></tr>
+              </thead>
+              <tbody id="cogganBody"></tbody>
+            </table>
+            <div class="coggan-match" id="cogganMatch"></div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="wf-section alt" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How it&rsquo;s built</h2>
+        <div class="ys-rule"></div>
+        <p>Five components turn VO<sub>2</sub> into watts.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>VO<sub>2</sub>max → metabolic rate</h3>
+          <p><code style="background: var(--ys-bg-soft); padding: 2px 8px; border-radius: 4px;">VO<sub>2</sub> (L/min) = ml/kg/min × mass / 1000</code></p>
+          <p style="margin-top: 8px;">Then × kJ/L oxygen (depends on RER) gives the kJ/min you&rsquo;re burning at full VO<sub>2</sub>max.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>RER substrate adjustment</h3>
+          <p>kJ per liter of O<sub>2</sub> depends on what you&rsquo;re burning: ~19.6 kJ/L on pure fat (RER 0.70), ~21.1 kJ/L on pure carb (RER 1.00). Linearly interpolated. Race-pace cycling typically RER 0.92–0.98.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>Fraction of VO<sub>2</sub>max</h3>
+          <p>You can&rsquo;t hold 100% of VO<sub>2</sub>max for long. The fraction drops with duration: ~95% at 5 min, ~85% at 20 min (FTP), ~80% at 60 min, ~72% at 3 hr. Auto-set by the duration dropdown.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">04</div>
+          <h3>VO<sub>2</sub> on-kinetics</h3>
+          <p>For durations ≤ 180 s, the <em>mean</em> VO<sub>2</sub> over the effort is reduced by the time it takes O<sub>2</sub> to ramp up. Mono-exponential, τ = 30 s. Matters most for 5K-track-pace efforts; negligible past ~3 min.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">05</div>
+          <h3>Gross efficiency → mechanical W</h3>
+          <p>Cycling efficiency converts metabolic kJ into pedal-stroke work. Typical 18–24%, higher for trained cyclists. <strong>Calibrate</strong> from a known 20-min FTP to lock in your real value.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COACH NOTE ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
+        <h2 style="margin-top: 4px;">Use this <em>after</em> a metabolic test, not before.</h2>
+        <p>This calculator turns a measured VO<sub>2</sub>max into a power target. Three real uses:</p>
+        <ul class="ys-card-bullets" style="margin-top: 12px;">
+          <li><strong>Translate lab data into ride targets.</strong> You walked out with a VO<sub>2</sub>max number; this turns it into watts at FTP, race pace, Ironman pace.</li>
+          <li><strong>Set targets for athletes who haven&rsquo;t done a long race yet.</strong> A 90-min race-pace estimate from VO<sub>2</sub>max is the cleanest starting point before you have race data to fit to.</li>
+          <li><strong>Sanity-check FTP outliers.</strong> If your <a href="calculator-critical-power.html" style="color: var(--wf-coral);">CP test</a> says one number and this says something 30 W different, dig &mdash; either VO<sub>2</sub>max measurement was off, or your CP test was paced badly.</li>
+        </ul>
+        <p style="margin-top: 12px;"><strong>Calibration matters most.</strong> The default 20% efficiency is a population average. <em>Your</em> efficiency might be 18 or 23 — that&rsquo;s a 25% spread on output. If you have a verified FTP, run the calibrator first; the rest of the predictions come out much tighter.</p>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">VO<sub>2</sub>max test</a>
+          <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Related calculators</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card redesigned" href="calculator-critical-power.html">
+          <span class="ys-calc-card-title">Critical power (CP)</span>
+          <p>Three maximal efforts → CP + W'. Cross-check the FTP this calculator predicts against a CP fit.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card redesigned" href="calculator-gear-speed-power.html">
+          <span class="ys-calc-card-title">Gear &times; Speed &times; Power</span>
+          <p>Once you have a power target, project speed on your bike + course profile.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="calculators.html">
+          <span class="ys-calc-card-title">All calculators</span>
+          <p>Back to the full catalog — 28 endurance calculators across performance, fueling, swim, bike, run.</p>
+          <span class="ys-calc-card-arrow">Browse &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want measured VO<sub>2</sub>max + efficiency?</h2>
+          <p>The lab measures both directly &mdash; the two inputs that matter most for this calculator. One morning, gas analysis with cycling ramp protocol, you walk out with VO<sub>2</sub>max, ventilatory thresholds, and gross efficiency. Plug all three in here and the predictions tighten dramatically.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Book bike testing</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20VO2%20Power">Send feedback</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Spotted a bug or want a feature? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20VO2%20Power" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ CALCULATOR LOGIC ============ -->
+  <script>
+    (function () {
+      const $ = id => document.getElementById(id);
+
+      // Coggan power profile data (preserved verbatim from platform)
+      const COGGAN_MALE = [
+        { level: 'World class',  s5: 24.04, m1: 11.50, m5: 7.60, ftp: 6.40 },
+        { level: 'Exceptional',  s5: 22.00, m1: 10.00, m5: 7.00, ftp: 5.90 },
+        { level: 'Excellent',    s5: 20.00, m1:  8.80, m5: 6.40, ftp: 5.40 },
+        { level: 'Very good',    s5: 18.00, m1:  7.80, m5: 5.80, ftp: 4.80 },
+        { level: 'Good',         s5: 16.00, m1:  6.80, m5: 5.20, ftp: 4.20 },
+        { level: 'Moderate',     s5: 14.00, m1:  6.00, m5: 4.60, ftp: 3.60 },
+        { level: 'Fair',         s5: 12.00, m1:  5.20, m5: 4.00, ftp: 3.00 },
+        { level: 'Untrained',    s5: 10.00, m1:  4.00, m5: 3.20, ftp: 2.50 }
+      ];
+      const COGGAN_FEMALE = [
+        { level: 'World class',  s5: 19.20, m1:  9.29, m5: 6.35, ftp: 5.69 },
+        { level: 'Exceptional',  s5: 17.50, m1:  8.30, m5: 5.70, ftp: 5.15 },
+        { level: 'Excellent',    s5: 15.80, m1:  7.30, m5: 5.10, ftp: 4.55 },
+        { level: 'Very good',    s5: 14.10, m1:  6.50, m5: 4.50, ftp: 3.93 },
+        { level: 'Good',         s5: 12.40, m1:  5.70, m5: 3.90, ftp: 3.33 },
+        { level: 'Moderate',     s5: 10.70, m1:  4.90, m5: 3.30, ftp: 2.73 },
+        { level: 'Fair',         s5:  9.00, m1:  4.10, m5: 2.70, ftp: 2.15 },
+        { level: 'Untrained',    s5:  7.30, m1:  3.30, m5: 2.10, ftp: 1.90 }
+      ];
+
+      // Duration presets: [fraction%, efficiency%]
+      const DUR_DEFAULTS = {
+        '5':   [95, 20],
+        '6':   [93, 20],
+        '8':   [90, 20],
+        '20':  [85, 20],
+        '40':  [82, 20],
+        '60':  [80, 20],
+        '90':  [77, 20],
+        '180': [72, 20]
+      };
+
+      function safeNum(v) { const x = parseFloat(v); return Number.isFinite(x) ? x : NaN; }
+
+      // Linear interpolation: 19.6 kJ/L (RER 0.70, fat) → 21.1 (RER 1.00, carb)
+      function kJperLfromRER(rer) {
+        const r = Math.max(0.70, Math.min(1.00, rer));
+        return 19.6 + (21.1 - 19.6) * ((r - 0.70) / 0.30);
+      }
+      // VO₂ on-kinetics: mean fraction over [0,T] with mono-exponential ramp, tau=30s
+      function meanFraction(fmax, Tsec, tau) {
+        if (typeof tau === 'undefined') tau = 30;
+        if (Tsec <= 0) return fmax;
+        return fmax * (1 - (tau / Tsec) * (1 - Math.exp(-Tsec / tau)));
+      }
+
+      function getDurationSec() {
+        const sel = $('duration').value;
+        if (sel === 'custom') return safeNum($('customDur').value);
+        return safeNum(sel) * 60;
+      }
+
+      function onDurationChange() {
+        const sel = $('duration').value;
+        $('customDurField').style.display = (sel === 'custom') ? '' : 'none';
+        if (DUR_DEFAULTS[sel]) {
+          $('fraction').value = DUR_DEFAULTS[sel][0];
+          $('efficiency').value = DUR_DEFAULTS[sel][1];
+        }
+      }
+
+      function calculate() {
+        const gender = $('gender').value;
+        const mass   = safeNum($('mass').value);
+        const vo2val = safeNum($('vo2').value);
+        const eff    = safeNum($('efficiency').value) / 100;
+        const frac   = safeNum($('fraction').value) / 100;
+        const rer    = safeNum($('rer').value);
+        const Tsec   = getDurationSec();
+        const showBand = $('showBand').checked;
+
+        if ([mass, vo2val, eff, frac, rer, Tsec].some(v => !Number.isFinite(v) || v <= 0)) return;
+
+        const kJperL = kJperLfromRER(rer);
+        // VO₂ in L/min
+        const vo2Lmin = vo2val * mass / 1000;
+        // Adjust fraction with on-kinetics for short durations
+        const fAdj = (Tsec <= 180) ? meanFraction(frac, Tsec, 30) : frac;
+        // Metabolic power (W) = vo2Lmin × kJ/L × 1000 / 60
+        const metPower  = vo2Lmin * fAdj * kJperL * 1000 / 60;
+        const mechPower = metPower * eff;
+        const wkg = mechPower / mass;
+
+        $('outPower').textContent  = Math.round(mechPower);
+        $('outWkg').textContent    = wkg.toFixed(2);
+        $('outEff').textContent    = (eff * 100).toFixed(1) + '%';
+        $('outRer').textContent    = rer.toFixed(2) + ' / ' + kJperL.toFixed(2) + ' kJ/L';
+        $('outFracEff').textContent = (fAdj * 100).toFixed(1) + '%';
+
+        $('tauNote').style.display = (Tsec <= 180) ? 'block' : 'none';
+
+        const bandBlock = $('bandBlock');
+        if (showBand) {
+          // Low: 18% eff, RER 0.85
+          const kJLow = kJperLfromRER(0.85);
+          const fAdjLo = (Tsec <= 180) ? meanFraction(frac, Tsec, 30) : frac;
+          const mechLow = vo2Lmin * fAdjLo * kJLow * 1000 / 60 * 0.18;
+          // High: 22% eff, RER 1.00
+          const kJHi = kJperLfromRER(1.00);
+          const fAdjHi = (Tsec <= 180) ? meanFraction(frac, Tsec, 30) : frac;
+          const mechHigh = vo2Lmin * fAdjHi * kJHi * 1000 / 60 * 0.22;
+
+          $('outBandLow').textContent  = Math.round(mechLow) + ' W (' + (mechLow / mass).toFixed(2) + ' W/kg)';
+          $('outBandHigh').textContent = Math.round(mechHigh) + ' W (' + (mechHigh / mass).toFixed(2) + ' W/kg)';
+          bandBlock.style.display = 'block';
+        } else {
+          bandBlock.style.display = 'none';
+        }
+
+        renderCoggan(gender, wkg);
+      }
+
+      function renderCoggan(gender, athleteWkg) {
+        const data = gender === 'male' ? COGGAN_MALE : COGGAN_FEMALE;
+        const tbody = $('cogganBody');
+        tbody.innerHTML = '';
+        let matchLevel = '';
+        // First level the athlete meets/exceeds at FTP
+        for (let i = 0; i < data.length; i++) {
+          const row = data[i];
+          const tr = document.createElement('tr');
+          // Highlight the row where athlete's FTP wkg first ≥ row.ftp (going from world-class to untrained)
+          if (!matchLevel && athleteWkg >= row.ftp) {
+            matchLevel = row.level;
+            tr.classList.add('athlete-row');
+          }
+          tr.innerHTML =
+            '<td>' + row.level + '</td>' +
+            '<td>' + row.s5.toFixed(2) + '</td>' +
+            '<td>' + row.m1.toFixed(2) + '</td>' +
+            '<td>' + row.m5.toFixed(2) + '</td>' +
+            '<td>' + row.ftp.toFixed(2) + '</td>';
+          tbody.appendChild(tr);
+        }
+        $('cogganMatch').innerHTML = matchLevel
+          ? 'Your FTP W/kg corresponds to: <strong>' + matchLevel + '</strong>'
+          : 'Below the Coggan untrained threshold — focus on aerobic base.';
+      }
+
+      function calibrate() {
+        const mass   = safeNum($('mass').value);
+        const vo2val = safeNum($('vo2').value);
+        const frac   = safeNum($('fraction').value) / 100;
+        const rer    = safeNum($('rer').value);
+        const knownP = safeNum($('calPower').value);
+
+        if ([mass, vo2val, frac, rer, knownP].some(v => !Number.isFinite(v) || v <= 0)) {
+          $('calResult').value = '';
+          alert('Enter a positive 20-min power and verify mass, VO₂max, fraction, RER are filled.');
+          return;
+        }
+        const kJperL = kJperLfromRER(rer);
+        const vo2Lmin = vo2val * mass / 1000;
+        // 20 min > 180s, so no kinetics adjustment
+        const metP = vo2Lmin * frac * kJperL * 1000 / 60;
+        const impliedEff = knownP / metP;
+
+        $('calResult').value = (impliedEff * 100).toFixed(1);
+        $('efficiency').value = (impliedEff * 100).toFixed(1);
+        calculate();
+      }
+
+      // Wire up
+      $('duration').addEventListener('change', () => { onDurationChange(); calculate(); });
+      ['gender','mass','vo2','customDur','fraction','efficiency','rer','showBand'].forEach(id => {
+        $(id).addEventListener('input',  calculate);
+        $(id).addEventListener('change', calculate);
+      });
+      $('calBtn').addEventListener('click', calibrate);
+
+      // Initial run
+      onDurationChange();
+      calculate();
+    })();
+  </script>
+
+</body>
+</html>
