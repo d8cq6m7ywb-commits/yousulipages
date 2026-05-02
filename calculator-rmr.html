@@ -1,0 +1,728 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Resting metabolic rate (RMR) — Yousuli calculators</title>
+  <meta name="description" content="Estimate RMR by Wang, Mifflin-St Jeor, Cunningham, or Harris-Benedict. Get TDEE and energy-availability score with RED-S risk band — and pair with metabolic-cart testing for the real number." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED CALCULATOR STYLES ============ -->
+  <style>
+    .rmr-calc-host { width: 100%; }
+
+    .rmr-calc-host .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      background: var(--ys-bg-soft);
+      padding: 18px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 600px) { .rmr-calc-host .field-grid { grid-template-columns: 1fr; } }
+    .rmr-calc-host .field-grid .full { grid-column: 1 / -1; }
+
+    .rmr-calc-host label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.72rem;
+      color: var(--ys-navy);
+      margin-bottom: 6px;
+    }
+    .rmr-calc-host .row { display: flex; align-items: stretch; }
+    .rmr-calc-host input[type="number"],
+    .rmr-calc-host select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      font-size: 0.96rem;
+      font-family: var(--ys-font-body);
+      background: #fff;
+      color: var(--ys-navy);
+      box-sizing: border-box;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .rmr-calc-host input:focus,
+    .rmr-calc-host select:focus {
+      outline: none;
+      border-color: var(--wf-coral);
+      box-shadow: 0 0 0 3px rgba(250, 119, 60, 0.18);
+    }
+    .rmr-calc-host .row input { border-radius: 6px 0 0 6px; }
+    .rmr-calc-host .row .unit {
+      padding: 0 12px;
+      background: var(--ys-navy); color: #fff;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em; font-size: 0.74rem;
+      display: flex; align-items: center;
+      border-radius: 0 6px 6px 0;
+    }
+
+    .rmr-calc-host .unit-toggle {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 14px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.72rem; color: var(--ys-muted);
+    }
+    .rmr-calc-host .unit-toggle .switch {
+      display: inline-flex;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px; overflow: hidden;
+    }
+    .rmr-calc-host .unit-toggle .switch button {
+      background: #fff; border: 0; padding: 6px 12px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.7rem; font-weight: 600;
+      color: var(--ys-muted); cursor: pointer;
+    }
+    .rmr-calc-host .unit-toggle .switch button.active {
+      background: var(--ys-navy); color: #fff;
+    }
+
+    .rmr-calc-host .err {
+      color: #c93939;
+      background: rgba(201, 57, 57, 0.08);
+      border-left: 4px solid #c93939;
+      padding: 10px 14px;
+      margin-top: 12px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      display: none;
+    }
+    .rmr-calc-host .err.active { display: block; }
+
+    .rmr-calc-host .results-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+      margin-top: 18px;
+    }
+    @media (max-width: 760px) { .rmr-calc-host .results-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { .rmr-calc-host .results-grid { grid-template-columns: 1fr; } }
+
+    .rmr-calc-host .result-tile {
+      background: #fff;
+      border: 1px solid var(--ys-line);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+    .rmr-calc-host .result-tile.featured {
+      background: var(--ys-navy); border-color: var(--ys-navy);
+    }
+    .rmr-calc-host .result-tile.featured .result-label,
+    .rmr-calc-host .result-tile.featured .result-value,
+    .rmr-calc-host .result-tile.featured .result-aux { color: #fff; }
+    .rmr-calc-host .result-tile.featured .result-aux { color: rgba(255,255,255,0.7); }
+
+    .rmr-calc-host .result-label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.7rem;
+      color: var(--ys-muted);
+      margin-bottom: 6px;
+    }
+    .rmr-calc-host .result-value {
+      display: block;
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: var(--ys-navy);
+      letter-spacing: 0.02em;
+    }
+    .rmr-calc-host .result-aux {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--ys-muted);
+      margin-top: 4px;
+    }
+
+    .rmr-calc-host .ea-band-row {
+      display: flex; gap: 4px;
+      margin-top: 18px;
+    }
+    .rmr-calc-host .ea-band {
+      flex: 1; min-width: 0;
+      padding: 10px 8px;
+      text-align: center;
+      background: var(--ys-bg-soft);
+      border-radius: 6px;
+      font-size: 0.78rem;
+      color: var(--ys-muted);
+      transition: all 0.2s ease;
+    }
+    .rmr-calc-host .ea-band-name {
+      display: block;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em; text-transform: uppercase;
+      font-size: 0.66rem; font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .rmr-calc-host .ea-band.active.danger {
+      background: #c93939; color: #fff;
+      box-shadow: 0 4px 12px rgba(201, 57, 57, 0.3);
+    }
+    .rmr-calc-host .ea-band.active.warn {
+      background: var(--wf-coral); color: #fff;
+      box-shadow: 0 4px 12px rgba(250, 119, 60, 0.3);
+    }
+    .rmr-calc-host .ea-band.active.good {
+      background: var(--ys-navy); color: #fff;
+      box-shadow: 0 4px 12px rgba(47, 45, 86, 0.3);
+    }
+    .rmr-calc-host .ea-band.active .ea-band-name { color: #fff; }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 56px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Fueling</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">RMR &amp; energy availability.</h1>
+      <div class="wf-subhead">Resting metabolic rate &middot; TDEE &middot; RED-S check</div>
+      <p class="lede" style="max-width: 660px;">Resting metabolic rate is the energy you burn just being alive. Add training and you get TDEE &mdash; total daily energy expenditure. Subtract exercise energy from intake, divide by lean mass &mdash; that&rsquo;s energy availability, the single most important number in endurance sports nutrition. Calculate all three. Catch RED-S before it catches you.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">Energy availability explained</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 32px 0 48px;">
+    <div class="ys-container">
+      <div class="ys-tool" style="max-width: 880px;">
+        <h3>Plug in your numbers</h3>
+        <p class="ys-tool-pre">Pick a method based on what you know &mdash; if you have body fat % from <a href="calculator-calipers-body-comp.html" style="color: var(--wf-coral);">calipers</a> or DEXA, use Wang or Cunningham (best for athletes). Otherwise Mifflin or Harris-Benedict.</p>
+
+        <div class="rmr-calc-host">
+
+          <div class="unit-toggle">
+            <span>Mass / height</span>
+            <span class="switch">
+              <button type="button" class="active" data-unit="metric">Metric</button>
+              <button type="button" data-unit="imperial">Imperial</button>
+            </span>
+          </div>
+
+          <div class="field-grid">
+            <div class="full">
+              <label>RMR method</label>
+              <select id="method">
+                <option value="cunningham" selected>Cunningham — best for athletes (needs body fat %)</option>
+                <option value="wang">Wang — FFM regression (needs body fat %)</option>
+                <option value="mifflin-men">Mifflin-St Jeor (men) — weight, height, age</option>
+                <option value="mifflin-women">Mifflin-St Jeor (women) — weight, height, age</option>
+                <option value="harris-men">Harris-Benedict (men) — classical, slight over-prediction</option>
+                <option value="harris-women">Harris-Benedict (women) — classical</option>
+              </select>
+            </div>
+
+            <div>
+              <label>Body weight</label>
+              <div class="row">
+                <input type="number" id="weight" step="0.1" min="0" value="75" />
+                <span class="unit unit-mass">kg</span>
+              </div>
+            </div>
+
+            <div id="bfField">
+              <label>Body fat %</label>
+              <div class="row">
+                <input type="number" id="bodyFat" step="0.1" min="0" max="60" value="15" />
+                <span class="unit">%</span>
+              </div>
+            </div>
+
+            <div id="heightField" style="display: none;">
+              <label>Height</label>
+              <div class="row">
+                <input type="number" id="height" step="0.5" min="0" value="178" />
+                <span class="unit unit-height">cm</span>
+              </div>
+            </div>
+
+            <div id="ageField" style="display: none;">
+              <label>Age</label>
+              <div class="row">
+                <input type="number" id="age" min="0" max="120" value="35" />
+                <span class="unit">yr</span>
+              </div>
+            </div>
+
+            <div>
+              <label>Activity level (for TDEE)</label>
+              <select id="activity">
+                <option value="1.2">Sedentary (desk job, no training)</option>
+                <option value="1.375">Light (1–3 sessions/wk)</option>
+                <option value="1.55" selected>Moderate (3–5 sessions/wk)</option>
+                <option value="1.725">Heavy (6–7 sessions/wk)</option>
+                <option value="1.9">Very heavy (2× daily, hard training block)</option>
+              </select>
+            </div>
+
+            <div>
+              <label>Exercise energy / day (optional, for EA)</label>
+              <div class="row">
+                <input type="number" id="exercise" step="50" min="0" value="600" />
+                <span class="unit">kcal</span>
+              </div>
+            </div>
+
+            <div>
+              <label>Caloric intake / day (optional, for EA)</label>
+              <div class="row">
+                <input type="number" id="intake" step="50" min="0" value="2800" />
+                <span class="unit">kcal</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ys-btn-row" style="margin: 4px 0 0;">
+            <button class="ys-btn ys-btn-coral" type="button" id="calcBtn">Calculate</button>
+            <button class="ys-btn ys-btn-ghost" type="button" id="resetBtn">Reset</button>
+          </div>
+
+          <div class="err" id="errorMsg"></div>
+
+          <div id="resultsBlock" style="display: none;">
+            <div class="results-grid">
+              <div class="result-tile featured">
+                <span class="result-label">RMR</span>
+                <span class="result-value"><span id="outRmr">—</span></span>
+                <span class="result-aux">kcal / day</span>
+              </div>
+              <div class="result-tile">
+                <span class="result-label">TDEE</span>
+                <span class="result-value"><span id="outTdee">—</span></span>
+                <span class="result-aux">RMR × activity</span>
+              </div>
+              <div class="result-tile">
+                <span class="result-label">Fat-free mass</span>
+                <span class="result-value"><span id="outFfm">—</span> <span class="unit-mass-text">kg</span></span>
+                <span class="result-aux" id="outFfmAux">—</span>
+              </div>
+              <div class="result-tile">
+                <span class="result-label">Energy availability</span>
+                <span class="result-value"><span id="outEa">—</span></span>
+                <span class="result-aux">kcal / kg FFM</span>
+              </div>
+            </div>
+
+            <div class="ea-band-row" id="eaBandRow">
+              <div class="ea-band" data-band="redS">
+                <span class="ea-band-name">RED-S risk</span>
+                &lt; 30
+              </div>
+              <div class="ea-band" data-band="suboptimal">
+                <span class="ea-band-name">Sub-optimal</span>
+                30–45
+              </div>
+              <div class="ea-band" data-band="optimal">
+                <span class="ea-band-name">Optimal</span>
+                ≥ 45
+              </div>
+            </div>
+            <p style="text-align: center; margin-top: 14px; font-size: 0.86rem; color: var(--ys-muted);" id="eaInterpretation">—</p>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW EA WORKS ============ -->
+  <section class="wf-section alt" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Energy availability, in 3 steps</h2>
+        <div class="ys-rule"></div>
+        <p>The single most important number in endurance sports nutrition. Most under-fueled athletes don&rsquo;t know they are.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>The formula</h3>
+          <p><code style="background: var(--ys-bg-soft); padding: 2px 8px; border-radius: 4px;">EA = (intake − exercise kcal) / FFM kg</code></p>
+          <p style="margin-top: 8px;">It&rsquo;s the energy left over for daily living, basal function, and recovery <em>after</em> training is paid for. Per kilogram of metabolically-active tissue.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>The thresholds (Loucks)</h3>
+          <p><strong>≥ 45 kcal/kg FFM</strong> &mdash; optimal. Adaptation, recovery, hormones intact.</p>
+          <p style="margin-top: 6px;"><strong>30–45</strong> &mdash; sub-optimal. Adaptations slow, mood/sleep can suffer, but tolerable in short blocks.</p>
+          <p style="margin-top: 6px;"><strong>&lt; 30</strong> &mdash; <strong>RED-S risk</strong>. Reproductive, bone, immune, metabolic systems start to compromise.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>What it ignores</h3>
+          <p>Day-to-day variation matters. EA averaged over 3 weeks is more meaningful than a single day. And acute deficits during a race or hard session aren&rsquo;t the same as chronic under-fueling — context always.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COACH NOTE ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
+        <h2 style="margin-top: 4px;">RED-S is the silent performance killer.</h2>
+        <p>Relative Energy Deficiency in Sport (RED-S, formerly female athlete triad) shows up everywhere: stalled adaptation, frequent illness, stress fractures, lost period, low libido, mood crashes, frozen weight loss. Endurance athletes are <strong>extraordinarily</strong> susceptible &mdash; the calorie cost of training scales fast, and many athletes self-restrict on top.</p>
+        <p style="margin-top: 10px;">Three patterns to watch in yourself or your athletes:</p>
+        <ul class="ys-card-bullets" style="margin-top: 8px;">
+          <li><strong>Chronic low EA &lt; 30</strong> for &gt; 5 days &mdash; the most common path</li>
+          <li><strong>Crash diets in-season</strong> &mdash; "I&rsquo;ll lean out before the race." You&rsquo;ll lose the race instead.</li>
+          <li><strong>Volume up, intake flat</strong> &mdash; the classic peak-block trap. Fuel scales with load or you blow up.</li>
+        </ul>
+        <p style="margin-top: 12px;">If you&rsquo;re consistently &lt; 30 kcal/kg FFM, eat more &mdash; not later, today. If symptoms are present (HR/HRV trending wrong, training feels heavy for no reason, persistent niggles), pause hard sessions until EA is restored. The body will outwork you back to fitness if it&rsquo;s actually fueled.</p>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Metabolic testing</a>
+          <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ABOUT THE METHODS ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>About the RMR methods</h2>
+        <div class="ys-rule"></div>
+        <p>Four equations, different inputs, slightly different answers. Pick by what you know.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-card featured">
+          <div class="ys-meta" style="color: var(--wf-coral);">Cunningham</div>
+          <h3>Best for athletes</h3>
+          <p><strong>500 + 22 × FFM</strong>. Built on athlete data, leans on lean mass. Most accurate when your FFM is well-measured. Tends to predict <strong>5–10% higher</strong> than Mifflin for trained athletes.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">Wang</div>
+          <h3>FFM regression</h3>
+          <p><strong>21.5 × FFM + 407</strong>. Similar in spirit to Cunningham. Slight differences from organ-tissue physiology assumptions; useful as a cross-check.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">Mifflin-St Jeor</div>
+          <h3>The default if you don&rsquo;t have FFM</h3>
+          <p><strong>10W + 6.25H − 5A ± 5/161</strong>. Sex-specific. Validated in mixed populations; <strong>under-predicts athlete RMR</strong> by 5–10%. Better than Harris-Benedict for general use.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">Harris-Benedict</div>
+          <h3>The classical equation</h3>
+          <p><strong>Men:</strong> 88.36 + 13.40W + 4.80H − 5.68A. <strong>Women:</strong> 447.6 + 9.25W + 3.10H − 4.33A. The original 1919 formula. Slight over-prediction in modern populations; included for reference.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">Indirect calorimetry</div>
+          <h3>The truth</h3>
+          <p>Mask + gas analyser, 20-min fasted measurement. Population formulas are estimates; lab measurement gives <em>your</em> number. Worth doing if you&rsquo;re building a precise fueling plan or chasing weight goals.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED CALCULATORS ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Related calculators</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card redesigned" href="calculator-calipers-body-comp.html">
+          <span class="ys-calc-card-title">Calipers → body composition</span>
+          <p>Get FFM from skinfolds, then plug into Cunningham or Wang here.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card redesigned" href="calculator-intraworkout-fueling.html">
+          <span class="ys-calc-card-title">Intra-workout fueling</span>
+          <p>The exercise-energy side of the EA equation. Fuel the work.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="https://www.yousuli.co/macro" target="_top">
+          <span class="ys-calc-card-title">Macros &amp; TDEE</span>
+          <p>Once you have RMR + activity, split daily calories into protein/carbs/fat.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want your real RMR, not an estimate?</h2>
+          <p>Indirect calorimetry at the lab measures your actual oxygen uptake and CO<sub>2</sub> production at rest &mdash; <strong>your</strong> RMR, not a population guess. Pair with body composition and you&rsquo;ve got the foundation of a real fueling plan.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Book RMR test</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20RMR">Send feedback</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Spotted a bug or want a feature? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20RMR" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ CALCULATOR LOGIC ============ -->
+  <script>
+    (function () {
+      const $ = id => document.getElementById(id);
+      const methodEl = $('method');
+      const weightEl = $('weight');
+      const bfEl     = $('bodyFat');
+      const heightEl = $('height');
+      const ageEl    = $('age');
+      const activityEl = $('activity');
+      const exEl     = $('exercise');
+      const intakeEl = $('intake');
+      const errEl    = $('errorMsg');
+      const resultsBlock = $('resultsBlock');
+
+      let unit = 'metric'; // metric or imperial
+
+      function needsBF(m)   { return m === 'cunningham' || m === 'wang'; }
+      function needsHA(m)   { return m.indexOf('mifflin') === 0 || m.indexOf('harris') === 0; }
+
+      function updateMethodUI() {
+        const m = methodEl.value;
+        $('bfField').style.display     = needsBF(m) ? '' : 'none';
+        $('heightField').style.display = needsHA(m) ? '' : 'none';
+        $('ageField').style.display    = needsHA(m) ? '' : 'none';
+      }
+      methodEl.addEventListener('change', () => { updateMethodUI(); hideResults(); });
+
+      // unit toggle
+      document.querySelectorAll('.rmr-calc-host .unit-toggle button').forEach(b => {
+        b.addEventListener('click', () => {
+          if (b.classList.contains('active')) return;
+          const newUnit = b.getAttribute('data-unit');
+          // convert visible weight + height
+          const w = parseFloat(weightEl.value);
+          const h = parseFloat(heightEl.value);
+          if (newUnit === 'imperial') {
+            if (Number.isFinite(w)) weightEl.value = (w * 2.20462).toFixed(1);
+            if (Number.isFinite(h)) heightEl.value = (h / 2.54).toFixed(1);
+          } else {
+            if (Number.isFinite(w)) weightEl.value = (w / 2.20462).toFixed(1);
+            if (Number.isFinite(h)) heightEl.value = (h * 2.54).toFixed(1);
+          }
+          unit = newUnit;
+          document.querySelectorAll('.rmr-calc-host .unit-toggle button').forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          document.querySelectorAll('.unit-mass').forEach(el => el.textContent = unit === 'metric' ? 'kg' : 'lb');
+          document.querySelectorAll('.unit-mass-text').forEach(el => el.textContent = unit === 'metric' ? 'kg' : 'lb');
+          document.querySelectorAll('.unit-height').forEach(el => el.textContent = unit === 'metric' ? 'cm' : 'in');
+          if (resultsBlock.style.display !== 'none') calc();
+        });
+      });
+
+      function showError(msg) {
+        errEl.textContent = msg;
+        errEl.classList.add('active');
+        resultsBlock.style.display = 'none';
+      }
+      function clearError() { errEl.classList.remove('active'); errEl.textContent = ''; }
+      function hideResults() { resultsBlock.style.display = 'none'; clearError(); }
+
+      function calc() {
+        clearError();
+        const m = methodEl.value;
+        let weight = parseFloat(weightEl.value);
+        if (!Number.isFinite(weight) || weight <= 0) return showError('Enter a valid body weight.');
+
+        // Convert weight to kg internally
+        if (unit === 'imperial') weight = weight / 2.20462;
+
+        let rmr = NaN, ffm = NaN;
+
+        if (needsBF(m)) {
+          const bf = parseFloat(bfEl.value);
+          if (!Number.isFinite(bf) || bf < 0 || bf > 60) return showError('Enter a valid body fat % (0–60).');
+          ffm = weight * (1 - bf / 100);
+          if (m === 'wang')        rmr = 21.5 * ffm + 407;
+          if (m === 'cunningham')  rmr = 500 + 22 * ffm;
+        } else if (needsHA(m)) {
+          let height = parseFloat(heightEl.value);
+          const age = parseFloat(ageEl.value);
+          if (!Number.isFinite(height) || height <= 0) return showError('Enter a valid height.');
+          if (!Number.isFinite(age) || age <= 0)       return showError('Enter a valid age.');
+          if (unit === 'imperial') height = height * 2.54; // in → cm
+
+          if (m === 'mifflin-men')   rmr = 10 * weight + 6.25 * height - 5 * age + 5;
+          if (m === 'mifflin-women') rmr = 10 * weight + 6.25 * height - 5 * age - 161;
+          if (m === 'harris-men')    rmr = 88.362 + 13.397 * weight + 4.799 * height - 5.677 * age;
+          if (m === 'harris-women')  rmr = 447.593 + 9.247 * weight + 3.098 * height - 4.330 * age;
+        }
+
+        if (!Number.isFinite(rmr) || rmr <= 0) return showError('RMR calculation failed — re-check inputs.');
+
+        const activityFactor = parseFloat(activityEl.value);
+        const tdee = rmr * activityFactor;
+
+        const exercise = parseFloat(exEl.value);
+        const intake = parseFloat(intakeEl.value);
+
+        // Energy availability (only valid if we have FFM)
+        let ea = null;
+        if (Number.isFinite(ffm) && ffm > 0 && Number.isFinite(intake) && Number.isFinite(exercise)) {
+          ea = (intake - exercise) / ffm;
+        }
+
+        // ---- render ----
+        $('outRmr').textContent = Math.round(rmr).toLocaleString();
+        $('outTdee').textContent = Math.round(tdee).toLocaleString() + ' kcal';
+
+        if (Number.isFinite(ffm)) {
+          const showFfm = unit === 'metric' ? ffm : ffm * 2.20462;
+          $('outFfm').textContent = showFfm.toFixed(1);
+          $('outFfmAux').textContent = ((ffm / weight) * 100).toFixed(1) + '% of body mass';
+        } else {
+          $('outFfm').textContent = '—';
+          $('outFfmAux').textContent = 'not computed (method)';
+        }
+
+        const eaBands = document.querySelectorAll('.rmr-calc-host .ea-band');
+        eaBands.forEach(b => b.classList.remove('active', 'danger', 'warn', 'good'));
+
+        if (ea !== null && Number.isFinite(ea)) {
+          $('outEa').textContent = ea.toFixed(1);
+          let bandKey, cls, msg;
+          if (ea < 30)       { bandKey = 'redS';        cls = 'danger'; msg = 'RED-S risk &mdash; chronic under-fueling damages hormones, bone, immunity, and adaptation. Eat more, urgently.'; }
+          else if (ea < 45)  { bandKey = 'suboptimal';  cls = 'warn';   msg = 'Sub-optimal &mdash; tolerable for short blocks; below this band over weeks costs adaptation and recovery.'; }
+          else               { bandKey = 'optimal';     cls = 'good';   msg = 'Optimal availability &mdash; supports adaptation, recovery, and long-term performance.'; }
+          const tile = document.querySelector('.rmr-calc-host .ea-band[data-band="' + bandKey + '"]');
+          if (tile) tile.classList.add('active', cls);
+          $('eaInterpretation').innerHTML = msg;
+        } else {
+          $('outEa').textContent = '—';
+          $('eaInterpretation').innerHTML = 'Add daily intake + exercise kcal (and use a method that gives FFM &mdash; Cunningham or Wang) to see your energy availability.';
+        }
+
+        resultsBlock.style.display = 'block';
+      }
+
+      function reset() {
+        methodEl.value = 'cunningham';
+        weightEl.value = unit === 'metric' ? 75 : (75 * 2.20462).toFixed(1);
+        bfEl.value = 15;
+        heightEl.value = unit === 'metric' ? 178 : (178 / 2.54).toFixed(1);
+        ageEl.value = 35;
+        activityEl.value = '1.55';
+        exEl.value = 600;
+        intakeEl.value = 2800;
+        clearError();
+        updateMethodUI();
+        resultsBlock.style.display = 'none';
+      }
+
+      $('calcBtn').addEventListener('click', calc);
+      $('resetBtn').addEventListener('click', reset);
+      ['weight','bodyFat','height','age','exercise','intake'].forEach(id => {
+        $(id).addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); calc(); } });
+      });
+
+      updateMethodUI();
+    })();
+  </script>
+
+</body>
+</html>
