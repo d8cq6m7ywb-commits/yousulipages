@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sweat rate calculator — Yousuli calculators</title>
+  <meta name="description" content="Pre-weight, post-weight, duration, fluid in. Get your hourly sweat rate, low/average/high sodium loss range, and % body weight lost — plus what to do about it." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED CALCULATOR STYLES ============ -->
+  <style>
+    .sweat-calc-host { width: 100%; }
+
+    .sweat-calc-host .sys-toggle {
+      display: flex; gap: 0;
+      border-bottom: 1px solid var(--ys-line);
+      margin-bottom: 18px;
+    }
+    .sweat-calc-host .btn-system {
+      flex: 1; padding: 10px 14px;
+      background: transparent; border: 0;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.12em; text-transform: uppercase;
+      font-size: 0.78rem; font-weight: 600;
+      color: var(--ys-muted);
+      cursor: pointer;
+      border-bottom: 4px solid transparent;
+      transition: color 0.15s ease, border-color 0.15s ease;
+    }
+    .sweat-calc-host .btn-system:hover { color: var(--ys-navy); }
+    .sweat-calc-host .btn-system.active {
+      color: var(--ys-navy);
+      border-bottom-color: var(--wf-coral);
+    }
+
+    .sweat-calc-host .input-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+      background: var(--ys-bg-soft);
+      padding: 18px;
+      border-radius: 10px;
+      margin-bottom: 18px;
+    }
+    @media (max-width: 600px) { .sweat-calc-host .input-grid { grid-template-columns: 1fr; } }
+
+    .sweat-calc-host label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.72rem;
+      color: var(--ys-navy);
+      margin-bottom: 6px;
+    }
+    .sweat-calc-host .combined {
+      display: flex; align-items: stretch;
+    }
+    .sweat-calc-host .combined input {
+      flex: 1; min-width: 0;
+      padding: 10px 12px;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px 0 0 6px;
+      font-size: 1rem;
+      font-family: var(--ys-font-body);
+      background: #fff;
+      color: var(--ys-navy);
+      box-sizing: border-box;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .sweat-calc-host .combined input:focus {
+      outline: none;
+      border-color: var(--wf-coral);
+      box-shadow: 0 0 0 3px rgba(250, 119, 60, 0.18);
+    }
+    .sweat-calc-host .combined .unit {
+      padding: 0 14px;
+      background: var(--ys-navy);
+      color: #fff;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em;
+      font-size: 0.78rem;
+      display: flex; align-items: center;
+      border-radius: 0 6px 6px 0;
+      white-space: nowrap;
+    }
+
+    .sweat-calc-host .results-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+    @media (max-width: 760px) { .sweat-calc-host .results-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { .sweat-calc-host .results-grid { grid-template-columns: 1fr; } }
+
+    .sweat-calc-host .result-tile {
+      background: #fff;
+      border: 1px solid var(--ys-line);
+      border-radius: 10px;
+      padding: 14px 16px;
+      text-align: center;
+    }
+    .sweat-calc-host .result-tile.featured {
+      background: var(--ys-navy);
+      border-color: var(--ys-navy);
+    }
+    .sweat-calc-host .result-tile.featured .result-label,
+    .sweat-calc-host .result-tile.featured .result-value { color: #fff; }
+    .sweat-calc-host .result-label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.7rem;
+      color: var(--ys-muted);
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+    .sweat-calc-host .result-value {
+      display: block;
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--ys-navy);
+      letter-spacing: 0.02em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 56px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Fueling</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">Sweat rate test.</h1>
+      <div class="wf-subhead">Fluid loss &middot; sodium range &middot; %BW dropped</div>
+      <p class="lede" style="max-width: 660px;">Pre-weight, post-weight, duration, what you drank. Out comes your hourly fluid loss, sodium-loss range (low / average / high), sweat-rate category, and how much body weight you actually shed. Run this on a representative session, then build your race-day fluid plan from real numbers.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">How to run a sweat test</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 32px 0 48px;">
+    <div class="ys-container">
+      <div class="ys-tool" style="max-width: 860px;">
+        <h3>Plug in your test</h3>
+        <p class="ys-tool-pre">Weigh yourself <strong>nude</strong> before and after the session, track exactly how much you drank during. Best run on a session that mimics race-day intensity, duration, and conditions &mdash; results vary 2&times; from a cool morning to a hot afternoon.</p>
+
+        <div class="sweat-calc-host">
+          <div class="sys-toggle" role="tablist" aria-label="Unit system">
+            <button class="btn-system active" id="metric-btn" type="button" onclick="changeSystem('metric')">Metric</button>
+            <button class="btn-system" id="imperial-btn" type="button" onclick="changeSystem('imperial')">Imperial</button>
+          </div>
+
+          <div class="input-grid">
+            <div>
+              <label>Weight before test</label>
+              <div class="combined">
+                <input type="text" id="weightBeforeTest" value="80" oninput="performCalculation()" />
+                <span class="unit unit-mass">kg</span>
+              </div>
+            </div>
+            <div>
+              <label>Weight after test</label>
+              <div class="combined">
+                <input type="text" id="weightAfterTest" value="74" oninput="performCalculation()" />
+                <span class="unit unit-mass">kg</span>
+              </div>
+            </div>
+            <div>
+              <label>Duration of workout</label>
+              <div class="combined">
+                <input type="text" id="duratationWorkout" value="2" oninput="performCalculation()" />
+                <span class="unit">hours</span>
+              </div>
+            </div>
+            <div>
+              <label>Fluid intake during</label>
+              <div class="combined">
+                <input type="text" id="qtField" value="2" oninput="performCalculation()" />
+                <span class="unit unit-liquid">liters</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="results-grid">
+            <div class="result-tile featured">
+              <span class="result-label">Fluid loss / hour</span>
+              <span class="result-value"><span id="fluidloss">0</span> <span class="unit-liquid-text">L</span></span>
+            </div>
+            <div class="result-tile">
+              <span class="result-label">Sweat rate category</span>
+              <span class="result-value" id="sweatRateMessage">—</span>
+            </div>
+            <div class="result-tile">
+              <span class="result-label">% body weight lost</span>
+              <span class="result-value" id="bwLoss">—</span>
+            </div>
+            <div class="result-tile">
+              <span class="result-label">Low sodium loss / hour</span>
+              <span class="result-value" id="low">—</span>
+            </div>
+            <div class="result-tile">
+              <span class="result-label">Avg sodium loss / hour</span>
+              <span class="result-value" id="avg">—</span>
+            </div>
+            <div class="result-tile">
+              <span class="result-label">High sodium loss / hour</span>
+              <span class="result-value" id="high">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW TO RUN A SWEAT TEST ============ -->
+  <section class="wf-section alt" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How to run a sweat test</h2>
+        <div class="ys-rule"></div>
+        <p>Five-minute protocol &mdash; if you skip the bits in bold the numbers are noise.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>Weigh in nude, post-bathroom</h3>
+          <p>Empty bladder. Towel-dry sweat from the warm-up. <strong>Nude on a scale, recorded to 0.1 kg.</strong> Clothes hold sweat and skew the result.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>Train at race-day intensity in race-day conditions</h3>
+          <p>Same heat, same effort, same gear. <strong>Pre-weigh the bottles, post-weigh, measure exactly how much went in.</strong> 1 mL = 1 g for water-based drinks &mdash; just weigh.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>Weigh out, again nude, again towel-dried</h3>
+          <p>Right after stopping &mdash; before a shower, before a meal. Subtract bathroom breaks from duration if any (or just don&rsquo;t go).</p>
+        </div>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.92rem; max-width: 720px; margin-left: auto; margin-right: auto;">Run the test on at least <strong>2&ndash;3 different sessions</strong> &mdash; one cool, one hot, one race-pace. Sweat rate doubles between cool and hot conditions, so a single number won&rsquo;t cover race day if conditions change.</p>
+    </div>
+  </section>
+
+  <!-- ============ HIGH SODIUM LOSS MARKERS ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Are you a high-sodium sweater?</div>
+        <h2 style="margin-top: 4px;">Six signs you lose more salt than the population average.</h2>
+        <p>The 600 / 800 / 1200 mg/L numbers in the calculator bracket the realistic range &mdash; but where you sit on that range is genetic and can shift with heat acclimation. If multiple of these apply, anchor your race-day plan to the <strong>high</strong> column, not the average.</p>
+        <ul class="ys-card-bullets" style="margin-top: 12px;">
+          <li><strong>Visible salt residue</strong> on clothing, helmet straps, or skin after a hot session</li>
+          <li><strong>Salty-tasting sweat</strong> &mdash; you can taste it on your lip without thinking about it</li>
+          <li><strong>Sweat that stings the eyes</strong> noticeably more than other people&rsquo;s</li>
+          <li><strong>Strong salt cravings</strong> after long efforts &mdash; pretzels, broth, pickles, olives</li>
+          <li><strong>Recurrent muscle cramps</strong> mid- or post-workout, especially in heat</li>
+          <li><strong>Dizziness, low BP</strong> in heavy work; or feeling wrecked by hot races vs. cool ones</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ %BW LOSS CLASSIFICATION ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What % body weight lost actually means</h2>
+        <div class="ys-rule"></div>
+        <p>The calculator tells you the number; this tells you whether to worry about it.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-card">
+          <div class="ys-meta">0&ndash;1%</div>
+          <h3>Minimal</h3>
+          <p>Within normal noise. Slight performance impairment possible; bloating if you over-drank.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">1&ndash;3%</div>
+          <h3>Normal</h3>
+          <p>Most well-fueled training falls here. Thirst kicks in around 2%. Performance largely unaffected.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">3&ndash;4%</div>
+          <h3>High</h3>
+          <p>Older studies show clear performance decline; recent data are more mixed. Either way, you under-drank for the conditions.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">4&ndash;5%</div>
+          <h3>Very high</h3>
+          <p>Performance hit in most studies. Heat tolerance drops, cognition starts to slip. Rebuild fluid intake before the next session.</p>
+        </div>
+        <div class="ys-card featured">
+          <div class="ys-meta" style="color: var(--wf-coral);">&gt; 5%</div>
+          <h3>Extreme</h3>
+          <p>Significant performance and decision-making impairment. Real heat-illness risk &mdash; heat stroke, rhabdo. Stop, cool down, rehydrate slowly with sodium.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HYDRATION GUIDELINES ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Pre &middot; during &middot; post hydration</h2>
+        <div class="ys-rule"></div>
+        <p>What to drink, when, with how much sodium.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>Pre-exercise (1&ndash;2 h before)</h3>
+          <p>500&ndash;750 mL of a sodium-containing drink with <strong>300&ndash;700 mg sodium per liter</strong>. Gives the body time to absorb fluid + salt before the session loads up the gut.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>During exercise</h3>
+          <p>Frequent small sips with sodium &mdash; promotes gastric emptying and helps carb absorption. Match intake to your measured sweat rate; don&rsquo;t force-drink past 1 L/h unless your number says you need it.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>Post-exercise (within 3 h)</h3>
+          <p>Replace ~<strong>150% of fluid lost</strong> with sodium-containing drink (300&ndash;700 mg/L). Stimulates thirst, promotes retention, recovers electrolyte balance for the next session.</p>
+        </div>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.92rem; max-width: 720px; margin-left: auto; margin-right: auto;">Reference: <strong>1 tsp table salt &asymp; 6 g &asymp; 2 325 mg sodium</strong> (table salt is ~40% Na by weight). Salty foods that work: pretzels, pickles, olives, salted nuts, broth, vegetable juice.</p>
+    </div>
+  </section>
+
+  <!-- ============ COACH NOTE ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note &middot; safety</div>
+        <h2 style="margin-top: 4px;">Three populations should not race-day-test this number.</h2>
+        <ul class="ys-card-bullets" style="margin-top: 8px;">
+          <li><strong>Older athletes</strong> &mdash; thirst response weakens with age. Don&rsquo;t rely on it; drink to a schedule.</li>
+          <li><strong>Athletes at altitude</strong> (~2 500 m+, non-acclimatized) &mdash; respiratory water loss adds on top of sweat loss.</li>
+          <li><strong>Athletes with HBP, kidney conditions, pregnancy, or breastfeeding</strong> &mdash; consult a sports dietitian or your doctor before changing sodium load.</li>
+        </ul>
+        <p style="margin-top: 12px;">For an individualized profile beyond the population averages this calculator uses &mdash; including a real measured sweat sodium concentration &mdash; book a hydration session at the lab.</p>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED CALCULATORS ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Related calculators</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card" href="calculator-intraworkout-fueling.html">
+          <span class="ys-calc-card-title">Intra-workout fueling</span>
+          <p>Pair your sweat number with a carb plan &mdash; total g/h, food equivalents, DIY ratios.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="calculator-all-in-one.html">
+          <span class="ys-calc-card-title">All-in-one converter</span>
+          <p>Concentration tab tells you whether your DIY bottle is too dilute or too thick.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="calculators.html">
+          <span class="ys-calc-card-title">All calculators</span>
+          <p>Back to the full catalog &mdash; 28 endurance calculators across performance, fueling, swim, bike, run.</p>
+          <span class="ys-calc-card-arrow">Browse &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want to know your actual sweat sodium?</h2>
+          <p>The 600 / 800 / 1200 mg/L brackets cover most athletes &mdash; but some lose 1 600+ mg/L. A sweat patch test or in-lab hydration session measures <em>your</em> sodium concentration, so race-day fluid plans are anchored in real numbers.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Hydration session</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Sweat%20rate">Send feedback</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Spotted a bug or want a feature? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Sweat%20rate" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ CALCULATOR LOGIC ============ -->
+  <script>
+    let system = "metric";
+
+    function setUnitLabels(mass, liquid) {
+      document.querySelectorAll('.unit-mass').forEach(el => el.textContent = mass);
+      document.querySelectorAll('.unit-liquid').forEach(el => el.textContent = liquid);
+      document.querySelectorAll('.unit-liquid-text').forEach(el => el.textContent = liquid === 'liters' ? 'L' : 'oz');
+    }
+
+    function changeSystem(sys) {
+      if (sys === system) return;
+
+      const wBefore = parseFloat(document.getElementById('weightBeforeTest').value) || 0;
+      const qt      = parseFloat(document.getElementById('qtField').value) || 0;
+      const wAfter  = parseFloat(document.getElementById('weightAfterTest').value) || 0;
+
+      document.getElementById('metric-btn').classList.toggle('active');
+      document.getElementById('imperial-btn').classList.toggle('active');
+
+      if (sys === 'metric') {
+        setUnitLabels('kg', 'liters');
+        document.getElementById('weightBeforeTest').value = (wBefore / 2.205).toFixed(1);
+        document.getElementById('qtField').value          = (qt / 33.814).toFixed(2);
+        document.getElementById('weightAfterTest').value  = (wAfter / 2.205).toFixed(1);
+      } else {
+        setUnitLabels('lb', 'oz');
+        document.getElementById('weightBeforeTest').value = (wBefore * 2.205).toFixed(1);
+        document.getElementById('qtField').value          = (qt * 33.814).toFixed(0);
+        document.getElementById('weightAfterTest').value  = (wAfter * 2.205).toFixed(1);
+      }
+
+      system = sys;
+      performCalculation();
+    }
+
+    function performCalculation() {
+      let wBefore  = parseFloat(document.getElementById('weightBeforeTest').value) || 0;
+      let duration = parseFloat(document.getElementById('duratationWorkout').value) || 1;
+      let qt       = parseFloat(document.getElementById('qtField').value) || 0;
+      let wAfter   = parseFloat(document.getElementById('weightAfterTest').value) || 0;
+
+      if (system === 'imperial') {
+        wBefore /= 2.205;
+        wAfter  /= 2.205;
+        qt      /= 33.814;
+      }
+
+      const fluidLossL = (wBefore - wAfter + qt) / duration;
+      document.getElementById('fluidloss').textContent = fluidLossL.toFixed(2);
+
+      document.getElementById('low').textContent  = (600  * fluidLossL).toFixed(0) + ' mg';
+      document.getElementById('avg').textContent  = (800  * fluidLossL).toFixed(0) + ' mg';
+      document.getElementById('high').textContent = (1200 * fluidLossL).toFixed(0) + ' mg';
+
+      const rateMsg = fluidLossL < 1   ? 'Low'
+                    : fluidLossL < 1.5 ? 'Moderate'
+                    : fluidLossL < 2.5 ? 'High'
+                    : 'Very high';
+      document.getElementById('sweatRateMessage').textContent = rateMsg;
+
+      const bwLossPct = wBefore > 0 ? ((wBefore - wAfter) / wBefore) * 100 : 0;
+      const bwClass   = bwLossPct < 1 ? 'Minimal'
+                      : bwLossPct < 3 ? 'Normal'
+                      : bwLossPct < 4 ? 'High'
+                      : bwLossPct < 5 ? 'Very high'
+                      : 'Extreme';
+      document.getElementById('bwLoss').textContent = bwLossPct.toFixed(1) + '% (' + bwClass + ')';
+    }
+
+    performCalculation();
+  </script>
+
+</body>
+</html>
