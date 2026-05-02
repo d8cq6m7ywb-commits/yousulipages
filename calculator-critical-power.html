@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Critical power (CP) — Yousuli calculators</title>
+  <meta name="description" content="Three maximal efforts in, critical power (CP) and W' anaerobic capacity out — plus Yousuli training zones, AeT range, and time-at-target / power-at-target conversions. Beats the 0.95×20-min FTP shortcut for most athletes." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED CALCULATOR STYLES ============ -->
+  <style>
+    .cp-calc-host { width: 100%; }
+
+    .cp-calc-host .efforts {
+      background: var(--ys-bg-soft);
+      padding: 18px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+    .cp-calc-host .efforts-head {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      color: var(--wf-coral);
+      margin-bottom: 12px;
+    }
+    .cp-calc-host .effort-row {
+      display: grid;
+      grid-template-columns: 80px 1fr 1fr;
+      gap: 10px;
+      align-items: end;
+      margin-bottom: 10px;
+    }
+    @media (max-width: 540px) { .cp-calc-host .effort-row { grid-template-columns: 60px 1fr 1fr; gap: 6px; } }
+    .cp-calc-host .effort-tag {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.12em; text-transform: uppercase;
+      font-size: 0.74rem;
+      color: var(--ys-navy);
+      padding-bottom: 10px;
+      text-align: center;
+    }
+    .cp-calc-host label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.7rem;
+      color: var(--ys-navy);
+      margin-bottom: 6px;
+    }
+    .cp-calc-host .row { display: flex; align-items: stretch; }
+    .cp-calc-host input[type="number"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      font-size: 0.96rem;
+      font-family: var(--ys-font-body);
+      background: #fff;
+      color: var(--ys-navy);
+      box-sizing: border-box;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .cp-calc-host input:focus {
+      outline: none;
+      border-color: var(--wf-coral);
+      box-shadow: 0 0 0 3px rgba(250, 119, 60, 0.18);
+    }
+    .cp-calc-host .row input { border-radius: 6px 0 0 6px; }
+    .cp-calc-host .row .unit {
+      padding: 0 12px;
+      background: var(--ys-navy); color: #fff;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em; font-size: 0.74rem;
+      display: flex; align-items: center;
+      border-radius: 0 6px 6px 0;
+      min-width: 40px; justify-content: center;
+    }
+
+    .cp-calc-host .err {
+      color: #c93939;
+      background: rgba(201, 57, 57, 0.08);
+      border-left: 4px solid #c93939;
+      padding: 10px 14px;
+      margin-top: 12px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      display: none;
+    }
+    .cp-calc-host .err.active { display: block; }
+
+    .cp-calc-host .results-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+      margin-top: 18px;
+    }
+    @media (max-width: 720px) { .cp-calc-host .results-grid { grid-template-columns: 1fr; } }
+    .cp-calc-host .result-tile {
+      background: #fff;
+      border: 1px solid var(--ys-line);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+    .cp-calc-host .result-tile.featured {
+      background: var(--ys-navy); border-color: var(--ys-navy);
+    }
+    .cp-calc-host .result-tile.featured .result-label,
+    .cp-calc-host .result-tile.featured .result-value,
+    .cp-calc-host .result-tile.featured .result-aux { color: #fff; }
+    .cp-calc-host .result-tile.featured .result-aux { color: rgba(255,255,255,0.7); }
+    .cp-calc-host .result-label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.72rem;
+      color: var(--ys-muted);
+      margin-bottom: 6px;
+    }
+    .cp-calc-host .result-value {
+      display: block;
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      font-size: 1.8rem;
+      color: var(--ys-navy);
+      letter-spacing: 0.02em;
+    }
+    .cp-calc-host .result-aux {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--ys-muted);
+      margin-top: 4px;
+    }
+
+    .cp-calc-host .target-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+      background: var(--ys-bg-soft);
+      padding: 18px;
+      border-radius: 10px;
+      margin-top: 18px;
+    }
+    @media (max-width: 600px) { .cp-calc-host .target-grid { grid-template-columns: 1fr; } }
+    .cp-calc-host .target-tile {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+      align-items: center;
+    }
+    .cp-calc-host .target-tile .target-out {
+      background: var(--ys-navy); color: #fff;
+      padding: 10px 14px;
+      border-radius: 6px;
+      text-align: center;
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    .cp-calc-host .target-tile .target-out small {
+      display: block; font-size: 0.72rem;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 0.04em;
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    .cp-calc-host .zones-block {
+      margin-top: 22px;
+    }
+    .cp-calc-host .zones-block h4 {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.12em; text-transform: uppercase;
+      font-size: 0.78rem;
+      color: var(--wf-coral);
+      margin: 0 0 12px;
+    }
+    .cp-calc-host .zone-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      padding: 9px 14px;
+      background: #fff;
+      border: 1px solid var(--ys-line);
+      border-left: 4px solid var(--ys-navy);
+      margin-bottom: 6px;
+      border-radius: 6px;
+      font-size: 0.94rem;
+    }
+    .cp-calc-host .zone-row.featured { border-left-color: var(--wf-coral); }
+    .cp-calc-host .zone-name {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.04em;
+      color: var(--ys-navy);
+      font-weight: 600;
+    }
+    .cp-calc-host .zone-name small {
+      display: block;
+      font-family: var(--ys-font-body);
+      font-weight: 400;
+      color: var(--ys-muted);
+      font-size: 0.78rem;
+      letter-spacing: 0;
+      margin-top: 2px;
+    }
+    .cp-calc-host .zone-value {
+      font-family: var(--ys-font-display);
+      color: var(--ys-navy);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .cp-calc-host .fit-meta {
+      margin-top: 10px;
+      font-size: 0.86rem;
+      color: var(--ys-muted);
+    }
+    .cp-calc-host .fit-meta strong { color: var(--ys-navy); }
+    .cp-calc-host .fit-quality.good    { color: #2e7d4f; }
+    .cp-calc-host .fit-quality.ok      { color: var(--wf-coral); }
+    .cp-calc-host .fit-quality.poor    { color: #c93939; }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 56px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Bike</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">Critical power (CP).</h1>
+      <div class="wf-subhead">3 efforts &middot; CP &middot; W&prime; &middot; Yousuli zones</div>
+      <p class="lede" style="max-width: 660px;">Plug three maximal efforts at different durations &mdash; ideally ~2-3 min, ~5-7 min, ~12-15 min. Out comes critical power (the asymptote of your power-duration curve), W&prime; (your finite anaerobic capacity above CP), AeT band, and a full set of Yousuli training zones. Better than the 0.95&times;20-min FTP shortcut for most athletes.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">How CP works</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 32px 0 48px;">
+    <div class="ys-container">
+      <div class="ys-tool" style="max-width: 920px;">
+        <h3>Plug in three maximal efforts</h3>
+        <p class="ys-tool-pre"><strong>Tip:</strong> use durations roughly around <strong>~2-3 min</strong>, <strong>~5-7 min</strong>, and <strong>~12-15 min</strong> for the most stable CP/W&prime; fit. Same day is OK with full recovery between; spread across 2-3 days is better. All efforts must be true maximal &mdash; pacing kills the model.</p>
+
+        <div class="cp-calc-host">
+
+          <div class="efforts">
+            <div class="efforts-head">Effort 1 &mdash; short (target ~2-3 min)</div>
+            <div class="effort-row">
+              <span class="effort-tag">Short</span>
+              <div>
+                <label>Time</label>
+                <div class="row"><input type="number" id="time1" min="30" step="1" value="120" /><span class="unit">s</span></div>
+              </div>
+              <div>
+                <label>Power</label>
+                <div class="row"><input type="number" id="power1" min="0" step="1" value="400" /><span class="unit">W</span></div>
+              </div>
+            </div>
+
+            <div class="efforts-head" style="margin-top: 16px;">Effort 2 &mdash; mid (target ~5-7 min)</div>
+            <div class="effort-row">
+              <span class="effort-tag">Mid</span>
+              <div>
+                <label>Time</label>
+                <div class="row"><input type="number" id="time2" min="60" step="1" value="480" /><span class="unit">s</span></div>
+              </div>
+              <div>
+                <label>Power</label>
+                <div class="row"><input type="number" id="power2" min="0" step="1" value="306" /><span class="unit">W</span></div>
+              </div>
+            </div>
+
+            <div class="efforts-head" style="margin-top: 16px;">Effort 3 &mdash; long (target ~12-15 min)</div>
+            <div class="effort-row">
+              <span class="effort-tag">Long</span>
+              <div>
+                <label>Time</label>
+                <div class="row"><input type="number" id="time3" min="120" step="1" value="900" /><span class="unit">s</span></div>
+              </div>
+              <div>
+                <label>Power</label>
+                <div class="row"><input type="number" id="power3" min="0" step="1" value="290" /><span class="unit">W</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="err" id="errorMsg"></div>
+
+          <div class="results-grid">
+            <div class="result-tile featured">
+              <span class="result-label">Critical power (CP)</span>
+              <span class="result-value"><span id="outCP">—</span> W</span>
+              <span class="result-aux">~ FTP / AnT / MLSS</span>
+            </div>
+            <div class="result-tile">
+              <span class="result-label">W&prime; anaerobic capacity</span>
+              <span class="result-value"><span id="outWp">—</span> kJ</span>
+              <span class="result-aux">finite reservoir above CP</span>
+            </div>
+            <div class="result-tile">
+              <span class="result-label">AeT range</span>
+              <span class="result-value" id="outAeT">—</span>
+              <span class="result-aux">60–76% CP</span>
+            </div>
+          </div>
+
+          <p class="fit-meta" id="fitMeta">—</p>
+
+          <div class="target-grid">
+            <div class="target-tile">
+              <div>
+                <label>Target power</label>
+                <div class="row"><input type="number" id="powerInp" min="0" step="1" value="300" /><span class="unit">W</span></div>
+              </div>
+              <div class="target-out">
+                <span id="outTimeAtPower">—</span>
+                <small>time-to-exhaustion (s)</small>
+              </div>
+            </div>
+            <div class="target-tile">
+              <div>
+                <label>Target time</label>
+                <div class="row"><input type="number" id="tempInp" min="30" step="1" value="285" /><span class="unit">s</span></div>
+              </div>
+              <div class="target-out">
+                <span id="outPowerAtTime">—</span>
+                <small>sustainable power (W)</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="zones-block">
+            <h4>Yousuli training zones</h4>
+            <div id="zonesContainer"></div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW CP WORKS ============ -->
+  <section class="wf-section alt" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How critical power works</h2>
+        <div class="ys-rule"></div>
+        <p>The model in three pieces.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>Two-parameter model</h3>
+          <p><code style="background: var(--ys-bg-soft); padding: 2px 8px; border-radius: 4px;">P = W&prime; / t + CP</code></p>
+          <p style="margin-top: 8px;">CP is the asymptote of the power-duration curve &mdash; the highest sustainable power. W&prime; is a finite work capacity above CP; spend it and you crack. Linear regression of <em>P vs 1/t</em> from your three efforts gives both numbers.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>CP &asymp; FTP, but cleaner</h3>
+          <p>For most athletes CP and FTP are within 5%. CP&rsquo;s advantage: built from <strong>multiple efforts</strong> at different durations, so it&rsquo;s less sensitive to a bad 20-min effort or anaerobic outliers that wreck the 0.95&times; shortcut. Better signal-to-noise.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>W&prime; tells you race tactics</h3>
+          <p>Big W&prime; (25+ kJ) = sprinter / puncheur. Small W&prime; (15 kJ) = diesel / steady-state engine. Same CP, totally different way to race. Drives breakaway timing, finish-line tactics, and the kind of power profile to develop.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COACH NOTE ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
+        <h2 style="margin-top: 4px;">Three things that wreck a CP test &mdash; and how to fix them.</h2>
+        <ul class="ys-card-bullets" style="margin-top: 12px;">
+          <li><strong>Pacing.</strong> Hard out from gun, hold to failure. If you sandbag the start to "pace", the effort isn&rsquo;t maximal and CP comes out low. Negative-split CP tests are useless.</li>
+          <li><strong>Spacing.</strong> Three efforts at <strong>different durations</strong> spread across the curve. Two efforts that are too close (e.g. 4 min + 5 min) make the regression unstable. Stick to ~2-3 / ~5-7 / ~12-15 min.</li>
+          <li><strong>Recovery.</strong> Same day is OK with 30+ min between efforts, but <em>fatigue</em> from the first effort drags down the others. Better: spread across 2-3 days at the start of a training block when fresh.</li>
+        </ul>
+        <p style="margin-top: 12px;">The math also assumes constant-power steady efforts &mdash; not surges. Use a smart trainer or a flat road with no traffic. And keep your 5-min effort somewhere near 5 min &mdash; the calculator uses the closest-to-5-min effort to anchor the VO<sub>2</sub>max zone, so a 3-min "5-min" effort biases the top zone.</p>
+        <p style="margin-top: 10px;">For the lab-grade version, our cycling protocol pairs CP testing with lactate sampling and gas analysis &mdash; you walk out with measured CP, MLSS, fat oxidation crossover, and VO<sub>2</sub>max in one session.</p>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Bike lab testing</a>
+          <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ABOUT THE METRICS ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>The metrics, plain English</h2>
+        <div class="ys-rule"></div>
+        <p>What CP, FTP, AeT, and W&prime; are &mdash; and aren&rsquo;t.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-card">
+          <div class="ys-meta">FTP (Coggan)</div>
+          <h3>~60-min sustainable</h3>
+          <p>Functional threshold power &mdash; the highest power you can sustain ~60 minutes. Field shortcut: 0.95&times;20-min mean max &mdash; not universal. Anaerobicly strong riders over-estimate; very aerobic riders under-estimate. <strong>CP is usually a cleaner number.</strong></p>
+        </div>
+        <div class="ys-card featured">
+          <div class="ys-meta" style="color: var(--wf-coral);">CP</div>
+          <h3>The asymptote</h3>
+          <p>Power-duration curve flattens to CP. Above CP, you spend W&prime;. Below CP, in theory you can ride indefinitely. Practically, ~30-60 min hold time depending on glycogen, heat, and prior fatigue.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">AeT / LT1</div>
+          <h3>Top of "easy"</h3>
+          <p>Aerobic threshold &mdash; the upper bound of comfortable aerobic work. Lactate near baseline; conversation easy. Roughly <strong>60-76% of CP</strong> for most athletes, but varies with training history.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">AnT / LT2 / MLSS</div>
+          <h3>Highest steady state</h3>
+          <p>Maximal lactate steady state &mdash; lactate levels off rather than climbing. Conceptually close to CP for most, but not identical. The line between "can hold" and "cracking soon".</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">W&prime;</div>
+          <h3>The reservoir above CP</h3>
+          <p>Finite anaerobic work capacity in <strong>kJ</strong>. Spend it above CP, recover it below. Recovery rate depends on how far below CP you are &mdash; faster as you ride easier.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED CALCULATORS ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Related calculators</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card redesigned" href="calculator-gear-speed-power.html">
+          <span class="ys-calc-card-title">Gear &times; Speed &times; Power</span>
+          <p>Once you know CP, see how fast you can ride that power on your bike + course.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card redesigned" href="calculator-tire-pressure.html">
+          <span class="ys-calc-card-title">Tire pressure guide</span>
+          <p>Lower Crr means more of your CP arrives at the wheel.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="calculators.html">
+          <span class="ys-calc-card-title">All calculators</span>
+          <p>Back to the full catalog &mdash; 28 endurance calculators across performance, fueling, swim, bike, run.</p>
+          <span class="ys-calc-card-arrow">Browse &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want CP measured, not estimated?</h2>
+          <p>The lab&rsquo;s cycling protocol gives you CP via a calibrated step test, plus lactate-sampled MLSS, fat-oxidation crossover, and VO<sub>2</sub>max in one session. Walk out with the four numbers that actually drive your training plan.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Book bike testing</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Critical%20power">Send feedback</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Spotted a bug or want a feature? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Critical%20power" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ CALCULATOR LOGIC ============ -->
+  <script>
+    (function () {
+      const $ = id => document.getElementById(id);
+      const errEl = $('errorMsg');
+
+      function safeNum(v) { const x = parseFloat(v); return Number.isFinite(x) ? x : NaN; }
+      function showError(msg) { errEl.textContent = msg; errEl.classList.add('active'); }
+      function clearError() { errEl.classList.remove('active'); errEl.textContent = ''; }
+
+      function mean(a) { return a.reduce((s, v) => s + v, 0) / a.length; }
+
+      function regress(points) {
+        // points: [[x,y], ...]
+        const xs = points.map(p => p[0]);
+        const ys = points.map(p => p[1]);
+        const xm = mean(xs), ym = mean(ys);
+        let num = 0, den = 0, ssTot = 0;
+        xs.forEach((x, i) => {
+          num += (x - xm) * (ys[i] - ym);
+          den += (x - xm) ** 2;
+          ssTot += (ys[i] - ym) ** 2;
+        });
+        if (den < 1e-12) return null;
+        const slope = num / den;
+        const intercept = ym - slope * xm;
+        // R²
+        let ssRes = 0;
+        xs.forEach((x, i) => {
+          const yhat = intercept + slope * x;
+          ssRes += (ys[i] - yhat) ** 2;
+        });
+        const r2 = ssTot > 0 ? 1 - ssRes / ssTot : 1;
+        return { slope, intercept, r2 };
+      }
+
+      function bestEffortNear(seconds) {
+        // Pick the test effort with time closest to `seconds`
+        const t = [safeNum($('time1').value), safeNum($('time2').value), safeNum($('time3').value)];
+        const p = [safeNum($('power1').value), safeNum($('power2').value), safeNum($('power3').value)];
+        let idx = 0, bestDiff = Math.abs(t[0] - seconds);
+        for (let i = 1; i < t.length; i++) {
+          const d = Math.abs(t[i] - seconds);
+          if (d < bestDiff) { bestDiff = d; idx = i; }
+        }
+        return Number.isFinite(p[idx]) ? p[idx] : 0;
+      }
+
+      function renderZones(cp) {
+        const cpInt = Math.max(0, Math.floor(cp));
+        const best5 = Math.floor(bestEffortNear(300));
+
+        const zones = [
+          { name: 'Easy',                sub: '< 60% CP',          lo: 0,                                 hi: Math.floor(cpInt * 0.59) },
+          { name: 'Zone 2 — poor cond.',  sub: '60-65% CP',         lo: Math.floor(cpInt * 0.60),          hi: Math.floor(cpInt * 0.65) },
+          { name: 'Zone 2 — normal cond.',sub: '66-71% CP',         lo: Math.floor(cpInt * 0.66),          hi: Math.floor(cpInt * 0.71) },
+          { name: 'Zone 2 — high cond.',  sub: '72-76% CP',         lo: Math.floor(cpInt * 0.72),          hi: Math.floor(cpInt * 0.76) },
+          { name: 'Endurance',            sub: '77-89% CP',         lo: Math.floor(cpInt * 0.77),          hi: Math.floor(cpInt * 0.89) },
+          { name: 'Threshold',            sub: '90-100% CP',        lo: Math.floor(cpInt * 0.90),          hi: cpInt, featured: true },
+          { name: 'Suprathreshold',       sub: '101% CP → just below VO₂max', lo: cpInt + 1, hi: Math.max(cpInt + 1, Math.floor(best5 * 0.98) - 1) },
+          { name: 'VO₂max',               sub: '~ best 5-min effort ±2%', lo: Math.floor(best5 * 0.98), hi: Math.floor(best5 * 1.02) },
+          { name: 'Power',                sub: '> 102% best 5-min',  lo: Math.floor(best5 * 1.02) + 1, hi: '∞' }
+        ];
+
+        const wrap = $('zonesContainer');
+        wrap.innerHTML = '';
+        zones.forEach(z => {
+          const div = document.createElement('div');
+          div.className = 'zone-row' + (z.featured ? ' featured' : '');
+          const value = (z.hi === '∞')
+            ? `${z.lo} W +`
+            : `${z.lo} – ${z.hi} W`;
+          div.innerHTML = `<div class="zone-name">${z.name}<small>${z.sub}</small></div><div class="zone-value">${value}</div>`;
+          wrap.appendChild(div);
+        });
+      }
+
+      function calc() {
+        clearError();
+        const t1 = safeNum($('time1').value), p1 = safeNum($('power1').value);
+        const t2 = safeNum($('time2').value), p2 = safeNum($('power2').value);
+        const t3 = safeNum($('time3').value), p3 = safeNum($('power3').value);
+
+        const all = [t1, p1, t2, p2, t3, p3];
+        if (!all.every(v => Number.isFinite(v) && v > 0)) {
+          return showError('Enter all six values (3 times in seconds, 3 powers in watts).');
+        }
+        // Sort efforts to enforce ordering
+        const efforts = [[t1, p1], [t2, p2], [t3, p3]].sort((a, b) => a[0] - b[0]);
+        // Sanity: powers should generally drop with longer time
+        if (!(efforts[0][1] > efforts[1][1] && efforts[1][1] >= efforts[2][1])) {
+          // not strict but warn
+          // (still allow calc — might be valid for some athletes)
+        }
+
+        const points = efforts.map(([t, p]) => [1 / t, p]);
+        const fit = regress(points);
+        if (!fit) return showError('Times must differ — same time twice gives a degenerate fit.');
+
+        const cp = fit.intercept;
+        const wj = fit.slope;     // J
+        const wkj = wj / 1000;     // kJ
+
+        if (cp <= 0 || wj <= 0) {
+          return showError('Negative CP or W′ — re-check inputs (durations and powers must drop together as time grows).');
+        }
+
+        // ---- render
+        $('outCP').textContent = Math.floor(cp);
+        $('outWp').textContent = wkj.toFixed(1);
+
+        const aeLo = Math.floor(cp * 0.60);
+        const aeHi = Math.floor(cp * 0.76);
+        $('outAeT').textContent = `${aeLo} – ${aeHi} W`;
+
+        // fit quality
+        const r2 = Math.max(0, fit.r2);
+        let qClass = 'good', qText = 'excellent';
+        if (r2 < 0.95) { qClass = 'ok'; qText = 'fair — tighten effort spacing'; }
+        if (r2 < 0.85) { qClass = 'poor'; qText = 'poor — re-test with cleaner efforts'; }
+        $('fitMeta').innerHTML = `Fit quality: <strong>R² = ${r2.toFixed(3)}</strong> <span class="fit-quality ${qClass}">(${qText})</span>. Above 0.95 = solid CP estimate.`;
+
+        // Targets
+        const tgtP = safeNum($('powerInp').value);
+        const tgtT = safeNum($('tempInp').value);
+        if (Number.isFinite(tgtP)) {
+          if (tgtP > cp) {
+            const tte = wj / (tgtP - cp);
+            $('outTimeAtPower').textContent = Math.floor(tte);
+          } else {
+            $('outTimeAtPower').textContent = '∞';
+          }
+        }
+        if (Number.isFinite(tgtT) && tgtT > 0) {
+          $('outPowerAtTime').textContent = Math.floor(wj / tgtT + cp);
+        }
+
+        renderZones(cp);
+      }
+
+      // wire inputs
+      ['time1','time2','time3','power1','power2','power3','powerInp','tempInp'].forEach(id => {
+        $(id).addEventListener('input', calc);
+        $(id).addEventListener('change', calc);
+      });
+
+      // initial run
+      calc();
+    })();
+  </script>
+
+</body>
+</html>
