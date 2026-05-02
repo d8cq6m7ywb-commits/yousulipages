@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EBT-2: Stroke tipping points — Yousuli calculators</title>
+  <meta name="description" content="Yousuli swim efficiency battery test #2: 5 timed 50m laps at varying speeds, see where your stroke rate vs pace curve crosses the DPS-collapse and SR-too-low boundaries. Find your tipping points." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED CALCULATOR STYLES ============ -->
+  <style>
+    .ebt2-calc-host { width: 100%; }
+
+    .ebt2-calc-host .unit-toggle {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 14px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.72rem; color: var(--ys-muted);
+    }
+    .ebt2-calc-host .unit-toggle .switch {
+      display: inline-flex;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px; overflow: hidden;
+    }
+    .ebt2-calc-host .unit-toggle .switch button {
+      background: #fff; border: 0; padding: 7px 14px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.7rem; font-weight: 600;
+      color: var(--ys-muted); cursor: pointer;
+    }
+    .ebt2-calc-host .unit-toggle .switch button.active {
+      background: var(--ys-navy); color: #fff;
+    }
+
+    .ebt2-calc-host .lap-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 1100px) { .ebt2-calc-host .lap-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 720px)  { .ebt2-calc-host .lap-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px)  { .ebt2-calc-host .lap-grid { grid-template-columns: 1fr; } }
+
+    .ebt2-calc-host .lap-block {
+      background: var(--ys-bg-soft);
+      border: 1px solid var(--ys-line);
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .ebt2-calc-host .lap-tag {
+      background: var(--ys-navy);
+      color: #fff;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.78rem;
+      padding: 6px 0;
+      text-align: center;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    .ebt2-calc-host .lap-block label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.66rem;
+      color: var(--ys-navy);
+      margin: 8px 0 4px;
+    }
+    .ebt2-calc-host .lap-block input[type="number"] {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 5px;
+      font-size: 0.96rem;
+      font-family: var(--ys-font-body);
+      background: #fff;
+      color: var(--ys-navy);
+      box-sizing: border-box;
+      text-align: center;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .ebt2-calc-host .lap-block input:focus {
+      outline: none;
+      border-color: var(--wf-coral);
+      box-shadow: 0 0 0 2px rgba(250, 119, 60, 0.18);
+    }
+    .ebt2-calc-host .lap-pace {
+      margin-top: 8px;
+      padding: 6px;
+      background: #fff;
+      border-radius: 5px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--ys-muted);
+      line-height: 1.4;
+      min-height: 2.4em;
+    }
+    .ebt2-calc-host .lap-pace strong { color: var(--ys-navy); }
+    .ebt2-calc-host .lap-help {
+      font-size: 0.7rem;
+      color: var(--ys-muted);
+      margin-top: 3px;
+      text-align: center;
+    }
+
+    .ebt2-calc-host .err {
+      color: #c93939;
+      background: rgba(201, 57, 57, 0.08);
+      border-left: 4px solid #c93939;
+      padding: 10px 14px;
+      margin-top: 12px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      display: none;
+    }
+    .ebt2-calc-host .err.active { display: block; }
+
+    .ebt2-calc-host .chart-wrap {
+      margin-top: 18px;
+      padding: 18px;
+      background: #fff;
+      border: 1px solid var(--ys-line);
+      border-radius: 12px;
+    }
+    .ebt2-calc-host .chart-title {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.82rem;
+      color: var(--wf-coral);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .ebt2-calc-host #ebt2Chart { width: 100%; height: 380px; }
+    .ebt2-calc-host .chart-legend {
+      display: flex; flex-wrap: wrap; gap: 14px;
+      justify-content: center;
+      margin-top: 12px;
+      font-size: 0.86rem;
+    }
+    .ebt2-calc-host .legend-item {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--ys-navy);
+    }
+    .ebt2-calc-host .legend-swatch {
+      display: inline-block;
+      width: 18px; height: 4px;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 56px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Swim</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">EBT-2: Stroke tipping points.</h1>
+      <div class="wf-subhead">5 × 50 m at varying speeds &middot; SR vs pace plot</div>
+      <p class="lede" style="max-width: 660px;">Battery test #2 of two. Five timed 50 m efforts at <strong>varying speeds</strong> &mdash; from cruise to flat-out. We plot your stroke rate against your pace, so you can see <em>exactly where your DPS collapses</em> or your stroke rate plateaus. The two reference lines define the &ldquo;balanced&rdquo; band; deviations above or below are technique tells.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">How to read the curve</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 32px 0 48px;">
+    <div class="ys-container">
+      <div class="ys-tool" style="max-width: 1080px; padding: 24px;">
+        <h3>Plug in 5 timed 50s</h3>
+        <p class="ys-tool-pre">Swim five 50 m efforts at <strong>different speeds</strong> &mdash; e.g. cruise, easy, moderate, hard, all-out. Each lap: time (30–60 s), stroke rate (or stroke count + we&rsquo;ll auto-compute SR). Hit calculate to plot your curve against the reference band.</p>
+
+        <div class="ebt2-calc-host">
+
+          <div class="unit-toggle">
+            <span>Units</span>
+            <span class="switch">
+              <button type="button" class="active" data-unit="m">Metric (50 m)</button>
+              <button type="button" data-unit="yd">Imperial (50 yd)</button>
+            </span>
+          </div>
+
+          <div class="lap-grid" id="lapGrid">
+            <!-- Lap blocks injected via JS -->
+          </div>
+
+          <div class="ys-btn-row" style="margin: 4px 0 0;">
+            <button class="ys-btn ys-btn-coral" type="button" id="calcBtn">Plot curve</button>
+            <button class="ys-btn ys-btn-ghost" type="button" id="resetBtn">Reset</button>
+          </div>
+
+          <div class="err" id="errorMsg"></div>
+
+          <div class="chart-wrap" id="chartWrap" style="display: none;">
+            <div class="chart-title">SR vs pace &mdash; your curve against the balanced band</div>
+            <div id="ebt2Chart"></div>
+            <div class="chart-legend">
+              <span class="legend-item"><span class="legend-swatch" style="background: var(--ys-navy);"></span><strong>DPS-collapse line</strong> &mdash; above this, your DPS is too low</span>
+              <span class="legend-item"><span class="legend-swatch" style="background: var(--wf-coral);"></span><strong>Your curve</strong> (athlete)</span>
+              <span class="legend-item"><span class="legend-swatch" style="background: var(--wf-teal);"></span><strong>SR-too-low line</strong> &mdash; below this, you&rsquo;re over-gliding</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW TO READ THE CURVE ============ -->
+  <section class="wf-section alt" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How to read the curve</h2>
+        <div class="ys-rule"></div>
+        <p>Three regions, three different stories.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>Below the SR-too-low line</h3>
+          <p>You&rsquo;re <strong>under-rating</strong> at that pace &mdash; coasting on big DPS but with a stroke rate too slow to support faster pace. Add tempo work; raise SR without dropping DPS.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>In the band</h3>
+          <p>Balanced. Your stroke rate matches the pace appropriately for the population. Aim to <em>shift the entire curve faster</em> in the next training block &mdash; same balance, higher speeds.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>Above the DPS-collapse line</h3>
+          <p>You&rsquo;re <strong>thrashing</strong> &mdash; high SR but DPS has cratered. Common at the fast end of the test (lap 5). The pace where your line crosses up = your <strong>tipping point</strong>. Past it, more SR doesn&rsquo;t buy speed; better technique does.</p>
+        </div>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.92rem; max-width: 720px; margin-left: auto; margin-right: auto;">The most diagnostic single point: <strong>where your curve crosses the DPS-collapse line</strong>. That&rsquo;s the pace beyond which <em>technique</em> is the limiter, not engine. Train at and just above that pace to push the tipping point faster.</p>
+    </div>
+  </section>
+
+  <!-- ============ COACH NOTE ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
+        <h2 style="margin-top: 4px;">Test protocol matters &mdash; here&rsquo;s the clean version.</h2>
+        <p>Bad protocol = noisy curve = useless conclusion. Five rules for a clean EBT-2:</p>
+        <ul class="ys-card-bullets" style="margin-top: 12px;">
+          <li><strong>Same lane, same pool, same time of day</strong> &mdash; or trends are meaningless.</li>
+          <li><strong>Spread the speeds widely</strong>: e.g. 60s / 55s / 50s / 45s / 40s. Tight bunching of similar paces makes the curve uninformative.</li>
+          <li><strong>Rest fully between efforts</strong> &mdash; 1:30–3:00 minimum, more for the fast ones. Fatigue from earlier efforts collapses DPS at later faster paces and shifts your tipping point falsely earlier.</li>
+          <li><strong>Same stroke (free) on every lap.</strong> Don&rsquo;t mix strokes, don&rsquo;t change kicking effort radically across reps.</li>
+          <li><strong>Re-test every 6&ndash;8 weeks</strong>. Look for the curve shifting <em>right</em> (faster paces at the same SR) or the tipping point moving faster.</li>
+        </ul>
+        <p style="margin-top: 12px;">Pair with EBT-1 for the static-snapshot view; this test gives the dynamic. Together they tell you exactly where to focus &mdash; technique, top-end speed, or stroke rate &mdash; in your next swim block.</p>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/on-site-swim-coaching" target="_top">On-site swim coaching</a>
+          <a class="ys-btn ys-btn-ghost" href="calculator-ebt-1.html">EBT-1 first</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED CALCULATORS ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Related calculators</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card redesigned" href="calculator-ebt-1.html">
+          <span class="ys-calc-card-title">EBT-1 — Stroke efficiency</span>
+          <p>Single-snapshot DPS rating + verdict. Run this first to anchor your overall efficiency.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card redesigned" href="calculator-css.html">
+          <span class="ys-calc-card-title">Critical swim speed (CSS)</span>
+          <p>Pace zones for swim training. Pair with this test&rsquo;s tipping point to set hard-set targets.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="calculators.html">
+          <span class="ys-calc-card-title">All calculators</span>
+          <p>Back to the full catalog &mdash; 28 endurance calculators across performance, fueling, swim, bike, run.</p>
+          <span class="ys-calc-card-arrow">Browse &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want video to pair with the curve?</h2>
+          <p>On-site swim coaching with the Slipstream stationary-swim setup turns this test into a side-by-side: your EBT-2 curve next to high-speed underwater footage. We see <em>why</em> DPS collapses at your tipping point &mdash; and exactly what to drill.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Book swim coaching</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20EBT-2">Send feedback</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Spotted a bug or want a feature? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20EBT-2" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ CALCULATOR LOGIC ============ -->
+  <script>
+    (function () {
+      // Yousuli reference anchors (pace seconds per 100 m → SR boundaries)
+      const REF_PACE = [120, 110, 100, 90, 80, 70, 60];
+      const REF_DPS_LOW_SR  = [62, 64, 65, 70, 80, 90, 100]; // upper bound — above means DPS collapsed
+      const REF_SR_TOO_LOW  = [50, 51, 52, 53, 54, 56, 60];  // lower bound — below means under-rating
+
+      // Default lap inputs
+      const DEFAULT_LAPS = [
+        { time: 60, sr: 50, count: '' },
+        { time: 55, sr: 55, count: '' },
+        { time: 50, sr: 58, count: '' },
+        { time: 45, sr: 53, count: '' },
+        { time: 40, sr: 56, count: '' }
+      ];
+
+      const $ = id => document.getElementById(id);
+      let unit = 'm';
+      let chart = null;
+
+      function buildLapBlocks() {
+        const grid = $('lapGrid');
+        grid.innerHTML = '';
+        DEFAULT_LAPS.forEach((d, i) => {
+          const block = document.createElement('div');
+          block.className = 'lap-block';
+          block.innerHTML =
+            '<div class="lap-tag">Lap ' + (i + 1) + '</div>' +
+            '<label>Time (sec)</label>' +
+            '<input type="number" step="0.01" min="20" max="120" class="lap-time" data-i="' + i + '" value="' + d.time + '" />' +
+            '<div class="lap-help">30–60 s typical</div>' +
+            '<div class="lap-pace" data-i="' + i + '">—</div>' +
+            '<label>Stroke rate (spm)</label>' +
+            '<input type="number" step="0.5" min="0" class="lap-sr" data-i="' + i + '" value="' + d.sr + '" />' +
+            '<label>Stroke count (optional)</label>' +
+            '<input type="number" step="1" min="0" class="lap-count" data-i="' + i + '" value="' + d.count + '" placeholder="optional" />';
+          grid.appendChild(block);
+        });
+
+        // Wire pace updates on time change
+        document.querySelectorAll('.lap-time').forEach(el => {
+          el.addEventListener('input', updatePaceLabels);
+        });
+        updatePaceLabels();
+      }
+
+      function fmtMmSs(sec) {
+        const m = Math.floor(sec / 60);
+        const s = sec - m * 60;
+        return m + ':' + (s < 10 ? '0' : '') + s.toFixed(2);
+      }
+
+      function updatePaceLabels() {
+        document.querySelectorAll('.lap-time').forEach(timeEl => {
+          const i = timeEl.getAttribute('data-i');
+          const t = parseFloat(timeEl.value);
+          const out = document.querySelector('.lap-pace[data-i="' + i + '"]');
+          if (Number.isFinite(t) && t > 0) {
+            const paceMetric = t * 2;                 // 50 m × 2 = 100 m
+            const paceImp = t * 2 * 0.9144;            // assumes the lap was 50 m, converted to /100 yd
+            // If the unit is yd, treat lap as 50 yd → pace per 100 yd is t*2 directly, and per 100 m is t*2/0.9144
+            if (unit === 'yd') {
+              const paceY = t * 2;
+              const paceM = t * 2 / 0.9144;
+              out.innerHTML = '<strong>' + fmtMmSs(paceY) + '</strong> /100 yd<br>' + fmtMmSs(paceM) + ' /100 m';
+            } else {
+              out.innerHTML = '<strong>' + fmtMmSs(paceMetric) + '</strong> /100 m<br>' + fmtMmSs(paceImp) + ' /100 yd';
+            }
+          } else {
+            out.textContent = '—';
+          }
+        });
+      }
+
+      // ---- unit toggle
+      document.querySelectorAll('.ebt2-calc-host .unit-toggle button').forEach(b => {
+        b.addEventListener('click', () => {
+          if (b.classList.contains('active')) return;
+          document.querySelectorAll('.ebt2-calc-host .unit-toggle button').forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          unit = b.getAttribute('data-unit');
+          updatePaceLabels();
+          if (chart) plot();
+        });
+      });
+
+      function showError(msg) {
+        $('errorMsg').textContent = msg;
+        $('errorMsg').classList.add('active');
+      }
+      function clearError() { $('errorMsg').classList.remove('active'); $('errorMsg').textContent = ''; }
+
+      // Linear interpolation across the reference axis
+      function interp(refX, refY, x) {
+        if (x >= refX[0]) return refY[0];
+        if (x <= refX[refX.length - 1]) return refY[refY.length - 1];
+        for (let i = 0; i < refX.length - 1; i++) {
+          if (x <= refX[i] && x >= refX[i + 1]) {
+            const f = (refX[i] - x) / (refX[i] - refX[i + 1]);
+            return refY[i] + f * (refY[i + 1] - refY[i]);
+          }
+        }
+        return refY[refY.length - 1];
+      }
+
+      function getEffectiveAthletePoints() {
+        // Returns array of { x: pace_per_100m, y: effective_SR }
+        const points = [];
+        document.querySelectorAll('.ebt2-calc-host .lap-block').forEach(block => {
+          const t = parseFloat(block.querySelector('.lap-time').value);
+          const sr = parseFloat(block.querySelector('.lap-sr').value);
+          const sc = parseFloat(block.querySelector('.lap-count').value);
+          if (!(t > 0)) return;
+          const eff = (Number.isFinite(sc) && sc > 0) ? (sc / t) * 60 : sr;
+          if (!(eff > 0)) return;
+          // Pace in /100 m regardless of unit — the reference is in /100 m
+          // If unit is 'yd', the lap was 50 yd, so /100 yd = t*2; convert to /100 m by dividing by 0.9144
+          const paceMeters = unit === 'yd' ? (t * 2 / 0.9144) : (t * 2);
+          points.push({ x: paceMeters, y: eff });
+        });
+        return points.sort((a, b) => a.x - b.x);
+      }
+
+      function plot() {
+        clearError();
+        const pts = getEffectiveAthletePoints();
+        if (pts.length < 2) {
+          return showError('Enter time + stroke rate (or stroke count) for at least 2 laps.');
+        }
+
+        // x-axis: 61 points across pace range (in /100 m metric internally)
+        const xHigh = 120, xLow = 60;
+        const numPoints = 61;
+        const step = (xHigh - xLow) / (numPoints - 1);
+        const xAxis = []; // descending (slow → fast)
+        for (let i = 0; i < numPoints; i++) {
+          xAxis.push(parseFloat((xHigh - i * step).toFixed(2)));
+        }
+
+        const dpsLow = xAxis.map(x => parseFloat(interp(REF_PACE, REF_DPS_LOW_SR, x).toFixed(2)));
+        const srLow  = xAxis.map(x => parseFloat(interp(REF_PACE, REF_SR_TOO_LOW, x).toFixed(2)));
+
+        // Athlete: linear interpolation across user points; outside range = clamp
+        const athletePts = pts.slice().sort((a, b) => a.x - b.x); // ascending
+        function athleteAt(x) {
+          if (x <= athletePts[0].x) return athletePts[0].y;
+          if (x >= athletePts[athletePts.length - 1].x) return athletePts[athletePts.length - 1].y;
+          for (let i = 0; i < athletePts.length - 1; i++) {
+            if (x >= athletePts[i].x && x <= athletePts[i + 1].x) {
+              const f = (x - athletePts[i].x) / (athletePts[i + 1].x - athletePts[i].x);
+              return athletePts[i].y + f * (athletePts[i + 1].y - athletePts[i].y);
+            }
+          }
+          return athletePts[athletePts.length - 1].y;
+        }
+        const athlete = xAxis.map(x => parseFloat(athleteAt(x).toFixed(2)));
+
+        // x-axis labels: show pace in current unit
+        const xLabels = xAxis.map(x => {
+          if (unit === 'yd') return (x * 0.9144).toFixed(0);
+          return x.toFixed(0);
+        });
+
+        $('chartWrap').style.display = 'block';
+
+        if (chart) chart.destroy();
+        chart = Highcharts.chart('ebt2Chart', {
+          chart: { type: 'spline', backgroundColor: 'transparent' },
+          title: { text: '' },
+          credits: { enabled: false },
+          xAxis: {
+            categories: xLabels,
+            title: { text: unit === 'yd' ? 'Pace (sec / 100 yd)' : 'Pace (sec / 100 m)', style: { color: '#2F2D56', fontFamily: 'Futura, "Trebuchet MS", sans-serif', letterSpacing: '0.06em' } },
+            tickInterval: 6,
+            labels: { style: { color: '#2F2D56' } }
+          },
+          yAxis: {
+            title: { text: 'Stroke rate (spm)', style: { color: '#2F2D56', fontFamily: 'Futura, "Trebuchet MS", sans-serif', letterSpacing: '0.06em' } },
+            labels: { style: { color: '#2F2D56' } },
+            gridLineColor: '#e5e7ea'
+          },
+          tooltip: { shared: true, valueSuffix: ' spm' },
+          legend: { enabled: false },
+          plotOptions: {
+            spline: { marker: { enabled: false } },
+            series: { lineWidth: 3 }
+          },
+          series: [
+            { name: 'DPS-collapse line',  data: dpsLow,   color: '#2F2D56', dashStyle: 'shortdash' },
+            { name: 'Athlete (you)',      data: athlete,  color: '#FA773C', lineWidth: 4, marker: { enabled: true, radius: 4, fillColor: '#FA773C' } },
+            { name: 'SR-too-low line',    data: srLow,    color: '#9966FF', dashStyle: 'shortdash' }
+          ]
+        });
+      }
+
+      $('calcBtn').addEventListener('click', plot);
+      $('resetBtn').addEventListener('click', () => {
+        buildLapBlocks();
+        clearError();
+        $('chartWrap').style.display = 'none';
+        if (chart) { chart.destroy(); chart = null; }
+      });
+
+      buildLapBlocks();
+    })();
+  </script>
+
+</body>
+</html>
