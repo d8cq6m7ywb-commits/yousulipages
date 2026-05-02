@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gear ratio table — Yousuli calculators</title>
+  <meta name="description" content="Pick your chainring + sprocket. See your gear ratio, development (meters per pedal stroke), and speed at cadence — plus a shaded table of all the gears around your choice." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED CALCULATOR STYLES ============ -->
+  <style>
+    .gear-calc-host { width: 100%; }
+
+    .gear-calc-host .field-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      background: var(--ys-bg-soft);
+      padding: 18px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 760px) { .gear-calc-host .field-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { .gear-calc-host .field-grid { grid-template-columns: 1fr; } }
+
+    .gear-calc-host label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.72rem;
+      color: var(--ys-navy);
+      margin-bottom: 6px;
+    }
+    .gear-calc-host select,
+    .gear-calc-host input[type="number"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      font-size: 0.96rem;
+      font-family: var(--ys-font-body);
+      background: #fff;
+      color: var(--ys-navy);
+      box-sizing: border-box;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .gear-calc-host select:focus,
+    .gear-calc-host input[type="number"]:focus {
+      outline: none;
+      border-color: var(--wf-coral);
+      box-shadow: 0 0 0 3px rgba(250, 119, 60, 0.18);
+    }
+
+    .gear-calc-host .results-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+      margin-bottom: 22px;
+    }
+    @media (max-width: 720px) { .gear-calc-host .results-grid { grid-template-columns: 1fr; } }
+
+    .gear-calc-host .result-tile {
+      background: #fff;
+      border: 1px solid var(--ys-line);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+    .gear-calc-host .result-tile.featured {
+      background: var(--ys-navy); border-color: var(--ys-navy);
+    }
+    .gear-calc-host .result-tile.featured .result-label,
+    .gear-calc-host .result-tile.featured .result-value,
+    .gear-calc-host .result-tile.featured .result-aux { color: #fff; }
+    .gear-calc-host .result-tile.featured .result-aux { color: rgba(255,255,255,0.7); }
+
+    .gear-calc-host .result-label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.72rem;
+      color: var(--ys-muted);
+      margin-bottom: 6px;
+    }
+    .gear-calc-host .result-value {
+      display: block;
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      font-size: 1.6rem;
+      color: var(--ys-navy);
+      letter-spacing: 0.02em;
+    }
+    .gear-calc-host .result-aux {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--ys-muted);
+      margin-top: 6px;
+    }
+
+    .gear-calc-host .table-tabs {
+      display: flex; gap: 0;
+      border-bottom: 1px solid var(--ys-line);
+      margin: 8px 0 14px;
+      flex-wrap: wrap;
+    }
+    .gear-calc-host .table-tab {
+      flex: 1 1 auto;
+      padding: 10px 14px;
+      background: transparent; border: 0;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.74rem; font-weight: 600;
+      color: var(--ys-muted);
+      cursor: pointer;
+      border-bottom: 4px solid transparent;
+      transition: color 0.15s ease, border-color 0.15s ease;
+    }
+    .gear-calc-host .table-tab:hover { color: var(--ys-navy); }
+    .gear-calc-host .table-tab.active {
+      color: var(--ys-navy);
+      border-bottom-color: var(--wf-coral);
+    }
+
+    .gear-calc-host .table-wrap {
+      overflow-x: auto;
+      margin-top: 4px;
+    }
+    .gear-calc-host table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 2px;
+      background: transparent;
+      font-size: 0.92rem;
+    }
+    .gear-calc-host table caption {
+      caption-side: top;
+      text-align: left;
+      padding: 4px 0 10px;
+      font-family: var(--ys-font-body);
+      color: var(--ys-muted);
+      font-size: 0.84rem;
+    }
+    .gear-calc-host th {
+      padding: 8px 6px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.04em;
+      text-align: center;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--ys-muted);
+      background: transparent;
+    }
+    .gear-calc-host th.row-header {
+      text-align: right;
+      padding-right: 10px;
+      width: 36px;
+    }
+    .gear-calc-host td {
+      padding: 10px 6px;
+      text-align: center;
+      border-radius: 4px;
+      font-family: var(--ys-font-body);
+      color: var(--ys-navy);
+      font-weight: 500;
+      transition: outline 0.15s ease;
+    }
+    .gear-calc-host td.selected {
+      background: var(--wf-coral) !important;
+      color: #fff !important;
+      font-weight: 700;
+      box-shadow: 0 2px 6px rgba(250, 119, 60, 0.35);
+    }
+    .gear-calc-host td.delta-0 { background: var(--ys-bg-soft); }
+    .gear-calc-host td.delta-1 { background: rgba(47, 45, 86, 0.07); }
+    .gear-calc-host td.delta-2 { background: rgba(47, 45, 86, 0.14); }
+    .gear-calc-host td.delta-3 { background: rgba(47, 45, 86, 0.22); color: #fff; }
+
+    .gear-calc-host .legend {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+      margin-top: 14px;
+      font-size: 0.82rem;
+      color: var(--ys-muted);
+    }
+    .gear-calc-host .legend-swatch {
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .gear-calc-host .legend-swatch span:first-child {
+      width: 16px; height: 16px;
+      border-radius: 3px;
+      border: 1px solid var(--ys-line);
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 56px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Bike</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">Gear ratio table.</h1>
+      <div class="wf-subhead">Chainring &times; sprocket &middot; development &middot; speed at cadence</div>
+      <p class="lede" style="max-width: 660px;">Pick your chainring and sprocket. See the gear ratio you&rsquo;re running, how far the wheel travels per pedal stroke, and how fast you&rsquo;d roll at any cadence. The shaded table maps every gear within a few teeth either side, so you can see how each shift changes the maths.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">How to read it</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 32px 0 48px;">
+    <div class="ys-container">
+      <div class="ys-tool" style="max-width: 980px;">
+        <h3>Pick your gear</h3>
+        <p class="ys-tool-pre">Set chainring and sprocket teeth, pick your wheel/tire (for development &amp; speed), and a target cadence. Everything updates live.</p>
+
+        <div class="gear-calc-host">
+          <div class="field-grid">
+            <div>
+              <label>Chainring</label>
+              <select id="chainring"></select>
+            </div>
+            <div>
+              <label>Sprocket</label>
+              <select id="sprocket"></select>
+            </div>
+            <div>
+              <label>Wheel + tire</label>
+              <select id="wheel">
+                <option value="2096">700C × 23 mm (2096 mm)</option>
+                <option value="2105" selected>700C × 25 mm (2105 mm)</option>
+                <option value="2136">700C × 28 mm (2136 mm)</option>
+                <option value="2155">700C × 32 mm (2155 mm)</option>
+                <option value="2175">700C × 35 mm (2175 mm)</option>
+                <option value="2210">700C × 40 mm / 29er (2210 mm)</option>
+                <option value="2105">650b × 47 mm (2105 mm)</option>
+                <option value="2080">26" × 1.95 (2080 mm)</option>
+                <option value="2125">27.5" × 2.1 (2125 mm)</option>
+                <option value="1944">650 × 23 mm TT (1944 mm)</option>
+              </select>
+            </div>
+            <div>
+              <label>Cadence (rpm)</label>
+              <input type="number" id="cadence" min="40" max="140" step="1" value="90" />
+            </div>
+          </div>
+
+          <div class="results-grid">
+            <div class="result-tile featured">
+              <span class="result-label">Gear ratio</span>
+              <span class="result-value" id="gearRatio">—</span>
+              <span class="result-aux" id="gearRatioAux">— : 1</span>
+            </div>
+            <div class="result-tile">
+              <span class="result-label">Development</span>
+              <span class="result-value"><span id="developmentM">—</span> m</span>
+              <span class="result-aux">per pedal stroke</span>
+            </div>
+            <div class="result-tile">
+              <span class="result-label">Speed at <span id="cadDisplay">90</span> rpm</span>
+              <span class="result-value"><span id="speedKmh">—</span> km/h</span>
+              <span class="result-aux"><span id="speedMph">—</span> mph</span>
+            </div>
+          </div>
+
+          <div class="table-tabs" role="tablist">
+            <button class="table-tab active" type="button" data-table="ratio">Gear ratio</button>
+            <button class="table-tab" type="button" data-table="development">Development (m)</button>
+            <button class="table-tab" type="button" data-table="speed">Speed (km/h)</button>
+          </div>
+
+          <div class="table-wrap">
+            <table id="gearTable">
+              <caption id="tableCaption">Gear ratio table — your gear is highlighted in coral. Darker grey cells are further from your gear in %.</caption>
+              <thead><tr id="tableHead"></tr></thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="legend">
+            <span>Distance from selected gear:</span>
+            <span class="legend-swatch"><span style="background: var(--wf-coral);"></span> selected</span>
+            <span class="legend-swatch"><span style="background: var(--ys-bg-soft);"></span> &lt; 5%</span>
+            <span class="legend-swatch"><span style="background: rgba(47,45,86,0.07);"></span> 5–10%</span>
+            <span class="legend-swatch"><span style="background: rgba(47,45,86,0.14);"></span> 10–20%</span>
+            <span class="legend-swatch"><span style="background: rgba(47,45,86,0.22);"></span> ≥ 20%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW TO READ IT ============ -->
+  <section class="wf-section alt" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How to read the table</h2>
+        <div class="ys-rule"></div>
+        <p>Same idea, three different views &mdash; the question changes, the picture stays.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>Gear ratio</h3>
+          <p>Just <code style="background: var(--ys-bg-soft); padding: 2px 8px; border-radius: 4px;">chainring &divide; sprocket</code>. A 50&times;15 = 3.33. Bigger ratio = harder to push, more distance per stroke. Useful for comparing setups and understanding range.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>Development (m)</h3>
+          <p>Meters of road covered per pedal revolution. Multiplies gear ratio by your wheel circumference. Ground truth &mdash; this is what your bike <em>actually does</em> when you turn the cranks once.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>Speed at cadence</h3>
+          <p>Development &times; cadence &mdash; how fast you&rsquo;d be rolling if you held that rpm. Bump cadence up: see how speed scales. Helpful for picking the right cassette for your event.</p>
+        </div>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.92rem; max-width: 720px; margin-left: auto; margin-right: auto;">The cell shading is always relative to your <strong>selected gear</strong> &mdash; closer cells (less than 5% off) look the same; cells &gt; 20% off go dark navy. The grid stays centered on your choice as you change inputs.</p>
+    </div>
+  </section>
+
+  <!-- ============ COACH NOTE ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
+        <h2 style="margin-top: 4px;">Pick gearing for the worst-case scenario, not the average one.</h2>
+        <p>The mistake we see most: athletes pick a cassette that suits their <em>training</em> rides, then get caught in trouble on race day. Three checks that prevent it:</p>
+        <ul class="ys-card-bullets" style="margin-top: 12px;">
+          <li><strong>Climb survival</strong> &mdash; can you spin the steepest section of your race at &gt; 70 rpm without crawling? If not, you need a smaller bottom gear (bigger sprocket or smaller chainring).</li>
+          <li><strong>Top-end usable range</strong> &mdash; on the fastest descent or tailwind, can you still pedal at &gt; 80 rpm? Don&rsquo;t leave watts on the table because you spun out.</li>
+          <li><strong>Cross-chain avoidance</strong> &mdash; the gears you&rsquo;ll <em>actually use</em> 90% of the time should sit in the middle of the cassette. Big-big and small-small are mechanically wasteful.</li>
+        </ul>
+        <p style="margin-top: 12px;">Cadence economy varies by athlete &mdash; most people are most efficient between 80&ndash;95 rpm. Test it in the lab: run pedal-economy passes at 70 / 80 / 90 / 100 rpm and you&rsquo;ll see your sweet spot in oxygen cost. Pick gears that keep you in that band on your race&rsquo;s realistic terrain.</p>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Bike lab testing</a>
+          <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COMMON SETUPS ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Common setups, what they&rsquo;re for</h2>
+        <div class="ys-rule"></div>
+        <p>Five gearset archetypes &mdash; pick the one that matches your terrain and event.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-card">
+          <div class="ys-meta">Road race / crit</div>
+          <h3>53/39 × 11–28</h3>
+          <p>Old-school race compact. Top end for sprints (53×11 = 4.82), survivable bottom for short steep climbs. Best for flat/rolling road racing.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">All-rounder road</div>
+          <h3>50/34 × 11–32</h3>
+          <p>The modern compact / wide-range cassette. Plenty of top end (50×11 = 4.55), real climbing gear (34×32 = 1.06). Default for most road riders.</p>
+        </div>
+        <div class="ys-card featured">
+          <div class="ys-meta" style="color: var(--wf-coral);">Triathlon TT</div>
+          <h3>54&ndash;58 × 11–28</h3>
+          <p>1× or large-chainring 2×. Maximizes sustained-cadence range at race pace; close-spaced cassette keeps you in the optimum cadence band.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">Climbing / mountain</div>
+          <h3>48/32 × 10–36 (or larger)</h3>
+          <p>Sub-1.0 ratios for sustained 8%+ pitches. Common on gravel and climbing-focused road bikes; trades top-end for survivability.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">Track / fixed</div>
+          <h3>Single ratio (e.g. 48 × 15)</h3>
+          <p>One gear ratio, picked for the velodrome and event. Outdoor fixed riders go lower (around 2.7&ndash;3.0); indoor track sprinters push 3.5+.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED CALCULATORS ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Related calculators</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card" href="https://www.yousuli.co/gearratiospeedpower" target="_top">
+          <span class="ys-calc-card-title">Gear &times; Speed &times; Power</span>
+          <p>Adds the power-output dimension to gearing &mdash; useful for picking gears for climbs at threshold.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="https://www.yousuli.co/critical-power-calculator" target="_top">
+          <span class="ys-calc-card-title">Critical power (CP)</span>
+          <p>Pair with gearing: know your CP, then pick a cassette that lets you hold it on race terrain.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="calculators.html">
+          <span class="ys-calc-card-title">All calculators</span>
+          <p>Back to the full catalog &mdash; 28 endurance calculators across performance, fueling, swim, bike, run.</p>
+          <span class="ys-calc-card-arrow">Browse &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want to know your actual cadence sweet spot?</h2>
+          <p>Pedal-economy testing in the lab measures oxygen cost across cadences from 70&ndash;100 rpm at race power. We hand you a number; you pick the cassette that keeps you in your band on race terrain.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Book bike testing</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Gear%20ratio">Send feedback</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Spotted a bug or want a feature? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Gear%20ratio" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ CALCULATOR LOGIC ============ -->
+  <script>
+    (function () {
+      const MIN_CHAIN = 24, MAX_CHAIN = 68;
+      const MIN_SPROC = 9,  MAX_SPROC = 52;
+      const TABLE_COLS = 7, TABLE_ROWS = 9;
+
+      const chainSel = document.getElementById('chainring');
+      const sprocSel = document.getElementById('sprocket');
+      const wheelSel = document.getElementById('wheel');
+      const cadEl    = document.getElementById('cadence');
+
+      // populate chainring/sprocket selects
+      for (let t = MAX_CHAIN; t >= MIN_CHAIN; t--) {
+        const opt = document.createElement('option');
+        opt.value = t; opt.textContent = t + 't';
+        if (t === 50) opt.selected = true;
+        chainSel.appendChild(opt);
+      }
+      for (let t = MIN_SPROC; t <= MAX_SPROC; t++) {
+        const opt = document.createElement('option');
+        opt.value = t; opt.textContent = t + 't';
+        if (t === 15) opt.selected = true;
+        sprocSel.appendChild(opt);
+      }
+
+      let activeMode = 'ratio';
+
+      // ---------- math ----------
+      function ratio(c, s) { return c / s; }
+      function development(c, s, wheelMm) { return ratio(c, s) * wheelMm / 1000; } // meters/rev
+      function speedKmh(c, s, wheelMm, cad) { return development(c, s, wheelMm) * cad * 60 / 1000; }
+
+      function fmt(n, d) { return Number.isFinite(n) ? n.toFixed(d) : '—'; }
+
+      // ---------- render results card ----------
+      function renderCard() {
+        const c = parseInt(chainSel.value, 10);
+        const s = parseInt(sprocSel.value, 10);
+        const w = parseFloat(wheelSel.value);
+        const cad = Math.max(0, parseInt(cadEl.value, 10) || 0);
+
+        const r = ratio(c, s);
+        const dev = development(c, s, w);
+        const km = speedKmh(c, s, w, cad);
+        const mi = km / 1.609344;
+
+        document.getElementById('gearRatio').textContent = fmt(r, 2);
+        document.getElementById('gearRatioAux').textContent = fmt(r, 3) + ' : 1  ·  ' + c + ' × ' + s;
+        document.getElementById('developmentM').textContent = fmt(dev, 2);
+        document.getElementById('cadDisplay').textContent = cad;
+        document.getElementById('speedKmh').textContent = fmt(km, 1);
+        document.getElementById('speedMph').textContent = fmt(mi, 1);
+      }
+
+      // ---------- render table ----------
+      function shadeClass(deltaPct) {
+        if (deltaPct < 0.05) return 'delta-0';
+        if (deltaPct < 0.10) return 'delta-1';
+        if (deltaPct < 0.20) return 'delta-2';
+        return 'delta-3';
+      }
+
+      function renderTable() {
+        const c = parseInt(chainSel.value, 10);
+        const s = parseInt(sprocSel.value, 10);
+        const w = parseFloat(wheelSel.value);
+        const cad = Math.max(0, parseInt(cadEl.value, 10) || 0);
+
+        // compute window centered on selection, clamped to bounds
+        const startC = Math.max(MIN_CHAIN, Math.min(c - Math.floor(TABLE_COLS / 2), MAX_CHAIN - (TABLE_COLS - 1)));
+        const startS = Math.max(MIN_SPROC, Math.min(s - Math.floor(TABLE_ROWS / 2), MAX_SPROC - (TABLE_ROWS - 1)));
+
+        const head = document.getElementById('tableHead');
+        const body = document.getElementById('tableBody');
+        const cap  = document.getElementById('tableCaption');
+
+        let captionText, getValue, fmtCell;
+        if (activeMode === 'ratio') {
+          captionText = 'Gear ratio = chainring ÷ sprocket. Higher = harder to push, more distance per stroke.';
+          getValue = (cc, ss) => ratio(cc, ss);
+          fmtCell  = v => v.toFixed(2);
+        } else if (activeMode === 'development') {
+          captionText = 'Development = meters per pedal revolution. The wheel rolls this far for each crank turn.';
+          getValue = (cc, ss) => development(cc, ss, w);
+          fmtCell  = v => v.toFixed(2) + ' m';
+        } else {
+          captionText = 'Speed at ' + cad + ' rpm. Change the cadence input to see speed at your chosen rpm.';
+          getValue = (cc, ss) => speedKmh(cc, ss, w, cad);
+          fmtCell  = v => v.toFixed(1);
+        }
+        cap.textContent = captionText;
+
+        // header
+        head.innerHTML = '';
+        const corner = document.createElement('th');
+        corner.textContent = '↓ s · c →';
+        corner.style.fontSize = '0.7rem';
+        corner.style.color = 'var(--ys-muted)';
+        head.appendChild(corner);
+        for (let col = 0; col < TABLE_COLS; col++) {
+          const th = document.createElement('th');
+          th.textContent = (startC + col) + 't';
+          head.appendChild(th);
+        }
+
+        // body
+        const selectedValue = getValue(c, s);
+        body.innerHTML = '';
+        for (let row = 0; row < TABLE_ROWS; row++) {
+          const tr = document.createElement('tr');
+          const rowH = document.createElement('th');
+          rowH.className = 'row-header';
+          rowH.textContent = (startS + row) + 't';
+          tr.appendChild(rowH);
+          for (let col = 0; col < TABLE_COLS; col++) {
+            const cc = startC + col;
+            const ss = startS + row;
+            const v = getValue(cc, ss);
+            const td = document.createElement('td');
+            td.title = cc + '×' + ss;
+            td.textContent = fmtCell(v);
+            if (cc === c && ss === s) {
+              td.classList.add('selected');
+            } else if (Number.isFinite(selectedValue) && selectedValue > 0) {
+              const delta = Math.abs((v - selectedValue) / selectedValue);
+              td.classList.add(shadeClass(delta));
+            }
+            tr.appendChild(td);
+          }
+          body.appendChild(tr);
+        }
+      }
+
+      function renderAll() {
+        renderCard();
+        renderTable();
+      }
+
+      // hook up tab buttons
+      document.querySelectorAll('.gear-calc-host .table-tab').forEach(b => {
+        b.addEventListener('click', () => {
+          if (b.classList.contains('active')) return;
+          document.querySelectorAll('.gear-calc-host .table-tab').forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          activeMode = b.getAttribute('data-table');
+          renderTable();
+        });
+      });
+
+      // hook up inputs
+      [chainSel, sprocSel, wheelSel, cadEl].forEach(el => {
+        el.addEventListener('input', renderAll);
+        el.addEventListener('change', renderAll);
+      });
+
+      // initial render
+      renderAll();
+    })();
+  </script>
+
+</body>
+</html>
