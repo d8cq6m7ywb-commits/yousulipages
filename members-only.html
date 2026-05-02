@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Members only — Yousuli Social Club</title>
+  <meta name="description" content="This part of the site is reserved for Yousuli Social Club members. Sign in if you have an account, join the Club (free or paid) if you don't, or head back to the public site." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero">
+    <div class="ys-container">
+      <span class="wf-eyebrow">🔒 Members area</span>
+      <h1>This part is for YSC members.</h1>
+      <div class="wf-subhead">Already a member? Sign in. Not yet? The Club is free to join.</div>
+      <p class="lede">You&rsquo;ve hit a corner of the site reserved for Yousuli Social Club members &mdash; partner discount codes, exclusive member content, and internal resources. No worries: pick a path below and you&rsquo;ll be back on track in a minute.</p>
+      <div class="ys-btn-row">
+        <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/social-club">Join the Club</a>
+        <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/account/login" target="_top">Sign in</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHAT MEMBERSHIP UNLOCKS ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What membership unlocks</h2>
+        <div class="ys-rule"></div>
+        <p>The Yousuli Social Club is free to join. The paid tier and coaching tiers add deeper access &mdash; partner discounts, member content, exclusive sessions.</p>
+      </div>
+
+      <div class="ys-grid">
+        <article class="ys-card">
+          <div class="ys-meta">Free tier</div>
+          <h3>Yousuli Social Club</h3>
+          <p>The entry point. Group training sessions, online community, member-rate testing, template plans for first 5K / first 70.3 / return from layoff.</p>
+          <ul class="ys-card-bullets">
+            <li>Group sessions in Walnut, CA + online squads</li>
+            <li>WhatsApp community</li>
+            <li>Member pricing on lab testing</li>
+          </ul>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/social-club">Free tier &mdash; join now</a>
+        </article>
+
+        <article class="ys-card featured">
+          <div class="ys-meta">Performance Tier</div>
+          <h3>$49 / year</h3>
+          <p>Adds the perks that need protection: partner discount codes (Slipstream, EO SwimBETTER, Zoot trisuit, ThinkChinese voucher), priority booking on testing days, exclusive member content.</p>
+          <ul class="ys-card-bullets">
+            <li>All partner discount codes &amp; affiliate links</li>
+            <li>Priority on monthly testing days</li>
+            <li>Exclusive webinars, Q&amp;As, case studies</li>
+            <li>Discount vouchers for friends</li>
+          </ul>
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/social-club">See Performance Tier</a>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Coached athletes</div>
+          <h3>Coaching tiers</h3>
+          <p>Bespoke 1:1 coaching includes everything in YSC Performance Tier automatically &mdash; plus structured plans, frequent coach access, and testing-informed adjustments.</p>
+          <ul class="ys-card-bullets">
+            <li>Structured ($200/mo) · Bespoke ($350/mo) · Full Performance</li>
+            <li>All YSC Performance Tier perks included</li>
+            <li>Direct coach access</li>
+          </ul>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/coaching">See coaching tiers</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COMMON SCENARIOS ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Why might you be seeing this?</h2>
+        <div class="ys-rule"></div>
+        <p>Three usual reasons &mdash; and the fix for each.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>You&rsquo;re a member but signed out</h3>
+          <p>Most common case. Sign back in and the page should load.</p>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/account/login" target="_top" style="margin-top: 12px;">Sign in</a>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>You&rsquo;re on the wrong tier</h3>
+          <p>Some content is Performance-Tier or Coaching only. Upgrade your plan to unlock.</p>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/pricing-plans/membership" style="margin-top: 12px;">Manage plan</a>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>You&rsquo;re not a member yet</h3>
+          <p>The Club has a free tier — the door&rsquo;s open. Pick the tier that fits and you&rsquo;re in.</p>
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/social-club" style="margin-top: 12px;">Join the Club</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Or just head back to the public site.</h2>
+          <p>Performance Lab, Coaching, Science, Calculators, Mission, About Coach Fred &mdash; all open without membership. The Club is for community, partner perks, and protected content.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/" target="_top">Back to home</a>
+            <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/contact" target="_top">Contact us</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Lost your account or stuck on this page repeatedly? Email <a href="mailto:info@yousuli.co?subject=Members%20area%20access%20issue" style="color: var(--wf-coral);">info@yousuli.co</a> &mdash; we&rsquo;ll sort it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
