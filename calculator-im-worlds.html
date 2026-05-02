@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IRONMAN &amp; 70.3 Worlds qualifier — Yousuli calculators</title>
+  <meta name="description" content="2026 qualifying helper for IRONMAN World Championship and IM 70.3 Worlds. Age-graded time using Kona / 70.3 Standard ratios, illustrative percentile within your gender, plus a coach note on the new gender-split performance pools." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED CALCULATOR STYLES ============ -->
+  <style>
+    .im-calc-host { width: 100%; }
+
+    .im-calc-host .field-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;
+      background: var(--ys-bg-soft);
+      padding: 18px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 760px) { .im-calc-host .field-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { .im-calc-host .field-grid { grid-template-columns: 1fr; } }
+    .im-calc-host .field-grid .full { grid-column: 1 / -1; }
+
+    .im-calc-host label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.72rem;
+      color: var(--ys-navy);
+      margin-bottom: 6px;
+    }
+    .im-calc-host .row { display: flex; align-items: stretch; }
+    .im-calc-host input[type="text"],
+    .im-calc-host input[type="number"],
+    .im-calc-host select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      font-size: 0.96rem;
+      font-family: var(--ys-font-body);
+      background: #fff;
+      color: var(--ys-navy);
+      box-sizing: border-box;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .im-calc-host input:focus,
+    .im-calc-host select:focus {
+      outline: none;
+      border-color: var(--wf-coral);
+      box-shadow: 0 0 0 3px rgba(250, 119, 60, 0.18);
+    }
+    .im-calc-host .field-help { font-size: 0.78rem; color: var(--ys-muted); margin-top: 6px; }
+
+    .im-calc-host .err {
+      color: #c93939;
+      background: rgba(201, 57, 57, 0.08);
+      border-left: 4px solid #c93939;
+      padding: 10px 14px;
+      margin-top: 12px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      display: none;
+    }
+    .im-calc-host .err.active { display: block; }
+
+    .im-calc-host .results-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+      margin-top: 18px;
+    }
+    @media (max-width: 600px) { .im-calc-host .results-grid { grid-template-columns: 1fr; } }
+    .im-calc-host .result-tile {
+      background: #fff;
+      border: 1px solid var(--ys-line);
+      border-radius: 10px;
+      padding: 18px;
+      text-align: center;
+    }
+    .im-calc-host .result-tile.featured {
+      background: var(--ys-navy); border-color: var(--ys-navy);
+    }
+    .im-calc-host .result-tile.featured .result-label,
+    .im-calc-host .result-tile.featured .result-value,
+    .im-calc-host .result-tile.featured .result-aux { color: #fff; }
+    .im-calc-host .result-tile.featured .result-aux { color: rgba(255,255,255,0.7); }
+    .im-calc-host .result-label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.72rem;
+      color: var(--ys-muted);
+      margin-bottom: 6px;
+    }
+    .im-calc-host .result-value {
+      display: block;
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      font-size: 1.8rem;
+      color: var(--ys-navy);
+      letter-spacing: 0.04em;
+    }
+    .im-calc-host .result-aux {
+      display: block;
+      font-size: 0.84rem;
+      color: var(--ys-muted);
+      margin-top: 6px;
+    }
+
+    .im-calc-host .pctile-block {
+      margin-top: 14px;
+      padding: 16px 18px;
+      background: var(--ys-bg-soft);
+      border-left: 4px solid var(--wf-coral);
+      border-radius: 8px;
+      display: none;
+      font-size: 0.95rem;
+      color: var(--ys-navy);
+      line-height: 1.5;
+    }
+    .im-calc-host .pctile-block.active { display: block; }
+    .im-calc-host .pctile-block strong { color: var(--wf-coral); }
+
+    .im-calc-host .flag-chip {
+      display: inline-block;
+      padding: 3px 10px;
+      background: rgba(250, 119, 60, 0.18);
+      color: var(--wf-coral);
+      border-radius: 999px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      font-size: 0.66rem;
+      font-weight: 700;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .im-calc-host .flag-chip.danger {
+      background: rgba(201, 57, 57, 0.12);
+      color: #c93939;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 56px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Triathlon</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">IM &amp; 70.3 Worlds qualifier.</h1>
+      <div class="wf-subhead">2026 system &middot; age-graded time &middot; gender-split pools</div>
+      <p class="lede" style="max-width: 660px;">Quick check on whether you&rsquo;re competitive enough for Kona or 70.3 Worlds. Plug in race, age, gender, finish time &mdash; we apply the official Kona / 70.3 Standard age-grade ratio, give you an illustrative percentile within your gender, and explain how the new <strong>gender-split performance pools</strong> actually work.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">How 2026 qualifying works</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 32px 0 48px;">
+    <div class="ys-container">
+      <div class="ys-tool" style="max-width: 880px;">
+
+        <div class="im-calc-host">
+
+          <h3 style="margin-top: 0;">Plug in your race</h3>
+          <p class="ys-tool-pre">Enter <strong>HH:MM</strong>. Slots field is optional &mdash; if you have it (from the race info pack) we&rsquo;ll mention how it splits between auto-qualifiers and gender pools.</p>
+
+          <div class="field-grid">
+            <div>
+              <label>Race</label>
+              <select id="raceType">
+                <option value="IM">IRONMAN (Full)</option>
+                <option value="IM70" selected>IRONMAN 70.3 (Half)</option>
+              </select>
+            </div>
+            <div>
+              <label>Gender</label>
+              <select id="gender">
+                <option value="Men">Men</option>
+                <option value="Women" selected>Women</option>
+              </select>
+            </div>
+            <div>
+              <label>Age group (race-day)</label>
+              <select id="ageGroup">
+                <option value="18-24">18–24</option>
+                <option value="25-29">25–29</option>
+                <option value="30-34">30–34</option>
+                <option value="35-39">35–39</option>
+                <option value="40-44">40–44</option>
+                <option value="45-49" selected>45–49</option>
+                <option value="50-54">50–54</option>
+                <option value="55-59">55–59</option>
+                <option value="60-64">60–64</option>
+                <option value="65-69">65–69</option>
+                <option value="70-74">70–74</option>
+                <option value="75-79">75–79</option>
+                <option value="80-84">80–84</option>
+                <option value="85-89">85–89</option>
+              </select>
+            </div>
+
+            <div>
+              <label>Your finish time</label>
+              <div class="row">
+                <input type="text" id="finish" placeholder="5:00" value="5:00" />
+                <span class="unit" style="padding: 0 12px; background: var(--ys-navy); color: #fff; font-family: var(--ys-font-display); letter-spacing: 0.06em; font-size: 0.74rem; display: flex; align-items: center; border-radius: 0 6px 6px 0;">HH:MM</span>
+              </div>
+              <div class="field-help">e.g. 10:42 (full) or 5:05 (70.3)</div>
+            </div>
+            <div>
+              <label>Slots at your race (optional)</label>
+              <div class="row">
+                <input type="number" id="slots" min="0" step="1" placeholder="e.g. 45" />
+                <span class="unit" style="padding: 0 12px; background: var(--ys-navy); color: #fff; font-family: var(--ys-font-display); letter-spacing: 0.06em; font-size: 0.74rem; display: flex; align-items: center; border-radius: 0 6px 6px 0;">slots</span>
+              </div>
+            </div>
+            <div></div>
+          </div>
+
+          <div class="ys-btn-row" style="margin: 4px 0 0;">
+            <button class="ys-btn ys-btn-coral" type="button" id="evalBtn">Evaluate</button>
+            <button class="ys-btn ys-btn-ghost" type="button" id="resetBtn">Reset</button>
+          </div>
+
+          <div class="err" id="errorMsg"></div>
+
+          <div id="resultsBlock" style="display: none;">
+            <div class="results-grid">
+              <div class="result-tile">
+                <span class="result-label">Raw finish time</span>
+                <span class="result-value" id="outRaw">—</span>
+                <span class="result-aux" id="outFlag"></span>
+              </div>
+              <div class="result-tile featured">
+                <span class="result-label">Age-graded time</span>
+                <span class="result-value" id="outGraded">—</span>
+                <span class="result-aux"><span id="outRatio">—</span> &times; ratio &middot; lower = better</span>
+              </div>
+            </div>
+
+            <div class="pctile-block" id="pctileBlock">—</div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW THE 2026 SYSTEM WORKS ============ -->
+  <section class="wf-section alt" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How 2026+ qualifying works</h2>
+        <div class="ys-rule"></div>
+        <p>The system changed. Three pieces explain it.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>AG winners auto-qualify</h3>
+          <p>The fastest finisher in each age group + gender at a qualifier event gets <strong>one automatic slot</strong>. If they decline, the slot rolls down to 2nd, then 3rd. If still unclaimed, it moves into the performance pool — <em>but only into the same-gender pool</em>.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>Gender-split performance pools</h3>
+          <p>The remaining slots split into a <strong>men&rsquo;s pool</strong> and <strong>women&rsquo;s pool</strong>. The split mirrors the ratio of male-to-female starters at that race. Within each pool, slots go to the fastest <strong>age-graded</strong> times.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>Age-graded ranking</h3>
+          <p>Your raw finish time × the official Kona / 70.3 Standard ratio for your age + gender. Lower wins. The ratio is meant to put a fast 70-year-old and a fast 30-year-old on the same scale within their gender.</p>
+        </div>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.92rem; max-width: 720px; margin-left: auto; margin-right: auto;">No course-difficulty penalty (unlike Boston). Ranking is relative to <strong>your event&rsquo;s field</strong>, after age-grading, within your gender. This calculator is an unofficial helper &mdash; defer to IRONMAN&rsquo;s published documentation and on-site roll-down lists.</p>
+    </div>
+  </section>
+
+  <!-- ============ COACH NOTE ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
+        <h2 style="margin-top: 4px;">Pick the right race &mdash; not just the right time.</h2>
+        <p>The 2026 system rewards three things, in this order:</p>
+        <ul class="ys-card-bullets" style="margin-top: 12px;">
+          <li><strong>Win your AG.</strong> Auto-qualifying slot is the cleanest path. Pick a race where the depth in your AG is shallow &mdash; smaller, less famous events have fewer fast competitors per gender.</li>
+          <li><strong>Be top of your gender pool.</strong> If you don&rsquo;t win AG, your age-graded time has to beat most of the gender pool. The number depends entirely on the gender breakdown of starters &mdash; in heavily-male races, female pool slots are scarce.</li>
+          <li><strong>Decline rates roll down.</strong> Some AG winners decline (cost, family, injury). If you finished 2nd or 3rd in AG, you&rsquo;re first in the roll-down queue. Show up at the slot allocation ceremony.</li>
+        </ul>
+        <p style="margin-top: 12px;"><strong>Practical:</strong> if you&rsquo;re ~5–10 min short of an AG win, look at events with fewer entrants in your AG, smaller fields overall, harder bike courses (slower times = more spread = bigger margin matters less), or tougher conditions (heat, hills) that thin the field.</p>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/performancelab" target="_top">Lab testing</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ABOUT THE RATIOS ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>About the age-grade ratios</h2>
+        <div class="ys-rule"></div>
+        <p>Where the numbers come from and what they mean.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-card">
+          <div class="ys-meta">Kona Standard (IM full)</div>
+          <h3>Peak ~30–34 men, ~30–34 women</h3>
+          <p>Built from historical age-group winners' relative times. <strong>Ratio = your AG time / the absolute peak (=1.00).</strong> Younger and older AGs get lower ratios; multiplying your time by your ratio brings them all to a comparable scale.</p>
+        </div>
+        <div class="ys-card featured">
+          <div class="ys-meta" style="color: var(--wf-coral);">70.3 Standard</div>
+          <h3>Different curve from full</h3>
+          <p>Half-distance ratios are <strong>not the same</strong> as Kona ratios. Half-distance racing is more aerobic-power-limited; full-distance more durability-limited. The age-fade differs accordingly.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">Within-gender</div>
+          <h3>Men compete vs men, women vs women</h3>
+          <p>The ratios are gender-specific. There&rsquo;s no cross-gender ranking &mdash; the 2026 system puts each gender in its own pool with its own slots. Your age-graded time only matters relative to others of your gender at your event.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED CALCULATORS ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Related calculators</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card redesigned" href="calculator-triathlon-finish-time.html">
+          <span class="ys-calc-card-title">Triathlon finish time</span>
+          <p>Build the swim/bike/run pacing strategy for the time you&rsquo;re aiming at.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card redesigned" href="calculator-intraworkout-fueling.html">
+          <span class="ys-calc-card-title">Intra-workout fueling</span>
+          <p>Race-day fueling for IM and 70.3 — the most common cause of blowing up at AG-winning pace.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="calculators.html">
+          <span class="ys-calc-card-title">All calculators</span>
+          <p>Back to the full catalog &mdash; 28 endurance calculators across performance, fueling, swim, bike, run.</p>
+          <span class="ys-calc-card-arrow">Browse &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want a Worlds-targeted training block?</h2>
+          <p>Coaching builds the 16–24 week build into your A-race with measured CdA, lactate threshold, fat-oxidation crossover, and sweat data. Pace, power, and fuel all anchored to your physiology &mdash; the difference between hoping to qualify and planning to.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20IM%2070.3%20Worlds">Send feedback</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Spotted a bug or want a feature? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20IM%2070.3%20Worlds" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ CALCULATOR LOGIC ============ -->
+  <script>
+    (function () {
+      const $ = id => document.getElementById(id);
+
+      // Kona / 70.3 Standard age-grade ratios (preserved verbatim from source)
+      const KONA_STD = {
+        Men:   {"18-24":0.9698,"25-29":0.9921,"30-34":1.0000,"35-39":0.9895,"40-44":0.9683,"45-49":0.9401,"50-54":0.9002,"55-59":0.8667,"60-64":0.8262,"65-69":0.7552,"70-74":0.6876,"75-79":0.6768,"80-84":0.5555,"85-89":0.5416},
+        Women: {"18-24":0.8567,"25-29":0.8961,"30-34":0.8977,"35-39":0.8866,"40-44":0.8707,"45-49":0.8501,"50-54":0.8125,"55-59":0.7778,"60-64":0.7218,"65-69":0.6828,"70-74":0.6439,"75-79":0.5521}
+      };
+      const IM70_STD = {
+        Men:   {"18-24":1.0000,"25-29":0.9929,"30-34":0.9655,"35-39":0.9500,"40-44":0.9262,"45-49":0.8978,"50-54":0.8833,"55-59":0.8565,"60-64":0.8192,"65-69":0.7640,"70-74":0.7119,"75-79":0.6419,"80-84":0.5095,"85-89":0.5402},
+        Women: {"18-24":0.9921,"25-29":1.0000,"30-34":0.9828,"35-39":0.9658,"40-44":0.9426,"45-49":0.9192,"50-54":0.9016,"55-59":0.8746,"60-64":0.8391,"65-69":0.7775,"70-74":0.7348,"75-79":0.6234}
+      };
+
+      // Illustrative finish-time distributions (preserved from source)
+      const DISTRO = {
+        IM: {
+          Men:   [[1,"17:00"],[5,"15:30"],[10,"14:30"],[20,"13:50"],[30,"13:15"],[50,"12:30"],[70,"12:00"],[80,"11:15"],[90,"10:15"],[95,"9:30"],[99,"8:15"]],
+          Women: [[1,"17:00"],[5,"16:15"],[10,"15:30"],[20,"14:45"],[30,"14:00"],[50,"13:15"],[70,"12:45"],[80,"12:00"],[90,"11:00"],[95,"10:15"],[99,"9:00"]]
+        },
+        IM70: {
+          Men:   [[1,"8:30"],[5,"7:45"],[10,"7:15"],[20,"6:40"],[30,"6:10"],[50,"5:45"],[70,"5:20"],[80,"5:00"],[90,"4:40"],[95,"4:20"],[99,"4:00"]],
+          Women: [[1,"8:30"],[5,"8:15"],[10,"7:40"],[20,"7:00"],[30,"6:35"],[50,"6:10"],[70,"5:50"],[80,"5:35"],[90,"5:10"],[95,"4:45"],[99,"4:20"]]
+        }
+      };
+
+      function parseHHMM(s) {
+        if (!s || !s.includes(':')) return NaN;
+        const parts = s.split(':').map(x => parseInt(x, 10));
+        if (parts.some(isNaN)) return NaN;
+        if (parts.length === 2) return parts[0] * 60 + parts[1];
+        if (parts.length === 3) return parts[0] * 60 + parts[1] + parts[2] / 60;
+        return NaN;
+      }
+      function fmtHHMM(mins) {
+        const h = Math.floor(mins / 60);
+        const m = Math.round(mins % 60);
+        return h + ':' + String(m).padStart(2, '0');
+      }
+
+      const errEl = $('errorMsg');
+      function showError(msg) {
+        errEl.textContent = msg;
+        errEl.classList.add('active');
+        $('resultsBlock').style.display = 'none';
+      }
+      function clearError() { errEl.classList.remove('active'); errEl.textContent = ''; }
+
+      function evaluate() {
+        clearError();
+        const race = $('raceType').value;
+        const gender = $('gender').value;
+        const ag = $('ageGroup').value;
+        const finishStr = $('finish').value.trim();
+        const slotsVal = parseInt($('slots').value, 10);
+
+        const mins = parseHHMM(finishStr);
+        if (!Number.isFinite(mins) || mins <= 0) return showError('Enter finish time as HH:MM (e.g. 5:00).');
+
+        const ratios = race === 'IM' ? KONA_STD : IM70_STD;
+        const ratio = (ratios[gender] || {})[ag];
+        if (!ratio) return showError('No published ratio for that age group + gender. The Standard table doesn\'t include some older Women AGs — try a younger AG or Men.');
+
+        const graded = mins * ratio;
+
+        // Cutoff / sanity flags
+        const tooFast = (race === 'IM' && mins < 8 * 60) || (race === 'IM70' && mins < 3.5 * 60);
+        const tooSlow = (race === 'IM' && mins > 17 * 60) || (race === 'IM70' && mins > 9 * 60);
+        const flagEl = $('outFlag');
+        if (tooFast) {
+          flagEl.innerHTML = '<span class="flag-chip">Verify time</span>';
+        } else if (tooSlow) {
+          flagEl.innerHTML = '<span class="flag-chip danger">Cutoff risk</span>';
+        } else {
+          flagEl.textContent = '';
+        }
+
+        $('outRaw').textContent = fmtHHMM(mins);
+        $('outGraded').textContent = fmtHHMM(graded);
+        $('outRatio').textContent = ratio.toFixed(4);
+
+        // Percentile interpolation
+        const table = DISTRO[race][gender].map(([p, t]) => [p, parseHHMM(t)]);
+        let pct = 1;
+        if (mins <= table[table.length - 1][1]) pct = 99;
+        else if (mins >= table[0][1]) pct = 1;
+        else {
+          for (let i = 0; i < table.length - 1; i++) {
+            const [p1, m1] = table[i];
+            const [p2, m2] = table[i + 1];
+            if (mins <= m1 && mins >= m2) {
+              const r = (m1 - mins) / (m1 - m2);
+              pct = Math.round(p1 + r * (p2 - p1));
+              break;
+            }
+          }
+        }
+
+        let pctileMsg = `Faster than approximately <strong>${pct}%</strong> of ${gender.toLowerCase()} finishers in ${race === 'IM' ? 'a full IRONMAN' : 'a 70.3'} (illustrative — based on rough population distributions, not official rankings).`;
+        if (Number.isFinite(slotsVal) && slotsVal > 0) {
+          pctileMsg += ` <br><br>With ~${slotsVal} slots at your race: AG winners auto-qualify first; the rest split into men&rsquo;s and women&rsquo;s pools by starter representation, then awarded by fastest age-graded times within each gender.`;
+        } else {
+          pctileMsg += ` <br><br>The 2026 system: AG winners auto-qualify; remaining slots go to gender-specific performance pools, awarded by fastest age-graded times.`;
+        }
+        $('pctileBlock').innerHTML = pctileMsg;
+        $('pctileBlock').classList.add('active');
+
+        $('resultsBlock').style.display = 'block';
+      }
+
+      // Wire up
+      $('evalBtn').addEventListener('click', evaluate);
+      $('resetBtn').addEventListener('click', () => {
+        $('raceType').value = 'IM70';
+        $('gender').value = 'Women';
+        $('ageGroup').value = '45-49';
+        $('finish').value = '5:00';
+        $('slots').value = '';
+        clearError();
+        $('resultsBlock').style.display = 'none';
+        $('pctileBlock').classList.remove('active');
+      });
+      ['raceType','gender','ageGroup','finish','slots'].forEach(id => {
+        $(id).addEventListener('change', () => { if ($('resultsBlock').style.display !== 'none') evaluate(); });
+      });
+      ['finish','slots'].forEach(id => {
+        $(id).addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); evaluate(); } });
+      });
+
+      // initial run
+      evaluate();
+    })();
+  </script>
+
+</body>
+</html>
