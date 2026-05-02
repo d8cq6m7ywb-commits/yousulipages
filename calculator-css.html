@@ -1,0 +1,743 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Critical swim speed (CSS) — Yousuli calculators</title>
+  <meta name="description" content="Two timed swims in. CSS pace, SDI score, training-zone bands, and finish-time predictions for 750m to 10K — with a coach note on what the numbers actually mean." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED CALCULATOR STYLES ============ -->
+  <style>
+    .css-calc-host { width: 100%; }
+
+    .css-calc-host .unit-toggle {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 16px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.74rem; color: var(--ys-muted);
+    }
+    .css-calc-host .unit-toggle .switch {
+      display: inline-flex;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .css-calc-host .unit-toggle .switch button {
+      background: #fff; border: 0; padding: 7px 14px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.72rem; font-weight: 600;
+      color: var(--ys-muted);
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .css-calc-host .unit-toggle .switch button.active {
+      background: var(--ys-navy); color: #fff;
+    }
+
+    .css-calc-host .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      background: var(--ys-bg-soft);
+      padding: 18px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 600px) { .css-calc-host .field-grid { grid-template-columns: 1fr; } }
+
+    .css-calc-host label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.72rem;
+      color: var(--ys-navy);
+      margin-bottom: 6px;
+    }
+    .css-calc-host input[type="number"],
+    .css-calc-host input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      font-size: 0.96rem;
+      font-family: var(--ys-font-body);
+      background: #fff;
+      color: var(--ys-navy);
+      box-sizing: border-box;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .css-calc-host input:focus {
+      outline: none;
+      border-color: var(--wf-coral);
+      box-shadow: 0 0 0 3px rgba(250, 119, 60, 0.18);
+    }
+
+    .css-calc-host .results-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+    @media (max-width: 760px) { .css-calc-host .results-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { .css-calc-host .results-grid { grid-template-columns: 1fr; } }
+
+    .css-calc-host .result-tile {
+      background: #fff;
+      border: 1px solid var(--ys-line);
+      border-radius: 10px;
+      padding: 14px 14px;
+      text-align: center;
+    }
+    .css-calc-host .result-tile.featured {
+      background: var(--ys-navy); border-color: var(--ys-navy);
+    }
+    .css-calc-host .result-tile.featured .result-label,
+    .css-calc-host .result-tile.featured .result-value,
+    .css-calc-host .result-tile.featured .result-aux { color: #fff; }
+    .css-calc-host .result-tile.featured .result-aux { color: rgba(255,255,255,0.7); }
+
+    .css-calc-host .result-label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.7rem;
+      color: var(--ys-muted);
+      margin-bottom: 6px;
+    }
+    .css-calc-host .result-value {
+      display: block;
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: var(--ys-navy);
+      letter-spacing: 0.02em;
+    }
+    .css-calc-host .result-aux {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--ys-muted);
+      margin-top: 4px;
+    }
+
+    .css-calc-host .err {
+      color: #c93939;
+      background: rgba(201, 57, 57, 0.08);
+      border-left: 4px solid #c93939;
+      padding: 10px 14px;
+      margin-top: 12px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      display: none;
+    }
+    .css-calc-host .err.active { display: block; }
+
+    .css-calc-host .css-table-wrap { overflow-x: auto; margin-top: 22px; }
+    .css-calc-host table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border: 1px solid var(--ys-line);
+      border-radius: 10px;
+      overflow: hidden;
+      font-size: 0.92rem;
+    }
+    .css-calc-host table caption {
+      caption-side: top;
+      text-align: left;
+      padding: 6px 0 10px;
+      font-family: var(--ys-font-display);
+      color: var(--ys-navy);
+      font-size: 0.92rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .css-calc-host table th {
+      background: var(--ys-navy);
+      color: #fff;
+      padding: 10px 12px;
+      text-align: center;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+    .css-calc-host table td {
+      padding: 10px 12px;
+      text-align: center;
+      border-bottom: 1px solid var(--ys-line);
+      color: var(--ys-navy);
+    }
+    .css-calc-host table tr:last-child td { border-bottom: 0; }
+    .css-calc-host table tbody tr:nth-child(even) td { background: var(--ys-bg-soft); }
+    .css-calc-host table td:first-child {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.04em;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 56px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Swim</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">Critical swim speed.</h1>
+      <div class="wf-subhead">Two timed swims &middot; CSS pace &middot; SDI &middot; training zones</div>
+      <p class="lede" style="max-width: 660px;">Critical swim speed is the swim equivalent of a runner&rsquo;s lactate threshold &mdash; the fastest pace you can hold sustainably. Two timed efforts (a short and a long) bracket the truth. Out comes your CSS, your SDI fade index, training-zone bands, and finish-time predictions for 750 m to 10 km.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">How to test CSS</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 32px 0 48px;">
+    <div class="ys-container">
+      <div class="ys-tool" style="max-width: 1000px;">
+        <h3>Plug in your two efforts</h3>
+        <p class="ys-tool-pre">Standard test: <strong>400 m all-out, rest, then 200 m all-out</strong> (or any two solid time-trials at different distances). Distance 1 should be the shorter, faster swim. Times accept either <code style="background: var(--ys-bg-soft); padding: 1px 6px; border-radius: 3px;">mm:ss</code> or just seconds.</p>
+
+        <div class="css-calc-host">
+          <div class="unit-toggle">
+            <span>Units</span>
+            <span class="switch">
+              <button type="button" class="active" data-unit="metric">Metric (m)</button>
+              <button type="button" data-unit="imperial">Imperial (yd)</button>
+            </span>
+          </div>
+
+          <div class="field-grid">
+            <div>
+              <label>Distance 1 (shorter)</label>
+              <input type="number" id="distance1" value="200" step="1" min="0" />
+            </div>
+            <div>
+              <label>Time 1 (mm:ss)</label>
+              <input type="text" id="time1" value="3:00" placeholder="3:00" />
+            </div>
+            <div>
+              <label>Distance 2 (longer)</label>
+              <input type="number" id="distance2" value="400" step="1" min="0" />
+            </div>
+            <div>
+              <label>Time 2 (mm:ss)</label>
+              <input type="text" id="time2" value="6:30" placeholder="6:30" />
+            </div>
+          </div>
+
+          <div class="ys-btn-row" style="margin: 4px 0 0;">
+            <button class="ys-btn ys-btn-coral" type="button" id="calculateBtn">Calculate CSS</button>
+            <button class="ys-btn ys-btn-ghost" type="button" id="resetBtn">Reset</button>
+          </div>
+
+          <div class="err" id="errorMsg"></div>
+
+          <div id="resultsBlock" style="display: none;">
+            <div class="results-grid">
+              <div class="result-tile featured">
+                <span class="result-label">CSS pace</span>
+                <span class="result-value" id="cssPace">—</span>
+                <span class="result-aux" id="cssPaceAux">— per <span class="unit-secondary"></span></span>
+              </div>
+              <div class="result-tile">
+                <span class="result-label">Pace 1</span>
+                <span class="result-value" id="pace1">—</span>
+                <span class="result-aux" id="pace1Aux"></span>
+              </div>
+              <div class="result-tile">
+                <span class="result-label">Pace 2</span>
+                <span class="result-value" id="pace2">—</span>
+                <span class="result-aux" id="pace2Aux"></span>
+              </div>
+              <div class="result-tile">
+                <span class="result-label">SDI score</span>
+                <span class="result-value" id="sdiScore">—</span>
+                <span class="result-aux" id="sdiRating">—</span>
+              </div>
+              <div class="result-tile">
+                <span class="result-label">25 split @ CSS</span>
+                <span class="result-value" id="split25">—</span>
+              </div>
+              <div class="result-tile">
+                <span class="result-label">50 split @ CSS</span>
+                <span class="result-value" id="split50">—</span>
+              </div>
+              <div class="result-tile">
+                <span class="result-label">100 split @ CSS</span>
+                <span class="result-value" id="split100">—</span>
+              </div>
+              <div class="result-tile">
+                <span class="result-label">200 split @ CSS</span>
+                <span class="result-value" id="split200">—</span>
+              </div>
+            </div>
+
+            <div class="css-table-wrap">
+              <table>
+                <caption>Pace time prediction</caption>
+                <thead>
+                  <tr>
+                    <th>Distance</th>
+                    <th>Current</th>
+                    <th>Perfect</th>
+                    <th>Good</th>
+                    <th>Poor</th>
+                  </tr>
+                </thead>
+                <tbody id="predictionBody"></tbody>
+              </table>
+            </div>
+
+            <div class="css-table-wrap">
+              <table>
+                <caption>Training zones</caption>
+                <thead>
+                  <tr>
+                    <th>Zone</th>
+                    <th>Pace per <span class="unit-secondary"></span></th>
+                    <th>Interval</th>
+                    <th>Rest (low)</th>
+                    <th>Rest (high)</th>
+                  </tr>
+                </thead>
+                <tbody id="zonesBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW TO TEST CSS ============ -->
+  <section class="wf-section alt" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How to test CSS</h2>
+        <div class="ys-rule"></div>
+        <p>The number is only as good as the test. Two protocols, both valid.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>The 400 + 200 (classic)</h3>
+          <p>Warm-up 800&ndash;1000 m. <strong>400 m all-out time trial.</strong> Easy 200 m recovery. <strong>200 m all-out.</strong> Plug both in. Most accurate when efforts are spaced enough to recover but close enough that fitness hasn&rsquo;t shifted.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>The 1500 + 100 (longer-leaning)</h3>
+          <p>Better for triathletes targeting 70.3+. <strong>1500 m time trial</strong>, recovery, then <strong>100 m flat-out</strong>. Gives a more endurance-anchored CSS but the SDI fade index is more dramatic (and informative).</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>Repeat every 4&ndash;6 weeks</h3>
+          <p>CSS shifts with training. Re-test every block. <strong>Same pool, same time of day, same protocol</strong> &mdash; or the comparison is noise.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COACH NOTE ON SDI ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">What SDI tells you</div>
+        <h2 style="margin-top: 4px;">SDI is the &ldquo;type of swimmer&rdquo; you are.</h2>
+        <p>The Swim Distance Index is just your second pace divided by your first. It tells you how much you fade as distance climbs &mdash; and that fade pattern hints at what your training should focus on.</p>
+        <ul class="ys-card-bullets" style="margin-top: 12px;">
+          <li><strong>SDI &gt; 1.12 &mdash; Endurance-limited</strong> &middot; You fade hard over distance. Build aerobic base: longer CSS-band sets, more total volume, ratio shifts.</li>
+          <li><strong>SDI 1.06&ndash;1.12 &mdash; Balanced</strong> &middot; The healthy zone for most age-groupers. You hold pace reasonably well; train both ends.</li>
+          <li><strong>SDI 1.00&ndash;1.06 &mdash; Strength/sprint-limited</strong> &middot; You fade so little it suggests you couldn&rsquo;t go faster on the short distance. Add power work: short fast intervals, dryland strength, paddles, technique-at-pace.</li>
+          <li><strong>SDI &le; 1.00 &mdash; Invalid</strong> &middot; The longer effort can&rsquo;t be faster per 100 than the shorter one. Re-check your inputs (Distance 1 must be the shorter swim).</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW TO USE THE ZONES ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How to use the zones</h2>
+        <div class="ys-rule"></div>
+        <p>What each band is for &mdash; and what a typical session looks like.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-card">
+          <div class="ys-meta">Anaerobic</div>
+          <h3>Top-end</h3>
+          <p>25&ndash;150 m reps, long rest (1:30&ndash;10:00). Builds peak speed and lactate tolerance. Use sparingly &mdash; 1 session per 7&ndash;10 days.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">Suprathreshold</div>
+          <h3>VO<sub>2</sub>max stimulus</h3>
+          <p>100&ndash;300 m reps, 1:00&ndash;3:00 rest. The classic 8&times;100 on 1:30 lives here. Hard but repeatable. 1&ndash;2 sessions per week.</p>
+        </div>
+        <div class="ys-card featured">
+          <div class="ys-meta" style="color: var(--wf-coral);">CSS</div>
+          <h3>The bread &amp; butter</h3>
+          <p>100&ndash;3500 m reps, 5&ndash;30 s rest &mdash; very short. The most cost-effective swim training there is. Hold this band 1&ndash;2&times;/week and your race pace climbs.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">Endurance</div>
+          <h3>Aerobic base</h3>
+          <p>800&ndash;3500 m continuous or with token rest. Builds the oxidative base that lets you hold CSS longer. Frequent, long, easy &mdash; no heroics.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">Easy</div>
+          <h3>Recovery + drill</h3>
+          <p>Any distance, any rest. Form work, drill ladders, recovery between hard sessions. Slow enough to do a full kick-set without the legs falling apart.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED CALCULATORS ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Related calculators</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card" href="https://www.yousuli.co/swimming-efficiency-battery-test-one" target="_top">
+          <span class="ys-calc-card-title">Swim efficiency I &mdash; stroke</span>
+          <p>Stroke rate vs distance per stroke. Tells you whether to lift rate or improve DPS.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="https://www.yousuli.co/swimming-efficiency-battery-test-two" target="_top">
+          <span class="ys-calc-card-title">Swim efficiency II &mdash; tipping points</span>
+          <p>Find the speed where your DPS collapses. Pairs naturally with CSS for race pacing.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="calculators.html">
+          <span class="ys-calc-card-title">All calculators</span>
+          <p>Back to the full catalog &mdash; 28 endurance calculators across performance, fueling, swim, bike, run.</p>
+          <span class="ys-calc-card-arrow">Browse &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want CSS measured, not estimated?</h2>
+          <p>The lab&rsquo;s swim protocol uses a 5&times;200 step test with lactate sampling &mdash; gives you a true threshold pace plus stroke metrics. Compare it against this calculator and you&rsquo;ll see exactly where the population averages stop describing you.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Swim test at the lab</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20CSS">Send feedback</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Spotted a bug or want a feature? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20CSS" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ CALCULATOR LOGIC ============ -->
+  <script>
+    (function () {
+      const M_PER_YD = 0.9144;
+
+      let unit = 'metric';
+
+      const unitButtons = document.querySelectorAll('.css-calc-host .unit-toggle button');
+      unitButtons.forEach(b => b.addEventListener('click', () => {
+        if (b.classList.contains('active')) return;
+        unitButtons.forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        unit = b.getAttribute('data-unit');
+        const u = unit === 'metric' ? 'm' : 'yd';
+        document.querySelectorAll('.unit-secondary').forEach(el => el.textContent = u);
+        if (lastResult) renderResults(lastResult);
+      }));
+
+      const errEl = document.getElementById('errorMsg');
+      const resultsBlock = document.getElementById('resultsBlock');
+      let lastResult = null;
+
+      function showError(msg) {
+        errEl.textContent = msg;
+        errEl.classList.add('active');
+        resultsBlock.style.display = 'none';
+      }
+      function clearError() {
+        errEl.classList.remove('active');
+        errEl.textContent = '';
+      }
+
+      function parseTime(str) {
+        if (str == null) return NaN;
+        str = String(str).trim();
+        if (!str) return NaN;
+        if (/^\d+(\.\d+)?$/.test(str)) return parseFloat(str);
+        const parts = str.split(':').map(p => p.trim());
+        if (parts.length === 2) {
+          const m = parseFloat(parts[0]);
+          const s = parseFloat(parts[1]);
+          if (isNaN(m) || isNaN(s)) return NaN;
+          return m * 60 + s;
+        }
+        if (parts.length === 3) {
+          const h = parseFloat(parts[0]);
+          const m = parseFloat(parts[1]);
+          const s = parseFloat(parts[2]);
+          if ([h, m, s].some(isNaN)) return NaN;
+          return h * 3600 + m * 60 + s;
+        }
+        return NaN;
+      }
+
+      function fmtPace(sec) {
+        if (!isFinite(sec) || sec <= 0) return '—';
+        const m = Math.floor(sec / 60);
+        const s = Math.round(sec - m * 60);
+        if (s === 60) return (m + 1) + ':00';
+        return m + ':' + (s < 10 ? '0' : '') + s;
+      }
+      function fmtHMS(sec) {
+        if (!isFinite(sec) || sec <= 0) return '—';
+        sec = Math.round(sec);
+        const h = Math.floor(sec / 3600);
+        const m = Math.floor((sec % 3600) / 60);
+        const s = sec % 60;
+        const pad = n => (n < 10 ? '0' : '') + n;
+        return pad(h) + ':' + pad(m) + ':' + pad(s);
+      }
+
+      function calculate() {
+        clearError();
+        const d1 = parseFloat(document.getElementById('distance1').value);
+        const d2 = parseFloat(document.getElementById('distance2').value);
+        const t1 = parseTime(document.getElementById('time1').value);
+        const t2 = parseTime(document.getElementById('time2').value);
+
+        if ([d1, d2, t1, t2].some(v => isNaN(v))) return showError('Fill all four fields with valid numbers.');
+        if (d1 <= 0 || d2 <= 0 || t1 <= 0 || t2 <= 0) return showError('Distances and times must be positive.');
+        if (d2 <= d1) return showError('Distance 2 must be longer than Distance 1.');
+        if (t2 <= t1) return showError('Time 2 must be greater than Time 1.');
+
+        // Speeds in user's unit (m/s or yd/s)
+        const speed1 = d1 / t1;
+        const speed2 = d2 / t2;
+        const cssSpeed = (d2 - d1) / (t2 - t1);
+
+        // Convert to both unit systems
+        let speed1_mps, speed2_mps, cssSpeed_mps, speed1_yps, speed2_yps, cssSpeed_yps;
+        if (unit === 'metric') {
+          speed1_mps = speed1;            speed2_mps = speed2;            cssSpeed_mps = cssSpeed;
+          speed1_yps = speed1 / M_PER_YD; speed2_yps = speed2 / M_PER_YD; cssSpeed_yps = cssSpeed / M_PER_YD;
+        } else {
+          speed1_yps = speed1;            speed2_yps = speed2;            cssSpeed_yps = cssSpeed;
+          speed1_mps = speed1 * M_PER_YD; speed2_mps = speed2 * M_PER_YD; cssSpeed_mps = cssSpeed * M_PER_YD;
+        }
+
+        // Paces per 100 (m and yd)
+        const p1m = 100 / speed1_mps,  p1y = 100 / speed1_yps;
+        const p2m = 100 / speed2_mps,  p2y = 100 / speed2_yps;
+        const cssM = 100 / cssSpeed_mps, cssY = 100 / cssSpeed_yps;
+
+        // SDI (unit invariant — same in metric or imperial)
+        const sdi = p2m / p1m;
+        let sdiRating;
+        if (sdi > 1.12)      sdiRating = 'Endurance-limited';
+        else if (sdi > 1.06) sdiRating = 'Balanced';
+        else if (sdi > 1.0)  sdiRating = 'Strength-limited';
+        else                 sdiRating = 'Invalid (check inputs)';
+
+        lastResult = { d1, d2, t1, t2, p1m, p1y, p2m, p2y, cssM, cssY, sdi, sdiRating };
+        renderResults(lastResult);
+      }
+
+      function renderResults(r) {
+        resultsBlock.style.display = 'block';
+        const u = unit === 'metric' ? 'm' : 'yd';
+        const otherU = unit === 'metric' ? 'yd' : 'm';
+        document.querySelectorAll('.unit-secondary').forEach(el => el.textContent = u);
+
+        const cssPrimary = unit === 'metric' ? r.cssM : r.cssY;
+        const cssOther   = unit === 'metric' ? r.cssY : r.cssM;
+        document.getElementById('cssPace').textContent = fmtPace(cssPrimary) + ' / 100' + u;
+        document.getElementById('cssPaceAux').textContent = fmtPace(cssOther) + ' / 100' + otherU;
+
+        const p1Primary = unit === 'metric' ? r.p1m : r.p1y;
+        const p2Primary = unit === 'metric' ? r.p2m : r.p2y;
+        document.getElementById('pace1').textContent = fmtPace(p1Primary) + ' / 100' + u;
+        document.getElementById('pace1Aux').textContent = `${r.d1} ${u} in ${fmtHMS(r.t1)}`;
+        document.getElementById('pace2').textContent = fmtPace(p2Primary) + ' / 100' + u;
+        document.getElementById('pace2Aux').textContent = `${r.d2} ${u} in ${fmtHMS(r.t2)}`;
+
+        document.getElementById('sdiScore').textContent = r.sdi.toFixed(3);
+        document.getElementById('sdiRating').textContent = r.sdiRating;
+
+        // CSS splits
+        const cssSec = cssPrimary;
+        document.getElementById('split25').textContent  = fmtPace(cssSec * 0.25);
+        document.getElementById('split50').textContent  = fmtPace(cssSec * 0.5);
+        document.getElementById('split100').textContent = fmtPace(cssSec);
+        document.getElementById('split200').textContent = fmtPace(cssSec * 2);
+
+        // Predictions
+        const distances = unit === 'metric'
+          ? [750, 1500, 1900, 3800, 5000, 10000]
+          : [820, 1640, 2078, 4156, 5468, 10936];
+        const cssPer100 = cssPrimary;
+        const factors = { Current: r.sdi, Perfect: 1.00, Good: 1.03, Poor: 1.06 };
+
+        const tbody = document.getElementById('predictionBody');
+        tbody.innerHTML = '';
+        distances.forEach(d => {
+          const tr = document.createElement('tr');
+          const cur = cssPer100 * factors.Current * (d / 100);
+          const per = cssPer100 * factors.Perfect * (d / 100);
+          const goo = cssPer100 * factors.Good * (d / 100);
+          const poo = cssPer100 * factors.Poor * (d / 100);
+          tr.innerHTML = `<td>${d} ${u}</td><td>${fmtHMS(cur)}</td><td>${fmtHMS(per)}</td><td>${fmtHMS(goo)}</td><td>${fmtHMS(poo)}</td>`;
+          tbody.appendChild(tr);
+        });
+
+        // Training zones
+        const ana = cssPer100 * 0.8;     // anaerobic (faster)
+        const easy = cssPer100 * 1.12;   // easy (slower)
+        const cssFast = cssPer100 - 3, cssSlow = cssPer100 + 3;
+        const supraFast = ana + 1, supraSlow = cssFast - 1;
+        const enduFast = cssSlow + 1, enduSlow = easy - 1;
+
+        const zones = [
+          { name: 'Anaerobic',      pace: '≤ ' + fmtPace(ana),                                  iv: '25–150 ' + u,  rl: '1:30',    rh: '10:00' },
+          { name: 'Suprathreshold', pace: fmtPace(supraFast) + ' – ' + fmtPace(supraSlow),      iv: '100–300 ' + u, rl: '1:00',    rh: '3:00' },
+          { name: 'CSS',            pace: fmtPace(cssFast) + ' – ' + fmtPace(cssSlow),          iv: '100–3500 ' + u, rl: '0:05',   rh: '0:30' },
+          { name: 'Endurance',      pace: fmtPace(enduFast) + ' – ' + fmtPace(enduSlow),        iv: '800–3500 ' + u, rl: 'Any',    rh: 'Any' },
+          { name: 'Easy',           pace: '≥ ' + fmtPace(easy),                                 iv: 'Any',                rl: 'Any',    rh: 'Any' }
+        ];
+        const zbody = document.getElementById('zonesBody');
+        zbody.innerHTML = '';
+        zones.forEach(z => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${z.name}</td><td>${z.pace}</td><td>${z.iv}</td><td>${z.rl}</td><td>${z.rh}</td>`;
+          zbody.appendChild(tr);
+        });
+      }
+
+      function reset() {
+        document.getElementById('distance1').value = 200;
+        document.getElementById('distance2').value = 400;
+        document.getElementById('time1').value = '3:00';
+        document.getElementById('time2').value = '6:30';
+        clearError();
+        resultsBlock.style.display = 'none';
+        lastResult = null;
+      }
+
+      document.getElementById('calculateBtn').addEventListener('click', calculate);
+      document.getElementById('resetBtn').addEventListener('click', reset);
+      ['distance1','distance2','time1','time2'].forEach(id => {
+        document.getElementById(id).addEventListener('keydown', e => {
+          if (e.key === 'Enter') { e.preventDefault(); calculate(); }
+        });
+      });
+
+      // initial unit-secondary fill
+      document.querySelectorAll('.unit-secondary').forEach(el => el.textContent = 'm');
+    })();
+  </script>
+
+</body>
+</html>
