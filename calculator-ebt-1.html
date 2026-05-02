@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EBT-1: Swim efficiency — Yousuli calculators</title>
+  <meta name="description" content="Swim efficiency battery test #1: distance per stroke, stroke rate, pace per 100, with rating against height-relative DPS bands. Tells you whether to increase stroke rate or improve DPS." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED CALCULATOR STYLES ============ -->
+  <style>
+    .ebt-calc-host { width: 100%; }
+
+    .ebt-calc-host .field-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+      background: var(--ys-bg-soft);
+      padding: 18px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 600px) { .ebt-calc-host .field-grid { grid-template-columns: 1fr; } }
+    .ebt-calc-host .field-grid .full { grid-column: 1 / -1; }
+
+    .ebt-calc-host label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.7rem;
+      color: var(--ys-navy);
+      margin-bottom: 6px;
+    }
+    .ebt-calc-host .row { display: flex; align-items: stretch; gap: 0; }
+    .ebt-calc-host .row.split { display: grid; grid-template-columns: 1fr auto 1fr; gap: 6px; align-items: center; }
+    .ebt-calc-host .row .colon { font-family: var(--ys-font-display); color: var(--wf-coral); font-weight: 700; font-size: 1.2rem; }
+    .ebt-calc-host input[type="text"],
+    .ebt-calc-host input[type="number"],
+    .ebt-calc-host select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      font-size: 0.96rem;
+      font-family: var(--ys-font-body);
+      background: #fff;
+      color: var(--ys-navy);
+      box-sizing: border-box;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .ebt-calc-host input:focus, .ebt-calc-host select:focus {
+      outline: none;
+      border-color: var(--wf-coral);
+      box-shadow: 0 0 0 3px rgba(250, 119, 60, 0.18);
+    }
+    .ebt-calc-host .row > input:first-child { border-radius: 6px 0 0 6px; }
+    .ebt-calc-host .row > .unit {
+      padding: 0 12px;
+      background: var(--ys-navy); color: #fff;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em; font-size: 0.74rem;
+      display: flex; align-items: center;
+      border-radius: 0 6px 6px 0;
+      min-width: 50px; justify-content: center;
+    }
+    .ebt-calc-host .field-help {
+      font-size: 0.78rem; color: var(--ys-muted); margin-top: 6px;
+    }
+
+    .ebt-calc-host .unit-toggle {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 14px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.72rem; color: var(--ys-muted);
+    }
+    .ebt-calc-host .unit-toggle .switch {
+      display: inline-flex;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px; overflow: hidden;
+    }
+    .ebt-calc-host .unit-toggle .switch button {
+      background: #fff; border: 0; padding: 7px 14px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.7rem; font-weight: 600;
+      color: var(--ys-muted); cursor: pointer;
+    }
+    .ebt-calc-host .unit-toggle .switch button.active {
+      background: var(--ys-navy); color: #fff;
+    }
+
+    .ebt-calc-host .err {
+      color: #c93939;
+      background: rgba(201, 57, 57, 0.08);
+      border-left: 4px solid #c93939;
+      padding: 10px 14px;
+      margin-top: 12px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      display: none;
+    }
+    .ebt-calc-host .err.active { display: block; }
+
+    .ebt-calc-host .results-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+      margin-top: 18px;
+    }
+    @media (max-width: 720px) { .ebt-calc-host .results-grid { grid-template-columns: 1fr; } }
+
+    .ebt-calc-host .result-block {
+      background: #fff;
+      border: 1px solid var(--ys-line);
+      border-radius: 12px;
+      padding: 18px;
+    }
+    .ebt-calc-host .result-block h4 {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.12em; text-transform: uppercase;
+      font-size: 0.8rem;
+      color: var(--wf-coral);
+      margin: 0 0 14px;
+    }
+    .ebt-calc-host .res-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--ys-line);
+      gap: 12px;
+    }
+    .ebt-calc-host .res-row:last-of-type { border-bottom: 0; }
+    .ebt-calc-host .res-label {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.04em;
+      font-size: 0.84rem;
+      color: var(--ys-muted);
+    }
+    .ebt-calc-host .res-value {
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--ys-navy);
+      letter-spacing: 0.02em;
+      text-align: right;
+    }
+    .ebt-calc-host .res-value.featured {
+      color: var(--wf-coral);
+      font-size: 1.15rem;
+    }
+
+    .ebt-calc-host .band-row {
+      display: flex; gap: 4px;
+      margin-top: 18px;
+    }
+    .ebt-calc-host .band {
+      flex: 1; min-width: 0;
+      padding: 10px 6px;
+      text-align: center;
+      background: var(--ys-bg-soft);
+      border-radius: 6px;
+      font-size: 0.78rem;
+      color: var(--ys-muted);
+      transition: all 0.2s ease;
+    }
+    .ebt-calc-host .band-name {
+      display: block;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em; text-transform: uppercase;
+      font-size: 0.66rem; font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .ebt-calc-host .band.active {
+      background: var(--wf-coral); color: #fff;
+      box-shadow: 0 4px 12px rgba(250, 119, 60, 0.3);
+    }
+    .ebt-calc-host .band.active .band-name { color: #fff; }
+
+    .ebt-calc-host .verdict {
+      margin-top: 14px;
+      padding: 14px 16px;
+      background: var(--ys-navy);
+      color: #fff;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .ebt-calc-host .verdict-label {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.14em; text-transform: uppercase;
+      font-size: 0.74rem;
+      color: rgba(255,255,255,0.7);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .ebt-calc-host .verdict-value {
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: var(--wf-coral);
+      letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 56px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Swim</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">EBT-1: Swim efficiency.</h1>
+      <div class="wf-subhead">Stroke rate &middot; distance per stroke &middot; height-relative rating</div>
+      <p class="lede" style="max-width: 660px;">Battery test #1 of two. From a single timed swim, get your distance per stroke, stroke rate, and a <strong>height-relative DPS rating</strong>. The Yousuli verdict tells you whether to focus on <em>increasing rate</em> or <em>improving DPS</em> &mdash; the cleanest single signal for swim training direction.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">How DPS &amp; SR work together</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 32px 0 48px;">
+    <div class="ys-container">
+      <div class="ys-tool" style="max-width: 880px;">
+        <h3>Plug in your test set</h3>
+        <p class="ys-tool-pre">Swim a measured distance at steady effort, count strokes (or know your SR), and time it. <strong>If you only have one of SR / total strokes</strong>, leave the other blank &mdash; we&rsquo;ll compute it.</p>
+
+        <div class="ebt-calc-host">
+
+          <div class="unit-toggle">
+            <span>Units</span>
+            <span class="switch">
+              <button type="button" class="active" data-unit="metric">Metric</button>
+              <button type="button" data-unit="imperial">Imperial</button>
+            </span>
+          </div>
+
+          <div class="field-grid">
+            <div>
+              <label>Distance</label>
+              <div class="row">
+                <input type="number" id="distance" min="0" step="1" value="400" />
+                <span class="unit unit-dist">m</span>
+              </div>
+            </div>
+            <div>
+              <label>Time (mm:ss)</label>
+              <div class="row split">
+                <input type="number" id="timeMin" min="0" step="1" value="6" />
+                <span class="colon">:</span>
+                <input type="number" id="timeSec" min="0" max="59" step="1" value="30" />
+              </div>
+            </div>
+            <div>
+              <label>Height</label>
+              <div class="row">
+                <input type="number" id="height" step="0.01" min="0" value="1.81" />
+                <span class="unit unit-height">m</span>
+              </div>
+              <div class="field-help">Your height anchors the DPS rating bands.</div>
+            </div>
+            <div>
+              <label>Stroke rate (SR)</label>
+              <div class="row">
+                <input type="number" id="sr" step="0.5" min="0" value="55" />
+                <span class="unit">/ min</span>
+              </div>
+              <div class="field-help">Leave blank if you only have total strokes.</div>
+            </div>
+            <div class="full">
+              <label>Total strokes for the swim</label>
+              <div class="row">
+                <input type="number" id="strokes" min="0" step="1" value="357" />
+                <span class="unit">strokes</span>
+              </div>
+              <div class="field-help">Leave blank if you have SR &mdash; we&rsquo;ll auto-fill from time + SR.</div>
+            </div>
+          </div>
+
+          <div class="ys-btn-row" style="margin: 4px 0 0;">
+            <button class="ys-btn ys-btn-coral" type="button" id="calcBtn">Calculate</button>
+            <button class="ys-btn ys-btn-ghost" type="button" id="resetBtn">Reset</button>
+          </div>
+
+          <div class="err" id="errorMsg"></div>
+
+          <div id="resultsBlock" style="display: none;">
+
+            <div class="results-grid">
+              <div class="result-block">
+                <h4>DPS &amp; height</h4>
+                <div class="res-row"><span class="res-label">DPS reference low</span><span class="res-value"><span id="outDpsLow">—</span> <span class="unit-dist-text">m</span> / stroke</span></div>
+                <div class="res-row"><span class="res-label">DPS reference high</span><span class="res-value"><span id="outDpsHigh">—</span> <span class="unit-dist-text">m</span> / stroke</span></div>
+                <div class="res-row"><span class="res-label">DPS current</span><span class="res-value featured"><span id="outDpsCurrent">—</span> <span class="unit-dist-text">m</span> / stroke</span></div>
+                <div class="res-row"><span class="res-label">DPS / height ratio</span><span class="res-value"><span id="outDpsRatio">—</span>%</span></div>
+              </div>
+              <div class="result-block">
+                <h4>Stroke rate &amp; pace</h4>
+                <div class="res-row"><span class="res-label">SR</span><span class="res-value featured"><span id="outSr">—</span> / min</span></div>
+                <div class="res-row"><span class="res-label">Sec / stroke</span><span class="res-value"><span id="outSecPerStroke">—</span> s</span></div>
+                <div class="res-row"><span class="res-label">Pace per 100 <span class="unit-dist-text">m</span></span><span class="res-value"><span id="outPace">—</span> s</span></div>
+                <div class="res-row"><span class="res-label">Total strokes</span><span class="res-value"><span id="outStrokes">—</span></span></div>
+              </div>
+            </div>
+
+            <div class="band-row" id="dpsBandRow">
+              <div class="band" data-band="vlow"><span class="band-name">Very low</span>&lt; 55%</div>
+              <div class="band" data-band="low"><span class="band-name">Low</span>55–60%</div>
+              <div class="band" data-band="bal"><span class="band-name">Balanced</span>60–65%</div>
+              <div class="band" data-band="high"><span class="band-name">High</span>65–70%</div>
+              <div class="band" data-band="vhigh"><span class="band-name">Very high</span>≥ 70%</div>
+            </div>
+
+            <div class="verdict">
+              <span class="verdict-label">Yousuli verdict</span>
+              <span class="verdict-value" id="outVerdict">—</span>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="wf-section alt" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How DPS &amp; SR work together</h2>
+        <div class="ys-rule"></div>
+        <p>Speed = SR × DPS. To swim faster, raise one without dropping the other.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>Distance per stroke (DPS)</h3>
+          <p>How far each pull moves you. Bigger people <em>can</em> have bigger DPS &mdash; that&rsquo;s why we anchor to height. <strong>DPS / height between 60% and 65%</strong> is the balanced range for most well-trained swimmers.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>Stroke rate (SR)</h3>
+          <p>How many pulls per minute. Faster swimming generally needs higher SR &mdash; but only if DPS doesn&rsquo;t collapse. The Yousuli SR table sets acceptable SR ranges by pace bracket.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>The verdict</h3>
+          <p>If your SR is below the acceptable range for your pace &rarr; <strong>Increase SR</strong>. If above &rarr; <strong>Increase DPS</strong> (you&rsquo;re thrashing). If inside &rarr; <strong>Balanced</strong> &mdash; you&rsquo;re using the right combination for that speed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COACH NOTE ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
+        <h2 style="margin-top: 4px;">What to actually do with each verdict.</h2>
+        <ul class="ys-card-bullets" style="margin-top: 12px;">
+          <li><strong>Increase SR</strong> &mdash; you&rsquo;re gliding too long. Drills: tempo trainer at +3–5 SPM, fast-arms 25s with paddles, in/out 50s focused on quick hand entry. Don&rsquo;t trade DPS for rate; aim for both.</li>
+          <li><strong>Increase DPS</strong> &mdash; you&rsquo;re thrashing. Drills: catch-up, fingertip drag, single-arm pull with breath control. <strong>Check your hand entry, body line, and high elbow catch.</strong> Stroke rate alone won&rsquo;t fix swim speed.</li>
+          <li><strong>Balanced</strong> &mdash; congrats; the next gain is at the same balance one band higher. Re-test after a 4–6 week training block to see if you&rsquo;ve moved bands.</li>
+        </ul>
+        <p style="margin-top: 12px;">Re-test every 4–6 weeks at the same distance, same pool, same time of day. Single-time numbers are noisy; <strong>trends matter.</strong> Pair this with EBT-2 (tipping points) for a fuller picture &mdash; that test finds the speed where DPS collapses, which tells you exactly when to switch from glide to grind.</p>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/on-site-swim-coaching" target="_top">On-site swim coaching</a>
+          <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/performancelab" target="_top">Lab swim test</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DPS BANDS EXPLAINED ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>DPS rating bands</h2>
+        <div class="ys-rule"></div>
+        <p>Where each band sits as a % of height &mdash; and what it means.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-card">
+          <div class="ys-meta">&lt; 55%</div>
+          <h3>Very low</h3>
+          <p>You&rsquo;re putting in many strokes for the distance. Almost certainly a <strong>technique fix</strong> &mdash; body position, catch, pull path. Drill-heavy block.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">55–60%</div>
+          <h3>Low</h3>
+          <p>Improvable. DPS work pays. Most adult-onset swimmers sit here when they start. 4–8 weeks of focused technique typically moves you up a band.</p>
+        </div>
+        <div class="ys-card featured">
+          <div class="ys-meta" style="color: var(--wf-coral);">60–65%</div>
+          <h3>Balanced</h3>
+          <p>Where most well-trained age-groupers live. From here, gains come from raising both SR and DPS together, not one in isolation.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">65–70%</div>
+          <h3>High</h3>
+          <p>Strong technique, long pull. Watch for over-gliding &mdash; if SR is dropping below your pace bracket, you&rsquo;re leaving speed on the table.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">≥ 70%</div>
+          <h3>Very high</h3>
+          <p>Elite territory or extreme glide. If race pace is slow despite huge DPS, you&rsquo;re under-using SR. Add tempo work.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED CALCULATORS ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Related calculators</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card" href="https://www.yousuli.co/swimming-efficiency-battery-test-two" target="_top">
+          <span class="ys-calc-card-title">EBT-2 — Stroke tipping points</span>
+          <p>Pairs naturally with this — finds the speed where your DPS collapses.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card redesigned" href="calculator-css.html">
+          <span class="ys-calc-card-title">Critical swim speed (CSS)</span>
+          <p>Pace zones for swim training based on a 2-effort threshold test.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="calculators.html">
+          <span class="ys-calc-card-title">All calculators</span>
+          <p>Back to the full catalog &mdash; 28 endurance calculators across performance, fueling, swim, bike, run.</p>
+          <span class="ys-calc-card-arrow">Browse &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want video analysis with the numbers?</h2>
+          <p>On-site swim coaching pairs the EBT data with high-speed video and a Slipstream stationary-swim setup &mdash; we identify the technique limiter behind your number, not just the number itself.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Book swim coaching</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20EBT-1">Send feedback</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Spotted a bug or want a feature? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20EBT-1" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ CALCULATOR LOGIC ============ -->
+  <script>
+    (function () {
+      const $ = id => document.getElementById(id);
+
+      // Yousuli SR-by-pace tables (preserved verbatim)
+      // pace per 100m bracket -> [sr_min, sr_max] acceptable SR for that pace
+      const SR_TABLE_M = [
+        { paceMax: 100000, paceMin: 131, srLo: 0,  srHi: 50 },
+        { paceMax: 131,    paceMin: 120, srLo: 50, srHi: 62 },
+        { paceMax: 120,    paceMin: 109, srLo: 50, srHi: 63 },
+        { paceMax: 109,    paceMin: 98,  srLo: 51, srHi: 64 },
+        { paceMax: 98,     paceMin: 87,  srLo: 52, srHi: 65 },
+        { paceMax: 87,     paceMin: 77,  srLo: 53, srHi: 70 },
+        { paceMax: 77,     paceMin: 76,  srLo: 54, srHi: 80 },
+        { paceMax: 76,     paceMin: 66,  srLo: 55, srHi: 85 },
+        { paceMax: 66,     paceMin: 65,  srLo: 56, srHi: 90 },
+        { paceMax: 65,     paceMin: 54,  srLo: 60, srHi: 100 },
+        { paceMax: 54,     paceMin: 0,   srLo: 60, srHi: 100 }
+      ];
+      // Pace per 100 yd (slightly tighter)
+      const SR_TABLE_Y = [
+        { paceMax: 100000, paceMin: 120, srLo: 0,  srHi: 50 },
+        { paceMax: 120,    paceMin: 110, srLo: 50, srHi: 62 },
+        { paceMax: 110,    paceMin: 100, srLo: 50, srHi: 63 },
+        { paceMax: 100,    paceMin: 90,  srLo: 51, srHi: 64 },
+        { paceMax: 90,     paceMin: 80,  srLo: 52, srHi: 65 },
+        { paceMax: 80,     paceMin: 71,  srLo: 53, srHi: 70 },
+        { paceMax: 71,     paceMin: 70,  srLo: 54, srHi: 80 },
+        { paceMax: 70,     paceMin: 60,  srLo: 55, srHi: 85 },
+        { paceMax: 60,     paceMin: 50,  srLo: 56, srHi: 90 },
+        { paceMax: 50,     paceMin: 0,   srLo: 60, srHi: 100 }
+      ];
+
+      // DPS bands as % of height (preserved)
+      const DPS_BANDS = [
+        { key: 'vlow',  name: 'Very low',  lo: 0,   hi: 55 },
+        { key: 'low',   name: 'Low',       lo: 55,  hi: 60 },
+        { key: 'bal',   name: 'Balanced',  lo: 60,  hi: 65 },
+        { key: 'high',  name: 'High',      lo: 65,  hi: 70 },
+        { key: 'vhigh', name: 'Very high', lo: 70,  hi: 100000 }
+      ];
+
+      let unit = 'metric';
+      const errEl = $('errorMsg');
+      const resultsBlock = $('resultsBlock');
+
+      function showError(msg) { errEl.textContent = msg; errEl.classList.add('active'); resultsBlock.style.display = 'none'; }
+      function clearError() { errEl.classList.remove('active'); errEl.textContent = ''; }
+
+      // ---- unit toggle (kg/lb-style for distance + height)
+      document.querySelectorAll('.ebt-calc-host .unit-toggle button').forEach(b => {
+        b.addEventListener('click', () => {
+          if (b.classList.contains('active')) return;
+          const newUnit = b.getAttribute('data-unit');
+          const d = parseFloat($('distance').value);
+          const h = parseFloat($('height').value);
+          if (newUnit === 'imperial') {
+            if (Number.isFinite(d)) $('distance').value = (d / 0.9144).toFixed(0);    // m → yd
+            if (Number.isFinite(h)) $('height').value   = (h / 0.0254).toFixed(0);     // m → in (total inches)
+          } else {
+            if (Number.isFinite(d)) $('distance').value = (d * 0.9144).toFixed(0);    // yd → m
+            if (Number.isFinite(h)) $('height').value   = (h * 0.0254).toFixed(2);     // in → m
+          }
+          unit = newUnit;
+          document.querySelectorAll('.ebt-calc-host .unit-toggle button').forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          document.querySelectorAll('.unit-dist').forEach(el => el.textContent = unit === 'metric' ? 'm' : 'yd');
+          document.querySelectorAll('.unit-dist-text').forEach(el => el.textContent = unit === 'metric' ? 'm' : 'yd');
+          document.querySelectorAll('.unit-height').forEach(el => el.textContent = unit === 'metric' ? 'm' : 'in');
+          if (resultsBlock.style.display !== 'none') calc();
+        });
+      });
+
+      function calc() {
+        clearError();
+        let distance = parseFloat($('distance').value);
+        const tMin = parseInt($('timeMin').value, 10) || 0;
+        const tSec = parseInt($('timeSec').value, 10) || 0;
+        let height = parseFloat($('height').value);
+        let srInput = $('sr').value.trim();
+        let strokesInput = $('strokes').value.trim();
+
+        const totalSec = tMin * 60 + tSec;
+        if (!(distance > 0)) return showError('Enter a positive distance.');
+        if (totalSec <= 0)   return showError('Enter a positive time (mm:ss).');
+        if (!(height > 0))   return showError('Enter a positive height.');
+
+        // Convert to metric internally (so SR table matches)
+        let distM = distance, heightM = height;
+        if (unit === 'imperial') {
+          distM = distance * 0.9144;     // yd → m
+          heightM = height * 0.0254;     // in → m
+        }
+
+        // SR / strokes auto-fill: prefer whichever has a value
+        let sr = parseFloat(srInput);
+        let strokes = parseFloat(strokesInput);
+        if (Number.isFinite(sr) && !Number.isFinite(strokes)) {
+          strokes = sr * (totalSec / 60);
+          $('strokes').value = strokes.toFixed(0);
+        } else if (Number.isFinite(strokes) && !Number.isFinite(sr)) {
+          sr = strokes / (totalSec / 60);
+          $('sr').value = sr.toFixed(2);
+        } else if (!Number.isFinite(sr) && !Number.isFinite(strokes)) {
+          return showError('Enter SR (strokes/min) or total strokes — we auto-fill the other.');
+        }
+        if (!(sr > 0) || !(strokes > 0)) return showError('SR and strokes must be positive.');
+
+        // ---- DPS calcs (always in metric for the band math)
+        const dpsCurrentM = distM / strokes;
+        const dpsLowM  = heightM * 0.55;
+        const dpsHighM = heightM * 0.70;
+        const dpsRatio = (dpsCurrentM / heightM) * 100;
+
+        // ---- pace per 100 (in user's unit so SR table aligns)
+        const pacePer100 = (totalSec / distance) * 100; // distance in user's unit, so per 100 of that unit
+
+        // ---- DPS rating
+        const band = DPS_BANDS.find(b => dpsRatio >= b.lo && dpsRatio < b.hi) || DPS_BANDS[DPS_BANDS.length - 1];
+
+        // ---- SR verdict (depends on SR table + pace)
+        const table = unit === 'metric' ? SR_TABLE_M : SR_TABLE_Y;
+        let verdict = 'Balanced';
+        for (const row of table) {
+          if (pacePer100 <= row.paceMax && pacePer100 > row.paceMin) {
+            if (sr <= row.srLo)      verdict = 'Increase SR';
+            else if (sr >= row.srHi) verdict = 'Increase DPS';
+            else                     verdict = 'Balanced';
+            break;
+          }
+        }
+
+        // ---- render
+        const dpsUnitText = unit === 'metric' ? '' : ''; // already shown via .unit-dist-text spans
+        // Display DPS values back in user's unit (m or yd)
+        const toDisp = vM => unit === 'metric' ? vM : vM / 0.9144;
+        $('outDpsLow').textContent     = toDisp(dpsLowM).toFixed(2);
+        $('outDpsHigh').textContent    = toDisp(dpsHighM).toFixed(2);
+        $('outDpsCurrent').textContent = toDisp(dpsCurrentM).toFixed(2);
+        $('outDpsRatio').textContent   = dpsRatio.toFixed(1);
+        $('outSr').textContent         = sr.toFixed(1);
+        $('outSecPerStroke').textContent = (60 / sr).toFixed(2);
+        $('outPace').textContent       = pacePer100.toFixed(1);
+        $('outStrokes').textContent    = Math.round(strokes);
+
+        // band row highlight
+        document.querySelectorAll('.ebt-calc-host .band').forEach(el => el.classList.remove('active'));
+        const activeBand = document.querySelector('.ebt-calc-host .band[data-band="' + band.key + '"]');
+        if (activeBand) activeBand.classList.add('active');
+
+        $('outVerdict').textContent = verdict;
+
+        resultsBlock.style.display = 'block';
+      }
+
+      $('calcBtn').addEventListener('click', calc);
+      $('resetBtn').addEventListener('click', () => {
+        $('distance').value = unit === 'metric' ? 400 : 437;
+        $('timeMin').value = 6;
+        $('timeSec').value = 30;
+        $('height').value = unit === 'metric' ? 1.81 : 71;
+        $('sr').value = 55;
+        $('strokes').value = 357;
+        clearError();
+        resultsBlock.style.display = 'none';
+      });
+
+      // re-calc on input change once results are showing
+      ['distance','timeMin','timeSec','height','sr','strokes'].forEach(id => {
+        $(id).addEventListener('input', () => { if (resultsBlock.style.display !== 'none') calc(); });
+      });
+
+    })();
+  </script>
+
+</body>
+</html>
