@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reactive strength index (RSI) — Yousuli calculators</title>
+  <meta name="description" content="Drop-jump RSI from flight time and ground contact time. Get jump height, RSI score, the standard category band, and a fast-SSC check — plus how to actually measure it." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED CALCULATOR STYLES ============ -->
+  <style>
+    .rsi-calc-host { width: 100%; }
+
+    .rsi-calc-host .field-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+      background: var(--ys-bg-soft);
+      padding: 18px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 600px) { .rsi-calc-host .field-grid { grid-template-columns: 1fr; } }
+
+    .rsi-calc-host label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.72rem;
+      color: var(--ys-navy);
+      margin-bottom: 6px;
+    }
+    .rsi-calc-host .row {
+      display: flex; gap: 10px; align-items: stretch;
+    }
+    .rsi-calc-host input[type="number"] {
+      flex: 1; min-width: 0;
+      padding: 10px 12px;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      font-size: 0.96rem;
+      font-family: var(--ys-font-body);
+      background: #fff;
+      color: var(--ys-navy);
+      box-sizing: border-box;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .rsi-calc-host input:focus {
+      outline: none;
+      border-color: var(--wf-coral);
+      box-shadow: 0 0 0 3px rgba(250, 119, 60, 0.18);
+    }
+    .rsi-calc-host .unit {
+      padding: 0 12px;
+      background: var(--ys-navy);
+      color: #fff;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em;
+      font-size: 0.78rem;
+      display: flex; align-items: center;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+    .rsi-calc-host .help {
+      font-size: 0.78rem; color: var(--ys-muted);
+      margin-top: 6px;
+    }
+
+    .rsi-calc-host .err {
+      color: #c93939;
+      background: rgba(201, 57, 57, 0.08);
+      border-left: 4px solid #c93939;
+      padding: 10px 14px;
+      margin-top: 12px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      display: none;
+    }
+    .rsi-calc-host .err.active { display: block; }
+    .rsi-calc-host .warn {
+      color: var(--ys-navy);
+      background: rgba(250, 119, 60, 0.10);
+      border-left: 4px solid var(--wf-coral);
+      padding: 10px 14px;
+      margin-top: 12px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      display: none;
+    }
+    .rsi-calc-host .warn.active { display: block; }
+
+    .rsi-calc-host .results-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+      margin-top: 18px;
+    }
+    @media (max-width: 720px) { .rsi-calc-host .results-grid { grid-template-columns: 1fr; } }
+
+    .rsi-calc-host .result-tile {
+      background: #fff;
+      border: 1px solid var(--ys-line);
+      border-radius: 10px;
+      padding: 16px 16px;
+      text-align: center;
+    }
+    .rsi-calc-host .result-tile.featured {
+      background: var(--ys-navy); border-color: var(--ys-navy);
+    }
+    .rsi-calc-host .result-tile.featured .result-label,
+    .rsi-calc-host .result-tile.featured .result-value,
+    .rsi-calc-host .result-tile.featured .result-aux { color: #fff; }
+    .rsi-calc-host .result-tile.featured .result-aux { color: rgba(255, 255, 255, 0.7); }
+
+    .rsi-calc-host .result-label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.72rem;
+      color: var(--ys-muted);
+      margin-bottom: 8px;
+    }
+    .rsi-calc-host .result-value {
+      display: block;
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      font-size: 1.7rem;
+      color: var(--ys-navy);
+      letter-spacing: 0.02em;
+    }
+    .rsi-calc-host .result-aux {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--ys-muted);
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 56px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Run / Strength</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">Reactive strength index.</h1>
+      <div class="wf-subhead">Drop jump &middot; flight time &middot; contact time</div>
+      <p class="lede" style="max-width: 660px;">RSI is a single number that tells you how much of your bodyweight bounces back per millisecond on the ground &mdash; a key marker of running economy, sprint capacity, and tendon health. Drop a step, hit the floor, spring up &mdash; type your two timings in.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">How to test it</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 32px 0 48px;">
+    <div class="ys-container">
+      <div class="ys-tool" style="max-width: 800px;">
+        <h3>Plug in your two timings</h3>
+        <p class="ys-tool-pre">From a drop jump (step off a 20&ndash;40 cm box). <strong>Ground contact time</strong> = how long your feet were on the floor between landing and take-off. <strong>Flight time</strong> = how long you were in the air on the rebound jump. Use a contact mat, force plate, optical system, or 240+ fps video.</p>
+
+        <div class="rsi-calc-host">
+          <div class="field-grid">
+            <div>
+              <label>Ground contact time</label>
+              <div class="row">
+                <input id="tContact" type="number" inputmode="decimal" step="0.001" min="0" value="0.180" />
+                <span class="unit">seconds</span>
+              </div>
+              <div class="help">Typical fast-SSC contact: 0.08&ndash;0.25 s.</div>
+            </div>
+            <div>
+              <label>Flight time</label>
+              <div class="row">
+                <input id="tFlight" type="number" inputmode="decimal" step="0.001" min="0" value="0.550" />
+                <span class="unit">seconds</span>
+              </div>
+              <div class="help">Often 0.25&ndash;0.70 s for DJs depending on box height &amp; intent.</div>
+            </div>
+          </div>
+
+          <div class="ys-btn-row" style="margin: 4px 0 0;">
+            <button class="ys-btn ys-btn-coral" type="button" id="calcBtn">Calculate RSI</button>
+            <button class="ys-btn ys-btn-ghost" type="button" id="resetBtn">Reset</button>
+          </div>
+
+          <div class="err" id="errorMsg"></div>
+          <div class="warn" id="warnMsg"></div>
+
+          <div class="results-grid">
+            <div class="result-tile featured">
+              <span class="result-label">RSI score</span>
+              <span class="result-value" id="rsi">—</span>
+              <span class="result-aux" id="rsiBand">&nbsp;</span>
+            </div>
+            <div class="result-tile">
+              <span class="result-label">Jump height</span>
+              <span class="result-value"><span id="hCm">—</span> cm</span>
+              <span class="result-aux"><span id="hM">—</span> m</span>
+            </div>
+            <div class="result-tile">
+              <span class="result-label">Fast-SSC</span>
+              <span class="result-value" id="sscFlag">—</span>
+              <span class="result-aux">GCT &lt; 0.25 s?</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT'S CALCULATED ============ -->
+  <section class="wf-section alt" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How it&rsquo;s calculated</h2>
+        <div class="ys-rule"></div>
+        <p>Two physics formulas, no magic.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>Jump height from flight time</h3>
+          <p><code style="background: var(--ys-bg-soft); padding: 2px 8px; border-radius: 4px;">h = g &middot; t<sub>flight</sub>² / 8</code> with g = 9.80665 m/s². Assumes take-off and landing happen at the same height. Standard projectile motion.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>RSI from height &amp; contact</h3>
+          <p><code style="background: var(--ys-bg-soft); padding: 2px 8px; border-radius: 4px;">RSI = h / t<sub>contact</sub></code>. Height per second on the ground. The lower the contact time and the higher the bounce, the better.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>Why this number matters</h3>
+          <p>RSI tracks closely with running economy, sprint mechanics, and tendon stiffness. It&rsquo;s the cheapest single measurement that previews how well an athlete will respond to plyometric training.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW TO TEST IT ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How to test it well</h2>
+        <div class="ys-rule"></div>
+        <p>Bad protocol = noise. Five details that make or break the number.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-card">
+          <div class="ys-meta">Box</div>
+          <h3>20&ndash;40 cm, consistent</h3>
+          <p>Same box every test. Higher boxes don&rsquo;t mean higher RSI &mdash; for many athletes, the optimum is 20&ndash;30 cm. Test at the box where you produce the best score, then standardize.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">Take-off</div>
+          <h3>Step off, don&rsquo;t jump</h3>
+          <p>Step off the box with a single leg without losing height. <strong>Land stiff, spring up immediately</strong> &mdash; "as fast and as high as possible."</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">Arms</div>
+          <h3>Hands on hips</h3>
+          <p>Or the same arm action every rep. Arm swing adds height and noise &mdash; lock it down to test the spring system, not the swing system.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">Reps</div>
+          <h3>3&ndash;5 trials, take the best</h3>
+          <p>Use the best valid rep (or mean of best 2). Discard reps where contact time blows out or technique collapses (knees caving, hips folding).</p>
+        </div>
+        <div class="ys-card featured">
+          <div class="ys-meta" style="color: var(--wf-coral);">Tool</div>
+          <h3>Contact mat &gt; force plate &gt; video</h3>
+          <p>Contact mat or force plate is the gold standard. Optical systems work. Video is fine if you can shoot at <strong>240+ fps</strong> &mdash; below that the timing error eats your signal.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ IMPROVING RSI ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">How to improve it</div>
+        <h2 style="margin-top: 4px;">RSI rises when contact time drops without losing jump height.</h2>
+        <p>Three angles of attack &mdash; in priority order for most endurance athletes:</p>
+        <ul class="ys-card-bullets" style="margin-top: 12px;">
+          <li><strong>Fast-SSC plyometrics</strong> &mdash; pogos, ankle hops, low-amplitude bounds, drop/depth jumps with <em>contact &lt; 0.25 s</em>. The point isn&rsquo;t height, it&rsquo;s short ground time.</li>
+          <li><strong>Eccentric rate-of-force</strong> &mdash; heavy strength + fast eccentrics, isometric calf and quad work, sprint drills. Builds the spring before you ask it to bounce.</li>
+          <li><strong>Manage fatigue and tendon load</strong> &mdash; 2&ndash;3 sessions/week, low contact volume to start, quality over volume. Plyometrics on top of fatigue is how Achilles tendons go bad.</li>
+        </ul>
+        <p style="margin-top: 12px;">Track RSI every 4&ndash;6 weeks &mdash; same protocol, same box, same shoes, same time of day. Trends matter; one number doesn&rsquo;t.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RSI BANDS ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What your number means</h2>
+        <div class="ys-rule"></div>
+        <p>The bands below come from sport-science literature (Flanagan &amp; Comyns) &mdash; valid for general athletic populations. Sprinters and jumpers will sit higher than endurance athletes at the same training level.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-card">
+          <div class="ys-meta">&lt; 1.6</div>
+          <h3>Low</h3>
+          <p>Reactive strength under-developed. <strong>Not yet ready</strong> for moderate-intensity plyos &mdash; build with strength, eccentric work, and very short fast-SSC drills first.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">1.6 &ndash; 2.0</div>
+          <h3>Moderate</h3>
+          <p>Ready for moderate-intensity plyometrics. Solid base for most age-groupers.</p>
+        </div>
+        <div class="ys-card featured">
+          <div class="ys-meta" style="color: var(--wf-coral);">2.0 &ndash; 2.5</div>
+          <h3>Good</h3>
+          <p>Ready for high-intensity plyometrics &mdash; bounds, depth jumps, weighted jumps. Most well-trained endurance athletes top out here.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">2.5 &ndash; 3.0</div>
+          <h3>Excellent</h3>
+          <p>Diminishing returns from more plyo volume. Time to specialize the stimulus toward the demand &mdash; sprint, jump, fast running, depending on the sport.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">≥ 3.0</div>
+          <h3>World-class</h3>
+          <p>Elite jumper / sprinter territory. Marginal gains only. Maintenance + sport-specific transfer becomes the focus.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COACH NOTE ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
+        <h2 style="margin-top: 4px;">RSI, GCT, and leg-spring stiffness aren&rsquo;t the same thing.</h2>
+        <p>Three related-but-distinct concepts that get blurred in conversation:</p>
+        <ul class="ys-card-bullets" style="margin-top: 8px;">
+          <li><strong>RSI</strong> rises when jump height goes up <em>or</em> contact time goes down. It&rsquo;s output / time-on-ground.</li>
+          <li><strong>Leg-spring stiffness (LSS)</strong> in spring-mass terms: stiffer legs need shorter contact times for a given height. RSI <em>correlates</em> with LSS but isn&rsquo;t identical &mdash; LSS also depends on vertical displacement and force profile.</li>
+          <li><strong>GCT alone</strong> is not RSI. Trimming GCT helps RSI <em>only</em> if you don&rsquo;t lose jump height in the process.</li>
+        </ul>
+        <p style="margin-top: 12px;">Things that move RSI even at the same fitness: acute fatigue, soreness, warm-up quality, time of day, caffeine, surface and footwear stiffness, box height, athlete intent (min-GCT vs max-height instruction), and technique (hip/knee collapse blows out GCT and tanks the score).</p>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED CALCULATORS ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Related calculators</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card" href="https://www.yousuli.co/strength-intensity-guide" target="_top">
+          <span class="ys-calc-card-title">Strength intensity guide</span>
+          <p>Plyometric volume, sets, rest intervals by training phase &mdash; pairs naturally with RSI.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card redesigned" href="calculator-running-time-predictor.html">
+          <span class="ys-calc-card-title">Running time predictor</span>
+          <p>RSI feeds running economy &mdash; better RSI, better predicted finish times for the same VO<sub>2</sub>.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="calculators.html">
+          <span class="ys-calc-card-title">All calculators</span>
+          <p>Back to the full catalog &mdash; 28 endurance calculators across performance, fueling, swim, bike, run.</p>
+          <span class="ys-calc-card-arrow">Browse &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want RSI measured properly?</h2>
+          <p>The lab uses a contact mat with sub-millisecond timing &mdash; bilateral and unilateral RSI plus jump-height symmetry. Pairs naturally with VO<sub>2</sub>max and gait analysis to give you a complete running profile.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Book testing</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20RSI">Send feedback</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Spotted a bug or want a feature? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20RSI" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ CALCULATOR LOGIC ============ -->
+  <script>
+    (function () {
+      const G = 9.80665;
+      const tCEl    = document.getElementById('tContact');
+      const tFEl    = document.getElementById('tFlight');
+      const errEl   = document.getElementById('errorMsg');
+      const warnEl  = document.getElementById('warnMsg');
+      const rsiEl   = document.getElementById('rsi');
+      const bandEl  = document.getElementById('rsiBand');
+      const hCmEl   = document.getElementById('hCm');
+      const hMEl    = document.getElementById('hM');
+      const sscEl   = document.getElementById('sscFlag');
+      const btnGo   = document.getElementById('calcBtn');
+      const btnRst  = document.getElementById('resetBtn');
+
+      function fmt(n, d = 2) { return Number.isFinite(n) ? n.toFixed(d) : '—'; }
+
+      function band(rsi) {
+        if (!Number.isFinite(rsi)) return ['', ''];
+        if (rsi < 1.6) return ['Low',         'Build base before plyo volume'];
+        if (rsi < 2.0) return ['Moderate',    'Ready for moderate-intensity plyo'];
+        if (rsi < 2.5) return ['Good',        'Ready for high-intensity plyo'];
+        if (rsi < 3.0) return ['Excellent',   'Diminishing returns from volume'];
+        return                ['World-class', 'Marginal gains'];
+      }
+
+      function showError(msg) {
+        errEl.textContent = msg;
+        errEl.classList.add('active');
+        warnEl.classList.remove('active');
+      }
+      function showWarn(msg) {
+        warnEl.textContent = msg;
+        warnEl.classList.add('active');
+        errEl.classList.remove('active');
+      }
+      function clearMsgs() {
+        errEl.classList.remove('active');
+        warnEl.classList.remove('active');
+        errEl.textContent = '';
+        warnEl.textContent = '';
+      }
+
+      function calc() {
+        clearMsgs();
+
+        const tC = parseFloat(tCEl.value);
+        const tF = parseFloat(tFEl.value);
+
+        if (!(tC > 0) || !(tF > 0)) {
+          showError('Enter positive values for contact and flight time.');
+          render(NaN, NaN);
+          return;
+        }
+
+        const hints = [];
+        if (tC < 0.06 || tC > 0.40) hints.push('Ground contact looks unusual (expected ~0.08–0.25 s for drop jumps).');
+        if (tF < 0.20 || tF > 0.90) hints.push('Flight time looks unusual (often ~0.25–0.70 s for DJs).');
+        if (hints.length) showWarn(hints.join(' '));
+
+        const h = (G * tF * tF) / 8;
+        const rsi = h / tC;
+        render(h, rsi);
+      }
+
+      function render(h, rsi) {
+        hCmEl.textContent = fmt(h * 100, 1);
+        hMEl.textContent  = fmt(h, 3);
+        rsiEl.textContent = fmt(rsi, 2);
+
+        const [name, sub] = band(rsi);
+        bandEl.textContent = name ? `${name} — ${sub}` : ' ';
+
+        const tCnow = parseFloat(tCEl.value);
+        sscEl.textContent = (Number.isFinite(tCnow) && tCnow < 0.25) ? '✓ Yes' : '—';
+      }
+
+      function reset() {
+        tCEl.value = '0.180';
+        tFEl.value = '0.550';
+        clearMsgs();
+        calc();
+      }
+
+      btnGo.addEventListener('click', calc);
+      btnRst.addEventListener('click', reset);
+      [tCEl, tFEl].forEach(el => {
+        el.addEventListener('input', calc);
+        el.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); calc(); } });
+      });
+
+      // initial run
+      calc();
+    })();
+  </script>
+
+</body>
+</html>
