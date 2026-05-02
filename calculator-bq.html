@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Boston qualifier — Yousuli calculators</title>
+  <meta name="description" content="2026 Boston Marathon qualifying time by age and gender, with finish-time comparison, downhill course index, and the realistic acceptance buffer above the BQ standard." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED CALCULATOR STYLES ============ -->
+  <style>
+    .bq-calc-host { width: 100%; }
+
+    .bq-calc-host .field-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+      background: var(--ys-bg-soft);
+      padding: 18px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 600px) { .bq-calc-host .field-grid { grid-template-columns: 1fr; } }
+    .bq-calc-host .field-grid .full { grid-column: 1 / -1; }
+
+    .bq-calc-host label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.72rem;
+      color: var(--ys-navy);
+      margin-bottom: 6px;
+    }
+    .bq-calc-host input[type="text"],
+    .bq-calc-host input[type="number"],
+    .bq-calc-host select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      font-size: 0.96rem;
+      font-family: var(--ys-font-body);
+      background: #fff;
+      color: var(--ys-navy);
+      box-sizing: border-box;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .bq-calc-host input:focus,
+    .bq-calc-host select:focus {
+      outline: none;
+      border-color: var(--wf-coral);
+      box-shadow: 0 0 0 3px rgba(250, 119, 60, 0.18);
+    }
+    .bq-calc-host .row { display: flex; align-items: stretch; }
+    .bq-calc-host .row input { border-radius: 6px 0 0 6px; }
+    .bq-calc-host .row .unit {
+      padding: 0 12px;
+      background: var(--ys-navy); color: #fff;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em; font-size: 0.74rem;
+      display: flex; align-items: center;
+      border-radius: 0 6px 6px 0;
+    }
+    .bq-calc-host .field-help { font-size: 0.78rem; color: var(--ys-muted); margin-top: 6px; }
+
+    .bq-calc-host .bq-display {
+      background: var(--ys-navy);
+      color: #fff;
+      border-radius: 12px;
+      padding: 22px;
+      margin-top: 18px;
+      text-align: center;
+    }
+    .bq-calc-host .bq-display .bq-label {
+      display: block;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.14em; text-transform: uppercase;
+      font-size: 0.78rem;
+      color: var(--wf-coral);
+      margin-bottom: 6px;
+    }
+    .bq-calc-host .bq-display .bq-time {
+      display: block;
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      font-size: 2.4rem;
+      letter-spacing: 0.04em;
+      color: #fff;
+    }
+    .bq-calc-host .bq-display .bq-paces {
+      margin-top: 8px;
+      font-size: 0.92rem;
+      color: rgba(255,255,255,0.8);
+    }
+    .bq-calc-host .bq-display .bq-paces strong { color: #fff; }
+
+    .bq-calc-host .margin-block {
+      margin-top: 14px;
+      padding: 16px;
+      border-radius: 10px;
+      text-align: center;
+      display: none;
+    }
+    .bq-calc-host .margin-block.active { display: block; }
+    .bq-calc-host .margin-block.qualified {
+      background: rgba(46, 125, 79, 0.10);
+      border: 1.5px solid #2e7d4f;
+    }
+    .bq-calc-host .margin-block.miss {
+      background: rgba(201, 57, 57, 0.08);
+      border: 1.5px solid #c93939;
+    }
+    .bq-calc-host .margin-headline {
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      font-size: 1.2rem;
+      letter-spacing: 0.04em;
+    }
+    .bq-calc-host .margin-block.qualified .margin-headline { color: #2e7d4f; }
+    .bq-calc-host .margin-block.miss .margin-headline { color: #c93939; }
+    .bq-calc-host .margin-sub {
+      font-size: 0.92rem;
+      color: var(--ys-navy);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .bq-calc-host .index-block {
+      margin-top: 14px;
+      padding: 16px;
+      background: var(--ys-bg-soft);
+      border-left: 4px solid var(--wf-coral);
+      border-radius: 8px;
+      display: none;
+    }
+    .bq-calc-host .index-block.active { display: block; }
+    .bq-calc-host .index-block.ineligible {
+      background: rgba(201, 57, 57, 0.08);
+      border-left-color: #c93939;
+    }
+    .bq-calc-host .index-headline {
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--ys-navy);
+      letter-spacing: 0.04em;
+    }
+    .bq-calc-host .index-block.ineligible .index-headline { color: #c93939; }
+    .bq-calc-host .index-rule {
+      font-size: 0.86rem;
+      color: var(--ys-muted);
+      margin-top: 6px;
+    }
+
+    .bq-calc-host .err {
+      color: #c93939;
+      background: rgba(201, 57, 57, 0.08);
+      border-left: 4px solid #c93939;
+      padding: 10px 14px;
+      margin-top: 12px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      display: none;
+    }
+    .bq-calc-host .err.active { display: block; }
+
+    /* Standards table */
+    .bq-table-wrap { overflow-x: auto; margin-top: 8px; }
+    .bq-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: #fff;
+      border: 1px solid var(--ys-line);
+      border-radius: 10px;
+      overflow: hidden;
+      font-size: 0.92rem;
+    }
+    .bq-table th, .bq-table td {
+      padding: 9px 12px;
+      text-align: center;
+      border-bottom: 1px solid var(--ys-line);
+    }
+    .bq-table tr:last-child td { border-bottom: 0; }
+    .bq-table th {
+      background: var(--ys-navy);
+      color: #fff;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em; text-transform: uppercase;
+      font-size: 0.74rem;
+      font-weight: 600;
+      border-bottom: 0;
+    }
+    .bq-table td:first-child {
+      text-align: left;
+      font-family: var(--ys-font-display);
+      font-weight: 600;
+      color: var(--ys-navy);
+    }
+    .bq-table tbody tr.highlight td {
+      background: rgba(250, 119, 60, 0.10);
+      font-weight: 700;
+      color: var(--wf-coral);
+    }
+    .bq-table tbody tr.highlight td:first-child { color: var(--wf-coral); }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 56px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Run</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">Boston qualifier.</h1>
+      <div class="wf-subhead">2026 standards &middot; downhill index &middot; acceptance buffer</div>
+      <p class="lede" style="max-width: 660px;">Look up your 2026 Boston Marathon qualifying time by age and gender, see your race time vs the standard, and check whether your course&rsquo;s downhill drop changes your eligibility. Plus the part most calculators ignore: <strong>BQ time alone hasn&rsquo;t guaranteed entry since 2014</strong> &mdash; we tell you the realistic buffer too.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">The acceptance reality</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 32px 0 48px;">
+    <div class="ys-container">
+      <div class="ys-tool" style="max-width: 760px;">
+
+        <div class="bq-calc-host">
+
+          <h3 style="margin-top: 0;">Find your qualifying time</h3>
+          <p class="ys-tool-pre">Pick age group + gender. The 2026 standards apply for races from <strong>September 1, 2024</strong> onward used in the 2026 registration cycle. Women and non-binary share standards.</p>
+
+          <div class="field-grid">
+            <div>
+              <label>Age group (race-day age)</label>
+              <select id="ageGroup">
+                <option value="18-34">18–34</option>
+                <option value="35-39">35–39</option>
+                <option value="40-44" selected>40–44</option>
+                <option value="45-49">45–49</option>
+                <option value="50-54">50–54</option>
+                <option value="55-59">55–59</option>
+                <option value="60-64">60–64</option>
+                <option value="65-69">65–69</option>
+                <option value="70-74">70–74</option>
+                <option value="75-79">75–79</option>
+                <option value="80+">80+</option>
+              </select>
+            </div>
+            <div>
+              <label>Gender</label>
+              <select id="gender">
+                <option value="Male">Male</option>
+                <option value="Female" selected>Female</option>
+                <option value="Non-Binary">Non-Binary</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="bq-display" id="bqDisplay">
+            <span class="bq-label">2026 Boston qualifying time</span>
+            <span class="bq-time" id="outBq">—</span>
+            <div class="bq-paces" id="outPaces">Pace @ BQ: <strong>—</strong> /km · <strong>—</strong> /mile</div>
+          </div>
+
+          <h3 style="margin-top: 26px;">Compare your finish time (optional)</h3>
+          <p class="ys-tool-pre">Enter your marathon time to see margin vs BQ and apply the downhill index if your course was net-downhill.</p>
+
+          <div class="field-grid">
+            <div class="full">
+              <label>Marathon finish time (HH:MM:SS)</label>
+              <input type="text" id="finishTime" placeholder="e.g. 3:24:30" />
+            </div>
+            <div>
+              <label>Course net downhill (start → finish)</label>
+              <div class="row">
+                <input type="number" id="netDrop" min="0" step="1" placeholder="e.g. 1600" />
+                <span class="unit">
+                  <select id="dropUnit" style="background: transparent; color: #fff; border: 0; padding: 0; font-family: inherit; font-size: inherit; letter-spacing: inherit; min-width: 50px;">
+                    <option value="ft">ft</option>
+                    <option value="m">m</option>
+                  </select>
+                </span>
+              </div>
+              <div class="field-help">Leave 0 if mostly flat or net-uphill.</div>
+            </div>
+            <div></div>
+          </div>
+
+          <div class="ys-btn-row" style="margin: 4px 0 0;">
+            <button class="ys-btn ys-btn-coral" type="button" id="checkBtn">Check qualification</button>
+            <button class="ys-btn ys-btn-ghost" type="button" id="resetBtn">Reset</button>
+          </div>
+
+          <div class="err" id="errorMsg"></div>
+
+          <div class="margin-block" id="marginBlock">
+            <div class="margin-headline" id="marginHeadline">—</div>
+            <div class="margin-sub" id="marginSub">—</div>
+          </div>
+
+          <div class="index-block" id="indexBlock">
+            <div class="index-headline" id="indexHeadline">—</div>
+            <div class="index-rule" id="indexRule">—</div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FULL STANDARDS TABLE ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Full 2026 standards</h2>
+        <div class="ys-rule"></div>
+        <p>Your selected age group highlights in coral.</p>
+      </div>
+
+      <div class="bq-table-wrap">
+        <table class="bq-table" id="standardsTable">
+          <thead>
+            <tr>
+              <th>Age group</th>
+              <th>Male</th>
+              <th>Female / Non-Binary</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT REALLY WORKS ============ -->
+  <section class="wf-section" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>The acceptance reality</h2>
+        <div class="ys-rule"></div>
+        <p>Hitting the BQ standard is necessary &mdash; not sufficient.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>BQ-X cutoffs since 2014</h3>
+          <p>Boston has been over-subscribed every year since 2014. That means the BAA accepts the <em>fastest</em> qualifiers in each age group, not all of them. Recent cutoffs have ranged from <strong>BQ −1:39</strong> (2025 race) to <strong>BQ −5:29</strong> (2024 race). Plan to be <strong>~5–7 minutes under</strong> if you want a realistic shot.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>2026 standards = 5 min tighter</h3>
+          <p>The BAA tightened all standards by 5 minutes for the 2026 race onward. The intent: reduce the cutoff buffer needed. Early signs are it&rsquo;s working &mdash; but until we have several cycles of data, treat BQ-5 as the realistic target.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>Downhill rules (eff. 2027 reg.)</h3>
+          <p>For races from <strong>Sep 13, 2025</strong> onward, courses with net drop ≥ 1500 ft get a time penalty. <strong>1500–2999 ft &rarr; +5:00 · 3000–5999 ft &rarr; +10:00 · ≥ 6000 ft &rarr; not eligible</strong>. Targets the &ldquo;mountain marathons&rdquo; (Tunnel, REVEL, Mt. Charleston) that flooded BQ entries with downhill-aided times.</p>
+        </div>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.92rem; max-width: 720px; margin-left: auto; margin-right: auto;">Standards and downhill policy come from the <strong>Boston Athletic Association</strong>. Always verify on the BAA website before registering &mdash; rules can change between cycles.</p>
+    </div>
+  </section>
+
+  <!-- ============ COACH NOTE ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
+        <h2 style="margin-top: 4px;">Train for BQ minus 7 &mdash; race for BQ minus 5.</h2>
+        <p>Three patterns in athletes who get to Boston:</p>
+        <ul class="ys-card-bullets" style="margin-top: 12px;">
+          <li><strong>They pick the right qualifying race.</strong> Flat, fast, certified, weather-stable, well-supported. Boston-area marathoners disproportionately qualify at California International (CIM), Indianapolis, Chicago, or Berlin &mdash; not at hill challenges.</li>
+          <li><strong>They build a buffer year.</strong> Hit BQ in the spring qualifier, sit on it through the registration window, don&rsquo;t race-bank-on a fall PR. Stress-free registration is worth the patience.</li>
+          <li><strong>They train for the standard, not the buffer.</strong> If you&rsquo;re shooting for BQ, train for BQ-7. If race-day execution gives you BQ-5, perfect. Aim too tight to the standard and a 1% bad day kills it.</li>
+        </ul>
+        <p style="margin-top: 12px;">For honest pacing targets at BQ effort: pair this with the <a href="calculator-advanced-running-predictor.html" style="color: var(--wf-coral);">Advanced running predictor</a> to convert your recent 5K / 10K / half into a marathon target. And lab testing gives you the metabolic crossover so race-day fueling doesn&rsquo;t become the limiter.</p>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Marathon testing</a>
+          <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED CALCULATORS ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Related calculators</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card redesigned" href="calculator-advanced-running-predictor.html">
+          <span class="ys-calc-card-title">Advanced running predictor</span>
+          <p>Convert a 5K / 10K / half into a marathon target — see if BQ is realistic from current fitness.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card redesigned" href="calculator-running-time-predictor.html">
+          <span class="ys-calc-card-title">Running time predictor</span>
+          <p>One effort in, marathon estimate out — quick sanity check.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="calculators.html">
+          <span class="ys-calc-card-title">All calculators</span>
+          <p>Back to the full catalog &mdash; 28 endurance calculators across performance, fueling, swim, bike, run.</p>
+          <span class="ys-calc-card-arrow">Browse &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want a marathon plan that actually targets BQ?</h2>
+          <p>Coaching builds a 16–20 week build around your marathon date with measured threshold + VO<sub>2</sub>max from the lab. Pace targets, fueling rehearsal, race-week taper &mdash; all anchored to your physiology, not a population guess.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20BQ">Send feedback</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Spotted a bug or want a feature? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20BQ" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ CALCULATOR LOGIC ============ -->
+  <script>
+    (function () {
+      const $ = id => document.getElementById(id);
+
+      const BQ_2026 = {
+        '18-34': { Male: '2:55:00', Female: '3:25:00', 'Non-Binary': '3:25:00' },
+        '35-39': { Male: '3:00:00', Female: '3:30:00', 'Non-Binary': '3:30:00' },
+        '40-44': { Male: '3:05:00', Female: '3:35:00', 'Non-Binary': '3:35:00' },
+        '45-49': { Male: '3:15:00', Female: '3:45:00', 'Non-Binary': '3:45:00' },
+        '50-54': { Male: '3:20:00', Female: '3:50:00', 'Non-Binary': '3:50:00' },
+        '55-59': { Male: '3:30:00', Female: '4:00:00', 'Non-Binary': '4:00:00' },
+        '60-64': { Male: '3:50:00', Female: '4:20:00', 'Non-Binary': '4:20:00' },
+        '65-69': { Male: '4:05:00', Female: '4:35:00', 'Non-Binary': '4:35:00' },
+        '70-74': { Male: '4:20:00', Female: '4:50:00', 'Non-Binary': '4:50:00' },
+        '75-79': { Male: '4:35:00', Female: '5:05:00', 'Non-Binary': '5:05:00' },
+        '80+':   { Male: '4:50:00', Female: '5:20:00', 'Non-Binary': '5:20:00' }
+      };
+
+      function parseTime(str) {
+        if (!str) return NaN;
+        const parts = String(str).trim().split(':').map(s => s.trim());
+        if (parts.some(p => p === '' || isNaN(Number(p)))) return NaN;
+        if (parts.length === 3) return Number(parts[0]) * 3600 + Number(parts[1]) * 60 + Number(parts[2]);
+        if (parts.length === 2) return Number(parts[0]) * 60 + Number(parts[1]);
+        if (parts.length === 1) return Number(parts[0]);
+        return NaN;
+      }
+      function fmtTime(s) {
+        s = Math.max(0, Math.round(s));
+        const h = Math.floor(s / 3600);
+        const m = Math.floor((s % 3600) / 60);
+        const sec = s % 60;
+        const pad = n => String(n).padStart(2, '0');
+        return h + ':' + pad(m) + ':' + pad(sec);
+      }
+      function fmtMargin(secs) {
+        const m = Math.floor(Math.abs(secs) / 60);
+        const s = Math.abs(secs) % 60;
+        return m + ':' + String(s).padStart(2, '0');
+      }
+      function pacePer(unitDistanceKm, totalSec) {
+        const secPer = totalSec / unitDistanceKm;
+        const m = Math.floor(secPer / 60);
+        const s = Math.round(secPer % 60);
+        return m + ':' + String(s).padStart(2, '0');
+      }
+
+      function showBQ() {
+        const age = $('ageGroup').value;
+        const g = $('gender').value;
+        const t = BQ_2026[age][g];
+        const secs = parseTime(t);
+        $('outBq').textContent = t;
+        $('outPaces').innerHTML = 'Pace @ BQ: <strong>' + pacePer(42.195, secs) + '</strong> /km · <strong>' + pacePer(26.2188, secs) + '</strong> /mile';
+        renderStandardsTable(age);
+      }
+
+      function renderStandardsTable(highlightAge) {
+        const tbody = $('standardsTable').querySelector('tbody');
+        tbody.innerHTML = '';
+        Object.keys(BQ_2026).forEach(age => {
+          const tr = document.createElement('tr');
+          if (age === highlightAge) tr.className = 'highlight';
+          tr.innerHTML = '<td>' + age + '</td><td>' + BQ_2026[age].Male + '</td><td>' + BQ_2026[age].Female + '</td>';
+          tbody.appendChild(tr);
+        });
+      }
+
+      function clearError() { $('errorMsg').classList.remove('active'); $('errorMsg').textContent = ''; }
+      function showError(msg) {
+        $('errorMsg').textContent = msg;
+        $('errorMsg').classList.add('active');
+        $('marginBlock').classList.remove('active');
+        $('indexBlock').classList.remove('active');
+      }
+
+      function checkResult() {
+        clearError();
+        const age = $('ageGroup').value;
+        const g = $('gender').value;
+        const bqTime = BQ_2026[age][g];
+        const bqSecs = parseTime(bqTime);
+
+        const finishStr = $('finishTime').value.trim();
+        if (!finishStr) {
+          $('marginBlock').classList.remove('active');
+          $('indexBlock').classList.remove('active');
+          return;
+        }
+        const finishSecs = parseTime(finishStr);
+        if (isNaN(finishSecs) || finishSecs <= 0) return showError('Enter finish time as HH:MM:SS (e.g. 3:24:30).');
+
+        // Downhill index
+        const ftPerM = 3.28084;
+        const dropVal = parseFloat($('netDrop').value) || 0;
+        const dropFt = $('dropUnit').value === 'm' ? dropVal * ftPerM : dropVal;
+
+        let add = 0, ruleNote = 'No index applied (net drop &lt; 1,500 ft).';
+        let ineligible = false;
+        if (dropFt >= 6000) {
+          ineligible = true;
+        } else if (dropFt >= 3000) {
+          add = 600; ruleNote = '+10:00 added &mdash; net drop 3,000–5,999 ft.';
+        } else if (dropFt >= 1500) {
+          add = 300; ruleNote = '+5:00 added &mdash; net drop 1,500–2,999 ft.';
+        }
+
+        const indexBlock = $('indexBlock');
+        indexBlock.classList.add('active');
+        if (ineligible) {
+          indexBlock.classList.add('ineligible');
+          $('indexHeadline').textContent = '✗ Result not eligible';
+          $('indexRule').innerHTML = 'Courses with <strong>net drop ≥ 6,000 ft</strong> are not accepted as Boston qualifiers (effective 2027 registration cycle).';
+          $('marginBlock').classList.remove('active');
+          return;
+        } else {
+          indexBlock.classList.remove('ineligible');
+          if (add > 0) {
+            $('indexHeadline').innerHTML = 'Indexed result: <strong>' + fmtTime(finishSecs + add) + '</strong>';
+          } else {
+            $('indexHeadline').innerHTML = 'Indexed result: <strong>' + fmtTime(finishSecs) + '</strong> (no penalty)';
+          }
+          $('indexRule').innerHTML = ruleNote;
+        }
+
+        // Margin vs BQ
+        const adjFinish = finishSecs + add;
+        const margin = bqSecs - adjFinish; // positive = under BQ (qualifier)
+        const block = $('marginBlock');
+        const head = $('marginHeadline');
+        const sub = $('marginSub');
+        block.classList.remove('qualified', 'miss');
+        block.classList.add('active');
+
+        if (margin > 0) {
+          block.classList.add('qualified');
+          head.innerHTML = '✓ Qualifier &mdash; ' + fmtMargin(margin) + ' under BQ';
+          let buffer = '';
+          if (margin >= 7 * 60) buffer = 'Comfortable buffer &mdash; should clear most cutoff cycles.';
+          else if (margin >= 5 * 60) buffer = 'Realistic buffer for typical recent cutoffs (BQ−5 area).';
+          else if (margin >= 3 * 60) buffer = 'Marginal &mdash; some cycles you&rsquo;d get in, others not. Consider re-running with a faster qualifier.';
+          else buffer = 'Tight &mdash; under most recent cutoffs you would <strong>not</strong> have been accepted. Aim for BQ−5 or better.';
+          sub.innerHTML = buffer;
+        } else if (margin === 0) {
+          block.classList.add('miss');
+          head.textContent = '✗ Exactly at BQ &mdash; will not get in';
+          sub.innerHTML = 'BQ-on-the-nose has not been accepted in any recent cycle. Aim for BQ−5 minimum.';
+        } else {
+          block.classList.add('miss');
+          head.innerHTML = '✗ Missed by ' + fmtMargin(margin);
+          sub.innerHTML = 'Need to drop ' + fmtMargin(Math.abs(margin) + 5 * 60) + ' to reach a realistic buffer (BQ−5).';
+        }
+      }
+
+      // wire inputs
+      $('ageGroup').addEventListener('change', () => { showBQ(); checkResult(); });
+      $('gender').addEventListener('change', () => { showBQ(); checkResult(); });
+      $('checkBtn').addEventListener('click', checkResult);
+      $('finishTime').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); checkResult(); } });
+      $('netDrop').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); checkResult(); } });
+      $('resetBtn').addEventListener('click', () => {
+        $('ageGroup').value = '40-44';
+        $('gender').value = 'Female';
+        $('finishTime').value = '';
+        $('netDrop').value = '';
+        $('dropUnit').value = 'ft';
+        clearError();
+        $('marginBlock').classList.remove('active');
+        $('indexBlock').classList.remove('active');
+        showBQ();
+      });
+
+      // initial
+      showBQ();
+    })();
+  </script>
+
+</body>
+</html>
