@@ -244,6 +244,22 @@
       </div>
 
       <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.92rem; max-width: 720px; margin-left: auto; margin-right: auto;"><strong>Reality check:</strong> Crr field-tests are noisy. Run the protocol twice and average. If the two answers disagree by more than 10% (e.g. 0.0035 vs 0.0042), one or both tests had a problem. Re-test, don&rsquo;t average bad data.</p>
+
+      <div class="ys-cta-card" style="display: block; margin-top: 28px;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Alternative — coast-down method</div>
+        <h2 style="margin-top: 4px; font-size: 1.4rem;">No power meter? Use coast-downs.</h2>
+        <p style="margin-top: 8px;">If you don&rsquo;t have a power meter, or you want a simpler protocol, the <strong>coast-down method</strong> works well: ride a small downhill, stop pedaling, let the bike roll onto a flat or gentle uphill section, and measure how the speed changes.</p>
+        <ul class="ys-card-bullets" style="margin-top: 10px;">
+          <li><strong>Repeat 5–8 times</strong> from roughly the same start point — same position, no braking, no pedaling once coasting starts</li>
+          <li><strong>Calm wind mandatory</strong> — even 5 km/h corrupts the result; this method is more wind-sensitive than power-based</li>
+          <li><strong>Logs the FIT file</strong> — you need GPS speed and ideally elevation; the maths solves for both CdA and Crr from how the bike decelerates against drag + rolling friction</li>
+          <li><strong>Single-speed estimate</strong> — at one speed point you can solve for Crr <em>if</em> CdA is known. Multi-speed coast-downs (Chung method) solve both simultaneously</li>
+        </ul>
+        <p style="margin-top: 12px;">The full <strong>Chung virtual-elevation analysis</strong> &mdash; multi-coast-down with FIT-file processing, simultaneous CdA + Crr fit &mdash; lives in our coaching platform. The single-effort version above with a known CdA covers most athletes&rsquo; needs.</p>
+        <div class="ys-btn-row" style="margin-top: 14px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/coaching" target="_top">Chung analysis with coaching</a>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -400,22 +416,27 @@
         <div class="ys-card featured">
           <div class="ys-meta" style="color: var(--wf-coral);">0.0030 – 0.0040</div>
           <h3>Very good</h3>
-          <p>Quality road tires (28mm GP5000, Pirelli P Zero, Vittoria Corsa) on chip-seal-grade tarmac. <strong>Where most well-set-up TT/road bikes land.</strong></p>
+          <p>Quality road tires (28 mm GP5000, Pirelli P Zero, Vittoria Corsa) on chip-seal-grade tarmac. <strong>Where most well-set-up TT/road bikes land.</strong></p>
         </div>
         <div class="ys-card">
           <div class="ys-meta">0.0040 – 0.0055</div>
           <h3>Average</h3>
-          <p>Training tires, slightly worn rubber, or rougher tarmac. Or properly-set-up gravel tires on smooth surfaces. Worth investigating tire choice.</p>
+          <p>Training tires, slightly worn rubber, or rougher tarmac. Or properly-set-up gravel tires on smooth surfaces.</p>
         </div>
         <div class="ys-card">
           <div class="ys-meta">0.0055 – 0.008</div>
           <h3>High</h3>
-          <p>Gravel / cyclocross tires on hardpack, or road tires badly under-pressurized. Real cost — can be 30+ watts at race pace vs. proper road setup.</p>
+          <p>Gravel / cyclocross tires on hardpack, or road tires badly under-pressurized. 30+ watts cost vs. proper road setup at race pace.</p>
         </div>
         <div class="ys-card">
-          <div class="ys-meta">&gt; 0.008</div>
+          <div class="ys-meta">0.008 – 0.015</div>
           <h3>Very high</h3>
-          <p>MTB on hardpack or road tires on chip-seal/cobbles. Surface or pressure choice is dominating; consider whether your gear matches the course.</p>
+          <p>MTB on hardpack, fat-bike on hard-packed snow, or road tires on cobbles. Surface choice dominates. Common for off-road race setups.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">&gt; 0.015</div>
+          <h3>Extreme</h3>
+          <p>Fat-bike on soft sand, plus-size MTB on loose terrain (e.g. Surly Moonlander on 4–5"+ tires off-road). Crr is the dominant force; aero is irrelevant.</p>
         </div>
       </div>
 
@@ -569,7 +590,8 @@
         if (crr < 0.0040) return 'Very good';
         if (crr < 0.0055) return 'Average';
         if (crr < 0.0080) return 'High';
-        return 'Very high';
+        if (crr < 0.0150) return 'Very high';
+        return 'Extreme (fat-bike / soft surface)';
       }
 
       function calc() {
@@ -631,8 +653,8 @@
           return showError('Computed rolling power is non-positive — likely too much wind cancellation, too steep a downhill, or CdA too high. Re-check the test conditions.');
         }
         const crr = pRoll / (mass * G * v);
-        if (crr < 0.0005 || crr > 0.025) {
-          return showError('Computed Crr ' + crr.toFixed(4) + ' is out of plausible range (0.0005–0.025). Re-check inputs and protocol.');
+        if (crr < 0.0005 || crr > 0.080) {
+          return showError('Computed Crr ' + crr.toFixed(4) + ' is out of plausible range (0.0005–0.080). Re-check inputs and protocol.');
         }
 
         // Render
