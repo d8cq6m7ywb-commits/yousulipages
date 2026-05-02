@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gear × Speed × Power — Yousuli calculators</title>
+  <meta name="description" content="Predict cycling speed and the watts you need to hold it. Gear ratio + cadence drive speed; CdA, Crr, weight, climb, and drivetrain efficiency drive power. Useful for race-pace planning." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED CALCULATOR STYLES ============ -->
+  <style>
+    .gsp-calc-host { width: 100%; }
+
+    .gsp-calc-host .layout {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 18px;
+    }
+    @media (max-width: 820px) { .gsp-calc-host .layout { grid-template-columns: 1fr; } }
+
+    .gsp-calc-host .panel {
+      background: var(--ys-bg-soft);
+      border-radius: 10px;
+      padding: 18px;
+    }
+    .gsp-calc-host .panel.results {
+      background: var(--ys-navy); color: #fff;
+    }
+
+    .gsp-calc-host .panel h3 {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.12em; text-transform: uppercase;
+      font-size: 0.78rem;
+      color: var(--wf-coral);
+      margin: 0 0 14px;
+    }
+    .gsp-calc-host .panel.results h3 { color: var(--wf-coral); }
+
+    .gsp-calc-host label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.7rem;
+      color: var(--ys-navy);
+      margin-bottom: 6px;
+    }
+    .gsp-calc-host .field {
+      margin-bottom: 14px;
+    }
+    .gsp-calc-host .row {
+      display: flex; align-items: stretch;
+    }
+    .gsp-calc-host input[type="number"],
+    .gsp-calc-host select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      font-size: 0.94rem;
+      font-family: var(--ys-font-body);
+      background: #fff;
+      color: var(--ys-navy);
+      box-sizing: border-box;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .gsp-calc-host input:focus,
+    .gsp-calc-host select:focus {
+      outline: none;
+      border-color: var(--wf-coral);
+      box-shadow: 0 0 0 3px rgba(250, 119, 60, 0.18);
+    }
+    .gsp-calc-host .row .unit {
+      padding: 0 12px;
+      background: var(--ys-navy);
+      color: #fff;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em;
+      font-size: 0.74rem;
+      display: flex; align-items: center;
+      border-radius: 0 6px 6px 0;
+      white-space: nowrap;
+      min-width: 60px; justify-content: center;
+    }
+    .gsp-calc-host .row input,
+    .gsp-calc-host .row select {
+      border-radius: 6px 0 0 6px;
+    }
+
+    .gsp-calc-host .grid-2 {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    }
+    @media (max-width: 480px) { .gsp-calc-host .grid-2 { grid-template-columns: 1fr; } }
+
+    .gsp-calc-host .unit-toggle {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 14px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.72rem; color: var(--ys-muted);
+    }
+    .gsp-calc-host .unit-toggle .switch {
+      display: inline-flex;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .gsp-calc-host .unit-toggle .switch button {
+      background: #fff; border: 0; padding: 6px 12px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.7rem; font-weight: 600;
+      color: var(--ys-muted);
+      cursor: pointer;
+    }
+    .gsp-calc-host .unit-toggle .switch button.active {
+      background: var(--ys-navy); color: #fff;
+    }
+
+    .gsp-calc-host .adv-toggle {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.78rem;
+      color: var(--wf-coral);
+      margin: 6px 0 12px;
+      border-top: 1px solid var(--ys-line);
+      padding-top: 16px;
+    }
+    .gsp-calc-host .adv-toggle button {
+      background: transparent; border: 0;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.72rem; font-weight: 600;
+      color: var(--ys-navy);
+      cursor: pointer;
+      padding: 6px 12px;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      background: #fff;
+    }
+    .gsp-calc-host .adv-toggle button.active {
+      background: var(--wf-coral);
+      color: #fff;
+      border-color: var(--wf-coral);
+    }
+    .gsp-calc-host .adv-fields { display: none; }
+    .gsp-calc-host .adv-fields.active { display: block; }
+
+    .gsp-calc-host .res-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      gap: 14px;
+    }
+    .gsp-calc-host .res-row:last-of-type { border-bottom: 0; }
+    .gsp-calc-host .res-label {
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.74rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    .gsp-calc-host .res-value {
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #fff;
+      letter-spacing: 0.02em;
+      text-align: right;
+    }
+    .gsp-calc-host .res-value small {
+      display: block; margin-top: 2px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.6);
+      letter-spacing: 0;
+      text-transform: none;
+    }
+    .gsp-calc-host .res-row.featured .res-value {
+      color: var(--wf-coral);
+      font-size: 1.6rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 56px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Bike</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">Gear &times; Speed &times; Power.</h1>
+      <div class="wf-subhead">Gear ratio &middot; speed &middot; watts to hold it</div>
+      <p class="lede" style="max-width: 660px;">Pick your gear and cadence &mdash; out comes your speed. Switch on advanced mode for the full power equation: aerodynamic drag, rolling resistance, climbing, and drivetrain efficiency. The watts number is the one that matters &mdash; it&rsquo;s what you actually have to push for the finish time you want.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">How the watts are calculated</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 32px 0 48px;">
+    <div class="ys-container">
+      <div class="ys-tool" style="max-width: 1080px;">
+
+        <div class="gsp-calc-host">
+
+          <div class="unit-toggle">
+            <span>Units</span>
+            <span class="switch">
+              <button type="button" class="active" data-unit="metric">Metric</button>
+              <button type="button" data-unit="imperial">Imperial</button>
+            </span>
+          </div>
+
+          <div class="layout">
+
+            <!-- INPUT PANEL -->
+            <div class="panel">
+              <h3>Simple mode &mdash; speed from gearing</h3>
+
+              <div class="grid-2">
+                <div class="field">
+                  <label>Front chainring</label>
+                  <div class="row">
+                    <input type="number" id="chainring" min="20" max="80" value="50" />
+                    <span class="unit">teeth</span>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>Rear cog (sprocket)</label>
+                  <div class="row">
+                    <input type="number" id="sprocket" min="9" max="60" value="28" />
+                    <span class="unit">teeth</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field">
+                <label>Wheel size preset</label>
+                <select id="wheelPreset">
+                  <option value="2.13" selected>700C — standard road bike</option>
+                  <option value="2.10">650b / 27.5"</option>
+                  <option value="2.07">26" — traditional MTB</option>
+                  <option value="2.30">29" / 700C MTB / 29er</option>
+                  <option value="2.18">27" — older road</option>
+                  <option value="1.90">24" — youth</option>
+                  <option value="1.60">20" — BMX / folding</option>
+                  <option value="1.30">16" — small kids</option>
+                  <option value="1.10">14" — very small kids</option>
+                </select>
+              </div>
+
+              <div class="grid-2">
+                <div class="field">
+                  <label>Wheel circumference</label>
+                  <div class="row">
+                    <input type="number" id="wheelCirc" step="0.01" min="0.5" max="3" value="2.13" />
+                    <span class="unit">m</span>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>Cadence</label>
+                  <div class="row">
+                    <input type="number" id="cadence" min="40" max="140" value="90" />
+                    <span class="unit">rpm</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="adv-toggle">
+                <span>Advanced mode &mdash; power, climb, distance</span>
+                <button type="button" id="advBtn" class="">OFF</button>
+              </div>
+
+              <div class="adv-fields" id="advFields">
+
+                <div class="grid-2">
+                  <div class="field">
+                    <label>Total weight (rider + bike + gear)</label>
+                    <div class="row">
+                      <input type="number" id="weight" step="0.1" min="0" value="80" />
+                      <span class="unit unit-mass">kg</span>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Drivetrain efficiency</label>
+                    <div class="row">
+                      <input type="number" id="drivetrain" min="80" max="100" step="0.1" value="98" />
+                      <span class="unit">%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="grid-2">
+                  <div class="field">
+                    <label>Total distance</label>
+                    <div class="row">
+                      <input type="number" id="distance" step="0.1" min="0" value="160" />
+                      <span class="unit unit-dist">km</span>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Total climb</label>
+                    <div class="row">
+                      <input type="number" id="climb" step="1" min="0" value="0" />
+                      <span class="unit unit-climb">m</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="grid-2">
+                  <div class="field">
+                    <label>CdA (aero drag)</label>
+                    <div class="row">
+                      <input type="number" id="cda" step="0.001" min="0.1" max="0.6" value="0.275" />
+                      <span class="unit">m²</span>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Crr (rolling resistance)</label>
+                    <div class="row">
+                      <input type="number" id="crr" step="0.0001" min="0.001" max="0.02" value="0.00366" />
+                      <span class="unit">—</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- OUTPUT PANEL -->
+            <div class="panel results">
+              <h3>Output</h3>
+
+              <div class="res-row">
+                <span class="res-label">Gear ratio</span>
+                <span class="res-value" id="outRatio">—</span>
+              </div>
+              <div class="res-row featured">
+                <span class="res-label">Speed</span>
+                <span class="res-value"><span id="outSpeed">—</span> <small id="outSpeedUnit">km/h</small></span>
+              </div>
+              <div class="res-row">
+                <span class="res-label">Development</span>
+                <span class="res-value"><span id="outDev">—</span> <small>m / pedal stroke</small></span>
+              </div>
+              <div class="res-row" id="rowGradient">
+                <span class="res-label">Average gradient</span>
+                <span class="res-value"><span id="outGradient">—</span> <small>%</small></span>
+              </div>
+              <div class="res-row" id="rowFinish">
+                <span class="res-label">Finish time</span>
+                <span class="res-value" id="outFinish">—</span>
+              </div>
+              <div class="res-row" id="rowPower">
+                <span class="res-label">Power needed</span>
+                <span class="res-value"><span id="outPower">—</span> <small>watts</small></span>
+              </div>
+
+              <div id="powerBreakdown" style="margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.12); display: none;">
+                <div style="font-family: var(--ys-font-display); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.7rem; color: rgba(255,255,255,0.6); margin-bottom: 8px;">Power breakdown</div>
+                <div class="res-row" style="border-bottom: 0; padding: 4px 0;">
+                  <span class="res-label" style="font-size: 0.7rem;">Aero (CdA)</span>
+                  <span class="res-value" style="font-size: 0.95rem;"><span id="powAero">—</span> <small>W</small></span>
+                </div>
+                <div class="res-row" style="border-bottom: 0; padding: 4px 0;">
+                  <span class="res-label" style="font-size: 0.7rem;">Rolling (Crr)</span>
+                  <span class="res-value" style="font-size: 0.95rem;"><span id="powRoll">—</span> <small>W</small></span>
+                </div>
+                <div class="res-row" style="border-bottom: 0; padding: 4px 0;">
+                  <span class="res-label" style="font-size: 0.7rem;">Climbing</span>
+                  <span class="res-value" style="font-size: 0.95rem;"><span id="powClimb">—</span> <small>W</small></span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW THE WATTS WORK ============ -->
+  <section class="wf-section alt" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How the watts are calculated</h2>
+        <div class="ys-rule"></div>
+        <p>Three forces resist forward motion. The drivetrain costs you a bit on top.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>Aerodynamic drag</h3>
+          <p><code style="background: var(--ys-bg-soft); padding: 2px 8px; border-radius: 4px;">P<sub>aero</sub> = ½ &middot; ρ &middot; CdA &middot; v³</code> &mdash; the cubic term means small speed gains cost a lot of watts. <strong>Dominant force above ~25 km/h</strong>. CdA 0.275 is reasonable for an in-tuck road position; 0.21 is good TT.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>Rolling resistance</h3>
+          <p><code style="background: var(--ys-bg-soft); padding: 2px 8px; border-radius: 4px;">P<sub>roll</sub> = m &middot; g &middot; Crr &middot; v</code> &mdash; linear in speed and weight. Crr 0.0037 is decent road tire on smooth tarmac; 0.005&ndash;0.008 is gravel.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>Climbing power</h3>
+          <p><code style="background: var(--ys-bg-soft); padding: 2px 8px; border-radius: 4px;">P<sub>climb</sub> = m &middot; g &middot; v &middot; gradient</code> &mdash; weight&times;gradient is gravity working against you. Drivetrain efficiency (~98% for clean modern systems) divides the total at the end.</p>
+        </div>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.92rem; max-width: 720px; margin-left: auto; margin-right: auto;">Note: gradient is computed as <strong>average</strong> over the whole distance &mdash; useful for estimating average power on a course. For specific climbs, use the segment&rsquo;s gradient and distance instead of the full ride. Air density is fixed at 1.225 kg/m³ (sea level, 15 °C); thinner air at altitude reduces aero power.</p>
+    </div>
+  </section>
+
+  <!-- ============ COACH NOTE ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
+        <h2 style="margin-top: 4px;">The biggest watts you can save aren&rsquo;t in the engine.</h2>
+        <p>Most athletes obsess over FTP. Three things move the needle more for the same fitness:</p>
+        <ul class="ys-card-bullets" style="margin-top: 12px;">
+          <li><strong>CdA &mdash; position &amp; equipment</strong>. Going from 0.30 to 0.25 m² is <em>~20 watts</em> at 40 km/h, completely free if you can hold it. Aero testing pays for itself in one race.</li>
+          <li><strong>Crr &mdash; tires &amp; pressure</strong>. A 0.001 Crr improvement is ~3&ndash;5 watts at speed. Latex tubes, fast tires, correct pressure for surface and weight.</li>
+          <li><strong>Weight &mdash; only matters on climbs</strong>. On flat, an extra 1 kg costs you fractions of a watt. On a 5% climb at 25 km/h, the same 1 kg costs ~3 watts. Don&rsquo;t obsess on flat courses.</li>
+        </ul>
+        <p style="margin-top: 12px;">Plug your numbers in &mdash; then play with the inputs. See where 10 watts comes from cheapest. That&rsquo;s where to spend your training and money.</p>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Aero / CdA testing</a>
+          <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TYPICAL VALUES ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Typical values to plug in</h2>
+        <div class="ys-rule"></div>
+        <p>If you don&rsquo;t have measured numbers, these are population averages by riding style.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-card">
+          <div class="ys-meta">Upright road</div>
+          <h3>CdA ~0.40</h3>
+          <p>Hands on hoods, head up, casual ride. <strong>Crr ~0.005</strong>. Most weekend riders sit here.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">In-the-drops road</div>
+          <h3>CdA ~0.30</h3>
+          <p>Race position, drops, hands narrow. <strong>Crr ~0.0040</strong> with decent tires. Default for road racing.</p>
+        </div>
+        <div class="ys-card featured">
+          <div class="ys-meta" style="color: var(--wf-coral);">TT / triathlon</div>
+          <h3>CdA 0.20–0.25</h3>
+          <p>Low arm pads, narrow shoulders, head tucked, aero helmet. <strong>Crr ~0.0035</strong>. The big gains live here.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">Gravel / MTB</div>
+          <h3>CdA ~0.40</h3>
+          <p>Higher position, wider tires. <strong>Crr 0.006&ndash;0.012</strong> depending on surface and pressure. Aero matters less; rolling matters more.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">Drivetrain efficiency</div>
+          <h3>96–98%</h3>
+          <p>Clean, well-lubed modern drivetrain ≈ 98%. Dirty chain, worn cassette, cross-chained: drops to 95% or lower.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED CALCULATORS ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Related calculators</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card redesigned" href="calculator-gear-ratio.html">
+          <span class="ys-calc-card-title">Gear ratio table</span>
+          <p>Just the gear ratio + development + speed table. Same engine, simpler view.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="https://www.yousuli.co/critical-power-calculator" target="_top">
+          <span class="ys-calc-card-title">Critical power (CP)</span>
+          <p>Estimate your sustainable power from 3 maximal efforts. Use it as the &ldquo;watts you can hold&rdquo; benchmark.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="calculators.html">
+          <span class="ys-calc-card-title">All calculators</span>
+          <p>Back to the full catalog &mdash; 28 endurance calculators across performance, fueling, swim, bike, run.</p>
+          <span class="ys-calc-card-arrow">Browse &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want measured CdA, not population averages?</h2>
+          <p>Field aero testing at the lab measures <em>your</em> CdA in <em>your</em> race position with <em>your</em> kit. Same protocol used by World Tour teams. The 10-15 watts you find here are the cheapest watts you&rsquo;ll ever buy.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Book aero testing</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Gear%20Speed%20Power">Send feedback</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Spotted a bug or want a feature? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Gear%20Speed%20Power" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ CALCULATOR LOGIC ============ -->
+  <script>
+    (function () {
+      const RHO = 1.225;        // air density kg/m³
+      const G   = 9.80665;      // gravity
+
+      let unit = 'metric';
+      let advOn = false;
+
+      const $ = id => document.getElementById(id);
+
+      const fields = {
+        chainring: $('chainring'),
+        sprocket:  $('sprocket'),
+        wheelPreset: $('wheelPreset'),
+        wheelCirc: $('wheelCirc'),
+        cadence:   $('cadence'),
+        weight:    $('weight'),
+        drivetrain:$('drivetrain'),
+        distance:  $('distance'),
+        climb:     $('climb'),
+        cda:       $('cda'),
+        crr:       $('crr')
+      };
+
+      const out = {
+        ratio:    $('outRatio'),
+        speed:    $('outSpeed'),
+        speedUnit:$('outSpeedUnit'),
+        dev:      $('outDev'),
+        gradient: $('outGradient'),
+        finish:   $('outFinish'),
+        power:    $('outPower'),
+        powAero:  $('powAero'),
+        powRoll:  $('powRoll'),
+        powClimb: $('powClimb')
+      };
+
+      // unit toggle
+      document.querySelectorAll('.gsp-calc-host .unit-toggle button').forEach(b => {
+        b.addEventListener('click', () => {
+          if (b.classList.contains('active')) return;
+          document.querySelectorAll('.gsp-calc-host .unit-toggle button').forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          const newUnit = b.getAttribute('data-unit');
+          convertInputsForUnit(newUnit);
+          unit = newUnit;
+          updateUnitLabels();
+          calc();
+        });
+      });
+
+      function updateUnitLabels() {
+        const isMetric = unit === 'metric';
+        document.querySelectorAll('.unit-mass').forEach(el => el.textContent = isMetric ? 'kg' : 'lb');
+        document.querySelectorAll('.unit-dist').forEach(el => el.textContent = isMetric ? 'km' : 'mi');
+        document.querySelectorAll('.unit-climb').forEach(el => el.textContent = isMetric ? 'm' : 'ft');
+        out.speedUnit.textContent = isMetric ? 'km/h' : 'mph';
+      }
+
+      // when user flips the unit toggle, convert visible numbers so they keep their meaning
+      function convertInputsForUnit(newUnit) {
+        if (newUnit === unit) return;
+        const w = parseFloat(fields.weight.value);
+        const d = parseFloat(fields.distance.value);
+        const c = parseFloat(fields.climb.value);
+        if (newUnit === 'imperial') {
+          if (Number.isFinite(w)) fields.weight.value   = (w * 2.20462).toFixed(1);
+          if (Number.isFinite(d)) fields.distance.value = (d * 0.621371).toFixed(2);
+          if (Number.isFinite(c)) fields.climb.value    = (c * 3.28084).toFixed(0);
+        } else {
+          if (Number.isFinite(w)) fields.weight.value   = (w / 2.20462).toFixed(1);
+          if (Number.isFinite(d)) fields.distance.value = (d / 0.621371).toFixed(2);
+          if (Number.isFinite(c)) fields.climb.value    = (c / 3.28084).toFixed(0);
+        }
+      }
+
+      // wheel preset → fill circumference
+      fields.wheelPreset.addEventListener('change', () => {
+        fields.wheelCirc.value = fields.wheelPreset.value;
+        calc();
+      });
+
+      // advanced toggle
+      const advBtn = $('advBtn');
+      const advFields = $('advFields');
+      const advRows = ['rowGradient', 'rowFinish', 'rowPower'].map($);
+      const powerBreakdown = $('powerBreakdown');
+
+      function setAdvVisible() {
+        if (advOn) {
+          advFields.classList.add('active');
+          advBtn.classList.add('active');
+          advBtn.textContent = 'ON';
+          advRows.forEach(r => r.style.display = '');
+          powerBreakdown.style.display = 'block';
+        } else {
+          advFields.classList.remove('active');
+          advBtn.classList.remove('active');
+          advBtn.textContent = 'OFF';
+          advRows.forEach(r => r.style.display = 'none');
+          powerBreakdown.style.display = 'none';
+        }
+      }
+      advBtn.addEventListener('click', () => { advOn = !advOn; setAdvVisible(); calc(); });
+
+      // wire all inputs
+      Object.values(fields).forEach(el => {
+        el.addEventListener('input', calc);
+        el.addEventListener('change', calc);
+      });
+
+      function fmt(n, d = 2) { return Number.isFinite(n) ? n.toFixed(d) : '—'; }
+
+      function fmtTime(decimalMinutes) {
+        if (!Number.isFinite(decimalMinutes) || decimalMinutes < 0) return '—';
+        const totalSec = Math.round(decimalMinutes * 60);
+        const h = Math.floor(totalSec / 3600);
+        const m = Math.floor((totalSec % 3600) / 60);
+        const s = totalSec % 60;
+        const pad = n => (n < 10 ? '0' : '') + n;
+        return pad(h) + ':' + pad(m) + ':' + pad(s);
+      }
+
+      function calc() {
+        const C  = parseFloat(fields.chainring.value);
+        const S  = parseFloat(fields.sprocket.value);
+        const Wc = parseFloat(fields.wheelCirc.value);     // circumference m
+        const cad = parseFloat(fields.cadence.value);
+
+        // Always compute basic outputs in metric, convert for display
+        const ratio = (Number.isFinite(C) && Number.isFinite(S) && S > 0) ? C / S : NaN;
+        const dev   = (Number.isFinite(ratio) && Number.isFinite(Wc)) ? ratio * Wc : NaN;
+        const speedKmh = (Number.isFinite(dev) && Number.isFinite(cad)) ? (dev * cad * 60) / 1000 : NaN;
+        const speedMps = Number.isFinite(speedKmh) ? speedKmh / 3.6 : NaN;
+
+        out.ratio.textContent = fmt(ratio, 2);
+        out.dev.textContent   = fmt(dev, 2);
+        out.speed.textContent = fmt(unit === 'metric' ? speedKmh : speedKmh / 1.609344, 1);
+
+        if (!advOn) return;
+
+        // advanced — convert inputs to metric for the physics
+        let weight  = parseFloat(fields.weight.value);
+        let distKm  = parseFloat(fields.distance.value);
+        let climbM  = parseFloat(fields.climb.value);
+        const drv   = parseFloat(fields.drivetrain.value) / 100;
+        const cda   = parseFloat(fields.cda.value);
+        const crr   = parseFloat(fields.crr.value);
+
+        if (unit === 'imperial') {
+          if (Number.isFinite(weight)) weight /= 2.20462;       // lb → kg
+          if (Number.isFinite(distKm)) distKm /= 0.621371;      // mi → km
+          if (Number.isFinite(climbM)) climbM /= 3.28084;       // ft → m
+        }
+
+        const gradient = (Number.isFinite(climbM) && Number.isFinite(distKm) && distKm > 0)
+          ? (climbM / 1000) / distKm
+          : 0;
+        out.gradient.textContent = fmt(gradient * 100, 2);
+
+        const finishMin = (Number.isFinite(speedKmh) && Number.isFinite(distKm) && speedKmh > 0)
+          ? (distKm / speedKmh) * 60
+          : NaN;
+        out.finish.textContent = fmtTime(finishMin);
+
+        if (Number.isFinite(speedMps) && Number.isFinite(weight) && Number.isFinite(cda) && Number.isFinite(crr) && drv > 0) {
+          const pAero  = 0.5 * RHO * cda * Math.pow(speedMps, 3);
+          const pRoll  = weight * G * crr * speedMps;
+          const pClimb = weight * G * speedMps * gradient;
+          const pTot   = (pAero + pRoll + pClimb) / drv;
+
+          out.power.textContent    = fmt(pTot, 0);
+          out.powAero.textContent  = fmt(pAero, 0);
+          out.powRoll.textContent  = fmt(pRoll, 0);
+          out.powClimb.textContent = fmt(pClimb, 0);
+        } else {
+          out.power.textContent = '—';
+          out.powAero.textContent = '—';
+          out.powRoll.textContent = '—';
+          out.powClimb.textContent = '—';
+        }
+      }
+
+      setAdvVisible();
+      updateUnitLabels();
+      calc();
+    })();
+  </script>
+
+</body>
+</html>
