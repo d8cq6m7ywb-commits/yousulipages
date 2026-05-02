@@ -1,0 +1,951 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tire pressure guide — Yousuli calculators</title>
+  <meta name="description" content="Recommended tire pressure for road, gravel, MTB, TT, tandem, and handcycle (PTWC). Front/rear split with measured-load presets, hookless ETRTO caps, wet-pavement and speed adjustments, plus altitude + temperature correction." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED CALCULATOR STYLES ============ -->
+  <style>
+    .tp-calc-host { width: 100%; }
+
+    .tp-calc-host .top-row {
+      display: flex; flex-wrap: wrap; gap: 18px;
+      justify-content: space-between; align-items: center;
+      margin-bottom: 16px;
+    }
+    .tp-calc-host .mode-toggle,
+    .tp-calc-host .unit-toggle {
+      display: flex; align-items: center; gap: 12px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.72rem; color: var(--ys-muted);
+    }
+    .tp-calc-host .switch {
+      display: inline-flex;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px; overflow: hidden;
+    }
+    .tp-calc-host .switch button {
+      background: #fff; border: 0; padding: 7px 14px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.7rem; font-weight: 600;
+      color: var(--ys-muted); cursor: pointer;
+    }
+    .tp-calc-host .switch button.active {
+      background: var(--ys-navy); color: #fff;
+    }
+
+    .tp-calc-host .field-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+      background: var(--ys-bg-soft);
+      padding: 18px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 600px) { .tp-calc-host .field-grid { grid-template-columns: 1fr; } }
+    .tp-calc-host .field-grid .full { grid-column: 1 / -1; }
+
+    .tp-calc-host label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.7rem;
+      color: var(--ys-navy);
+      margin-bottom: 6px;
+    }
+    .tp-calc-host .row { display: flex; align-items: stretch; }
+    .tp-calc-host input[type="number"],
+    .tp-calc-host select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      font-size: 0.96rem;
+      font-family: var(--ys-font-body);
+      background: #fff;
+      color: var(--ys-navy);
+      box-sizing: border-box;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .tp-calc-host input:focus,
+    .tp-calc-host select:focus {
+      outline: none;
+      border-color: var(--wf-coral);
+      box-shadow: 0 0 0 3px rgba(250, 119, 60, 0.18);
+    }
+    .tp-calc-host .row input { border-radius: 6px 0 0 6px; }
+    .tp-calc-host .row .unit {
+      padding: 0 12px;
+      background: var(--ys-navy); color: #fff;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em; font-size: 0.74rem;
+      display: flex; align-items: center;
+      border-radius: 0 6px 6px 0;
+      min-width: 50px; justify-content: center;
+    }
+    .tp-calc-host .field-help {
+      font-size: 0.78rem; color: var(--ys-muted); margin-top: 6px;
+    }
+
+    .tp-calc-host .adv-section {
+      display: none;
+      margin-top: 6px;
+    }
+    .tp-calc-host .adv-section.active { display: block; }
+
+    .tp-calc-host .slider-block {
+      margin-top: 4px;
+    }
+    .tp-calc-host input[type="range"] {
+      width: 100%; height: 6px;
+      -webkit-appearance: none; appearance: none;
+      background: var(--ys-line);
+      border-radius: 3px;
+      outline: none;
+      margin: 8px 0;
+    }
+    .tp-calc-host input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 18px; height: 18px;
+      background: var(--wf-coral);
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 1px var(--ys-line);
+    }
+    .tp-calc-host input[type="range"]::-moz-range-thumb {
+      width: 18px; height: 18px;
+      background: var(--wf-coral);
+      border-radius: 50%;
+      cursor: pointer; border: 2px solid #fff;
+    }
+    .tp-calc-host .slider-value {
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      color: var(--wf-coral);
+    }
+    .tp-calc-host .preset-row {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+      margin-top: 8px;
+    }
+    @media (max-width: 480px) { .tp-calc-host .preset-row { grid-template-columns: 1fr 1fr; } }
+    .tp-calc-host .preset-btn {
+      padding: 7px 6px;
+      background: #fff;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.04em;
+      font-size: 0.72rem; font-weight: 600;
+      color: var(--ys-navy);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .tp-calc-host .preset-btn:hover {
+      border-color: var(--wf-coral);
+      color: var(--wf-coral);
+    }
+
+    .tp-calc-host .err {
+      color: #c93939;
+      background: rgba(201, 57, 57, 0.08);
+      border-left: 4px solid #c93939;
+      padding: 10px 14px;
+      margin-top: 12px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      display: none;
+    }
+    .tp-calc-host .err.active { display: block; }
+
+    .tp-calc-host .result-block {
+      margin-top: 18px;
+      padding: 22px;
+      background: var(--ys-navy);
+      color: #fff;
+      border-radius: 12px;
+      display: none;
+    }
+    .tp-calc-host .result-block.active { display: block; }
+    .tp-calc-host .result-block h4 {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.12em; text-transform: uppercase;
+      font-size: 0.78rem;
+      color: var(--wf-coral);
+      margin: 0 0 16px;
+    }
+
+    .tp-calc-host .pres-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    }
+    @media (max-width: 540px) { .tp-calc-host .pres-grid { grid-template-columns: 1fr; } }
+    .tp-calc-host .pres-tile {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+    .tp-calc-host .pres-label {
+      display: block;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.12em; text-transform: uppercase;
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 6px;
+    }
+    .tp-calc-host .pres-med {
+      display: block;
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      font-size: 2rem;
+      color: #fff;
+      letter-spacing: 0.02em;
+    }
+    .tp-calc-host .pres-med small {
+      font-size: 0.78rem;
+      color: rgba(255, 255, 255, 0.7);
+      letter-spacing: 0;
+      font-weight: 500;
+      display: block;
+      margin-top: 2px;
+    }
+    .tp-calc-host .pres-range {
+      display: block;
+      font-size: 0.92rem;
+      color: var(--wf-coral);
+      margin-top: 8px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.04em;
+    }
+
+    .tp-calc-host .result-meta {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      font-size: 0.86rem;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.5;
+    }
+    .tp-calc-host .warn-banner {
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: rgba(250, 119, 60, 0.18);
+      border-left: 4px solid var(--wf-coral);
+      border-radius: 6px;
+      color: #fff;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 56px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Bike</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">Tire pressure guide.</h1>
+      <div class="wf-subhead">Road · gravel · MTB · TT · tandem · handcycle</div>
+      <p class="lede" style="max-width: 660px;">Recommended tire pressure based on rider + bike weight, tire width, terrain, and load split. Quick mode for the basics; advanced mode for rim type, posture, wet pavement, average speed, and altitude/temperature correction (the gauge difference between where you pump and where you ride).</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">What the model assumes</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 32px 0 48px;">
+    <div class="ys-container">
+      <div class="ys-tool" style="max-width: 960px;">
+
+        <div class="tp-calc-host">
+
+          <div class="top-row">
+            <div class="mode-toggle">
+              <span>Mode</span>
+              <span class="switch">
+                <button type="button" class="active" data-mode="quick">Quick</button>
+                <button type="button" data-mode="advanced">Advanced</button>
+              </span>
+            </div>
+            <div class="unit-toggle">
+              <span>Units</span>
+              <span class="switch">
+                <button type="button" class="active" data-unit="metric">kg / mm</button>
+                <button type="button" data-unit="imperial">lb / in</button>
+              </span>
+            </div>
+          </div>
+
+          <div class="field-grid">
+            <div>
+              <label>Rider weight</label>
+              <div class="row">
+                <input type="number" id="riderWeight" step="0.1" min="0" value="75" />
+                <span class="unit unit-mass">kg</span>
+              </div>
+            </div>
+            <div id="stokerWrap" style="display: none;">
+              <label>Stoker weight (tandem)</label>
+              <div class="row">
+                <input type="number" id="stokerWeight" step="0.1" min="0" value="" />
+                <span class="unit unit-mass">kg</span>
+              </div>
+            </div>
+            <div>
+              <label>Bike weight</label>
+              <div class="row">
+                <input type="number" id="bikeWeight" step="0.1" min="0" value="8" />
+                <span class="unit unit-mass">kg</span>
+              </div>
+            </div>
+            <div>
+              <label>Front tire width</label>
+              <div class="row">
+                <input type="number" id="frontTireWidth" step="0.5" min="0" value="25" />
+                <span class="unit unit-width">mm</span>
+              </div>
+              <div class="field-help">Road 23–32 · Gravel 35–50 · MTB 50+ mm</div>
+            </div>
+            <div>
+              <label>Rear tire width</label>
+              <div class="row">
+                <input type="number" id="rearTireWidth" step="0.5" min="0" value="25" />
+                <span class="unit unit-width">mm</span>
+              </div>
+              <div class="field-help">For handcycles, this is each rear wheel.</div>
+            </div>
+          </div>
+
+          <!-- ============ ADVANCED FIELDS ============ -->
+          <div class="adv-section" id="advFields">
+            <div class="field-grid">
+              <div>
+                <label>Bike type / posture</label>
+                <select id="posture">
+                  <option value="timeTrial">Tri / TT (aerobars) — 50/50</option>
+                  <option value="road" selected>Road — 44/56</option>
+                  <option value="endurance">Endurance / Gravel — 42/58</option>
+                  <option value="mtb">MTB — 38/62</option>
+                  <option value="handcycle">Handcycle (PTWC) — 30/70</option>
+                  <option value="tandem">Tandem (PTVI) — 40/60</option>
+                </select>
+                <div class="field-help">Sets a typical front-load %. Override below if you measured your split.</div>
+              </div>
+
+              <div>
+                <label>Front load <span class="slider-value" id="frontLoadText">44%</span></label>
+                <div class="slider-block">
+                  <input type="range" id="frontLoadPct" min="20" max="60" value="44" />
+                  <div class="preset-row">
+                    <button type="button" class="preset-btn" data-fl="50">TT 50%</button>
+                    <button type="button" class="preset-btn" data-fl="44">Road 44%</button>
+                    <button type="button" class="preset-btn" data-fl="42">Endur. 42%</button>
+                    <button type="button" class="preset-btn" data-fl="38">MTB 38%</button>
+                    <button type="button" class="preset-btn" data-fl="30">PTWC 30%</button>
+                    <button type="button" class="preset-btn" data-fl="40">PTVI 40%</button>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label>Terrain</label>
+                <select id="terrain">
+                  <option value="road" selected>Road</option>
+                  <option value="mixed">Mixed surfaces</option>
+                  <option value="trail">Trail / loose</option>
+                </select>
+              </div>
+
+              <div>
+                <label>Rim / tire system</label>
+                <select id="rimType">
+                  <option value="tubed" selected>Tubed</option>
+                  <option value="tubelessHooks">Tubeless with hooks</option>
+                  <option value="tubelessHookless">Tubeless hookless (TSS) — ETRTO caps</option>
+                </select>
+              </div>
+
+              <div>
+                <label>Road condition</label>
+                <select id="roadCondition">
+                  <option value="dry" selected>Dry</option>
+                  <option value="wet">Wet (apply penalty)</option>
+                </select>
+                <div class="slider-block">
+                  <input type="range" id="wetPct" min="0" max="10" step="1" value="7" />
+                  <div class="field-help">Wet penalty: <span class="slider-value" id="wetPctText">7%</span></div>
+                </div>
+              </div>
+
+              <div>
+                <label>Average speed (km/h)</label>
+                <select id="speed">
+                  <option value="below20">Below 20</option>
+                  <option value="20-35" selected>20–35</option>
+                  <option value="36-39">36–39</option>
+                  <option value="40-45">40–45</option>
+                  <option value="46-49">46–49</option>
+                  <option value="50-60">50–60</option>
+                </select>
+              </div>
+
+              <div class="full">
+                <label>Environment correction (optional)</label>
+                <div class="field-help" style="margin-bottom: 10px;">If you pump in the garage and ride at altitude (or in heat), the gauge changes. Enter pump and ride conditions to compute the gauge to set <em>at the pump</em>.</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                  <div>
+                    <div style="font-family: var(--ys-font-display); letter-spacing: 0.08em; font-size: 0.74rem; color: var(--wf-coral); margin-bottom: 6px;">Pump at</div>
+                    <div class="row" style="margin-bottom: 8px;"><input type="number" id="pumpAlt" placeholder="50" /><span class="unit">m alt</span></div>
+                    <div class="row"><input type="number" id="pumpTemp" placeholder="20" /><span class="unit">°C</span></div>
+                  </div>
+                  <div>
+                    <div style="font-family: var(--ys-font-display); letter-spacing: 0.08em; font-size: 0.74rem; color: var(--wf-coral); margin-bottom: 6px;">Ride at</div>
+                    <div class="row" style="margin-bottom: 8px;"><input type="number" id="rideAlt" placeholder="2000" /><span class="unit">m alt</span></div>
+                    <div class="row"><input type="number" id="rideTemp" placeholder="30" /><span class="unit">°C</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ys-btn-row" style="margin: 4px 0 0;">
+            <button class="ys-btn ys-btn-coral" type="button" id="calcBtn">Calculate pressure</button>
+            <button class="ys-btn ys-btn-ghost" type="button" id="resetBtn">Reset</button>
+          </div>
+
+          <div class="err" id="errorMsg"></div>
+
+          <div class="result-block" id="resultBlock">
+            <h4>Recommended pressure</h4>
+            <div class="pres-grid" id="presGrid">
+              <div class="pres-tile">
+                <span class="pres-label">Front</span>
+                <span class="pres-med"><span id="outFrontMed">—</span><small>psi median</small></span>
+                <span class="pres-range" id="outFrontRange">— – — psi</span>
+              </div>
+              <div class="pres-tile" id="rearTile">
+                <span class="pres-label" id="rearLabel">Rear</span>
+                <span class="pres-med"><span id="outRearMed">—</span><small>psi median</small></span>
+                <span class="pres-range" id="outRearRange">— – — psi</span>
+              </div>
+            </div>
+            <div class="warn-banner" id="warnBanner" style="display: none;"></div>
+            <div class="result-meta" id="resultMeta"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW THE MODEL WORKS ============ -->
+  <section class="wf-section alt" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What the model assumes</h2>
+        <div class="ys-rule"></div>
+        <p>Three principles drive the maths.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>Tire drop ≈ 15%</h3>
+          <p>The Berto/Heine principle: optimal tire pressure produces about 15% vertical drop under load. Pressure scales <strong>linearly with load and inversely with width</strong>. Diameter (650b vs 700C) doesn&rsquo;t matter much — measured width does.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>Hookless rims have ETRTO caps</h3>
+          <p>TSS / hookless road rims must obey: <strong>≤ 5 bar (72.5 psi) up to ~29 mm · ≤ 4.5 bar (65 psi) for 30–34 mm · ~60 psi beyond</strong>. We enforce these and warn if the recommendation hits the cap (use a wider tire if you need higher).</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>Pump-at vs ride-at</h3>
+          <p>Pump in a 20 °C garage at sea level, then ride at 2 500 m and 30 °C — the gauge changes by ~5 psi. Optional advanced inputs use ideal-gas + standard atmosphere to compute the <strong>pump gauge</strong> that lands on your target <strong>ride gauge</strong>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COACH NOTE ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
+        <h2 style="margin-top: 4px;">Lower than you think — and you can prove it.</h2>
+        <p>Most riders run 10–15 psi too high. Modern wide tires (28+ mm) on smooth tarmac are <strong>fastest and grippier at 50–70 psi</strong> for 70–80 kg riders, not the 100+ psi old habit. The reasons:</p>
+        <ul class="ys-card-bullets" style="margin-top: 12px;">
+          <li><strong>Crr drops with width</strong> on real-world road. A 28 mm at 65 psi rolls faster than a 23 mm at 110 psi over chip-seal, joints, expansion strips.</li>
+          <li><strong>Suspension losses</strong> dominate at high pressure: tire bounces, energy goes into heat, not forward motion. Drop pressure → smooth rolling → less wasted watts.</li>
+          <li><strong>Grip in corners</strong> goes up with sensible lower pressure. Hard tires skip; supple tires bite.</li>
+        </ul>
+        <p style="margin-top: 12px;"><strong>Test it</strong>: run the same loop at three pressures (e.g. 70, 60, 50 psi) on the same day, same gear, same route. The fastest one wins. Don&rsquo;t take our word for it &mdash; the route always tells you.</p>
+        <p style="margin-top: 10px;">For TT and triathlon athletes, pair pressure with field aero testing &mdash; the lab measures CdA + Crr in the same protocol so you can pick a tire/pressure combo that&rsquo;s actually optimal for you.</p>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Aero / Crr testing</a>
+          <a class="ys-btn ys-btn-ghost" href="calculator-gear-speed-power.html">Power calc</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TYPICAL TARGETS ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Typical targets</h2>
+        <div class="ys-rule"></div>
+        <p>For a 75 kg rider + 8 kg bike. Real numbers come from the calc above.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-card">
+          <div class="ys-meta">Road · 25 mm</div>
+          <h3>~60 / ~72 psi</h3>
+          <p>Smooth tarmac, dry. Front lower than rear because of weight split. Drop 5 psi for chip-seal or wet.</p>
+        </div>
+        <div class="ys-card featured">
+          <div class="ys-meta" style="color: var(--wf-coral);">Endurance · 32 mm</div>
+          <h3>~50 / ~60 psi</h3>
+          <p>Wider tire, lower pressure, better real-world speed. Default for most modern road riders on rough surfaces.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">Gravel · 40 mm</div>
+          <h3>~30 / ~38 psi</h3>
+          <p>Tubeless almost mandatory at this width. Lower for chunky surfaces, slightly higher if you&rsquo;re mostly on hardpack.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">MTB · 2.3" (~58 mm)</div>
+          <h3>~22 / ~25 psi</h3>
+          <p>Even lower for technical descents; even higher for hardpack / XC race. Tubeless mandatory below ~30 psi.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">TT / Tri · 28 mm</div>
+          <h3>~58 / ~72 psi</h3>
+          <p>50/50 weight split flattens the front-rear gap. CdA testing usually beats pure pressure tweaking here.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED CALCULATORS ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Related calculators</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card redesigned" href="calculator-gear-speed-power.html">
+          <span class="ys-calc-card-title">Gear &times; Speed &times; Power</span>
+          <p>The watts you save with better Crr show up in the power equation directly.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="https://www.yousuli.co/crr-estimator" target="_top">
+          <span class="ys-calc-card-title">Crr calculator</span>
+          <p>If you have power + speed + CdA, this confirms your actual rolling-resistance number.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="calculators.html">
+          <span class="ys-calc-card-title">All calculators</span>
+          <p>Back to the full catalog &mdash; 28 endurance calculators across performance, fueling, swim, bike, run.</p>
+          <span class="ys-calc-card-arrow">Browse &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want measured Crr instead of assumed?</h2>
+          <p>Field aero testing at the lab measures CdA <em>and</em> Crr in the same protocol &mdash; so we can recommend the specific tire and pressure that&rsquo;s optimal for your bike, body, and roads. Pays for itself in one hilly race.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Book aero testing</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Tire%20pressure">Send feedback</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Spotted a bug or want a feature? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Tire%20pressure" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ CALCULATOR LOGIC ============ -->
+  <script>
+    (function () {
+      const $ = id => document.getElementById(id);
+      let mode = 'quick';
+      let unit = 'metric';
+
+      // ---- mode toggle
+      document.querySelectorAll('.tp-calc-host .mode-toggle button').forEach(b => {
+        b.addEventListener('click', () => {
+          if (b.classList.contains('active')) return;
+          document.querySelectorAll('.tp-calc-host .mode-toggle button').forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          mode = b.getAttribute('data-mode');
+          $('advFields').classList.toggle('active', mode === 'advanced');
+        });
+      });
+
+      // ---- unit toggle
+      document.querySelectorAll('.tp-calc-host .unit-toggle button').forEach(b => {
+        b.addEventListener('click', () => {
+          if (b.classList.contains('active')) return;
+          const newUnit = b.getAttribute('data-unit');
+          const ids = ['riderWeight','stokerWeight','bikeWeight','frontTireWidth','rearTireWidth'];
+          ids.forEach(id => {
+            const el = $(id);
+            const v = parseFloat(el.value);
+            if (!Number.isFinite(v)) return;
+            if (newUnit === 'imperial') {
+              if (id.endsWith('Weight')) el.value = (v * 2.20462).toFixed(1);
+              else el.value = (v / 25.4).toFixed(2);
+            } else {
+              if (id.endsWith('Weight')) el.value = (v / 2.20462).toFixed(1);
+              else el.value = (v * 25.4).toFixed(1);
+            }
+          });
+          unit = newUnit;
+          document.querySelectorAll('.tp-calc-host .unit-toggle button').forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          document.querySelectorAll('.unit-mass').forEach(el => el.textContent = unit === 'metric' ? 'kg' : 'lb');
+          document.querySelectorAll('.unit-width').forEach(el => el.textContent = unit === 'metric' ? 'mm' : 'in');
+        });
+      });
+
+      // ---- posture sync
+      const postureEl = $('posture');
+      const slider    = $('frontLoadPct');
+      const stokerWrap = $('stokerWrap');
+      function syncPosture() {
+        const p = postureEl.value;
+        if (p === 'handcycle') { slider.min = 20; slider.max = 45; setFL(30); stokerWrap.style.display = 'none'; }
+        else if (p === 'tandem')    { slider.min = 35; slider.max = 50; setFL(40); stokerWrap.style.display = ''; }
+        else if (p === 'timeTrial') { slider.min = 35; slider.max = 60; setFL(50); stokerWrap.style.display = 'none'; }
+        else if (p === 'road')      { slider.min = 35; slider.max = 60; setFL(44); stokerWrap.style.display = 'none'; }
+        else if (p === 'endurance') { slider.min = 35; slider.max = 60; setFL(42); stokerWrap.style.display = 'none'; }
+        else                        { slider.min = 35; slider.max = 60; setFL(38); stokerWrap.style.display = 'none'; }
+      }
+      postureEl.addEventListener('change', syncPosture);
+
+      function setFL(v) {
+        slider.value = v;
+        $('frontLoadText').textContent = v + '%';
+      }
+      slider.addEventListener('input', () => { $('frontLoadText').textContent = slider.value + '%'; });
+
+      // ---- preset buttons
+      document.querySelectorAll('.tp-calc-host .preset-btn').forEach(b => {
+        b.addEventListener('click', () => setFL(parseInt(b.getAttribute('data-fl'), 10)));
+      });
+
+      // ---- wet pct slider
+      $('wetPct').addEventListener('input', () => { $('wetPctText').textContent = $('wetPct').value + '%'; });
+
+      // ---- physics helpers
+      function atmPsiAtAltitude(alt_m) {
+        if (!Number.isFinite(alt_m)) return 14.696;
+        const p0 = 101325, T0 = 288.15, g = 9.80665, L = 0.0065, R = 287.05;
+        const h = Math.max(0, alt_m);
+        const p = p0 * Math.pow(1 - (L * h) / T0, g / (R * L));
+        return p * 0.0001450377;
+      }
+      function clampPsi(v) { if (v < 15) return 15; if (v > 120) return 120; return v; }
+      function basePsiForWheel(load_kg, width_mm, terrain) {
+        const w = Math.max(20, width_mm);
+        const base = (load_kg / w) * 33.6 + 10;
+        let f = 1.0;
+        if (terrain === 'mixed') f = 0.9;
+        if (terrain === 'trail') f = 0.8;
+        return base * f;
+      }
+      function capForWidth(wmm) {
+        if (wmm <= 29) return 72.5;
+        if (wmm <= 34) return 65.0;
+        return 60.0;
+      }
+      function softHooklessBase(basePsi, width_mm) {
+        const cap = capForWidth(width_mm);
+        const frac = 0.88;
+        return basePsi <= cap * frac ? basePsi : cap * frac;
+      }
+
+      // ---- error
+      const errEl = $('errorMsg');
+      function showError(msg) {
+        errEl.textContent = msg; errEl.classList.add('active');
+        $('resultBlock').classList.remove('active');
+      }
+      function clearError() { errEl.classList.remove('active'); errEl.textContent = ''; }
+
+      // ---- main
+      function calc() {
+        clearError();
+        const isAdv = mode === 'advanced';
+        const posture = isAdv ? postureEl.value : 'road';
+
+        let rider  = parseFloat($('riderWeight').value) || 0;
+        let stoker = (posture === 'tandem') ? (parseFloat($('stokerWeight').value) || 0) : 0;
+        let bike   = parseFloat($('bikeWeight').value) || 0;
+        let fW     = parseFloat($('frontTireWidth').value) || 25;
+        let rW     = parseFloat($('rearTireWidth').value)  || 25;
+
+        if (rider <= 0) return showError('Enter a valid rider weight.');
+        if (bike  <= 0) return showError('Enter a valid bike weight.');
+        if (fW <= 0 || rW <= 0) return showError('Enter valid tire widths.');
+
+        if (unit === 'imperial') {
+          rider  /= 2.20462;
+          stoker /= 2.20462;
+          bike   /= 2.20462;
+          fW     *= 25.4;
+          rW     *= 25.4;
+        }
+
+        const totalKg = rider + stoker + bike;
+        const terrain = isAdv ? $('terrain').value : 'road';
+        const frontFrac = isAdv ? (parseFloat(slider.value) / 100) : 0.44;
+        const rimType = isAdv ? $('rimType').value : 'tubed';
+        const wetActive = isAdv && $('roadCondition').value === 'wet';
+        const wetPct = wetActive ? ((parseFloat($('wetPct').value) || 7) / 100) : 0;
+
+        let baseF = 0, baseR = 0, baseR_each = 0;
+        if (posture === 'handcycle') {
+          const fKg = totalKg * frontFrac;
+          const rKg = totalKg * (1 - frontFrac);
+          baseF = basePsiForWheel(fKg, fW, terrain);
+          baseR_each = basePsiForWheel(rKg / 2, rW, terrain);
+        } else {
+          const fKg = totalKg * frontFrac;
+          const rKg = totalKg * (1 - frontFrac);
+          baseF = basePsiForWheel(fKg, fW, terrain);
+          baseR = basePsiForWheel(rKg, rW, terrain);
+        }
+
+        if (isAdv) {
+          let nF = 0, nR = 0;
+          if (rimType === 'tubed')            { nF =  2;   nR =  2; }
+          if (rimType === 'tubelessHookless') { nF = -1;   nR = -1; }
+          if (rimType === 'tubelessHooks')    { nF = -0.5; nR = -0.5; }
+          if (posture === 'handcycle') { baseF += nF; baseR_each += nR; }
+          else                          { baseF += nF; baseR += nR; }
+
+          if (wetPct > 0) {
+            baseF *= (1 - wetPct);
+            if (posture === 'handcycle') baseR_each *= (1 - wetPct);
+            else baseR *= (1 - wetPct);
+          }
+
+          const speedMap = { below20: 15, '20-35': 30, '36-39': 38, '40-45': 43, '46-49': 48, '50-60': 55 };
+          const numSpeed = speedMap[$('speed').value] || 30;
+          const speedAdj = Math.max(0, numSpeed - 30) * 0.03;
+          baseF -= speedAdj;
+          if (posture === 'handcycle') baseR_each -= speedAdj;
+          else baseR -= speedAdj;
+        }
+
+        let effF = baseF, effR = baseR, effR_each = baseR_each;
+        if (isAdv && rimType === 'tubelessHookless') {
+          effF = softHooklessBase(baseF, fW);
+          if (posture === 'handcycle') effR_each = softHooklessBase(baseR_each, rW);
+          else effR = softHooklessBase(baseR, rW);
+        }
+
+        const ranges = x => {
+          const m = clampPsi(Math.round(x));
+          return [clampPsi(Math.round(m * 0.94)), m, clampPsi(Math.round(m * 1.06))];
+        };
+
+        let F = ranges(effF);
+        let R = posture === 'handcycle' ? [0,0,0] : ranges(effR);
+        let Reach = posture === 'handcycle' ? ranges(effR_each) : [0,0,0];
+
+        let frontCapped = false, rearCapped = false;
+        if (isAdv && rimType === 'tubelessHookless') {
+          const capF = capForWidth(fW);
+          F = F.map(v => Math.min(v, capF));
+          frontCapped = (F[1] === capF || F[2] === capF);
+          if (posture === 'handcycle') {
+            const capR = capForWidth(rW);
+            Reach = Reach.map(v => Math.min(v, capR));
+            rearCapped = (Reach[1] === capR || Reach[2] === capR);
+          } else {
+            const capR = capForWidth(rW);
+            R = R.map(v => Math.min(v, capR));
+            rearCapped = (R[1] === capR || R[2] === capR);
+          }
+        }
+
+        // env correction (advanced only)
+        const pumpAlt  = parseFloat($('pumpAlt').value);
+        const rideAlt  = parseFloat($('rideAlt').value);
+        const pumpTemp = parseFloat($('pumpTemp').value);
+        const rideTemp = parseFloat($('rideTemp').value);
+        const useEnv = isAdv && [pumpAlt, rideAlt, pumpTemp, rideTemp].every(Number.isFinite);
+        let envNote = '';
+        if (useEnv) {
+          const PpumpA = atmPsiAtAltitude(pumpAlt);
+          const PrideA = atmPsiAtAltitude(rideAlt);
+          const Kp = pumpTemp + 273.15;
+          const Kr = rideTemp + 273.15;
+          const toPump = ride => Math.max(0, (PrideA + ride) * (Kp / Kr) - PpumpA);
+          F = F.map(toPump).map(Math.round);
+          if (posture === 'handcycle') Reach = Reach.map(toPump).map(Math.round);
+          else                         R     = R.map(toPump).map(Math.round);
+          envNote = `Adjusted to pump at ${pumpAlt} m / ${pumpTemp} °C to hit targets at ride ${rideAlt} m / ${rideTemp} °C.`;
+        }
+
+        // ---- render
+        $('outFrontMed').textContent = F[1];
+        $('outFrontRange').textContent = F[0] + ' – ' + F[2] + ' psi';
+
+        if (posture === 'handcycle') {
+          $('rearLabel').textContent = 'Each rear';
+          $('outRearMed').textContent = Reach[1];
+          $('outRearRange').textContent = Reach[0] + ' – ' + Reach[2] + ' psi';
+        } else {
+          $('rearLabel').textContent = 'Rear';
+          $('outRearMed').textContent = R[1];
+          $('outRearRange').textContent = R[0] + ' – ' + R[2] + ' psi';
+        }
+
+        const frontLoadVal = Math.round(parseFloat(slider.value));
+        const splitText = frontLoadVal + '/' + (100 - frontLoadVal);
+
+        let meta = `Front/rear load split: <strong>${splitText}%</strong>. Range = median ±6%.`;
+        if (envNote) meta += ' ' + envNote;
+        $('resultMeta').innerHTML = meta;
+
+        const warnEl = $('warnBanner');
+        if (isAdv && rimType === 'tubelessHookless' && (frontCapped || rearCapped)) {
+          warnEl.style.display = 'block';
+          warnEl.innerHTML = '<strong>⚠ Hookless ETRTO cap reached.</strong> Use a wider tire if you require higher pressure. Always obey the lower of rim and tire maker limits.';
+        } else {
+          warnEl.style.display = 'none';
+        }
+
+        $('resultBlock').classList.add('active');
+      }
+
+      $('calcBtn').addEventListener('click', calc);
+      $('resetBtn').addEventListener('click', () => {
+        $('riderWeight').value = unit === 'metric' ? 75 : (75 * 2.20462).toFixed(1);
+        $('stokerWeight').value = '';
+        $('bikeWeight').value = unit === 'metric' ? 8 : (8 * 2.20462).toFixed(1);
+        $('frontTireWidth').value = unit === 'metric' ? 25 : (25 / 25.4).toFixed(2);
+        $('rearTireWidth').value  = unit === 'metric' ? 25 : (25 / 25.4).toFixed(2);
+        $('terrain').value = 'road';
+        $('rimType').value = 'tubed';
+        postureEl.value = 'road';
+        syncPosture();
+        $('roadCondition').value = 'dry';
+        $('speed').value = '20-35';
+        $('wetPct').value = 7;
+        $('wetPctText').textContent = '7%';
+        ['pumpAlt','rideAlt','pumpTemp','rideTemp'].forEach(id => $(id).value = '');
+        clearError();
+        $('resultBlock').classList.remove('active');
+      });
+
+      // initial
+      syncPosture();
+    })();
+  </script>
+
+</body>
+</html>
