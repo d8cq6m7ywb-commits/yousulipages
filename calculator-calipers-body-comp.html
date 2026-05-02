@@ -1,0 +1,775 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calipers → body composition — Yousuli calculators</title>
+  <meta name="description" content="Skinfold caliper measurements to body fat % using Jackson-Pollock 3-site or Durnin-Womersley 4-site. Body density via Siri equation, lean and fat mass, ACE/ACSM category bands." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED CALCULATOR STYLES ============ -->
+  <style>
+    .bc-calc-host { width: 100%; }
+
+    .bc-calc-host .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      background: var(--ys-bg-soft);
+      padding: 18px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 600px) { .bc-calc-host .field-grid { grid-template-columns: 1fr; } }
+    .bc-calc-host .field-grid .full { grid-column: 1 / -1; }
+
+    .bc-calc-host label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.72rem;
+      color: var(--ys-navy);
+      margin-bottom: 6px;
+    }
+    .bc-calc-host .row { display: flex; align-items: stretch; }
+    .bc-calc-host input[type="number"],
+    .bc-calc-host select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      font-size: 0.96rem;
+      font-family: var(--ys-font-body);
+      background: #fff;
+      color: var(--ys-navy);
+      box-sizing: border-box;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .bc-calc-host input:focus,
+    .bc-calc-host select:focus {
+      outline: none;
+      border-color: var(--wf-coral);
+      box-shadow: 0 0 0 3px rgba(250, 119, 60, 0.18);
+    }
+    .bc-calc-host .row input { border-radius: 6px 0 0 6px; }
+    .bc-calc-host .row .unit {
+      padding: 0 12px;
+      background: var(--ys-navy);
+      color: #fff;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em;
+      font-size: 0.74rem;
+      display: flex; align-items: center;
+      border-radius: 0 6px 6px 0;
+    }
+
+    .bc-calc-host .unit-toggle {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 14px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.72rem; color: var(--ys-muted);
+    }
+    .bc-calc-host .unit-toggle .switch {
+      display: inline-flex;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .bc-calc-host .unit-toggle .switch button {
+      background: #fff; border: 0; padding: 6px 12px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.7rem; font-weight: 600;
+      color: var(--ys-muted);
+      cursor: pointer;
+    }
+    .bc-calc-host .unit-toggle .switch button.active {
+      background: var(--ys-navy); color: #fff;
+    }
+
+    .bc-calc-host .err {
+      color: #c93939;
+      background: rgba(201, 57, 57, 0.08);
+      border-left: 4px solid #c93939;
+      padding: 10px 14px;
+      margin-top: 12px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      display: none;
+    }
+    .bc-calc-host .err.active { display: block; }
+
+    .bc-calc-host .results-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+      margin-top: 18px;
+    }
+    @media (max-width: 760px) { .bc-calc-host .results-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { .bc-calc-host .results-grid { grid-template-columns: 1fr; } }
+
+    .bc-calc-host .result-tile {
+      background: #fff;
+      border: 1px solid var(--ys-line);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+    .bc-calc-host .result-tile.featured {
+      background: var(--ys-navy); border-color: var(--ys-navy);
+    }
+    .bc-calc-host .result-tile.featured .result-label,
+    .bc-calc-host .result-tile.featured .result-value,
+    .bc-calc-host .result-tile.featured .result-aux { color: #fff; }
+    .bc-calc-host .result-tile.featured .result-aux { color: rgba(255, 255, 255, 0.7); }
+
+    .bc-calc-host .result-label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.7rem;
+      color: var(--ys-muted);
+      margin-bottom: 6px;
+    }
+    .bc-calc-host .result-value {
+      display: block;
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--ys-navy);
+      letter-spacing: 0.02em;
+    }
+    .bc-calc-host .result-aux {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--ys-muted);
+      margin-top: 4px;
+    }
+
+    .bc-calc-host .band-row {
+      display: flex; gap: 4px;
+      margin-top: 18px;
+    }
+    .bc-calc-host .band {
+      flex: 1; min-width: 0;
+      padding: 10px 6px;
+      text-align: center;
+      background: var(--ys-bg-soft);
+      border-radius: 6px;
+      font-size: 0.78rem;
+      color: var(--ys-muted);
+      transition: all 0.2s ease;
+    }
+    .bc-calc-host .band-name {
+      display: block;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em; text-transform: uppercase;
+      font-size: 0.66rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .bc-calc-host .band.active {
+      background: var(--wf-coral);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(250, 119, 60, 0.3);
+    }
+    .bc-calc-host .band.active .band-name { color: #fff; }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 56px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Body composition</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">Calipers &rarr; body composition.</h1>
+      <div class="wf-subhead">3 sites or 4 sites &middot; body fat % &middot; lean mass</div>
+      <p class="lede" style="max-width: 660px;">Three or four caliper measurements convert to body density via the Jackson-Pollock or Durnin-Womersley equation, then to body-fat percentage via Siri. Track lean mass over a season &mdash; that&rsquo;s the number that matters for endurance athletes, not weight on a scale.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">How to take the measurements</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 32px 0 48px;">
+    <div class="ys-container">
+      <div class="ys-tool" style="max-width: 880px;">
+        <h3>Plug in your skinfolds</h3>
+        <p class="ys-tool-pre">Pick a method, enter your measurements in millimetres. Take each fold <strong>3 times</strong> and use the average. Always measure on the right side of the body, on dry skin, before training (not after).</p>
+
+        <div class="bc-calc-host">
+
+          <div class="unit-toggle">
+            <span>Mass units</span>
+            <span class="switch">
+              <button type="button" class="active" data-unit="metric">kg</button>
+              <button type="button" data-unit="imperial">lb</button>
+            </span>
+          </div>
+
+          <div class="field-grid">
+            <div class="full">
+              <label>Method</label>
+              <select id="method">
+                <option value="jp-men">Jackson-Pollock 3-site (men) — chest, abdomen, thigh</option>
+                <option value="jp-women">Jackson-Pollock 3-site (women) — triceps, suprailiac, thigh</option>
+                <option value="dw">Durnin-Womersley 4-site — biceps, triceps, subscapular, suprailiac</option>
+              </select>
+            </div>
+
+            <div id="dwSexField" style="display: none;">
+              <label>Sex (for DW coefficients)</label>
+              <select id="dwSex">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </div>
+
+            <div>
+              <label>Age</label>
+              <div class="row">
+                <input type="number" id="age" min="10" max="100" value="35" />
+                <span class="unit">yr</span>
+              </div>
+            </div>
+
+            <div>
+              <label>Body weight (optional &mdash; enables fat/lean mass)</label>
+              <div class="row">
+                <input type="number" id="weight" step="0.1" min="0" value="75" />
+                <span class="unit unit-mass">kg</span>
+              </div>
+            </div>
+            <div></div>
+
+            <div id="site1Field">
+              <label id="site1Label">Site 1</label>
+              <div class="row">
+                <input type="number" id="site1" min="0" step="0.5" />
+                <span class="unit">mm</span>
+              </div>
+            </div>
+            <div id="site2Field">
+              <label id="site2Label">Site 2</label>
+              <div class="row">
+                <input type="number" id="site2" min="0" step="0.5" />
+                <span class="unit">mm</span>
+              </div>
+            </div>
+            <div id="site3Field">
+              <label id="site3Label">Site 3</label>
+              <div class="row">
+                <input type="number" id="site3" min="0" step="0.5" />
+                <span class="unit">mm</span>
+              </div>
+            </div>
+            <div id="site4Field" style="display: none;">
+              <label id="site4Label">Site 4</label>
+              <div class="row">
+                <input type="number" id="site4" min="0" step="0.5" />
+                <span class="unit">mm</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ys-btn-row" style="margin: 4px 0 0;">
+            <button class="ys-btn ys-btn-coral" type="button" id="calcBtn">Calculate</button>
+            <button class="ys-btn ys-btn-ghost" type="button" id="resetBtn">Reset</button>
+          </div>
+
+          <div class="err" id="errorMsg"></div>
+
+          <div id="resultsBlock" style="display: none;">
+            <div class="results-grid">
+              <div class="result-tile featured">
+                <span class="result-label">Body fat</span>
+                <span class="result-value"><span id="outBfPct">—</span> %</span>
+                <span class="result-aux" id="outBfBand">—</span>
+              </div>
+              <div class="result-tile">
+                <span class="result-label">Body density</span>
+                <span class="result-value" id="outBd">—</span>
+                <span class="result-aux">g/cm³</span>
+              </div>
+              <div class="result-tile">
+                <span class="result-label">Fat mass</span>
+                <span class="result-value"><span id="outFatMass">—</span> <span class="unit-mass-text">kg</span></span>
+                <span class="result-aux" id="outFatPct">—</span>
+              </div>
+              <div class="result-tile">
+                <span class="result-label">Lean mass</span>
+                <span class="result-value"><span id="outLeanMass">—</span> <span class="unit-mass-text">kg</span></span>
+                <span class="result-aux" id="outLeanPct">—</span>
+              </div>
+            </div>
+
+            <div class="band-row" id="bandRow"></div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW TO MEASURE ============ -->
+  <section class="wf-section alt" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How to take a clean measurement</h2>
+        <div class="ys-rule"></div>
+        <p>Skinfolds are technique-sensitive. Same caliper, same site, same person measuring &mdash; or the trend is noise.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>Right side, dry skin, pre-training</h3>
+          <p>Always measure on the right side of the body. Skin must be dry. Take the measurement <strong>before</strong> training &mdash; sweat and post-exercise hydration shifts can change the read by 1&ndash;2%.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>Pinch fat, not muscle</h3>
+          <p>Grip the skin between thumb and forefinger about 1 cm from the measurement site, lift away from the muscle, then place the caliper jaws on the fold. Read at 2&ndash;3 seconds &mdash; longer compresses the fold and gives a low read.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>Three reads, take the average</h3>
+          <p>Two reads if they&rsquo;re within 1 mm of each other. If the third differs by &gt; 2 mm, take a fourth and median it. <strong>Trend matters more than absolute number</strong> &mdash; same caliper + same person measuring repeats well.</p>
+        </div>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.92rem; max-width: 720px; margin-left: auto; margin-right: auto;">Caliper choice: Harpenden, Lange, Slim Guide are the three standards. Cheap plastic calipers can be off by ±2 mm. For tracking changes over a season, a single cheap caliper used by the same person each time gives you better data than rotating between expensive calipers.</p>
+    </div>
+  </section>
+
+  <!-- ============ MEASUREMENT SITES ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Where each site is</h2>
+        <div class="ys-rule"></div>
+        <p>Anatomical landmarks for each fold.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-card">
+          <div class="ys-meta">JP3 men · 1</div>
+          <h3>Chest</h3>
+          <p>Diagonal fold, halfway between the anterior axillary line (front of armpit crease) and the nipple. Lift fold along the diagonal axis.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">JP3 men · 2 · DW · 4</div>
+          <h3>Abdomen / Suprailiac</h3>
+          <p><strong>Abdomen (JP3 men):</strong> vertical fold ~2 cm right of the navel. <strong>Suprailiac (DW):</strong> diagonal fold just above the iliac crest along the anterior axillary line.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">JP3 · 3</div>
+          <h3>Thigh</h3>
+          <p>Vertical fold on the front of the thigh, midway between the inguinal crease (hip flexor crease) and the top of the kneecap. Standing weight on the other leg.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">JP3 women · 1 · DW · 2</div>
+          <h3>Triceps</h3>
+          <p>Vertical fold on the back of the upper arm, halfway between the acromion (shoulder bone) and the olecranon (elbow). Arm relaxed at the side.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">DW · 1</div>
+          <h3>Biceps</h3>
+          <p>Vertical fold at the front of the upper arm, halfway between the shoulder and the elbow &mdash; over the belly of the biceps with the arm relaxed.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">DW · 3</div>
+          <h3>Subscapular</h3>
+          <p>Diagonal fold 1&ndash;2 cm below the inferior angle (bottom corner) of the scapula, running 45° down and laterally toward the elbow.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COACH NOTE ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
+        <h2 style="margin-top: 4px;">Track lean mass, not weight.</h2>
+        <p>Two athletes lose 3 kg over a training block. Athlete A loses 1 kg fat + 2 kg muscle. Athlete B loses 3 kg fat + 0 kg muscle. The scale tells the same story; your performance won&rsquo;t.</p>
+        <p style="margin-top: 10px;"><strong>Lean mass is the proxy for the engine.</strong> If lean mass is dropping, you&rsquo;re under-fuelling, under-recovering, or losing the wrong tissue. If lean mass holds or climbs while body fat drops, the work is doing what you want it to do.</p>
+        <ul class="ys-card-bullets" style="margin-top: 12px;">
+          <li>Test every <strong>4&ndash;6 weeks</strong> &mdash; same caliper, same person, same time of day, same hydration state</li>
+          <li>Keep changes small: a sustainable rate of fat loss for trained athletes is <strong>0.5&ndash;1% bodyweight / week</strong>, max</li>
+          <li>If lean mass drops two consecutive tests, eat more &mdash; you&rsquo;re in a deficit that&rsquo;s costing you watts</li>
+        </ul>
+        <p style="margin-top: 12px;">For absolute precision &mdash; tracking 0.5% changes &mdash; pair calipers with DEXA every 6 months. Calipers track <em>your</em> trend; DEXA gives you the calibration.</p>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FORMULAS / ABOUT THE METHODS ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>About the methods</h2>
+        <div class="ys-rule"></div>
+        <p>Two equations, both validated against hydrostatic weighing on adult populations.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-card">
+          <div class="ys-meta">Jackson-Pollock 3-site</div>
+          <h3>Quick &amp; convenient</h3>
+          <p>Three sites, sex-specific equations. <strong>Best for athletes</strong> &mdash; populations were lean and fit. Slight under-prediction for very lean athletes (&lt; 10% men / &lt; 16% women). Standard error ~3.5% body fat.</p>
+        </div>
+        <div class="ys-card featured">
+          <div class="ys-meta" style="color: var(--wf-coral);">Durnin-Womersley 4-site</div>
+          <h3>Population-stable</h3>
+          <p>Four sites with <strong>5 age brackets &times; 2 sexes</strong> coefficients. More robust across the general population &mdash; including older athletes. Slight over-prediction for very lean. Use it for non-elite or master&rsquo;s populations. Standard error ~3.5%.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">Siri equation</div>
+          <h3>Density &rarr; body fat %</h3>
+          <p>Both methods compute body density first; <strong>BF% = (495 / BD) − 450</strong>. Assumes fat density 0.9 g/cm³ and lean density 1.1 g/cm³ &mdash; valid for most adult populations. Brozek alternative differs by &lt; 1%.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED CALCULATORS ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Related calculators</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card" href="https://www.yousuli.co/resting-metabolic-rate-calculator" target="_top">
+          <span class="ys-calc-card-title">RMR calculator</span>
+          <p>Lean mass is the strongest input to RMR. Track both together.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="https://www.yousuli.co/macro" target="_top">
+          <span class="ys-calc-card-title">Macros &amp; TDEE</span>
+          <p>Body composition feeds your daily energy and macro targets.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card" href="calculators.html">
+          <span class="ys-calc-card-title">All calculators</span>
+          <p>Back to the full catalog &mdash; 28 endurance calculators across performance, fueling, swim, bike, run.</p>
+          <span class="ys-calc-card-arrow">Browse &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want body comp without the &plusmn;3% error?</h2>
+          <p>DEXA at the lab gives you bone, lean, and fat by region with sub-1% precision. Track over a season with calipers; calibrate to truth twice a year with DEXA. The combination beats either alone.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Book DEXA</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Calipers">Send feedback</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Spotted a bug or want a feature? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Calipers" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ CALCULATOR LOGIC ============ -->
+  <script>
+    (function () {
+      // Durnin-Womersley table — full age-bracketed coefficients
+      const DW_TABLE = {
+        male: [
+          { maxAge: 19, c: 1.1620, m: 0.0630 }, // 17–19
+          { maxAge: 29, c: 1.1631, m: 0.0632 }, // 20–29
+          { maxAge: 39, c: 1.1422, m: 0.0544 }, // 30–39
+          { maxAge: 49, c: 1.1620, m: 0.0700 }, // 40–49
+          { maxAge: 999, c: 1.1715, m: 0.0779 } // 50+
+        ],
+        female: [
+          { maxAge: 19, c: 1.1549, m: 0.0678 }, // 16–19
+          { maxAge: 29, c: 1.1599, m: 0.0717 }, // 20–29
+          { maxAge: 39, c: 1.1423, m: 0.0632 }, // 30–39
+          { maxAge: 49, c: 1.1333, m: 0.0612 }, // 40–49
+          { maxAge: 999, c: 1.1339, m: 0.0645 } // 50+
+        ]
+      };
+
+      function dwCoeffs(sex, age) {
+        const t = DW_TABLE[sex];
+        for (const row of t) {
+          if (age <= row.maxAge) return row;
+        }
+        return t[t.length - 1];
+      }
+
+      // ACE / ACSM body fat bands
+      const BANDS = {
+        male:   [{ name: 'Essential', max: 5 }, { name: 'Athletic', max: 13 }, { name: 'Fitness', max: 17 }, { name: 'Average', max: 24 }, { name: 'Obese', max: 100 }],
+        female: [{ name: 'Essential', max: 13 }, { name: 'Athletic', max: 20 }, { name: 'Fitness', max: 24 }, { name: 'Average', max: 31 }, { name: 'Obese', max: 100 }]
+      };
+
+      function bandFor(sex, bf) {
+        const list = BANDS[sex];
+        for (const b of list) { if (bf <= b.max) return b.name; }
+        return 'Obese';
+      }
+
+      // ---- DOM ----
+      const $ = id => document.getElementById(id);
+      const methodEl = $('method');
+      const dwSexField = $('dwSexField');
+      const dwSexEl = $('dwSex');
+      const ageEl = $('age');
+      const weightEl = $('weight');
+      const errEl = $('errorMsg');
+      const resultsBlock = $('resultsBlock');
+      const calcBtn = $('calcBtn');
+      const resetBtn = $('resetBtn');
+
+      const SITE_LABELS = {
+        'jp-men':   ['Chest (mm)', 'Abdomen (mm)', 'Thigh (mm)', null],
+        'jp-women': ['Triceps (mm)', 'Suprailiac (mm)', 'Thigh (mm)', null],
+        'dw':       ['Biceps (mm)', 'Triceps (mm)', 'Subscapular (mm)', 'Suprailiac (mm)']
+      };
+
+      let unit = 'metric'; // mass
+
+      function updateMethodUI() {
+        const m = methodEl.value;
+        const labels = SITE_LABELS[m];
+        $('site1Label').textContent = labels[0];
+        $('site2Label').textContent = labels[1];
+        $('site3Label').textContent = labels[2];
+
+        const isDW = m === 'dw';
+        $('site4Field').style.display = isDW ? '' : 'none';
+        dwSexField.style.display = isDW ? '' : 'none';
+        if (!isDW) $('site4Label').textContent = '—';
+        else $('site4Label').textContent = labels[3];
+      }
+      methodEl.addEventListener('change', () => { updateMethodUI(); hideResults(); });
+
+      // mass unit toggle
+      document.querySelectorAll('.bc-calc-host .unit-toggle button').forEach(b => {
+        b.addEventListener('click', () => {
+          if (b.classList.contains('active')) return;
+          document.querySelectorAll('.bc-calc-host .unit-toggle button').forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          const newUnit = b.getAttribute('data-unit');
+          const w = parseFloat(weightEl.value);
+          if (Number.isFinite(w)) {
+            if (newUnit === 'imperial') weightEl.value = (w * 2.20462).toFixed(1);
+            else weightEl.value = (w / 2.20462).toFixed(1);
+          }
+          unit = newUnit;
+          document.querySelectorAll('.unit-mass').forEach(el => el.textContent = unit === 'metric' ? 'kg' : 'lb');
+          document.querySelectorAll('.unit-mass-text').forEach(el => el.textContent = unit === 'metric' ? 'kg' : 'lb');
+          if (resultsBlock.style.display !== 'none') calc();
+        });
+      });
+
+      function showError(msg) {
+        errEl.textContent = msg;
+        errEl.classList.add('active');
+        resultsBlock.style.display = 'none';
+      }
+      function clearError() { errEl.classList.remove('active'); errEl.textContent = ''; }
+      function hideResults() { resultsBlock.style.display = 'none'; clearError(); }
+
+      function calc() {
+        clearError();
+        const m = methodEl.value;
+        const age = parseInt(ageEl.value, 10);
+        const s1 = parseFloat($('site1').value);
+        const s2 = parseFloat($('site2').value);
+        const s3 = parseFloat($('site3').value);
+        const s4 = m === 'dw' ? parseFloat($('site4').value) : 0;
+
+        if (!Number.isFinite(age) || age <= 0) return showError('Enter a valid age.');
+        if ([s1, s2, s3].some(v => !Number.isFinite(v) || v <= 0)) return showError('Enter all skinfold values in millimetres.');
+        if (m === 'dw' && (!Number.isFinite(s4) || s4 <= 0)) return showError('DW needs all 4 skinfolds.');
+
+        let bd, sexForBand;
+        if (m === 'jp-men') {
+          const sum = s1 + s2 + s3;
+          bd = 1.10938 - 0.0008267 * sum + 0.0000016 * sum * sum - 0.0002574 * age;
+          sexForBand = 'male';
+        } else if (m === 'jp-women') {
+          const sum = s1 + s2 + s3;
+          bd = 1.0994921 - 0.0009929 * sum + 0.0000023 * sum * sum - 0.0001392 * age;
+          sexForBand = 'female';
+        } else {
+          // DW
+          const sex = dwSexEl.value;
+          const sum = s1 + s2 + s3 + s4;
+          if (sum <= 0) return showError('DW skinfold sum must be positive.');
+          const { c, m: slope } = dwCoeffs(sex, age);
+          bd = c - slope * Math.log10(sum);
+          sexForBand = sex;
+        }
+
+        if (!Number.isFinite(bd) || bd <= 0 || bd > 1.5) return showError('Body density out of range — re-check inputs.');
+
+        const bfPct = (495 / bd) - 450;
+        if (bfPct < 0 || bfPct > 60) return showError('Body fat % out of plausible range — re-check inputs.');
+
+        const band = bandFor(sexForBand, bfPct);
+
+        // Display
+        $('outBd').textContent = bd.toFixed(4);
+        $('outBfPct').textContent = bfPct.toFixed(1);
+        $('outBfBand').textContent = band;
+
+        // weight → fat / lean mass
+        let weight = parseFloat(weightEl.value);
+        if (Number.isFinite(weight) && weight > 0) {
+          if (unit === 'imperial') weight /= 2.20462; // convert to kg internally
+          const fatKg = weight * (bfPct / 100);
+          const leanKg = weight - fatKg;
+          const showWeight = unit === 'metric' ? 1 : 2.20462;
+          $('outFatMass').textContent  = (fatKg * showWeight).toFixed(1);
+          $('outLeanMass').textContent = (leanKg * showWeight).toFixed(1);
+          $('outFatPct').textContent   = bfPct.toFixed(1) + '% of total';
+          $('outLeanPct').textContent  = (100 - bfPct).toFixed(1) + '% of total';
+        } else {
+          $('outFatMass').textContent  = '—';
+          $('outLeanMass').textContent = '—';
+          $('outFatPct').textContent   = 'enter weight';
+          $('outLeanPct').textContent  = 'enter weight';
+        }
+
+        // bands row
+        const bandRow = $('bandRow');
+        bandRow.innerHTML = '';
+        const bands = BANDS[sexForBand];
+        let prev = 0;
+        bands.forEach(b => {
+          const div = document.createElement('div');
+          div.className = 'band' + (b.name === band ? ' active' : '');
+          const range = b.max >= 100 ? '> ' + prev + '%' : prev + '–' + b.max + '%';
+          div.innerHTML = '<span class="band-name">' + b.name + '</span>' + range;
+          bandRow.appendChild(div);
+          prev = b.max;
+        });
+
+        resultsBlock.style.display = 'block';
+      }
+
+      function reset() {
+        ['site1','site2','site3','site4'].forEach(id => $(id).value = '');
+        ageEl.value = 35;
+        weightEl.value = unit === 'metric' ? 75 : (75 * 2.20462).toFixed(1);
+        clearError();
+        resultsBlock.style.display = 'none';
+      }
+
+      calcBtn.addEventListener('click', calc);
+      resetBtn.addEventListener('click', reset);
+      ['site1','site2','site3','site4','age','weight'].forEach(id => {
+        $(id).addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); calc(); } });
+      });
+
+      updateMethodUI();
+    })();
+  </script>
+
+</body>
+</html>
