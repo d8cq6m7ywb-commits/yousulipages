@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RPE ↔ RER — Yousuli calculators</title>
+  <meta name="description" content="Approximate the carb/fat fuel split at a given RPE or RER. Useful for fueling planning — but real substrate utilization is non-linear and athlete-specific. Lab metabolic profiling gives the truth." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED CALCULATOR STYLES ============ -->
+  <style>
+    .rr-calc-host { width: 100%; }
+
+    .rr-calc-host .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      background: var(--ys-bg-soft);
+      padding: 18px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 700px) { .rr-calc-host .field-grid { grid-template-columns: 1fr; } }
+
+    .rr-calc-host label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.7rem;
+      color: var(--ys-navy);
+      margin-bottom: 6px;
+    }
+    .rr-calc-host .row { display: flex; align-items: stretch; }
+    .rr-calc-host input[type="number"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      font-size: 0.96rem;
+      font-family: var(--ys-font-body);
+      background: #fff;
+      color: var(--ys-navy);
+      box-sizing: border-box;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .rr-calc-host input:focus {
+      outline: none;
+      border-color: var(--wf-coral);
+      box-shadow: 0 0 0 3px rgba(250, 119, 60, 0.18);
+    }
+    .rr-calc-host .row input { border-radius: 6px 0 0 6px; }
+    .rr-calc-host .row .unit {
+      padding: 0 12px;
+      background: var(--ys-navy); color: #fff;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em; font-size: 0.74rem;
+      display: flex; align-items: center;
+      border-radius: 0 6px 6px 0;
+      min-width: 50px; justify-content: center;
+    }
+    .rr-calc-host .field-help {
+      font-size: 0.78rem;
+      color: var(--ys-muted);
+      margin-top: 6px;
+    }
+
+    .rr-calc-host .err {
+      color: #c93939;
+      background: rgba(201, 57, 57, 0.08);
+      border-left: 4px solid #c93939;
+      padding: 10px 14px;
+      margin-top: 12px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      display: none;
+    }
+    .rr-calc-host .err.active { display: block; }
+
+    /* visual split bar */
+    .rr-calc-host .split-bar {
+      margin-top: 18px;
+      height: 28px;
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .rr-calc-host .split-bar .seg-carb {
+      background: var(--ys-navy);
+      transition: width 0.3s ease;
+    }
+    .rr-calc-host .split-bar .seg-fat {
+      background: var(--wf-coral);
+      transition: width 0.3s ease;
+    }
+    .rr-calc-host .split-legend {
+      display: flex; justify-content: space-between; gap: 12px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      font-size: 0.78rem;
+      margin-top: 8px;
+    }
+    .rr-calc-host .split-legend .legend-carb { color: var(--ys-navy); }
+    .rr-calc-host .split-legend .legend-fat { color: var(--wf-coral); }
+
+    .rr-calc-host .results-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+      margin-top: 18px;
+    }
+    @media (max-width: 760px) { .rr-calc-host .results-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { .rr-calc-host .results-grid { grid-template-columns: 1fr; } }
+
+    .rr-calc-host .result-tile {
+      background: #fff;
+      border: 1px solid var(--ys-line);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+    .rr-calc-host .result-tile.carb {
+      border-top: 4px solid var(--ys-navy);
+    }
+    .rr-calc-host .result-tile.fat {
+      border-top: 4px solid var(--wf-coral);
+    }
+    .rr-calc-host .result-label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.68rem;
+      color: var(--ys-muted);
+      margin-bottom: 6px;
+    }
+    .rr-calc-host .result-value {
+      display: block;
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: var(--ys-navy);
+      letter-spacing: 0.02em;
+    }
+    .rr-calc-host .result-aux {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--ys-muted);
+      margin-top: 4px;
+    }
+
+    .rr-calc-host .domain-tag {
+      display: inline-block;
+      padding: 6px 14px;
+      background: var(--wf-coral);
+      color: #fff;
+      border-radius: 999px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+
+    .rr-calc-host .rpe-desc {
+      margin-top: 14px;
+      padding: 14px 16px;
+      background: var(--ys-bg-soft);
+      border-left: 4px solid var(--wf-coral);
+      border-radius: 6px;
+      color: var(--ys-navy);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    .rr-calc-host .rpe-level {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.04em;
+      color: var(--wf-coral);
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 56px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Fueling</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">RPE &harr; RER.</h1>
+      <div class="wf-subhead">Effort &middot; substrate split &middot; fat oxidation rate</div>
+      <p class="lede" style="max-width: 660px;">A loose link between rate of perceived exertion and respiratory exchange ratio &mdash; rough way to gauge fat vs. carb burn at a given intensity. Useful for fueling sanity checks; not a substitute for measured VO<sub>2</sub> testing. Type RPE <em>or</em> RER, the other one fills in.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">What RER actually tells you</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 32px 0 48px;">
+    <div class="ys-container">
+      <div class="ys-tool" style="max-width: 880px;">
+        <h3>Plug in your effort</h3>
+        <p class="ys-tool-pre">Set <strong>total kcal</strong> for the session, then either <strong>RPE 1–10</strong> or <strong>RER 0.70–1.00</strong>. The other field auto-fills via a linear mapping (with the standard caveats — see below).</p>
+
+        <div class="rr-calc-host">
+
+          <div class="field-grid">
+            <div>
+              <label>Total kcal in the session</label>
+              <div class="row">
+                <input type="number" id="totalCalories" min="0" step="10" value="500" />
+                <span class="unit">kcal</span>
+              </div>
+              <div class="field-help">Use the <a href="calculator-calorie-burn.html" style="color: var(--wf-coral);">calorie burn</a> calc if you don&rsquo;t have it.</div>
+            </div>
+            <div>
+              <label>RPE (1–10)</label>
+              <input type="number" id="rpe" step="0.1" min="1" max="10" value="5" />
+              <div class="field-help">Rate of perceived exertion.</div>
+            </div>
+            <div>
+              <label>RER (0.70–1.00)</label>
+              <input type="number" id="rer" step="0.01" min="0.70" max="1.00" value="0.86" />
+              <div class="field-help">~0.70 fat-only · ~1.00 carb-only.</div>
+            </div>
+          </div>
+
+          <div class="ys-btn-row" style="margin: 4px 0 0;">
+            <button class="ys-btn ys-btn-coral" type="button" id="calcBtn">Calculate</button>
+            <button class="ys-btn ys-btn-ghost" type="button" id="resetBtn">Reset</button>
+          </div>
+
+          <div class="err" id="errorMsg"></div>
+
+          <div id="resultsBlock" style="display: none;">
+
+            <div class="split-bar">
+              <div class="seg-carb" id="segCarb" style="width: 50%;"></div>
+              <div class="seg-fat" id="segFat" style="width: 50%;"></div>
+            </div>
+            <div class="split-legend">
+              <span class="legend-carb">Carb &mdash; <span id="legendCarb">—</span>%</span>
+              <span class="legend-fat">Fat &mdash; <span id="legendFat">—</span>%</span>
+            </div>
+
+            <div style="text-align: center; margin-top: 14px;">
+              <span style="font-family: var(--ys-font-display); text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.74rem; color: var(--ys-muted);">Intensity domain</span><br>
+              <span class="domain-tag" id="domainTag">—</span>
+            </div>
+
+            <div class="results-grid">
+              <div class="result-tile carb">
+                <span class="result-label">Calories from carb</span>
+                <span class="result-value"><span id="outCarbCals">—</span></span>
+                <span class="result-aux">kcal</span>
+              </div>
+              <div class="result-tile carb">
+                <span class="result-label">Carb (grams)</span>
+                <span class="result-value"><span id="outCarbG">—</span> g</span>
+                <span class="result-aux">@ 4 kcal/g</span>
+              </div>
+              <div class="result-tile fat">
+                <span class="result-label">Calories from fat</span>
+                <span class="result-value"><span id="outFatCals">—</span></span>
+                <span class="result-aux">kcal</span>
+              </div>
+              <div class="result-tile fat">
+                <span class="result-label">Fat (grams)</span>
+                <span class="result-value"><span id="outFatG">—</span> g</span>
+                <span class="result-aux">@ 9 kcal/g</span>
+              </div>
+            </div>
+
+            <div class="rpe-desc" id="rpeDesc">—</div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHAT RER TELLS YOU ============ -->
+  <section class="wf-section alt" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What RER actually tells you</h2>
+        <div class="ys-rule"></div>
+        <p>And what it doesn&rsquo;t.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>Substrate ratio at steady state</h3>
+          <p><strong>RER ≈ 0.70</strong> = predominantly fat. <strong>RER ≈ 1.00</strong> = predominantly carb. <strong>0.85</strong> sits roughly 50/50. The math is the volume of CO<sub>2</sub> you exhale divided by O<sub>2</sub> you consume — fat oxidation produces less CO<sub>2</sub> per O<sub>2</sub>, carb produces equal.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>Doesn&rsquo;t see protein, ketones, or PCr</h3>
+          <p><strong>Protein</strong> contributes a small, variable amount RER can&rsquo;t isolate. <strong>Ketone</strong> oxidation has an effective RQ near fat &mdash; can&rsquo;t separate them. <strong>Phosphocreatine</strong> powers the first ~3–10 s of all-out efforts and uses no oxygen, so it&rsquo;s invisible to RER.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>Above ~1.0, it lies</h3>
+          <p>At very high intensity, lactate is buffered and exhales as extra CO<sub>2</sub>. RER can climb past 1.0 even with no actual carb-only oxidation &mdash; substrate inference becomes unreliable. <strong>Reading is most useful at RPE 4–8 / RER 0.85–0.95</strong> when you&rsquo;re in steady-state aerobic work.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ INTENSITY DOMAINS ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Fuel systems by intensity domain</h2>
+        <div class="ys-rule"></div>
+        <p>The map is rough — but the order is right.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-card">
+          <div class="ys-meta">RER ~0.75–0.82</div>
+          <h3>Very easy / Z1 recovery</h3>
+          <p>Predominantly oxidative. <strong>Fat &gt; carb</strong>. Aerobic base work, recovery sessions, all-day Zone 1. Long-term metabolic adaptations live here.</p>
+        </div>
+        <div class="ys-card featured">
+          <div class="ys-meta" style="color: var(--wf-coral);">RER ~0.82–0.90</div>
+          <h3>Aerobic / tempo · Z2–Z3</h3>
+          <p>Oxidative. <strong>Mix of fat + carb</strong>. The endurance sweet spot. Where most race-pace effort happens for events of 90 min+. Fat ox peak typically lives in here.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">RER ~0.90–1.00</div>
+          <h3>Threshold / heavy-severe · Z4</h3>
+          <p>Oxidative + glycolytic. <strong>Carb &gt; fat</strong>. Sustainable for 30–60 min. Where lactate threshold sits; fueling decisions matter most because carb burn rate is high.</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">RER &gt; 1.00</div>
+          <h3>VO<sub>2</sub>max + sprints · Z5</h3>
+          <p>PCr → glycolytic dominant. <strong>RER becomes meaningless</strong> due to lactate buffering. Don&rsquo;t infer substrate split here — fueling at this intensity is a different conversation.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COACH NOTE ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
+        <h2 style="margin-top: 4px;">Real RER vs intensity is not linear &mdash; and not the same for any two athletes.</h2>
+        <p>This calculator&rsquo;s linear RPE→RER mapping is a teaching tool. In reality, two athletes at the same RPE can have <em>very different</em> RER values:</p>
+        <ul class="ys-card-bullets" style="margin-top: 12px;">
+          <li><strong>Trained</strong> endurance athletes burn more fat at a given intensity — their crossover (the RER point where carb takes over from fat) shifts <em>right</em>, sometimes by 20+ % VO<sub>2</sub>max.</li>
+          <li><strong>Glycogen status</strong> matters: same effort fasted vs. carb-loaded → different RER.</li>
+          <li><strong>Heat, altitude, modality</strong> all shift it. Cycling RER ≠ running RER at the same effort.</li>
+          <li><strong>Diet</strong>: a fat-adapted (low-carb) athlete oxidizes fat at higher intensities — peak fat ox can hit 1.5×&nbsp; that of a high-carb-fed athlete.</li>
+        </ul>
+        <p style="margin-top: 12px;">If you actually need <strong>your</strong> crossover and peak-fat-oxidation rate &mdash; for race-day fueling planning, weight goals, or zone setup &mdash; metabolic profiling at the lab measures it directly. The number you walk out with is the difference between guessing your fuel needs and knowing them.</p>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Metabolic profiling</a>
+          <a class="ys-btn ys-btn-ghost" href="calculator-intraworkout-fueling.html">Fueling calculator</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THINGS RER MISSES ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Protein, gluconeogenesis &amp; intra-workout fueling</h2>
+        <div class="ys-rule"></div>
+        <p>Why fueling matters even when RER says you&rsquo;re &ldquo;mostly burning fat.&rdquo;</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-card">
+          <div class="ys-meta">Catabolism</div>
+          <h3>Protein gets eaten too</h3>
+          <p>Long, under-fueled efforts pull amino acids from muscle. The liver (and kidneys) convert them — plus lactate (Cori cycle) and glycerol — into glucose via gluconeogenesis. Muscle itself doesn&rsquo;t export glucose; it supplies substrates (e.g. alanine via the glucose-alanine cycle).</p>
+        </div>
+        <div class="ys-card">
+          <div class="ys-meta">Cost</div>
+          <h3>Lean mass &amp; power loss</h3>
+          <p>Chronic under-fueling raises reliance on amino acids. Net: lean mass and power both decline. Athletes feel this as &ldquo;legs heavy for no reason&rdquo; weeks before the scale moves.</p>
+        </div>
+        <div class="ys-card featured">
+          <div class="ys-meta" style="color: var(--wf-coral);">Practical</div>
+          <h3>Fuel the work</h3>
+          <p>Appropriate <strong>intra-workout carbohydrate</strong> + adequate <strong>daily protein</strong> protect performance and muscle. RER says &ldquo;mostly fat&rdquo; at low intensity — but that doesn&rsquo;t mean fasted long sessions are free.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED CALCULATORS ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Related calculators</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card redesigned" href="calculator-intraworkout-fueling.html">
+          <span class="ys-calc-card-title">Intra-workout fueling</span>
+          <p>Once you know carb % and burn rate, here&rsquo;s how to actually replace it on the move.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card redesigned" href="calculator-calorie-burn.html">
+          <span class="ys-calc-card-title">Triathlon calorie burn</span>
+          <p>The total-kcal input above &mdash; estimate it for your session.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card redesigned" href="calculator-rmr.html">
+          <span class="ys-calc-card-title">RMR &amp; energy availability</span>
+          <p>The bigger-picture view of fueling — daily, not per-session.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want your real fat-vs-carb crossover?</h2>
+          <p>Indirect calorimetry at the lab measures your oxygen and CO<sub>2</sub> across a graded intensity protocol — gives you measured RER, fat oxidation rate (g/min), and the exact wattage / pace where carb takes over. The fueling plan you build on top of that is in a different league.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Book metabolic test</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20RPE%20RER">Send feedback</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Spotted a bug or want a feature? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20RPE%20RER" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ CALCULATOR LOGIC ============ -->
+  <script>
+    (function () {
+      const $ = id => document.getElementById(id);
+      const totalEl = $('totalCalories');
+      const rpeEl   = $('rpe');
+      const rerEl   = $('rer');
+      const errEl   = $('errorMsg');
+      const resBlock = $('resultsBlock');
+
+      const RPE_DESC = {
+        1: 'Very light, can maintain all day.',
+        2: 'Light effort, easy conversation.',
+        3: 'Moderate, comfortable but focused.',
+        4: 'Somewhat hard; conversation possible but not easy.',
+        5: 'Hard; breathing heavy.',
+        6: 'Moderately hard; quite fatiguing.',
+        7: 'Very hard; short phrases only.',
+        8: 'Intense; conversation near impossible.',
+        9: 'Very intense; near max; no talking.',
+        10: 'Maximal; unsustainable for more than a few seconds.'
+      };
+
+      // RPE 1–10 → RER 0.75–1.00
+      function rpeToRer(rpe) { return 0.75 + (rpe - 1) * (0.25 / 9); }
+      function rerToRpe(rer) { return 1 + (rer - 0.75) * (9 / 0.25); }
+
+      function carbFat(rer) {
+        // linear: RER 0.70 → 100% fat, RER 1.00 → 100% carb
+        let cp = 100 * ((rer - 0.70) / 0.30);
+        cp = Math.max(0, Math.min(100, cp));
+        return { carb: cp, fat: 100 - cp };
+      }
+
+      function intensityDomain(rer) {
+        if (rer < 0.82) return { name: 'Z1 · Very easy / recovery', color: '#7f8c8d' };
+        if (rer < 0.90) return { name: 'Z2–Z3 · Aerobic / tempo',    color: 'var(--wf-coral)' };
+        if (rer < 1.00) return { name: 'Z4 · Threshold / heavy',     color: 'var(--ys-navy)' };
+        return            { name: 'Z5 · VO₂max / sprints (RER unreliable)', color: '#c93939' };
+      }
+
+      function showError(msg) { errEl.textContent = msg; errEl.classList.add('active'); resBlock.style.display = 'none'; }
+      function clearError() { errEl.classList.remove('active'); errEl.textContent = ''; }
+
+      // Sync handlers — typing RPE updates RER, typing RER updates RPE
+      let syncing = false;
+      rpeEl.addEventListener('input', () => {
+        if (syncing) return;
+        const v = parseFloat(rpeEl.value);
+        if (Number.isFinite(v) && v >= 1 && v <= 10) {
+          syncing = true;
+          rerEl.value = rpeToRer(v).toFixed(2);
+          syncing = false;
+        }
+        if (resBlock.style.display !== 'none') calc();
+      });
+      rerEl.addEventListener('input', () => {
+        if (syncing) return;
+        const v = parseFloat(rerEl.value);
+        if (Number.isFinite(v) && v >= 0.70 && v <= 1.10) {
+          syncing = true;
+          rpeEl.value = Math.max(1, Math.min(10, rerToRpe(v))).toFixed(1);
+          syncing = false;
+        }
+        if (resBlock.style.display !== 'none') calc();
+      });
+      totalEl.addEventListener('input', () => { if (resBlock.style.display !== 'none') calc(); });
+
+      function calc() {
+        clearError();
+        const total = parseFloat(totalEl.value);
+        const rpe = parseFloat(rpeEl.value);
+        const rer = parseFloat(rerEl.value);
+
+        if (!Number.isFinite(total) || total < 0) return showError('Enter total calories (≥ 0).');
+        if (!Number.isFinite(rer) || rer < 0.70 || rer > 1.10) return showError('Enter a valid RER (0.70–1.10).');
+
+        const split = carbFat(rer);
+        const carbCals = total * (split.carb / 100);
+        const fatCals  = total * (split.fat  / 100);
+        const carbG = carbCals / 4;
+        const fatG  = fatCals  / 9;
+
+        // bar
+        $('segCarb').style.width = split.carb.toFixed(1) + '%';
+        $('segFat').style.width  = split.fat.toFixed(1) + '%';
+        $('legendCarb').textContent = split.carb.toFixed(1);
+        $('legendFat').textContent  = split.fat.toFixed(1);
+
+        // domain tag
+        const dom = intensityDomain(rer);
+        const domTag = $('domainTag');
+        domTag.textContent = dom.name;
+        domTag.style.background = dom.color;
+
+        // numeric results
+        $('outCarbCals').textContent = Math.round(carbCals);
+        $('outFatCals').textContent  = Math.round(fatCals);
+        $('outCarbG').textContent = carbG.toFixed(1);
+        $('outFatG').textContent  = fatG.toFixed(1);
+
+        // RPE description
+        let rpeInt = Math.round(Number.isFinite(rpe) ? rpe : rerToRpe(rer));
+        rpeInt = Math.max(1, Math.min(10, rpeInt));
+        const desc = RPE_DESC[rpeInt] || '';
+        $('rpeDesc').innerHTML = `<span class="rpe-level">RPE ${rpeInt}</span> &mdash; ${desc}`;
+
+        resBlock.style.display = 'block';
+      }
+
+      $('calcBtn').addEventListener('click', calc);
+      $('resetBtn').addEventListener('click', () => {
+        totalEl.value = 500; rpeEl.value = 5; rerEl.value = 0.86;
+        clearError(); resBlock.style.display = 'none';
+      });
+
+      [totalEl, rpeEl, rerEl].forEach(el => {
+        el.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); calc(); } });
+      });
+    })();
+  </script>
+
+</body>
+</html>
