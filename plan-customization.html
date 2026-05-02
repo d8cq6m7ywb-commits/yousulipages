@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Last step — Yousuli plan customization</title>
+  <meta name="description" content="Final step: pick your start date and confirm checkout for your Yousuli plan." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ ANNOUNCEMENT BAR ============ -->
+  <a href="#checkout" class="ys-announce-bar">
+    <strong>Pick your start date &amp; check out below</strong> &mdash; final step <span class="ys-arrow">&darr;</span>
+  </a>
+
+  <!-- ============ HERO (compact) ============ -->
+  <section class="wf-hero" style="padding: 64px 0 56px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Last step</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">Almost in.</h1>
+      <div class="wf-subhead">Pick a start date &middot; Confirm &middot; Done</div>
+      <p class="lede" style="max-width: 580px; margin-bottom: 0;">One short form below. Pick when you want your plan to start, hit Continue to Checkout, and you&rsquo;ll get a confirmation email within seconds. We follow up the same day with onboarding details.</p>
+    </div>
+  </section>
+
+  <!-- ============ WHAT HAPPENS AFTER ============ -->
+  <section class="wf-section" style="padding: 44px 0;">
+    <div class="ys-container">
+      <div class="ys-section-head" style="margin-bottom: 24px;">
+        <h2 style="font-size: clamp(1.4rem, 2.6vw, 2rem);">What happens after you confirm</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>Instant confirmation</h3>
+          <p>Email lands in your inbox the moment payment goes through. Your plan is active from your chosen start date.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>Onboarding within 24 h</h3>
+          <p>Quick welcome message with what to expect, how to access the WhatsApp community, and any next-step booking links.</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>Manage anytime</h3>
+          <p>Sign in to your Yousuli account to update payment, change plan, or cancel. No contracts, no surprise renewals.</p>
+        </div>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.92rem;">Questions before checking out? Email <a href="mailto:info@yousuli.co?subject=Plan%20customization%20question" style="color: var(--wf-coral);">info@yousuli.co</a> or text (909) 979-4118 &mdash; we reply within hours, not days.</p>
+    </div>
+  </section>
+
+  <!-- ============ WIX WIDGET ANCHOR ============ -->
+  <section class="wf-section" id="checkout" style="padding: 44px 0;">
+    <div class="ys-container">
+      <div class="ys-section-head" style="margin-bottom: 22px;">
+        <h2 style="font-size: clamp(1.4rem, 2.6vw, 2rem);">Pick your date &amp; checkout</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-wix-anchor">
+        <h3>Your plan summary &amp; checkout below &darr;</h3>
+        <p>Your selected plan, date picker, and Continue-to-Checkout button live in the Wix widget directly below this section.</p>
+        <div class="ys-wix-arrow">&darr;</div>
+        <p style="font-size: 0.85rem; margin-top: 14px; color: var(--ys-muted);"><em>Wrong plan or want to switch?</em> <a href="https://www.yousuli.co/pricing-plans/membership" target="_top" style="color: var(--wf-coral);">Back to all plans</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
