@@ -27,7 +27,7 @@
        parent page exactly there.) */
     document.addEventListener('DOMContentLoaded', function () {
       var inIframe = (function(){ try { return window.self !== window.top; } catch (e) { return true; } })();
-      var WIX_PLANS_URL = 'https://www.yousuli.co/membership#plans';
+      var WIX_PLANS_URL = 'https://www.yousuli.co/membership#pricing-plan';
 
       document.querySelectorAll('a[href^="#"]').forEach(function (a) {
         a.addEventListener('click', function (e) {
