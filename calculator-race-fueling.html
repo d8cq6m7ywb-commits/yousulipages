@@ -1068,9 +1068,20 @@
     sis_beta:{name:"SiS Beta Fuel",cho:40,kcal:160,na:30,k:0,caf:0,fluid:0,kind:"gel"},
     pf30:{name:"PF 30 Gel",cho:30,kcal:120,na:0,k:0,caf:0,fluid:0,kind:"gel"},
     pf30_caf:{name:"PF 30 Caffeine",cho:30,kcal:120,na:0,k:0,caf:100,fluid:0,kind:"gel"},
-    ns_c30:{name:"Neversecond C30",cho:30,kcal:120,na:40,k:0,caf:0,fluid:0,kind:"gel"},
-    ns_c30_caf:{name:"Neversecond C30 Caffeine",cho:30,kcal:120,na:40,k:0,caf:75,fluid:0,kind:"gel"},
-    ns_c90:{name:"Neversecond C90",cho:90,kcal:360,na:0,k:0,caf:0,fluid:0,kind:"gel"},
+    ns_c30:{name:"Neversecond C30 gel",cho:30,kcal:120,na:40,k:0,caf:0,fluid:0,kind:"gel"},
+    ns_c30_caf:{name:"Neversecond C30 Caffeine gel",cho:30,kcal:120,na:40,k:0,caf:75,fluid:0,kind:"gel"},
+    ns_c90:{name:"Neversecond C90 gel (mega)",cho:90,kcal:360,na:0,k:0,caf:0,fluid:0,kind:"gel"},
+    // Neversecond Sports Drink Mix — single sachet dissolved in bottle
+    ns_mix_c30_500:{name:"Neversecond Mix C30 (500 ml)",cho:30,kcal:120,na:250,k:0,caf:0,fluid:500,kind:"drink"},
+    ns_mix_c30_650:{name:"Neversecond Mix C30 (650 ml)",cho:30,kcal:120,na:250,k:0,caf:0,fluid:650,kind:"drink"},
+    ns_mix_c30_750:{name:"Neversecond Mix C30 (750 ml)",cho:30,kcal:120,na:250,k:0,caf:0,fluid:750,kind:"drink"},
+    ns_mix_c90_500:{name:"Neversecond Mix C90 (500 ml)",cho:90,kcal:360,na:100,k:0,caf:0,fluid:500,kind:"drink"},
+    ns_mix_c90_650:{name:"Neversecond Mix C90 (650 ml)",cho:90,kcal:360,na:100,k:0,caf:0,fluid:650,kind:"drink"},
+    ns_mix_c90_750:{name:"Neversecond Mix C90 (750 ml)",cho:90,kcal:360,na:100,k:0,caf:0,fluid:750,kind:"drink"},
+    // Neversecond Energy Bar (solid)
+    ns_bar_c40:{name:"Neversecond Energy Bar C40",cho:40,kcal:200,na:100,k:0,caf:0,fluid:0,kind:"solid"},
+    // Neversecond Hydro Mineral electrolyte tab
+    ns_hydro_tab:{name:"Neversecond Hydro Mineral tab",cho:0,kcal:0,na:750,k:0,caf:0,fluid:0,kind:"tablet"},
     maurten160:{name:"Maurten Gel 160",cho:40,kcal:160,na:0,k:0,caf:0,fluid:0,kind:"gel"},
     maurten_solid160:{name:"Maurten SOLID 160",cho:44,kcal:230,na:0,k:0,caf:0,fluid:0,kind:"solid"},
     maurten_solid225:{name:"Maurten SOLID 225",cho:43,kcal:225,na:0,k:0,caf:100,fluid:0,kind:"solid"},
@@ -1103,12 +1114,13 @@
 
   const OG = {
     transitionDrinks:['water250','water350','gatorade250','gatorade350','mortal250','mortal350','cho8_250','cho10_250','cho14_250','cho8_350','cho10_350','cho14_350','red_bull_250','coke_250','pepsi_250'],
-    bikeBottles:['water500','water650','water750','gatorade500','gatorade650','gatorade750','mortal500','mortal650','mortal750','cho8_500','cho8_650','cho8_750','cho10_500','cho10_650','cho10_750','cho14_500','cho14_650','cho14_750','cho20_500','cho20_650','cho20_750','cho30_500','cho30_650','cho30_750','cho40_500','cho40_650','cho40_750','pfh1000_500','pfh1500_500','maurten160_500','maurten320_500'],
-    runFlasks:['water250','water500','gatorade250','gatorade500','mortal250','mortal500','cho8_250','cho8_500','cho10_250','cho10_500','cho14_250','cho14_500','cho20_500','cho30_500','cho40_500'],
+    bikeBottles:['water500','water650','water750','gatorade500','gatorade650','gatorade750','mortal500','mortal650','mortal750','cho8_500','cho8_650','cho8_750','cho10_500','cho10_650','cho10_750','cho14_500','cho14_650','cho14_750','cho20_500','cho20_650','cho20_750','cho30_500','cho30_650','cho30_750','cho40_500','cho40_650','cho40_750','pfh1000_500','pfh1500_500','maurten160_500','maurten320_500','ns_mix_c30_500','ns_mix_c30_650','ns_mix_c30_750','ns_mix_c90_500','ns_mix_c90_650','ns_mix_c90_750'],
+    runFlasks:['water250','water500','gatorade250','gatorade500','mortal250','mortal500','cho8_250','cho8_500','cho10_250','cho10_500','cho14_250','cho14_500','cho20_500','cho30_500','cho40_500','ns_mix_c30_500','ns_mix_c90_500'],
     runStationDrinks:['water150','gatorade150','mortal150','cho8_150','cho10_150','cho14_150','pfh1000_150','pfh1500_150','coke_150','chicken_broth_150','red_bull_250','coke_250','pepsi_250'],
     gelsAndSolids: Object.keys(P).filter(k=>P[k].kind==='gel').concat([
       'clif_bar','nature_valley','coffee_cup',
       'maurten_solid160','maurten_solid225',
+      'ns_bar_c40',
       'banana_half','banana_whole','orange_slice','pretzels_30g','cookie_im','rice_cake_small',
     ]),
     tablets: Object.keys(P).filter(k=>P[k].kind==='tablet')
