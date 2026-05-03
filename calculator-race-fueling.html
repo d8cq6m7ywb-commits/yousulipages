@@ -1,0 +1,2039 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Triathlon race-day fueling planner — Yousuli calculators</title>
+  <meta name="description" content="Build a complete triathlon race-day fueling and hydration plan: hourly carb / fluid / sodium targets, bottle / gel / tablet inventory, transition intakes, aid-station strategy, glycogen trajectory, and a printable race-day cheat sheet for Sprint, Olympic, 70.3, and Ironman." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ FUELING CALCULATOR HOST STYLES (scoped to .fuel-plan-host) ============ -->
+  <style>
+    /* ── Design tokens (scoped) ────────────────────────────────────────
+       Maps the original calculator's `--yc-*` tokens to Yousuli brand
+       colours so the imported markup keeps working without rewriting
+       hundreds of selectors. */
+    .fuel-plan-host {
+      --yc-brand:        var(--ys-navy);
+      --yc-brand-light:  #79aec8;
+      --yc-brand-hover:  #1f1d3a;
+      --yc-accent:       var(--wf-coral);
+      --yc-accent-hover: #d6571f;
+
+      --yc-green:        #2e7d32;
+      --yc-green-bg:     #e8f5e9;
+      --yc-yellow:       #b45309;
+      --yc-yellow-bg:    #fff3e0;
+      --yc-red:          #c62828;
+      --yc-red-bg:       #ffebee;
+      --yc-orange:       #c2410c;
+
+      --yc-bg:           #ffffff;
+      --yc-card-bg:      #ffffff;
+      --yc-input-bg:     #ffffff;
+      --yc-section-bg:   var(--ys-bg-soft);
+      --yc-border:       var(--ys-line);
+      --yc-border-input: var(--ys-line);
+
+      --yc-text:         var(--ys-navy);
+      --yc-text-light:   #555555;
+      --yc-text-muted:   var(--ys-muted);
+
+      --yc-radius-sm:  6px;
+      --yc-radius:     8px;
+      --yc-radius-lg:  12px;
+      --yc-shadow:     0 1px 3px rgba(0, 0, 0, 0.08);
+      --yc-shadow-lg:  0 4px 12px rgba(0, 0, 0, 0.10);
+
+      font-family: var(--ys-font-body);
+      color: var(--ys-navy);
+    }
+
+    /* ── Layout ─────────────────────────────────────────────────────── */
+    .fuel-plan-host .container { max-width: 1180px; margin: 0 auto; background: #fff; border-radius: var(--yc-radius-lg); box-shadow: var(--yc-shadow); padding: 14px; }
+    .fuel-plan-host h1 { margin: 0 0 10px; text-align: center; }
+    .fuel-plan-host .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 10px; }
+    .fuel-plan-host .card { background: #fff; border: 1px solid var(--ys-line); border-radius: var(--yc-radius-lg); padding: 12px; }
+    .fuel-plan-host .col-3 { grid-column: span 3; min-width: 0; }
+    .fuel-plan-host .col-4 { grid-column: span 4; min-width: 0; }
+    .fuel-plan-host .col-5 { grid-column: span 5; min-width: 0; }
+    .fuel-plan-host .col-6 { grid-column: span 6; min-width: 0; }
+    .fuel-plan-host .col-8 { grid-column: span 8; min-width: 0; }
+    .fuel-plan-host .col-12 { grid-column: span 12; min-width: 0; }
+    @media (max-width: 1000px) {
+      .fuel-plan-host .col-3,
+      .fuel-plan-host .col-4,
+      .fuel-plan-host .col-5,
+      .fuel-plan-host .col-6,
+      .fuel-plan-host .col-8 { grid-column: span 12; }
+    }
+
+    .fuel-plan-host label {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.10em;
+      font-size: 0.7rem;
+      color: var(--ys-navy);
+      margin: 6px 0 4px;
+    }
+    .fuel-plan-host input[type="number"],
+    .fuel-plan-host input[type="time"],
+    .fuel-plan-host input[type="text"],
+    .fuel-plan-host select {
+      width: 100%;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 14px;
+      font-family: var(--ys-font-body);
+      background: #fff;
+      color: var(--ys-navy);
+      box-sizing: border-box;
+    }
+    .fuel-plan-host input:focus,
+    .fuel-plan-host select:focus {
+      outline: none;
+      border-color: var(--wf-coral);
+      box-shadow: 0 0 0 3px rgba(250, 119, 60, 0.18);
+    }
+    .fuel-plan-host input[type="checkbox"] { width: auto; transform: scale(1.05); margin-right: 6px; }
+
+    .fuel-plan-host .row-2col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .fuel-plan-host .row-3col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .fuel-plan-host .row-4col { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+
+    .fuel-plan-host .section-title {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ys-navy);
+      font-weight: 700;
+      font-size: 0.92rem;
+      margin: 2px 0 10px;
+      cursor: pointer;
+      user-select: none;
+      padding-bottom: 6px;
+      border-bottom: 2px solid var(--wf-coral);
+      display: inline-block;
+    }
+    .fuel-plan-host .section-title::after { content: ' \25BC'; font-size: 10px; color: var(--ys-muted); }
+    .fuel-plan-host .card.collapsed .section-title::after { content: ' \25B6'; }
+    .fuel-plan-host .card.collapsed > *:not(.section-title) { display: none; }
+
+    .fuel-plan-host .muted { color: var(--ys-muted); font-size: 12px; margin: 2px 0; }
+    .fuel-plan-host .summary {
+      background: var(--ys-bg-soft);
+      border: 1px solid var(--ys-line);
+      border-radius: var(--yc-radius-lg);
+      padding: 10px;
+    }
+    .fuel-plan-host .stat-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 8px; margin-top: 2px; }
+    .fuel-plan-host .stat { grid-column: span 3; background: #fff; border: 1px solid var(--ys-line); border-radius: var(--yc-radius-lg); padding: 10px; }
+    @media (max-width: 800px) { .fuel-plan-host .stat { grid-column: span 6; } }
+    @media (max-width: 500px) { .fuel-plan-host .stat { grid-column: span 12; } }
+    .fuel-plan-host .stat h4 {
+      margin: 0 0 6px;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.10em;
+      font-size: 0.7rem;
+      color: var(--wf-coral);
+    }
+    .fuel-plan-host .stat p { margin: 2px 0; font-size: 13px; color: var(--ys-navy); }
+
+    .fuel-plan-host .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .fuel-plan-host button {
+      background: var(--wf-coral); color: #fff; border: 1.5px solid var(--wf-coral);
+      border-radius: 6px; padding: 9px 16px; cursor: pointer;
+      font-family: var(--ys-font-display); font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; font-size: 0.78rem;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+    .fuel-plan-host button:hover { background: var(--ys-navy); border-color: var(--ys-navy); }
+    .fuel-plan-host button.secondary { background: #fff; color: var(--ys-navy); border-color: var(--ys-line); }
+    .fuel-plan-host button.secondary:hover { border-color: var(--wf-coral); color: var(--wf-coral); }
+
+    .fuel-plan-host table {
+      width: 100%; border-collapse: collapse; margin-top: 10px;
+      font-size: 13px; table-layout: fixed; background: #fff;
+    }
+    .fuel-plan-host th, .fuel-plan-host td {
+      border: 1px solid var(--ys-line); padding: 7px 6px;
+      text-align: center; word-wrap: break-word;
+    }
+    .fuel-plan-host th {
+      background: var(--ys-bg-soft);
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      color: var(--ys-navy);
+    }
+
+    .fuel-plan-host .seg-swim { background: #fff; }
+    .fuel-plan-host .seg-bike { background: rgba(47, 45, 86, 0.06); }
+    .fuel-plan-host .seg-run  { background: rgba(250, 119, 60, 0.10); }
+    .fuel-plan-host .seg-trans { background: var(--ys-bg-soft); }
+    .fuel-plan-host .seg-green { background: #e8f5e9; font-weight: 700; }
+    .fuel-plan-host .deficit-warn { background: #fff3e0 !important; }
+    .fuel-plan-host .deficit-bad { background: #ffebee !important; }
+
+    .fuel-plan-host .note {
+      font-size: 13px; color: var(--ys-navy);
+      background: rgba(250, 119, 60, 0.08);
+      border: 1px solid rgba(250, 119, 60, 0.30);
+      border-left: 4px solid var(--wf-coral);
+      padding: 12px 14px; border-radius: 8px;
+    }
+    .fuel-plan-host .note strong {
+      display: block;
+      font-family: var(--ys-font-display);
+      text-transform: uppercase;
+      letter-spacing: 0.10em;
+      font-size: 0.74rem;
+      color: var(--wf-coral);
+      margin-bottom: 6px;
+    }
+    .fuel-plan-host fieldset {
+      border: 1px dashed var(--ys-line);
+      border-radius: var(--yc-radius-lg);
+      padding: 10px;
+    }
+    .fuel-plan-host legend {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      color: var(--ys-navy);
+      padding: 0 6px;
+    }
+    .fuel-plan-host .trans-head { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; }
+    .fuel-plan-host .pairs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .fuel-plan-host .pair { display: grid; grid-template-columns: 1fr 64px; gap: 6px; align-items: center; }
+    .fuel-plan-host .pair small { color: var(--ys-muted); font-size: 11px; grid-column: 1 / -1; margin-top: -2px; }
+
+    /* Glycogen bars */
+    .fuel-plan-host .glycogen-row { display: flex; align-items: center; gap: 8px; margin: 4px 0; font-size: 12px; }
+    .fuel-plan-host .glycogen-label { width: 130px; text-align: right; font-weight: 600; color: var(--ys-navy); }
+    .fuel-plan-host .glycogen-bar { flex: 1; height: 22px; background: var(--ys-line); border-radius: 11px; overflow: hidden; position: relative; }
+    .fuel-plan-host .glycogen-fill { height: 100%; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #fff; min-width: 30px; transition: width 0.3s; }
+
+    /* Timeline bars */
+    .fuel-plan-host .tl-row { display: grid; grid-template-columns: 110px 1fr 1fr; gap: 6px; align-items: center; margin: 3px 0; font-size: 12px; }
+    .fuel-plan-host .tl-label { text-align: right; font-weight: 600; color: var(--ys-navy); }
+    .fuel-plan-host .tl-bar { height: 18px; background: var(--ys-line); border-radius: 9px; overflow: hidden; }
+    .fuel-plan-host .tl-fill { height: 100%; border-radius: 9px; transition: width 0.3s; }
+    .fuel-plan-host .tl-head { font-weight: 600; color: var(--ys-muted); font-size: 11px; text-align: center; }
+
+    /* Cheat sheet */
+    .fuel-plan-host .cheat-seg {
+      font-family: var(--ys-font-display);
+      font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      margin: 10px 0 4px; padding: 5px 10px; border-radius: 6px; font-size: 0.82rem;
+    }
+    .fuel-plan-host .cheat-seg-bike { background: rgba(47, 45, 86, 0.10); color: var(--ys-navy); }
+    .fuel-plan-host .cheat-seg-run { background: rgba(250, 119, 60, 0.14); color: #b8460a; }
+    .fuel-plan-host .cheat-seg-trans { background: var(--ys-bg-soft); color: var(--ys-navy); }
+    .fuel-plan-host .cheat-item {
+      display: grid; grid-template-columns: 68px minmax(0, 1fr);
+      gap: 10px; padding: 4px 10px; font-size: 13px; line-height: 1.4;
+      align-items: start;
+    }
+    .fuel-plan-host .cheat-item > span { min-width: 0; word-break: break-word; overflow-wrap: anywhere; color: var(--ys-navy); }
+    .fuel-plan-host .cheat-time { font-weight: 700; white-space: nowrap; color: var(--wf-coral); }
+
+    /* Save/Load */
+    .fuel-plan-host .save-load { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+    .fuel-plan-host .save-load input[type="text"] { width: 150px; }
+    .fuel-plan-host .save-load select { width: 200px; }
+
+    /* Tooltips */
+    .fuel-plan-host .tip { position: relative; display: inline; font-size: 12px; color: var(--ys-muted); cursor: help; margin-left: 3px; }
+    .fuel-plan-host .tip .tip-text {
+      display: none; position: absolute; bottom: calc(100% + 6px); left: 50%;
+      transform: translateX(-50%); background: var(--ys-navy); color: #fff;
+      padding: 8px 10px; border-radius: 6px; font-size: 12px; width: 240px;
+      z-index: 100; line-height: 1.4; font-weight: 400;
+      box-shadow: var(--yc-shadow-lg); pointer-events: none;
+      white-space: normal; text-transform: none; letter-spacing: 0;
+    }
+    .fuel-plan-host .tip:hover .tip-text, .fuel-plan-host .tip:focus .tip-text { display: block; }
+
+    /* Scorecard */
+    .fuel-plan-host .sc-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+    @media (max-width: 800px) { .fuel-plan-host .sc-grid { grid-template-columns: repeat(2, 1fr); } }
+    .fuel-plan-host .sc-item {
+      background: var(--ys-bg-soft); border: 1px solid var(--ys-line);
+      border-radius: 8px; padding: 10px; text-align: center;
+    }
+    .fuel-plan-host .sc-label {
+      font-family: var(--ys-font-display); text-transform: uppercase;
+      font-size: 0.66rem; letter-spacing: 0.10em; color: var(--ys-muted); font-weight: 600;
+    }
+    .fuel-plan-host .sc-val {
+      font-size: 1.15rem; font-weight: 700; margin: 4px 0 2px;
+      font-family: var(--ys-font-display); color: var(--ys-navy);
+    }
+    .fuel-plan-host .sc-sub { font-size: 11px; color: var(--ys-muted); }
+    .fuel-plan-host .sc-bar { height: 6px; background: var(--ys-line); border-radius: 3px; margin-top: 4px; overflow: hidden; }
+    .fuel-plan-host .sc-fill { height: 100%; border-radius: 3px; }
+
+    /* Inventory */
+    .fuel-plan-host .inv-grid { display: flex; gap: 8px; flex-wrap: wrap; font-size: 12px; }
+    .fuel-plan-host .inv-item { padding: 4px 10px; border-radius: 6px; border: 1px solid var(--ys-line); }
+    .fuel-plan-host .inv-ok { background: #e8f5e9; border-color: #2e7d32; color: #1b5e20; }
+    .fuel-plan-host .inv-warn { background: #fff3e0; border-color: #b45309; color: #b45309; }
+    .fuel-plan-host .inv-bad { background: #ffebee; border-color: #c62828; color: #c62828; }
+
+    /* Warnings */
+    .fuel-plan-host .warning {
+      padding: 10px 14px; border-radius: 8px; margin-bottom: 8px;
+      font-size: 13px; line-height: 1.45;
+    }
+    .fuel-plan-host .warning-red { background: #ffebee; border-left: 4px solid #c62828; color: #b71c1c; }
+    .fuel-plan-host .warning-yellow { background: #fff3e0; border-left: 4px solid #b45309; color: #92400e; }
+    .fuel-plan-host .warning-green { background: #e8f5e9; border-left: 4px solid #2e7d32; color: #1b5e20; }
+
+    /* Mobile responsive table — SCREEN ONLY */
+    @media screen and (max-width: 768px) {
+      .fuel-plan-host #schedule thead { display: none; }
+      .fuel-plan-host #schedule tbody tr { display: block; margin-bottom: 8px; border: 1px solid var(--ys-line); border-radius: 8px; padding: 8px; }
+      .fuel-plan-host #schedule tbody td { display: flex; justify-content: space-between; border: none; padding: 3px 0; text-align: right; font-size: 13px; }
+      .fuel-plan-host #schedule tbody td::before { content: attr(data-label); font-weight: 600; text-align: left; color: var(--ys-navy); }
+      .fuel-plan-host #schedule tbody td:last-child { flex-direction: column; text-align: left; }
+      .fuel-plan-host #schedule tbody td:last-child::before { margin-bottom: 2px; }
+      .fuel-plan-host .trans-head { grid-template-columns: 1fr 1fr; }
+      .fuel-plan-host .row-4col { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* Print — Cheat Sheet + key visuals mode */
+    @media print {
+      body { padding: 0; background: #fff; }
+      @page { margin: 12mm; size: A4; }
+      .ys-site-header, .ys-site-footer, .wf-hero, .wf-section, .ys-cta-card { display: none !important; }
+      .fuel-plan-host .container { box-shadow: none; padding: 0; max-width: none; }
+      .fuel-plan-host .no-print, .fuel-plan-host .controls, .fuel-plan-host .save-load, .fuel-plan-host button { display: none !important; }
+      .fuel-plan-host .card { border: none; page-break-inside: avoid; }
+      .fuel-plan-host .card.collapsed > * { display: block !important; }
+      .fuel-plan-host .section-title::after { display: none; }
+
+      body.print-cheat-only h1 { display: none !important; }
+
+      body.print-cheat-only .fuel-plan-host #cheatSheetCard { order: 1 !important; }
+      body.print-cheat-only .fuel-plan-host #printHeader    { order: 0 !important; }
+      body.print-cheat-only .fuel-plan-host #scorecardCard  { order: 2 !important; }
+      body.print-cheat-only .fuel-plan-host #glycogenCard   { order: 3 !important; }
+      body.print-cheat-only .fuel-plan-host #timelineCard   { order: 4 !important; }
+      body.print-cheat-only .fuel-plan-host .card.printable { order: 5 !important; }
+
+      body.print-cheat-only .fuel-plan-host .card { display: none !important; }
+      body.print-cheat-only .fuel-plan-host #scorecardCard,
+      body.print-cheat-only .fuel-plan-host #glycogenCard,
+      body.print-cheat-only .fuel-plan-host #timelineCard,
+      body.print-cheat-only .fuel-plan-host #cheatSheetCard { display: block !important; }
+
+      body.print-cheat-only .fuel-plan-host #schedule thead { display: table-header-group !important; }
+      body.print-cheat-only .fuel-plan-host #schedule tbody tr { display: table-row !important; margin: 0; padding: 0; border: none; }
+      body.print-cheat-only .fuel-plan-host #schedule tbody td {
+        display: table-cell !important; text-align: left; padding: 3px 6px;
+        font-size: 11px; border: none;
+      }
+      body.print-cheat-only .fuel-plan-host #schedule tbody td::before { content: none !important; }
+      body.print-cheat-only .fuel-plan-host #schedule tbody td:last-child { flex-direction: row; text-align: left; font-size: 10px; }
+
+      body.print-cheat-only .fuel-plan-host .card.printable:not(.print-include-schedule) { display: none !important; }
+      body.print-cheat-only .fuel-plan-host .card.printable.print-include-schedule { display: block !important; }
+
+      body.print-cheat-only .fuel-plan-host #printHeader {
+        display: block !important;
+        grid-column: 1 / -1 !important;
+        padding: 0 0 8px 0; margin: 0 0 10px 0;
+        border-bottom: 2px solid #333;
+      }
+
+      body.print-cheat-only .fuel-plan-host #timelineChart,
+      body.print-cheat-only .fuel-plan-host #timelineChart *,
+      body.print-cheat-only .fuel-plan-host #glycogenChart,
+      body.print-cheat-only .fuel-plan-host #glycogenChart * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+      body.print-cheat-only .fuel-plan-host .tl-bar { background: #e5e7eb !important; border: 1px solid #cbd5e1 !important; }
+      body.print-cheat-only .fuel-plan-host .glycogen-bar { background: #e5e7eb !important; border: 1px solid #cbd5e1 !important; }
+
+      body.print-cheat-only .fuel-plan-host .card { margin: 0 0 10px 0 !important; padding: 0 !important; }
+      body.print-cheat-only .fuel-plan-host .card .section-title { font-size: 13px !important; margin: 8px 0 4px 0 !important; }
+      body.print-cheat-only .fuel-plan-host #scorecardCard { page-break-after: auto; }
+      body.print-cheat-only .fuel-plan-host #cheatSheetCard { page-break-before: auto; page-break-inside: auto !important; }
+      body.print-cheat-only .fuel-plan-host #cheatSheetCard .cheat-item,
+      body.print-cheat-only .fuel-plan-host #cheatSheetCard .cheat-seg { page-break-inside: avoid; }
+
+      body.print-cheat-only .fuel-plan-host #glycogenCard,
+      body.print-cheat-only .fuel-plan-host #timelineCard { page-break-inside: avoid !important; break-inside: avoid-page !important; }
+      body.print-cheat-only .fuel-plan-host .glycogen-row,
+      body.print-cheat-only .fuel-plan-host .tl-row { page-break-inside: avoid !important; break-inside: avoid !important; font-size: 11px; }
+
+      body.print-cheat-only .fuel-plan-host .cheat-item {
+        grid-template-columns: 72px 1fr !important;
+        gap: 12px !important;
+        padding: 3px 6px !important;
+        font-size: 12.5px !important;
+        line-height: 1.35 !important;
+        page-break-inside: avoid;
+      }
+      body.print-cheat-only .fuel-plan-host .cheat-item > span:last-child { word-break: break-word; white-space: normal; overflow: visible; text-overflow: clip; }
+      body.print-cheat-only .fuel-plan-host .cheat-seg { font-size: 13px !important; margin: 8px 0 4px !important; padding: 4px 8px !important; page-break-after: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 40px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Race-day fueling</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">Triathlon race-day fueling planner.</h1>
+      <div class="wf-subhead">Hourly carb / fluid / sodium targets &middot; bottle &amp; gel inventory &middot; transitions &middot; aid stations &middot; printable cheat sheet</div>
+      <p class="lede" style="max-width: 680px;">Build your complete fueling and hydration plan for a Sprint, Olympic, 70.3, or full Ironman. Enter your weight, sweat rate, race splits, and conditions; pick your products from the database (Maurten, SiS, PF, GU, Neversecond, Mortal, Precision, plus IM aid-station classics like coke, banana, broth). Get a minute-by-minute schedule, glycogen trajectory, race scorecard, and a one-page cheat sheet you can print and tape to your top-tube.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Start planning &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">How it works</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 24px 0 48px;">
+    <div class="ys-container">
+      <div class="fuel-plan-host">
+        <div class="container">
+
+          <div class="grid">
+            <!-- ═══ ATHLETE & ENVIRONMENT ═══ -->
+            <div class="card col-6">
+              <div class="section-title">Athlete &amp; environment</div>
+              <div class="row-2col">
+                <div><label>Height (cm)</label><input id="height" type="number" value="178" step="1"></div>
+                <div><label>Weight (kg)</label><input id="weight" type="number" value="72" step="0.1"></div>
+              </div>
+              <label>Conditions</label>
+              <select id="conditions">
+                <option value="cool">Cool (&lt;15 &deg;C)</option>
+                <option value="moderate" selected>Moderate (15&ndash;25 &deg;C)</option>
+                <option value="hot">Hot (25&ndash;32 &deg;C)</option>
+                <option value="extreme">Extreme (&gt;32 &deg;C)</option>
+              </select>
+              <div class="muted" id="conditionHint"></div>
+              <div class="row-2col">
+                <div><label>Bike sweat rate (L/h) <span class="tip" tabindex="0">&#9432;<span class="tip-text">Measure by weighing before/after a 1h workout. Typical range: 0.5&ndash;2.5 L/h. Changing conditions auto-adjusts these values.</span></span></label><input id="sweatBike" type="number" value="1.0" step="0.1"></div>
+                <div><label>Run sweat rate (L/h) <span class="tip" tabindex="0">&#9432;<span class="tip-text">Running sweat rate is usually 10&ndash;20% higher than biking due to less airflow cooling. Adjust based on your data.</span></span></label><input id="sweatRun" type="number" value="1.2" step="0.1"></div>
+              </div>
+              <div class="row-2col">
+                <div>
+                  <label>Sweat type</label>
+                  <select id="sweatType">
+                    <option value="600">Low salt (~600 mg/L)</option>
+                    <option value="800" selected>Average (~800 mg/L)</option>
+                    <option value="1200">Salty (~1200 mg/L)</option>
+                  </select>
+                </div>
+                <div><label>Sweat sodium (mg/L)</label><input id="sweatNa" type="number" value="800" step="10"></div>
+              </div>
+              <div class="muted">Sweat type presets sodium; override if you have lab data.</div>
+            </div>
+
+            <!-- ═══ RACE DETAILS ═══ -->
+            <div class="card col-6">
+              <div class="section-title">Race details</div>
+              <label>Race distance</label>
+              <select id="raceDistance">
+                <option value="sprint">Sprint</option>
+                <option value="olympic">Olympic</option>
+                <option value="half" selected>Half (70.3)</option>
+                <option value="full">Full (Ironman)</option>
+              </select>
+              <label>Race start (HH:MM)</label>
+              <input id="raceStart" type="time" value="07:00">
+              <div class="grid">
+                <div class="col-6"><label>Swim split (min)</label><input id="swimMin" type="number" value="35" step="1"></div>
+                <div class="col-6"><label>Bike split (min)</label><input id="bikeMin" type="number" value="160" step="1"></div>
+                <div class="col-6"><label>Run split (min)</label><input id="runMin" type="number" value="105" step="1"></div>
+                <div class="col-6"><label>Bike power (W)</label><input id="bikeW" type="number" value="220" step="1"></div>
+              </div>
+              <div class="muted" id="paceDisplay"></div>
+            </div>
+
+            <!-- ═══ FUELING MODE ═══ -->
+            <div class="card col-12">
+              <div class="section-title">Fueling mode</div>
+              <div class="row-4col">
+                <div>
+                  <label>Fueling mode <span class="tip" tabindex="0">&#9432;<span class="tip-text">Minimum: conservative, for shorter races or untrained guts. Recommended: balanced for most athletes. Maximum: aggressive, requires trained gut &amp; dual-transport carbs.</span></span></label>
+                  <select id="fuelMode">
+                    <option value="0">Minimum</option>
+                    <option value="1" selected>Recommended</option>
+                    <option value="2">Maximum</option>
+                  </select>
+                </div>
+                <div>
+                  <label>Run CHO vs bike <span class="tip" tabindex="0">&#9432;<span class="tip-text">Running reduces GI tolerance. 75% means your run carb target is 75% of bike. Override higher if you&rsquo;ve trained your gut for running intake.</span></span></label>
+                  <select id="runCHOFactor">
+                    <option value="0.60">60%</option>
+                    <option value="0.70">70%</option>
+                    <option value="0.75" selected>75% (recommended)</option>
+                    <option value="0.80">80%</option>
+                    <option value="0.90">90%</option>
+                    <option value="1.00">100% (same as bike)</option>
+                  </select>
+                </div>
+                <div>
+                  <label>Caffeine strategy <span class="tip" tabindex="0">&#9432;<span class="tip-text">Caffeine peaks ~45&ndash;60 min after ingestion. Late Bike places tabs in the last 1&ndash;2 h of bike so they peak during the run. Run Only saves all caffeine for the run.</span></span></label>
+                  <select id="cafStrategy">
+                    <option value="even">Even (each hour)</option>
+                    <option value="late-bike" selected>Late bike (recommended)</option>
+                    <option value="run-only">Run only</option>
+                    <option value="none">No auto caffeine</option>
+                  </select>
+                </div>
+                <div>
+                  <label>Starting glycogen (g) <span class="tip" tabindex="0">&#9432;<span class="tip-text">Estimated glycogen stores after carb loading. Default = weight &times; 7g (well carb-loaded). Range: 5&ndash;10 g/kg depending on loading protocol.</span></span></label>
+                  <input id="startGlycogen" type="number" value="504" step="10">
+                </div>
+              </div>
+              <div class="muted">CHO targets based on total race duration. Run discount reflects reduced GI tolerance. Glycogen default = weight &times; 7.</div>
+            </div>
+
+            <!-- ═══ HYDRATION ═══ -->
+            <div class="card col-12">
+              <div class="section-title">Hydration strategy</div>
+              <div class="grid">
+                <div class="col-6">
+                  <label>Bike fluid replacement <span class="tip" tabindex="0">&#9432;<span class="tip-text">Percentage of sweat loss to replace via drinking. 100% = drink back everything you sweat. Some athletes tolerate 80&ndash;90% to reduce GI load.</span></span></label>
+                  <select id="bikeReplace">
+                    <option value="0.6">60%</option>
+                    <option value="0.75">75%</option>
+                    <option value="0.9">90%</option>
+                    <option value="1.0" selected>100%</option>
+                    <option value="1.1">110%</option>
+                  </select>
+                </div>
+                <div class="col-6">
+                  <label>Run fluid replacement <span class="tip" tabindex="0">&#9432;<span class="tip-text">Auto: allows up to 2% body weight loss, a widely accepted safe threshold. Manual: set your own replacement percentage.</span></span></label>
+                  <select id="runReplace">
+                    <option value="auto" selected>Auto (allow ~2% BW loss)</option>
+                    <option value="0.4">40%</option>
+                    <option value="0.5">50%</option>
+                    <option value="0.6">60%</option>
+                    <option value="0.75">75%</option>
+                    <option value="0.9">90%</option>
+                    <option value="1.0">100%</option>
+                  </select>
+                </div>
+              </div>
+              <label style="margin-top:12px;"><input id="autoUseTabs" type="checkbox" checked> Auto-use sodium &amp; caffeine tablets at the hour mark (if carried)</label>
+            </div>
+
+            <!-- ═══ SUMMARY ═══ -->
+            <div class="card col-12">
+              <div class="section-title">Energy &amp; hydration summary</div>
+              <div id="summary" class="summary"></div>
+              <div id="warnings" style="margin-top:12px;"></div>
+            </div>
+
+            <!-- ═══ CARRIED AT START ═══ -->
+            <div class="card col-12">
+              <div class="section-title">Carried at race start</div>
+              <div class="grid">
+                <div class="col-6">
+                  <fieldset>
+                    <legend>Bike &mdash; bottles, gels, tablets</legend>
+                    <div class="pairs">
+                      <div class="pair"><label>Drink 1</label><select id="bikeCarryDrink1"></select></div>
+                      <div class="pair"><label>Count</label><input id="bikeCarryDrink1Cnt" type="number" value="2" min="0" step="1"></div>
+                      <div></div>
+                      <div class="pair"><label>Drink 2</label><select id="bikeCarryDrink2"></select></div>
+                      <div class="pair"><label>Count</label><input id="bikeCarryDrink2Cnt" type="number" value="1" min="0" step="1"></div>
+                      <div></div>
+                      <div class="pair"><label>Drink 3</label><select id="bikeCarryDrink3"></select></div>
+                      <div class="pair"><label>Count</label><input id="bikeCarryDrink3Cnt" type="number" value="0" min="0" step="1"></div>
+                      <div></div>
+                      <div class="pair"><label>Gel A</label><select id="bikeCarryGelProd"></select></div>
+                      <div class="pair"><label>Gels A</label><input id="bikeCarryGels" type="number" value="6" min="0" step="1"></div>
+                      <div></div>
+                      <div class="pair"><label>Gel B</label><select id="bikeCarryGelProdB"></select></div>
+                      <div class="pair"><label>Gels B</label><input id="bikeCarryGelsB" type="number" value="0" min="0" step="1"></div>
+                      <div></div>
+                      <div class="pair"><label>Gel C</label><select id="bikeCarryGelProdC"></select></div>
+                      <div class="pair"><label>Gels C</label><input id="bikeCarryGelsC" type="number" value="0" min="0" step="1"></div>
+                      <div></div>
+                      <div class="pair"><label>Tablet A</label><select id="bikeCarryTabA"></select></div>
+                      <div class="pair"><label>Count</label><input id="bikeCarryTabACnt" type="number" value="3" min="0" step="1"></div>
+                      <div></div>
+                      <div class="pair"><label>Tablet B</label><select id="bikeCarryTabB"></select></div>
+                      <div class="pair"><label>Count</label><input id="bikeCarryTabBCnt" type="number" value="0" min="0" step="1"></div>
+                      <div></div>
+                    </div>
+                  </fieldset>
+                </div>
+                <div class="col-6">
+                  <fieldset>
+                    <legend>Run &mdash; flasks, gels, tablets</legend>
+                    <div class="pairs">
+                      <div class="pair"><label>Flask 1</label><select id="runCarryDrink1"></select></div>
+                      <div class="pair"><label>Count</label><input id="runCarryDrink1Cnt" type="number" value="0" min="0" step="1"></div>
+                      <div></div>
+                      <div class="pair"><label>Flask 2</label><select id="runCarryDrink2"></select></div>
+                      <div class="pair"><label>Count</label><input id="runCarryDrink2Cnt" type="number" value="0" min="0" step="1"></div>
+                      <div></div>
+                      <div class="pair"><label>Gel A</label><select id="runCarryGelProd"></select></div>
+                      <div class="pair"><label>Gels A</label><input id="runCarryGels" type="number" value="2" min="0" step="1"></div>
+                      <div></div>
+                      <div class="pair"><label>Gel B</label><select id="runCarryGelProdB"></select></div>
+                      <div class="pair"><label>Gels B</label><input id="runCarryGelsB" type="number" value="0" min="0" step="1"></div>
+                      <div></div>
+                      <div class="pair"><label>Gel C</label><select id="runCarryGelProdC"></select></div>
+                      <div class="pair"><label>Gels C</label><input id="runCarryGelsC" type="number" value="0" min="0" step="1"></div>
+                      <div></div>
+                      <div class="pair"><label>Tablet A</label><select id="runCarryTabA"></select></div>
+                      <div class="pair"><label>Count</label><input id="runCarryTabACnt" type="number" value="0" min="0" step="1"></div>
+                      <div></div>
+                      <div class="pair"><label>Tablet B</label><select id="runCarryTabB"></select></div>
+                      <div class="pair"><label>Count</label><input id="runCarryTabBCnt" type="number" value="0" min="0" step="1"></div>
+                      <div></div>
+                    </div>
+                  </fieldset>
+                </div>
+              </div>
+            </div>
+
+            <!-- ═══ TRANSITIONS ═══ -->
+            <div class="card col-12">
+              <div class="section-title">Transitions</div>
+              <div class="trans-head">
+                <div><strong>T0 (&minus;15 min)</strong><br><label><input id="t0On" type="checkbox" checked> Enable T0</label></div>
+                <div><strong>T1</strong><br><label><input id="t1On" type="checkbox" checked> Allow nutrition in T1</label></div>
+                <div><strong>T2</strong><br><label><input id="t2On" type="checkbox" checked> Allow nutrition in T2</label></div>
+                <div class="row-2col">
+                  <div><label>T1 time (min)</label><input id="t1Time" type="number" value="3" step="1" min="0"></div>
+                  <div><label>T2 time (min)</label><input id="t2Time" type="number" value="2" step="1" min="0"></div>
+                </div>
+              </div>
+              <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;">
+                <fieldset>
+                  <legend>T0 selections</legend>
+                  <div class="pairs">
+                    <div class="pair"><label>Drink 1</label><select id="t0Drink1"></select></div>
+                    <div class="pair"><label>Serv.</label><input id="t0Drink1Cnt" type="number" value="1" step="0.5" min="0"></div><div></div>
+                    <div class="pair"><label>Drink 2</label><select id="t0Drink2"></select></div>
+                    <div class="pair"><label>Serv.</label><input id="t0Drink2Cnt" type="number" value="0" step="0.5" min="0"></div><div></div>
+                    <div class="pair"><label>Gel/Solid</label><select id="t0Gel"></select></div>
+                    <div class="pair"><label>Count</label><input id="t0GelCnt" type="number" value="1" step="1" min="0"></div><div></div>
+                    <div class="pair"><label>Tablet A</label><select id="t0TabA"></select></div>
+                    <div class="pair"><label>Count</label><input id="t0TabACnt" type="number" value="0" step="1" min="0"></div><div></div>
+                    <div class="pair"><label>Tablet B</label><select id="t0TabB"></select></div>
+                    <div class="pair"><label>Count</label><input id="t0TabBCnt" type="number" value="0" step="1" min="0"></div><div></div>
+                  </div>
+                </fieldset>
+                <fieldset>
+                  <legend>T1 selections</legend>
+                  <div class="pairs">
+                    <div class="pair"><label>Drink 1</label><select id="t1Drink1"></select></div>
+                    <div class="pair"><label>Serv.</label><input id="t1Drink1Cnt" type="number" value="0" step="0.5" min="0"></div><div></div>
+                    <div class="pair"><label>Drink 2</label><select id="t1Drink2"></select></div>
+                    <div class="pair"><label>Serv.</label><input id="t1Drink2Cnt" type="number" value="0" step="0.5" min="0"></div><div></div>
+                    <div class="pair"><label>Gel/Solid</label><select id="t1Gel"></select></div>
+                    <div class="pair"><label>Count</label><input id="t1GelCnt" type="number" value="0" step="1" min="0"></div><div></div>
+                    <div class="pair"><label>Tablet</label><select id="t1Tab"></select></div>
+                    <div class="pair"><label>Count</label><input id="t1TabCnt" type="number" value="0" step="1" min="0"></div><div></div>
+                  </div>
+                </fieldset>
+                <fieldset>
+                  <legend>T2 selections</legend>
+                  <div class="pairs">
+                    <div class="pair"><label>Drink 1</label><select id="t2Drink1"></select></div>
+                    <div class="pair"><label>Serv.</label><input id="t2Drink1Cnt" type="number" value="0" step="0.5" min="0"></div><div></div>
+                    <div class="pair"><label>Drink 2</label><select id="t2Drink2"></select></div>
+                    <div class="pair"><label>Serv.</label><input id="t2Drink2Cnt" type="number" value="0" step="0.5" min="0"></div><div></div>
+                    <div class="pair"><label>Gel/Solid</label><select id="t2Gel"></select></div>
+                    <div class="pair"><label>Count</label><input id="t2GelCnt" type="number" value="0" step="1" min="0"></div><div></div>
+                    <div class="pair"><label>Tablet</label><select id="t2Tab"></select></div>
+                    <div class="pair"><label>Count</label><input id="t2TabCnt" type="number" value="0" step="1" min="0"></div><div></div>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+
+            <!-- ═══ AID STATIONS ═══ -->
+            <div class="card col-12">
+              <div class="section-title">Aid stations</div>
+              <fieldset style="margin-bottom:8px;">
+                <legend>Bike aid-stations</legend>
+                <div class="row-3col">
+                  <div><label><input id="enableBikeStations" type="checkbox" checked> Enable bike aid-stations</label></div>
+                  <div><label>Frequency (km)</label><input id="bikeAidKm" type="number" value="25" step="5" min="1"></div>
+                  <div><div class="muted" id="bikeAidHint"></div></div>
+                </div>
+                <div class="row-4col">
+                  <div><label>Drink A (bottles/station)</label><select id="bikeDrinkA"></select><input id="bikeDrinkACnt" type="number" value="1" min="0" step="1"></div>
+                  <div><label>Drink B (bottles/station)</label><select id="bikeDrinkB"></select><input id="bikeDrinkBCnt" type="number" value="0" min="0" step="1"></div>
+                  <div><label>Drink C (bottles/station)</label><select id="bikeDrinkC"></select><input id="bikeDrinkCCnt" type="number" value="0" min="0" step="1"></div>
+                  <div class="muted">Bike station bottles add to your on-bike bank; you sip evenly over time.</div>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend>Run aid-stations (cups)</legend>
+                <div class="row-3col">
+                  <div><label><input id="enableRunStations" type="checkbox" checked> Enable run aid-stations</label></div>
+                  <div><label>Frequency (km)</label><input id="runAidKm" type="number" value="2.5" step="0.5" min="0.5"></div>
+                  <div><div class="muted" id="runAidHint"></div></div>
+                </div>
+                <div class="row-4col">
+                  <div><label>Run drink A</label><select id="runDrinkA"></select><label>Cups/station (150 ml)</label><input id="runDrinkACups" type="number" value="1" min="0" step="1"></div>
+                  <div><label>Run drink B</label><select id="runDrinkB"></select><label>Cups/station (150 ml)</label><input id="runDrinkBCups" type="number" value="0" min="0" step="1"></div>
+                  <div><label>Run drink C</label><select id="runDrinkC"></select><label>Cups/station (150 ml)</label><input id="runDrinkCCups" type="number" value="0" min="0" step="1"></div>
+                  <div class="muted">Run cups are consumed at the station (not carried).</div>
+                </div>
+              </fieldset>
+            </div>
+
+            <!-- ═══ PRE-RACE GUIDANCE ═══ -->
+            <div class="card col-12">
+              <div class="section-title">Pre-race guidance</div>
+              <div id="prerace" class="summary"></div>
+            </div>
+
+            <!-- ═══ SAVE / LOAD / CONTROLS ═══ -->
+            <div class="card col-12 no-print">
+              <div class="save-load">
+                <input id="planName" type="text" placeholder="Plan name..." style="width:150px;">
+                <button id="saveBtn" class="secondary">Save</button>
+                <select id="loadPlan" style="width:200px;"><option value="">Load plan...</option></select>
+                <button id="deleteBtn" class="secondary">Delete</button>
+              </div>
+              <div class="controls">
+                <button id="buildBtn">Build schedule</button>
+                <button id="resetBtn" class="secondary">Reset distance defaults</button>
+                <button id="csvBtn" class="secondary">Export CSV</button>
+                <button id="cheatBtn" class="secondary">Print cheat sheet</button>
+              </div>
+            </div>
+
+            <!-- ═══ SCORECARD ═══ -->
+            <div class="card col-12" id="scorecardCard" style="display:none;">
+              <div class="section-title">Race scorecard</div>
+              <div id="scorecard"></div>
+              <div id="inventory" style="margin-top:8px;"></div>
+            </div>
+
+            <!-- ═══ SCHEDULE ═══ -->
+            <div class="card col-12 printable">
+              <div class="section-title">Schedule</div>
+              <table id="schedule">
+                <thead><tr>
+                  <th>Time</th><th>Segment</th><th>CHO (g)</th><th>kcal</th>
+                  <th>Fluid (ml)</th><th>Sodium (mg)</th><th>Potassium (mg)</th>
+                  <th>Caffeine (mg)</th><th>Products / notes</th>
+                </tr></thead>
+                <tbody></tbody>
+              </table>
+              <div class="note" style="margin-top:8px;">
+                <strong>Notes</strong>
+                <ul style="margin:6px 0 0 18px;">
+                  <li>Breakfast target depends on expected race duration; also take ~25 g CHO 15 min before start.</li>
+                  <li>Gels may be taken with water or sports drink; prefer water when possible.</li>
+                  <li>Bike: liquids are sipped evenly from your carried bottles; aid-stations refill your bank.</li>
+                  <li>Run: cups (150 ml) are consumed at the station; choose cups/station to match your needs.</li>
+                  <li>Recovery: within 30&ndash;60 min, aim ~60&ndash;90 g carbs + 15&ndash;25 g protein; hydrate ~150% of fluid lost.</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- ═══ GLYCOGEN TRAJECTORY ═══ -->
+            <div class="card col-12" id="glycogenCard" style="display:none;">
+              <div class="section-title">Glycogen trajectory</div>
+              <div id="glycogenChart"></div>
+            </div>
+
+            <!-- ═══ FUELING TIMELINE ═══ -->
+            <div class="card col-12" id="timelineCard" style="display:none;">
+              <div class="section-title">Fueling timeline</div>
+              <div id="timelineChart"></div>
+            </div>
+
+            <!-- ═══ CHEAT SHEET ═══ -->
+            <div class="card col-12" id="cheatSheetCard" style="display:none;">
+              <div class="section-title">Race-day cheat sheet</div>
+              <div id="cheatSheet"></div>
+            </div>
+
+            <!-- ═══ PAGE-1 BRIEFING (print-only) ═══ -->
+            <div id="printHeader" style="display:none;">
+              <div style="font-size:18px; font-weight:700;" id="printHeaderTitle">Race-day fueling plan</div>
+              <div style="font-size:11px; color:#555;" id="printHeaderMeta"></div>
+
+              <div id="printBriefing" style="margin-top:10px; font-size:11px;">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:8px;">
+                  <div style="border:1px solid #cbd5e1; border-radius:6px; padding:8px;">
+                    <div style="font-weight:700; font-size:11px; color:#0284c7; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:4px;">Hourly targets</div>
+                    <div id="briefTargets" style="line-height:1.5;"></div>
+                  </div>
+                  <div style="border:1px solid #cbd5e1; border-radius:6px; padding:8px;">
+                    <div style="font-weight:700; font-size:11px; color:#0284c7; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:4px;">Race totals</div>
+                    <div id="briefTotals" style="line-height:1.5;"></div>
+                  </div>
+                </div>
+                <div style="border:1px solid #cbd5e1; border-radius:6px; padding:8px; margin-bottom:8px;">
+                  <div style="font-weight:700; font-size:11px; color:#dc2626; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:4px;">What to carry</div>
+                  <div id="briefCarry" style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; line-height:1.5;"></div>
+                </div>
+                <div style="border:1px solid #cbd5e1; border-radius:6px; padding:8px; margin-bottom:8px;">
+                  <div style="font-weight:700; font-size:11px; color:#16a34a; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:4px;">Aid-station strategy</div>
+                  <div id="briefStations" style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; line-height:1.5;"></div>
+                </div>
+                <div style="border:1px solid #cbd5e1; border-radius:6px; padding:8px;">
+                  <div style="font-weight:700; font-size:11px; color:#f59e0b; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:4px;">Transitions</div>
+                  <div id="briefTransitions" style="line-height:1.5;"></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="wf-section alt" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How the planner builds your race-day schedule</h2>
+        <div class="ys-rule"></div>
+      </div>
+      <div class="ys-grid-3" style="gap: 22px;">
+        <div>
+          <div class="ys-meta" style="color: var(--wf-coral);">1. Targets</div>
+          <h3 style="margin-top: 4px;">Hourly carb / fluid / sodium targets</h3>
+          <p>Your weight, sweat rate, and total race duration set the per-hour targets. The carb matrix scales with race time (Sprint sips, Ironman approaches 90&ndash;120 g/h). Run carbs default to 75% of bike to reflect reduced GI tolerance &mdash; override if you&rsquo;ve trained your gut higher.</p>
+        </div>
+        <div>
+          <div class="ys-meta" style="color: var(--wf-coral);">2. Inventory</div>
+          <h3 style="margin-top: 4px;">Pick your products from a real database</h3>
+          <p>120+ products: Maurten 100 / 160 / Mix 320, SiS GO + Beta Fuel, Precision PF 30, GU, Neversecond C30 / C90, Mortal, Torq, High5, plus IM aid-station classics (flat coke, broth, banana, pretzels, orange slice). DIY super-syrup bottles up to 40% CHO. Mix three gel types per leg to combine caffeinated + plain.</p>
+        </div>
+        <div>
+          <div class="ys-meta" style="color: var(--wf-coral);">3. Transitions</div>
+          <h3 style="margin-top: 4px;">T0, T1, T2 are real fueling windows</h3>
+          <p>T0 (&minus;15 min) is your pre-swim deposit. T1 is post-swim refuel. T2 is the run handover. Each gets its own products and counts toward the appropriate leg total &mdash; the planner knows pre-swim glucose lands in your bloodstream during the swim, not before it.</p>
+        </div>
+        <div>
+          <div class="ys-meta" style="color: var(--wf-coral);">4. Aid stations</div>
+          <h3 style="margin-top: 4px;">Course aid plays into the math</h3>
+          <p>Set bike aid frequency (km) and what you grab per pass &mdash; bottles refill your on-bike bank and drain over time. Run aid stations dispense 150 ml cups; pick the drink and how many cups you grab. The schedule slots them at the actual time you arrive based on your pace.</p>
+        </div>
+        <div>
+          <div class="ys-meta" style="color: var(--wf-coral);">5. Schedule + scorecard</div>
+          <h3 style="margin-top: 4px;">Hour-by-hour minute-by-minute plan</h3>
+          <p>15-minute granularity for the first hour, hourly summaries with target-vs-actual for CHO / fluid / sodium. Race scorecard at the bottom: how close you got to targets, projected body-weight loss (red &gt;3.5%), caffeine load (mg and mg/kg), and what&rsquo;s left in your bottles at the finish.</p>
+        </div>
+        <div>
+          <div class="ys-meta" style="color: var(--wf-coral);">6. Cheat sheet</div>
+          <h3 style="margin-top: 4px;">Print or export &mdash; tape it to your top-tube</h3>
+          <p>Race-day PDF strips the inputs and shows: a one-page briefing (hourly targets + race totals + carry list + aid plan + transitions), then the cheat sheet (what / when), then glycogen trajectory and timeline. Export CSV for further editing or to import into a coach&rsquo;s spreadsheet.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COACH NOTE ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
+        <h2 style="margin-top: 4px;">A plan is the floor &mdash; not the contract.</h2>
+        <p>Most race-day fueling plans fail because they&rsquo;re built top-down (textbook number) instead of bottom-up (what your gut actually tolerates). Three rules I make every athlete follow:</p>
+        <ul class="ys-card-bullets" style="margin-top: 12px;">
+          <li><strong>Train every product on race day.</strong> Don&rsquo;t take Maurten 320 in the bottle for the first time at IM Lanzarote. Every bottle, gel, and tablet on the cheat sheet should have been tested at race intensity for at least three long sessions.</li>
+          <li><strong>Practice the transitions.</strong> T1 / T2 are not a bonus &mdash; they&rsquo;re ~50&ndash;100 g of CHO and 250&ndash;500 ml of fluid each. Drill them in brick workouts so they happen automatically when you&rsquo;re cooked.</li>
+          <li><strong>Have a downside plan.</strong> If you can&rsquo;t hit 100 g/h on the bike, what&rsquo;s your 70 g/h fallback? The planner&rsquo;s &ldquo;Recommended&rdquo; mode is the goal; &ldquo;Minimum&rdquo; is the bailout. Know both before the gun.</li>
+        </ul>
+        <p style="margin-top: 12px;"><strong>What this calculator can&rsquo;t do:</strong> tell you what your gut will tolerate at 88% CP in 32&deg;C heat. That&rsquo;s a training adaptation, not a number. The plan is the input; how you build the gut to execute it is the work.</p>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/coaching" target="_top">Race-prep coaching</a>
+          <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED CALCULATORS ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Related calculators</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card redesigned" href="calculator-intraworkout-fueling.html">
+          <span class="ys-calc-card-title">Intra-workout fueling</span>
+          <p>Quicker version: hourly carb target for any workout duration with food-equivalent and DIY mix breakdowns. Good for training days.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card redesigned" href="calculator-sweat-rate.html">
+          <span class="ys-calc-card-title">Sweat rate</span>
+          <p>Measure your bike + run sweat rate from a weigh-in protocol &mdash; the most important input for fluid &amp; sodium targets above.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card redesigned" href="calculator-power-to-finish.html">
+          <span class="ys-calc-card-title">Power to finish (course-based)</span>
+          <p>Pair the fueling plan with a realistic race-time prediction on your actual course (Kona, Lanzarote, every IM 70.3 worldwide).</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want a coach to build the plan and rehearse it with you?</h2>
+          <p>The planner is the input. Race-prep coaching turns it into the actual race-day brief: which bottles go where on the bike, what you tell special-needs to put in your bag, the bailout plan if your stomach turns, the heat-adjusted version. Built around your gut, your sweat data, and the specific course.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Race-day%20fueling">Send feedback</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Spotted a bug, want a product added to the database, or have feedback? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Race-day%20fueling" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ FUELING CALCULATOR ENGINE ============ -->
+  <script>
+  /* ==========================================================================
+     TRIATHLON RACE-DAY FUELING CALCULATOR
+     Imported from yousuli-platform/yousuli/core/static/calculators/triathlon_fueling_calculator.html
+     Bridge integration stripped; logic preserved.
+     ========================================================================== */
+
+  /* ── PRODUCT DATABASE ─────────────────────────────────────────── */
+  const P = {
+    water150:{name:"Water 150 ml",cho:0,kcal:0,na:0,k:0,caf:0,fluid:150,kind:"drink"},
+    water250:{name:"Water 250 ml",cho:0,kcal:0,na:0,k:0,caf:0,fluid:250,kind:"drink"},
+    water350:{name:"Water 350 ml",cho:0,kcal:0,na:0,k:0,caf:0,fluid:350,kind:"drink"},
+    water500:{name:"Water 500 ml",cho:0,kcal:0,na:0,k:0,caf:0,fluid:500,kind:"drink"},
+    water650:{name:"Water 650 ml",cho:0,kcal:0,na:0,k:0,caf:0,fluid:650,kind:"drink"},
+    water750:{name:"Water 750 ml",cho:0,kcal:0,na:0,k:0,caf:0,fluid:750,kind:"drink"},
+    gatorade150:{name:"Gatorade 150 ml",cho:9,kcal:36,na:90,k:27,caf:0,fluid:150,kind:"drink"},
+    gatorade250:{name:"Gatorade 250 ml",cho:15,kcal:60,na:150,k:45,caf:0,fluid:250,kind:"drink"},
+    gatorade350:{name:"Gatorade 350 ml",cho:21,kcal:84,na:210,k:63,caf:0,fluid:350,kind:"drink"},
+    gatorade500:{name:"Gatorade 500 ml",cho:30,kcal:120,na:300,k:90,caf:0,fluid:500,kind:"drink"},
+    gatorade650:{name:"Gatorade 650 ml",cho:39,kcal:156,na:390,k:117,caf:0,fluid:650,kind:"drink"},
+    gatorade750:{name:"Gatorade 750 ml",cho:45,kcal:180,na:450,k:135,caf:0,fluid:750,kind:"drink"},
+    mortal150:{name:"Mortal 150 ml",cho:7.5,kcal:30,na:150,k:0,caf:0,fluid:150,kind:"drink"},
+    mortal250:{name:"Mortal 250 ml",cho:12.5,kcal:50,na:250,k:0,caf:0,fluid:250,kind:"drink"},
+    mortal350:{name:"Mortal 350 ml",cho:17.5,kcal:70,na:350,k:0,caf:0,fluid:350,kind:"drink"},
+    mortal500:{name:"Mortal 500 ml",cho:25,kcal:100,na:500,k:0,caf:0,fluid:500,kind:"drink"},
+    mortal650:{name:"Mortal 650 ml",cho:32.5,kcal:130,na:650,k:0,caf:0,fluid:650,kind:"drink"},
+    mortal750:{name:"Mortal 750 ml",cho:37.5,kcal:150,na:750,k:0,caf:0,fluid:750,kind:"drink"},
+    cho8_150:{name:"CHO 8% 150 ml",cho:12,kcal:48,na:0,k:0,caf:0,fluid:150,kind:"drink"},
+    cho10_150:{name:"CHO 10% 150 ml",cho:15,kcal:60,na:0,k:0,caf:0,fluid:150,kind:"drink"},
+    cho14_150:{name:"CHO 14% 150 ml",cho:21,kcal:84,na:0,k:0,caf:0,fluid:150,kind:"drink"},
+    cho8_250:{name:"CHO 8% 250 ml",cho:20,kcal:80,na:0,k:0,caf:0,fluid:250,kind:"drink"},
+    cho8_350:{name:"CHO 8% 350 ml",cho:28,kcal:112,na:0,k:0,caf:0,fluid:350,kind:"drink"},
+    cho10_250:{name:"CHO 10% 250 ml",cho:25,kcal:100,na:0,k:0,caf:0,fluid:250,kind:"drink"},
+    cho10_350:{name:"CHO 10% 350 ml",cho:35,kcal:140,na:0,k:0,caf:0,fluid:350,kind:"drink"},
+    cho14_250:{name:"CHO 14% 250 ml",cho:35,kcal:140,na:0,k:0,caf:0,fluid:250,kind:"drink"},
+    cho14_350:{name:"CHO 14% 350 ml",cho:49,kcal:196,na:0,k:0,caf:0,fluid:350,kind:"drink"},
+    cho8_500:{name:"CHO 8% 500 ml",cho:40,kcal:160,na:0,k:0,caf:0,fluid:500,kind:"drink"},
+    cho8_650:{name:"CHO 8% 650 ml",cho:52,kcal:208,na:0,k:0,caf:0,fluid:650,kind:"drink"},
+    cho8_750:{name:"CHO 8% 750 ml",cho:60,kcal:240,na:0,k:0,caf:0,fluid:750,kind:"drink"},
+    cho10_500:{name:"CHO 10% 500 ml",cho:50,kcal:200,na:0,k:0,caf:0,fluid:500,kind:"drink"},
+    cho10_650:{name:"CHO 10% 650 ml",cho:65,kcal:260,na:0,k:0,caf:0,fluid:650,kind:"drink"},
+    cho10_750:{name:"CHO 10% 750 ml",cho:75,kcal:300,na:0,k:0,caf:0,fluid:750,kind:"drink"},
+    cho14_500:{name:"CHO 14% 500 ml",cho:70,kcal:280,na:0,k:0,caf:0,fluid:500,kind:"drink"},
+    cho14_650:{name:"CHO 14% 650 ml",cho:91,kcal:364,na:0,k:0,caf:0,fluid:650,kind:"drink"},
+    cho14_750:{name:"CHO 14% 750 ml",cho:105,kcal:420,na:0,k:0,caf:0,fluid:750,kind:"drink"},
+    cho20_500:{name:"CHO 20% 500 ml",cho:100,kcal:400,na:0,k:0,caf:0,fluid:500,kind:"drink"},
+    cho20_650:{name:"CHO 20% 650 ml",cho:130,kcal:520,na:0,k:0,caf:0,fluid:650,kind:"drink"},
+    cho20_750:{name:"CHO 20% 750 ml",cho:150,kcal:600,na:0,k:0,caf:0,fluid:750,kind:"drink"},
+    cho30_500:{name:"CHO 30% 500 ml",cho:150,kcal:600,na:0,k:0,caf:0,fluid:500,kind:"drink"},
+    cho30_650:{name:"CHO 30% 650 ml",cho:195,kcal:780,na:0,k:0,caf:0,fluid:650,kind:"drink"},
+    cho30_750:{name:"CHO 30% 750 ml",cho:225,kcal:900,na:0,k:0,caf:0,fluid:750,kind:"drink"},
+    cho40_500:{name:"CHO 40% 500 ml (super-syrup)",cho:200,kcal:800,na:0,k:0,caf:0,fluid:500,kind:"drink"},
+    cho40_650:{name:"CHO 40% 650 ml (super-syrup)",cho:260,kcal:1040,na:0,k:0,caf:0,fluid:650,kind:"drink"},
+    cho40_750:{name:"CHO 40% 750 ml (super-syrup)",cho:300,kcal:1200,na:0,k:0,caf:0,fluid:750,kind:"drink"},
+    pfh1000_150:{name:"PH 1000 (150 ml)",cho:0,kcal:0,na:300,k:0,caf:0,fluid:150,kind:"drink"},
+    pfh1500_150:{name:"PH 1500 (150 ml)",cho:0,kcal:0,na:450,k:0,caf:0,fluid:150,kind:"drink"},
+    pfh1000_500:{name:"PH 1000 (500 ml)",cho:0,kcal:0,na:1000,k:0,caf:0,fluid:500,kind:"drink"},
+    pfh1500_500:{name:"PH 1500 (500 ml)",cho:0,kcal:0,na:1500,k:0,caf:0,fluid:500,kind:"drink"},
+    maurten160_500:{name:"Maurten Mix160 (500 ml)",cho:40,kcal:160,na:0,k:0,caf:0,fluid:500,kind:"drink"},
+    maurten320_500:{name:"Maurten Mix320 (500 ml)",cho:80,kcal:320,na:0,k:0,caf:0,fluid:500,kind:"drink"},
+    gu:{name:"GU Gel",cho:22,kcal:100,na:50,k:0,caf:20,fluid:0,kind:"gel"},
+    gu_liquid:{name:"GU Liquid Gel",cho:22,kcal:100,na:60,k:0,caf:20,fluid:0,kind:"gel"},
+    maurten:{name:"Maurten 100",cho:25,kcal:100,na:0,k:0,caf:0,fluid:0,kind:"gel"},
+    maurten_caf:{name:"Maurten CAF100",cho:25,kcal:100,na:0,k:0,caf:100,fluid:0,kind:"gel"},
+    sis_gel:{name:"SiS GO Isotonic",cho:22,kcal:87,na:40,k:0,caf:0,fluid:0,kind:"gel"},
+    sis_caf:{name:"SiS GO Caffeine",cho:22,kcal:87,na:40,k:0,caf:75,fluid:0,kind:"gel"},
+    sis_beta:{name:"SiS Beta Fuel",cho:40,kcal:160,na:30,k:0,caf:0,fluid:0,kind:"gel"},
+    pf30:{name:"PF 30 Gel",cho:30,kcal:120,na:0,k:0,caf:0,fluid:0,kind:"gel"},
+    pf30_caf:{name:"PF 30 Caffeine",cho:30,kcal:120,na:0,k:0,caf:100,fluid:0,kind:"gel"},
+    ns_c30:{name:"Neversecond C30",cho:30,kcal:120,na:40,k:0,caf:0,fluid:0,kind:"gel"},
+    ns_c30_caf:{name:"Neversecond C30 Caffeine",cho:30,kcal:120,na:40,k:0,caf:75,fluid:0,kind:"gel"},
+    ns_c90:{name:"Neversecond C90",cho:90,kcal:360,na:0,k:0,caf:0,fluid:0,kind:"gel"},
+    maurten160:{name:"Maurten Gel 160",cho:40,kcal:160,na:0,k:0,caf:0,fluid:0,kind:"gel"},
+    maurten_solid160:{name:"Maurten SOLID 160",cho:44,kcal:230,na:0,k:0,caf:0,fluid:0,kind:"solid"},
+    maurten_solid225:{name:"Maurten SOLID 225",cho:43,kcal:225,na:0,k:0,caf:100,fluid:0,kind:"solid"},
+    gu_chews:{name:"GU Chews (8 pc)",cho:32,kcal:120,na:90,k:0,caf:0,fluid:0,kind:"gel"},
+    torq_gel:{name:"Torq Gel",cho:30,kcal:120,na:30,k:0,caf:0,fluid:0,kind:"gel"},
+    torq_gel_caf:{name:"Torq Gel Caffeine",cho:30,kcal:120,na:30,k:0,caf:89,fluid:0,kind:"gel"},
+    high5:{name:"High5 Energy Gel",cho:23,kcal:92,na:28,k:0,caf:0,fluid:0,kind:"gel"},
+    high5_caf:{name:"High5 Energy Gel Caffeine",cho:23,kcal:92,na:28,k:0,caf:30,fluid:0,kind:"gel"},
+    coke_150:{name:"Coca-Cola flat 150 ml (IM)",cho:16,kcal:63,na:5,k:0,caf:14,fluid:150,kind:"drink"},
+    coke_250:{name:"Coca-Cola flat 250 ml",cho:27,kcal:105,na:8,k:0,caf:24,fluid:250,kind:"drink"},
+    red_bull_250:{name:"Red Bull 250 ml",cho:27,kcal:108,na:105,k:0,caf:80,fluid:250,kind:"drink"},
+    chicken_broth_150:{name:"Chicken broth 150 ml (IM)",cho:0,kcal:8,na:450,k:0,caf:0,fluid:150,kind:"drink"},
+    pepsi_250:{name:"Pepsi 250 ml",cho:27,kcal:108,na:13,k:0,caf:25,fluid:250,kind:"drink"},
+    clif_bar:{name:"Clif Bar",cho:45,kcal:250,na:180,k:0,caf:0,fluid:0,kind:"solid"},
+    nature_valley:{name:"Nature Valley Bar",cho:29,kcal:190,na:160,k:0,caf:0,fluid:0,kind:"solid"},
+    coffee_cup:{name:"Cup of Coffee",cho:0,kcal:0,na:5,k:0,caf:95,fluid:0,kind:"solid"},
+    banana_half:{name:"Banana (half, IM)",cho:14,kcal:55,na:1,k:210,caf:0,fluid:0,kind:"solid"},
+    banana_whole:{name:"Banana (whole)",cho:27,kcal:105,na:1,k:420,caf:0,fluid:0,kind:"solid"},
+    orange_slice:{name:"Orange slice (1/4)",cho:5,kcal:20,na:0,k:55,caf:0,fluid:0,kind:"solid"},
+    pretzels_30g:{name:"Pretzels 30 g (IM)",cho:23,kcal:115,na:380,k:0,caf:0,fluid:0,kind:"solid"},
+    cookie_im:{name:"Cookie (IM aid)",cho:20,kcal:145,na:90,k:0,caf:0,fluid:0,kind:"solid"},
+    rice_cake_small:{name:"Rice cake (small)",cho:18,kcal:95,na:80,k:0,caf:0,fluid:0,kind:"solid"},
+    maurten_bicarb:{name:"Maurten Bicarb System",cho:0,kcal:0,na:0,k:0,caf:0,fluid:0,kind:"tablet"},
+    salt500:{name:"Salt Tab 500 mg",cho:0,kcal:0,na:500,k:0,caf:0,fluid:0,kind:"tablet"},
+    salt1000:{name:"Salt Tab 1000 mg",cho:0,kcal:0,na:1000,k:0,caf:0,fluid:0,kind:"tablet"},
+    salt1500:{name:"Salt Tab 1500 mg",cho:0,kcal:0,na:1500,k:0,caf:0,fluid:0,kind:"tablet"},
+    caf100:{name:"Caffeine Tab 100 mg",cho:0,kcal:0,na:0,k:0,caf:100,fluid:0,kind:"tablet"},
+    caf200:{name:"Caffeine Tab 200 mg",cho:0,kcal:0,na:0,k:0,caf:200,fluid:0,kind:"tablet"},
+  };
+
+  const OG = {
+    transitionDrinks:['water250','water350','gatorade250','gatorade350','mortal250','mortal350','cho8_250','cho10_250','cho14_250','cho8_350','cho10_350','cho14_350','red_bull_250','coke_250','pepsi_250'],
+    bikeBottles:['water500','water650','water750','gatorade500','gatorade650','gatorade750','mortal500','mortal650','mortal750','cho8_500','cho8_650','cho8_750','cho10_500','cho10_650','cho10_750','cho14_500','cho14_650','cho14_750','cho20_500','cho20_650','cho20_750','cho30_500','cho30_650','cho30_750','cho40_500','cho40_650','cho40_750','pfh1000_500','pfh1500_500','maurten160_500','maurten320_500'],
+    runFlasks:['water250','water500','gatorade250','gatorade500','mortal250','mortal500','cho8_250','cho8_500','cho10_250','cho10_500','cho14_250','cho14_500','cho20_500','cho30_500','cho40_500'],
+    runStationDrinks:['water150','gatorade150','mortal150','cho8_150','cho10_150','cho14_150','pfh1000_150','pfh1500_150','coke_150','chicken_broth_150','red_bull_250','coke_250','pepsi_250'],
+    gelsAndSolids: Object.keys(P).filter(k=>P[k].kind==='gel').concat([
+      'clif_bar','nature_valley','coffee_cup',
+      'maurten_solid160','maurten_solid225',
+      'banana_half','banana_whole','orange_slice','pretzels_30g','cookie_im','rice_cake_small',
+    ]),
+    tablets: Object.keys(P).filter(k=>P[k].kind==='tablet')
+  };
+
+  /* ── RACE CONFIG ──────────────────────────────────────────────── */
+  const DIST={sprint:{swimKm:0.75,bikeKm:20,runKm:5},olympic:{swimKm:1.5,bikeKm:40,runKm:10},half:{swimKm:1.9,bikeKm:90,runKm:21.1},full:{swimKm:3.8,bikeKm:180,runKm:42.2}};
+  const DIST_DEF={sprint:{swim:15,bike:45,run:25,w:200},olympic:{swim:25,bike:90,run:50,w:210},half:{swim:35,bike:160,run:105,w:220},full:{swim:75,bike:360,run:240,w:190}};
+  const CONDITIONS={cool:{bikeMult:0.75,runMult:0.80,label:'Cool: sweat rates auto-adjusted ↓ (~75–80%)'},moderate:{bikeMult:1.0,runMult:1.0,label:'Moderate: baseline sweat rates'},hot:{bikeMult:1.25,runMult:1.30,label:'Hot: sweat rates auto-adjusted ↑ (~25–30%)'},extreme:{bikeMult:1.50,runMult:1.60,label:'Extreme: sweat rates auto-adjusted ↑ (~50–60%)'}};
+  const THRESHOLDS=[29.5,59.5,89.5,119.5,149.5,179.5,359.5,10000];
+  const CARB_MATRIX=[[0,0,20,40,50,60,75,75],[10,20,30,60,80,90,100,90],[30,50,70,90,120,120,120,90]];
+  function carbPerHour(mi,dm){for(let i=0;i<THRESHOLDS.length;i++){if(dm<THRESHOLDS[i])return CARB_MATRIX[mi][i];}return CARB_MATRIX[mi][CARB_MATRIX[mi].length-1];}
+
+  const CARRY_DEF={
+    sprint:{bd1:1,bd2:0,bd3:0,bg:2,bta:0,btb:0,rd1:0,rd2:0,rg:1,rta:0,rtb:0},
+    olympic:{bd1:2,bd2:0,bd3:0,bg:3,bta:1,btb:0,rd1:0,rd2:0,rg:1,rta:0,rtb:0},
+    half:{bd1:2,bd2:1,bd3:0,bg:6,bta:3,btb:0,rd1:0,rd2:0,rg:2,rta:0,rtb:0},
+    full:{bd1:2,bd2:1,bd3:1,bg:12,bta:6,btb:2,rd1:0,rd2:0,rg:4,rta:2,rtb:1}
+  };
+
+  /* ── UTILITIES ────────────────────────────────────────────────── */
+  function $(id){return document.getElementById(id);}
+  function fmt(n,d=0){const x=Number(n);return(isNaN(x)?0:x).toFixed(d);}
+  function parseTimeHM(t){if(!t||!t.includes(':'))return 7*60;const[H,M]=t.split(':').map(Number);return(isNaN(H)||isNaN(M))?7*60:H*60+M;}
+  function hm(m){const mm=((m%60)+60)%60;return`${String(Math.floor(m/60)).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;}
+  function legLabel(off,blk,tot){const a=off,b=Math.min(off+blk,tot);const f=m=>`${Math.floor(m/60)}:${String(m%60).padStart(2,'0')}`;return`${f(a)}–${f(b)}`;}
+  function zero(){return{cho:0,kcal:0,na:0,k:0,caf:0,fluid:0};}
+  function add(a,b){return{cho:a.cho+b.cho,kcal:a.kcal+b.kcal,na:a.na+b.na,k:a.k+b.k,caf:a.caf+b.caf,fluid:a.fluid+b.fluid};}
+  function cv(v){return(typeof v==='string')?v:fmt(v,0);}
+  function paceStr(min,km){if(!km||!min)return'';const p=min/km;return`${Math.floor(p)}:${String(Math.round((p%1)*60)).padStart(2,'0')}/km`;}
+
+  /* ── ENERGY MODELS ────────────────────────────────────────────── */
+  function swimKcal(w,km,min){const p100=(min*60)/(km*10);const f=Math.max(0.85,Math.min(1.15,Math.pow(110/p100,0.5)*Math.pow(p100/110,0.35)));return w*km*4.2*f;}
+  function bikeKcalFromPower(watts,min){return watts*(min/60)*3.6;}
+  function runKcal(w,km,min){if(min<=0||km<=0)return 0;const spd=(km*1000)/(min*60);const vo2=3.5+spd*12;return vo2*w*min/1000*5;}
+
+  /* ── NOTE & BOTTLE HELPERS ────────────────────────────────────── */
+  function mkNotes(){return{drink:{},gel:{},solid:{},tablet:{}};}
+  function addDN(n,k,ml){n.drink[k]=(n.drink[k]||0)+ml;}
+  function addIN(n,kind,k){n[kind][k]=(n[kind][k]||0)+1;}
+  function baseLabel(nm){return nm.replace(/\s*\(?\d+\s*ml\)?/gi,'').trim();}
+  function renderNotes(n){
+    const parts=[];
+    const dl={};Object.entries(n.drink).forEach(([k,ml])=>{const l=baseLabel(P[k].name);dl[l]=(dl[l]||0)+ml;});
+    const dp=Object.entries(dl).map(([l,ml])=>`${l}: ${fmt(ml,0)} ml`);
+    if(dp.length)parts.push(dp.join(', '));
+    ['gel','solid','tablet'].forEach(kind=>{const ls=Object.entries(n[kind]).map(([k,c])=>`${fmt(c,0)} ${P[k].name}`);if(ls.length)parts.push(ls.join(' • '));});
+    return parts.join(' • ');
+  }
+  function mkBottle(k){return{key:k,ml:P[k].fluid};}
+  function drainBottle(notes,bot,want){const p=P[bot.key];const take=Math.min(want,bot.ml);const r=take/p.fluid;bot.ml-=take;if(take>0)addDN(notes,bot.key,take);return{cho:p.cho*r,kcal:p.kcal*r,na:p.na*r,k:p.k*r,caf:p.caf*r,fluid:take};}
+  function sipBottles(bots,want,notes){let a=zero(),need=want,g=0;while(need>1&&bots.length&&g<20){g++;bots.sort((x,y)=>y.ml-x.ml);const o=drainBottle(notes,bots[0],need);a=add(a,o);need-=o.fluid;for(let i=bots.length-1;i>=0;i--)if(bots[i].ml<=1)bots.splice(i,1);}return a;}
+
+  /* ── SELECT POPULATION ────────────────────────────────────────── */
+  function fillSel(s,keys){if(!s)return;s.innerHTML='';keys.forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=P[k].name;s.appendChild(o);});}
+  function fillAll(){
+    [$('bikeCarryDrink1'),$('bikeCarryDrink2'),$('bikeCarryDrink3')].forEach(s=>fillSel(s,OG.bikeBottles));
+    [$('runCarryDrink1'),$('runCarryDrink2')].forEach(s=>fillSel(s,OG.runFlasks));
+    [$('bikeCarryGelProd'),$('bikeCarryGelProdB'),$('bikeCarryGelProdC'),
+     $('runCarryGelProd'),$('runCarryGelProdB'),$('runCarryGelProdC'),
+     $('t0Gel'),$('t1Gel'),$('t2Gel')].forEach(s=>fillSel(s,OG.gelsAndSolids));
+    [$('bikeCarryTabA'),$('bikeCarryTabB'),$('runCarryTabA'),$('runCarryTabB'),$('t0TabA'),$('t0TabB'),$('t1Tab'),$('t2Tab')].forEach(s=>fillSel(s,OG.tablets));
+    [$('t0Drink1'),$('t0Drink2'),$('t1Drink1'),$('t1Drink2'),$('t2Drink1'),$('t2Drink2')].forEach(s=>fillSel(s,OG.transitionDrinks));
+    [$('bikeDrinkA'),$('bikeDrinkB'),$('bikeDrinkC')].forEach(s=>fillSel(s,OG.bikeBottles));
+    [$('runDrinkA'),$('runDrinkB'),$('runDrinkC')].forEach(s=>fillSel(s,OG.runStationDrinks));
+  }
+
+  /* ── INPUT READERS ────────────────────────────────────────────── */
+  function getAthlete(){return{weight:+$('weight').value||0,height:+$('height').value||0,sweatBike:+$('sweatBike').value||0,sweatRun:+$('sweatRun').value||0,sweatNa:+$('sweatNa').value||0};}
+  function getRace(){
+    const dk=$('raceDistance').value;const d=DIST[dk];
+    const swimMin=+$('swimMin').value||0,bikeMin=+$('bikeMin').value||0,runMin=+$('runMin').value||0;
+    const t1=+$('t1Time').value||0,t2=+$('t2Time').value||0;
+    return{distKey:dk,raceStartMin:parseTimeHM($('raceStart').value||'07:00'),swimMin,bikeMin,runMin,bikeW:+$('bikeW').value||0,fuelMode:+$('fuelMode').value,runCHOFactor:parseFloat($('runCHOFactor').value),cafStrategy:$('cafStrategy').value,swimKm:d.swimKm,bikeKm:d.bikeKm,runKm:d.runKm,t1Time:t1,t2Time:t2,totalMin:swimMin+bikeMin+runMin+t1+t2};
+  }
+  function getHydration(){return{bikeReplace:parseFloat($('bikeReplace').value),runReplaceRaw:$('runReplace').value};}
+  function getTrans(){return{t0On:$('t0On').checked,t1On:$('t1On').checked,t2On:$('t2On').checked,t1Time:+$('t1Time').value||0,t2Time:+$('t2Time').value||0};}
+  function getStations(race){
+    const bikeAidKm=+$('bikeAidKm').value||25;
+    const runAidKm=+$('runAidKm').value||2.5;
+    const bikePace=race.bikeKm>0?race.bikeMin/race.bikeKm:0;
+    const runPace=race.runKm>0?race.runMin/race.runKm:0;
+    const bikeAidMin=Math.round(bikeAidKm*bikePace);
+    const runAidMin=Math.round(runAidKm*runPace);
+    $('bikeAidHint').textContent=bikeAidMin>0?`≈ every ${bikeAidMin} min at current pace`:'';
+    $('runAidHint').textContent=runAidMin>0?`≈ every ${runAidMin} min at current pace`:'';
+    return{
+      bike:{enabled:$('enableBikeStations').checked,freqMin:bikeAidMin,drinks:[$('bikeDrinkA').value,$('bikeDrinkB').value,$('bikeDrinkC').value],counts:[+$('bikeDrinkACnt').value||0,+$('bikeDrinkBCnt').value||0,+$('bikeDrinkCCnt').value||0]},
+      run:{enabled:$('enableRunStations').checked,freqMin:runAidMin,drinks:[$('runDrinkA').value,$('runDrinkB').value,$('runDrinkC').value],cups:[+$('runDrinkACups').value||0,+$('runDrinkBCups').value||0,+$('runDrinkCCups').value||0]}
+    };
+  }
+  function getCarry(){
+    const bb=[];[['bikeCarryDrink1','bikeCarryDrink1Cnt'],['bikeCarryDrink2','bikeCarryDrink2Cnt'],['bikeCarryDrink3','bikeCarryDrink3Cnt']].forEach(([s,c])=>{const se=$(s),ce=$(c);if(se&&ce){const n=+ce.value||0;for(let i=0;i<n;i++)bb.push(mkBottle(se.value));}});
+    const rf=[];[['runCarryDrink1','runCarryDrink1Cnt'],['runCarryDrink2','runCarryDrink2Cnt']].forEach(([s,c])=>{const se=$(s),ce=$(c);if(se&&ce){const n=+ce.value||0;for(let i=0;i<n;i++)rf.push(mkBottle(se.value));}});
+    const bikeGelPools = [
+      {key:$('bikeCarryGelProd').value, count:+$('bikeCarryGels').value||0},
+      {key:$('bikeCarryGelProdB')?.value, count:+($('bikeCarryGelsB')?.value||0)},
+      {key:$('bikeCarryGelProdC')?.value, count:+($('bikeCarryGelsC')?.value||0)},
+    ].filter(p=>p.key && p.count>0);
+    const runGelPools = [
+      {key:$('runCarryGelProd').value, count:+$('runCarryGels').value||0},
+      {key:$('runCarryGelProdB')?.value, count:+($('runCarryGelsB')?.value||0)},
+      {key:$('runCarryGelProdC')?.value, count:+($('runCarryGelsC')?.value||0)},
+    ].filter(p=>p.key && p.count>0);
+    const bikeGelsTotal = bikeGelPools.reduce((s,p)=>s+p.count,0);
+    const runGelsTotal  = runGelPools.reduce((s,p)=>s+p.count,0);
+    return{
+      bikeBottles:bb,
+      bikeGelKey:$('bikeCarryGelProd').value,
+      bikeGels: bikeGelsTotal,
+      bikeGelPools,
+      bikeTabKeys:[$('bikeCarryTabA').value,$('bikeCarryTabB').value],
+      bikeTabCounts:[+$('bikeCarryTabACnt').value||0,+$('bikeCarryTabBCnt').value||0],
+      runFlasks:rf,
+      runGelKey:$('runCarryGelProd').value,
+      runGels: runGelsTotal,
+      runGelPools,
+      runTabKeys:[$('runCarryTabA').value,$('runCarryTabB').value],
+      runTabCounts:[+$('runCarryTabACnt').value||0,+$('runCarryTabBCnt').value||0]
+    };
+  }
+
+  /* ── TARGETS COMPUTATION ──────────────────────────────────────── */
+  function computeTargets(race,ath,hyd){
+    const baseCHO=carbPerHour(race.fuelMode,race.totalMin);
+    const choBikeHr=baseCHO;
+    const choRunHr=Math.round(baseCHO*race.runCHOFactor);
+    const intakeBikeL=hyd.bikeReplace*ath.sweatBike;
+    let intakeRunL;
+    if(hyd.runReplaceRaw==='auto'){const loss=0.02*ath.weight;const rh=Math.max(0.1,race.runMin/60);intakeRunL=Math.max(0,ath.sweatRun-loss/rh);}
+    else{intakeRunL=parseFloat(hyd.runReplaceRaw)*ath.sweatRun;}
+    const bikeNaHr=ath.sweatBike*ath.sweatNa;
+    const runNaHr=ath.sweatRun*ath.sweatNa;
+    const swimSweatL=(race.swimMin/60)*0.4;
+    const bikeSweatL=ath.sweatBike*(race.bikeMin/60);
+    const runSweatL=ath.sweatRun*(race.runMin/60);
+    const totalSweatL=swimSweatL+bikeSweatL+runSweatL;
+    const projFluidInL=(intakeBikeL*(race.bikeMin/60)+intakeRunL*(race.runMin/60));
+    const bwLossKg=totalSweatL-projFluidInL;
+    const bwLossPct=ath.weight>0?(bwLossKg/ath.weight)*100:0;
+    return{choBikeHr,choRunHr,bikeMLhr:intakeBikeL*1000,runMLhr:intakeRunL*1000,bikeNaHr,runNaHr,
+      bwLossKg,bwLossPct,totalSweatL,
+      burns:{swim:Math.round(swimKcal(ath.weight,race.swimKm,race.swimMin)),bike:Math.round(bikeKcalFromPower(race.bikeW,race.bikeMin)),run:Math.round(runKcal(ath.weight,race.runKm,race.runMin))}};
+  }
+
+  /* ── RENDERING ────────────────────────────────────────────────── */
+  function renderSummary(t,race){
+    const b=t.burns;const choT=Math.round(t.choBikeHr*(race.bikeMin/60)+t.choRunHr*(race.runMin/60));
+    const bwCls=Math.abs(t.bwLossPct)<2?'color:#22c55e':Math.abs(t.bwLossPct)<3.5?'color:#eab308':'color:#ef4444';
+    $('summary').innerHTML=`<div class="stat-grid">
+      <div class="stat"><h4>Expected burn</h4><p>Swim ${b.swim} • Bike ${b.bike} • Run ${b.run}</p><p><strong>Total: ${b.swim+b.bike+b.run} kcal</strong></p></div>
+      <div class="stat"><h4>Carbohydrates</h4><p>Bike ${t.choBikeHr} g/h • Run ${t.choRunHr} g/h</p><p><strong>Total target: ${choT} g</strong></p></div>
+      <div class="stat"><h4>Hydration &amp; sodium</h4><p>Bike ${fmt(t.bikeMLhr)} ml/h • Na ~${Math.round(t.bikeNaHr)} mg/h</p><p>Run ${fmt(t.runMLhr)} ml/h • Na ~${Math.round(t.runNaHr)} mg/h</p></div>
+      <div class="stat"><h4>Projected BW change</h4><p>Sweat loss: ~${fmt(t.totalSweatL,1)} L</p><p style="${bwCls};font-weight:700">${fmt(t.bwLossKg,1)} kg (${fmt(t.bwLossPct,1)}%)</p></div>
+    </div>`;
+  }
+
+  function renderWarnings(t,ath){
+    const w=[];
+    const maxCHO=Math.max(t.choBikeHr,t.choRunHr);
+    if(maxCHO>120)w.push({cls:'warning-red',msg:`CHO target ${maxCHO} g/h exceeds standard guidelines (max ~120 g/h). Some elite athletes tolerate higher rates &mdash; ensure well-trained gut and dual-transport carbs (glucose + fructose).`});
+    else if(maxCHO>90)w.push({cls:'warning-yellow',msg:`CHO target ${maxCHO} g/h is high. Ensure you use dual-transport carbs (glucose + fructose) and have trained at this rate.`});
+    else if(maxCHO>60)w.push({cls:'warning-green',msg:`CHO target ${maxCHO} g/h is moderate. Dual-transport carbs recommended for rates above 60 g/h.`});
+    const maxFluid=Math.max(t.bikeMLhr,t.runMLhr);
+    if(maxFluid>1200)w.push({cls:'warning-red',msg:`Fluid target ${fmt(maxFluid)} ml/h is very high. Risk of GI distress or hyponatremia. Consider reducing.`});
+    else if(maxFluid>1000)w.push({cls:'warning-yellow',msg:`Fluid target ${fmt(maxFluid)} ml/h is high. Monitor tolerance carefully.`});
+    if(Math.abs(t.bwLossPct)>3.5)w.push({cls:'warning-red',msg:`Projected BW loss ${fmt(t.bwLossPct,1)}% exceeds safe threshold (>3.5%). Increase fluid intake or reduce sweat rate expectations.`});
+    else if(Math.abs(t.bwLossPct)>2.5)w.push({cls:'warning-yellow',msg:`Projected BW loss ${fmt(t.bwLossPct,1)}% is borderline. Target <2% for optimal performance.`});
+    $('warnings').innerHTML=w.map(x=>`<div class="warning ${x.cls}">${x.msg}</div>`).join('');
+  }
+
+  function renderPrerace(){
+    const pe=$('prerace');if(!pe)return;
+    const w=+$('weight').value||72;
+    const sm=+$('swimMin').value||0,bm=+$('bikeMin').value||0,rm=+$('runMin').value||0;
+    const tot=(sm+bm+rm+(+$('t1Time').value||0)+(+$('t2Time').value||0))/60||4;
+    let bc,loadG;
+    if(tot<=2){bc='20–43 g CHO';loadG=`${Math.round(w*5)}–${Math.round(w*7)} g/day`;}
+    else if(tot<=4){bc='30–60 g CHO';loadG=`${Math.round(w*7)}–${Math.round(w*8)} g/day`;}
+    else if(tot<=8){bc='60+ g CHO';loadG=`${Math.round(w*8)}–${Math.round(w*10)} g/day`;}
+    else{bc='60+ g CHO (consider 80–120 g)';loadG=`${Math.round(w*10)}–${Math.round(w*12)} g/day`;}
+    const morningG=`${Math.round(w*1)}–${Math.round(w*4)} g CHO`;
+    function cm(d){if(tot<=2)return d===1?'1 high-carb meal':'—';if(tot<=4)return d===1?'2 high-carb meals':'—';if(tot<=8)return(d<=2)?'2 high-carb meals':'—';return'2 high-carb meals';}
+    const na='24 oz (~710 ml) with 1,000–1,500 mg sodium';
+    const rows=[
+      {w:'Three days before',d:`${cm(3)}. Carb load: <strong>${loadG}</strong> (${fmt(w*8,0)}–${fmt(w*10,0)} g total). Increase fluid &amp; electrolytes.`},
+      {w:'Two days before',d:`${cm(2)}. Continue carb loading at <strong>${loadG}</strong>.`},
+      {w:'Day before',d:`${cm(1)}. Evening: ${na}.`},
+      {w:'Morning of race (~2–3 h)',d:`<strong>${morningG}</strong> (${bc}); plus ${na}.`}
+    ];
+    let h='<table style="width:100%;max-width:900px"><thead><tr><th style="width:220px">When</th><th>Recommendation</th></tr></thead><tbody>';
+    rows.forEach(r=>{h+=`<tr><td>${r.w}</td><td>${r.d}</td></tr>`;});
+    h+='</tbody></table><div style="text-align:center;font-size:0.9em;color:var(--ys-muted);margin-top:12px">Pre-swim (T0): ~25 g CHO + 250–350 ml water.</div>';
+    pe.innerHTML=h;
+  }
+
+  function renderPace(race){
+    const bp=race.bikeKm>0&&race.bikeMin>0?`${fmt(race.bikeKm/(race.bikeMin/60),1)} km/h`:'';
+    const rp=race.runKm>0&&race.runMin>0?paceStr(race.runMin,race.runKm):'';
+    $('paceDisplay').textContent=`Bike: ${bp} • Run: ${rp}`;
+  }
+
+  /* ── TRANSITION BUILDER ───────────────────────────────────────── */
+  function consumeTrans(pfx){
+    let a=zero();const n=mkNotes();
+    function addDS(se,ce){if(!se||!ce)return;const p=P[se.value];const cnt=+ce.value||0;if(cnt<=0)return;const w=Math.floor(cnt),f=cnt-w;for(let i=0;i<w;i++){a=add(a,{cho:p.cho,kcal:p.kcal,na:p.na,k:p.k,caf:p.caf,fluid:p.fluid});addDN(n,se.value,p.fluid);}if(f>0){a=add(a,{cho:p.cho*f,kcal:p.kcal*f,na:p.na*f,k:p.k*f,caf:p.caf*f,fluid:p.fluid*f});addDN(n,se.value,p.fluid*f);}}
+    addDS($(pfx+'Drink1'),$(pfx+'Drink1Cnt'));addDS($(pfx+'Drink2'),$(pfx+'Drink2Cnt'));
+    const gs=$(pfx+'Gel'),gc=$(pfx+'GelCnt');
+    if(gs&&gc){const p=P[gs.value];const cnt=+gc.value||0;for(let i=0;i<cnt;i++){a=add(a,{cho:p.cho,kcal:p.kcal,na:p.na,k:0,caf:p.caf,fluid:0});addIN(n,p.kind,gs.value);}}
+    if(pfx==='t0'){[['t0TabA','t0TabACnt'],['t0TabB','t0TabBCnt']].forEach(([ti,ci])=>{const ts=$(ti),tc=$(ci);if(ts&&tc){const p=P[ts.value];const cnt=+tc.value||0;for(let i=0;i<cnt;i++){a=add(a,{cho:0,kcal:0,na:p.na,k:0,caf:p.caf,fluid:0});addIN(n,'tablet',ts.value);}}});}
+    else{const ts=$(pfx+'Tab'),tc=$(pfx+'TabCnt');if(ts&&tc){const p=P[ts.value];const cnt=+tc.value||0;for(let i=0;i<cnt;i++){a=add(a,{cho:0,kcal:0,na:p.na,k:0,caf:p.caf,fluid:0});addIN(n,'tablet',ts.value);}}}
+    return{add:a,note:renderNotes(n)};
+  }
+
+  /* ── SCHEDULE HELPERS ─────────────────────────────────────────── */
+  const CHO_TOL=8;
+  function placeGelsFromPools(qs, hrC, target, pools) {
+    let def = Math.max(0, target - hrC.cho);
+    let placed = 0;
+    if (def <= CHO_TOL) return placed;
+    const wq = [];
+    for (let i = 0; i < qs.length; i++) {
+      const wm = Object.entries(qs[i].notes.drink)
+        .filter(([k]) => /^water/i.test(P[k].name))
+        .reduce((s, [, m]) => s + m, 0);
+      if (wm > 0) wq.push(i);
+    }
+    while (def > CHO_TOL) {
+      const pool = pools.find(p => p.remaining > 0);
+      if (!pool) break;
+      const gel = P[pool.key];
+      const qi = wq.length ? wq.shift() : qs.length - 1;
+      qs[qi].add.cho += gel.cho;
+      qs[qi].add.kcal += gel.kcal;
+      qs[qi].add.na += gel.na;
+      qs[qi].add.caf += gel.caf;
+      addIN(qs[qi].notes, 'gel', pool.key);
+      pool.remaining -= 1;
+      placed += 1;
+      def -= gel.cho;
+    }
+    return placed;
+  }
+  function placeGels(qs,hrC,target,gk,avail){
+    const pools = [{key: gk, remaining: avail}];
+    return placeGelsFromPools(qs, hrC, target, pools);
+  }
+
+  function shouldPlaceCaf(strategy,leg,hourInLeg,totalLegHours){
+    if(strategy==='none')return false;
+    if(strategy==='even')return true;
+    if(strategy==='late-bike')return leg==='bike'&&hourInLeg>=Math.max(1,totalLegHours-2);
+    if(strategy==='run-only')return leg==='run';
+    return true;
+  }
+  function placeTabs(qs,tks,tcs,auto,cafOpts){
+    if(!auto||!qs.length)return;
+    const lq=qs.length-1;
+    for(let i=0;i<2;i++){if(tcs[i]>0&&/^salt/.test(tks[i])){qs[lq].add.na+=P[tks[i]].na;addIN(qs[lq].notes,'tablet',tks[i]);tcs[i]--;break;}}
+    const doCaf=cafOpts?shouldPlaceCaf(cafOpts.strategy,cafOpts.leg,cafOpts.hourInLeg,cafOpts.totalLegHours):true;
+    if(doCaf){for(let i=0;i<2;i++){if(tcs[i]>0&&/^caf/.test(tks[i])){qs[lq].add.caf+=P[tks[i]].caf;addIN(qs[lq].notes,'tablet',tks[i]);tcs[i]--;break;}}}
+  }
+  function hrCons(qs){let h=zero();qs.forEach(q=>{h=add(h,q.add);});return h;}
+  function aidTimes(legDur,freqMin){const t=[];if(freqMin<=0)return t;let m=freqMin;while(m<legDur){t.push(m);m+=freqMin;}return t;}
+
+  /* ── ROW RENDERING ────────────────────────────────────────────── */
+  const COL_LABELS=['Time','Segment','CHO (g)','kcal','Fluid (ml)','Sodium (mg)','Potassium (mg)','Caffeine (mg)','Products / notes'];
+  function addRow(tb,tm,cls,lbl,a,note,ds){
+    const tr=document.createElement('tr');tr.className=cls;if(ds)tr.dataset.segment=ds;
+    const vals=[hm(tm),lbl,cv(a.cho),cv(a.kcal),cv(a.fluid),cv(a.na),cv(a.k),cv(a.caf),note||''];
+    vals.forEach((v,i)=>{const td=document.createElement('td');td.setAttribute('data-label',COL_LABELS[i]);td.innerHTML=v;if(i===8)td.style.textAlign='left';tr.appendChild(td);});
+    if(ds==='summary'||ds==='total'){
+      const choStr=String(a.cho);if(choStr.includes('/')){
+        const[ac,tg]=choStr.split('/').map(s=>parseFloat(s.trim()));
+        if(tg>0){const pct=ac/tg;if(pct>=0.9)tr.classList.add('deficit-ok');else if(pct>=0.75)tr.classList.add('deficit-warn');else tr.classList.add('deficit-bad');}
+      }
+    }
+    tb.appendChild(tr);
+  }
+
+  /* ── MAIN BUILD SCHEDULE ──────────────────────────────────────── */
+  function buildSchedule(){
+    const tb=$('schedule').querySelector('tbody');tb.innerHTML='';
+    const ath=getAthlete(),race=getRace(),hyd=getHydration(),trans=getTrans();
+    const stations=getStations(race),carry=getCarry(),autoTabs=$('autoUseTabs').checked;
+    const t=computeTargets(race,ath,hyd);
+    renderSummary(t,race);renderWarnings(t,ath);renderPace(race);
+    const{bikeMLhr,runMLhr,choBikeHr,choRunHr,bikeNaHr,runNaHr}=t;
+    const{swimMin,bikeMin,runMin,raceStartMin}=race;
+
+    let bBots=carry.bikeBottles,bGels=carry.bikeGels;
+    const bTK=carry.bikeTabKeys,bTC=carry.bikeTabCounts;
+    let rFlasks=carry.runFlasks,rGels=carry.runGels;
+    const rTK=carry.runTabKeys,rTC=carry.runTabCounts;
+    const bikeGelPools = (carry.bikeGelPools || [{key:carry.bikeGelKey, remaining:carry.bikeGels}])
+      .map(p => ({key:p.key, remaining:p.count ?? p.remaining ?? 0}));
+    const runGelPools = (carry.runGelPools || [{key:carry.runGelKey, remaining:carry.runGels}])
+      .map(p => ({key:p.key, remaining:p.count ?? p.remaining ?? 0}));
+    let allTrans=zero();
+
+    const initBG=carry.bikeGels,initRG=carry.runGels;
+    const initBTC=[...bTC],initRTC=[...rTC];
+
+    const hourlyData=[];
+    const totalBikeHours=Math.ceil(bikeMin/60);
+    const totalRunHours=Math.ceil(runMin/60);
+
+    let cursor=raceStartMin;
+    let t0Add=zero(), t1Add=zero(), t2Add=zero();
+    if(trans.t0On){const r=consumeTrans('t0');addRow(tb,cursor-15,'seg-trans','T0 (−15 min)',r.add,r.note,'transition');t0Add=r.add;allTrans=add(allTrans,t0Add);}
+    addRow(tb,cursor,'seg-swim','Swim start',zero(),'—','swim');
+    const swimStart=cursor;
+    cursor+=swimMin;
+    addRow(tb,cursor,'seg-swim','Swim finish',zero(),'—','swim');
+    const swimTot = t0Add;
+    addRow(tb,cursor,'seg-green','Swim Total (incl. T0)',
+      {cho:`${fmt(swimTot.cho,0)} / —`,kcal:swimTot.kcal,
+       fluid:`${fmt(swimTot.fluid,0)} / —`,
+       na:`${fmt(swimTot.na,0)} / —`,k:swimTot.k,caf:swimTot.caf},
+      '','total');
+    if(trans.t1On){const r=consumeTrans('t1');addRow(tb,cursor,'seg-trans',`T1 (${fmt(trans.t1Time,0)} min)`,r.add,r.note,'transition');t1Add=r.add;allTrans=add(allTrans,t1Add);}
+    cursor+=trans.t1Time;
+
+    // BIKE
+    const bikeStart=cursor;let bikeRem=bikeMin,mib=0,bikeTot=zero();
+    const bikeAidT=stations.bike.enabled?aidTimes(bikeMin,stations.bike.freqMin):[];
+    function addBikeStation(){for(let i=0;i<3;i++){const k=stations.bike.drinks[i],c=stations.bike.counts[i];for(let j=0;j<c;j++)bBots.push(mkBottle(k));}}
+    let bikeHourIdx=0;
+
+    while(bikeRem>0){
+      const hm2=Math.min(60,bikeRem);const hfT=bikeMLhr*(hm2/60),hcT=choBikeHr*(hm2/60),hnT=bikeNaHr*(hm2/60);
+      const qs=[];
+      for(let q=0;q<4&&q*15<hm2;q++){
+        const qS=bikeStart+mib+q*15,qM=Math.min(15,hm2-q*15);
+        const abs=mib+q*15;const qE=abs+qM;
+        if(bikeAidT.some(at=>at>=abs&&at<qE))addBikeStation();
+        const notes=mkNotes();const a2=sipBottles(bBots,hfT*(qM/hm2),notes);
+        qs.push({qS,qM,add:a2,notes});
+      }
+      const hc=hrCons(qs);const gu=placeGelsFromPools(qs,hc,hcT,bikeGelPools);bGels-=gu;
+      placeTabs(qs,bTK,bTC,autoTabs,{strategy:race.cafStrategy,leg:'bike',hourInLeg:bikeHourIdx,totalLegHours:totalBikeHours});
+      const fhc=hrCons(qs);
+      for(let qi=0;qi<qs.length;qi++){const q=qs[qi];addRow(tb,q.qS,'seg-bike',`Bike ${legLabel(mib+qi*15,q.qM,bikeMin)}`,q.add,renderNotes(q.notes),'bike');}
+      const hl=Math.floor(mib/60)+1;const lq=qs[qs.length-1];
+      addRow(tb,lq.qS+lq.qM,'seg-green',`Bike Hour ${hl} summary`,{cho:`${fmt(fhc.cho,0)} / ${fmt(hcT,0)}`,kcal:fhc.kcal,fluid:`${fmt(fhc.fluid,0)} / ${fmt(hfT,0)}`,na:`${fmt(fhc.na,0)} / ${fmt(hnT,0)}`,k:fhc.k,caf:fhc.caf},'','summary');
+      hourlyData.push({label:`Bike H${hl}`,cho:fhc.cho,choT:hcT,fluid:fhc.fluid,fluidT:hfT});
+      bikeTot=add(bikeTot,fhc);mib+=hm2;bikeRem-=hm2;bikeHourIdx++;
+    }
+    const bPC=choBikeHr*(bikeMin/60),bPM=bikeMLhr*(bikeMin/60),bPN=bikeNaHr*(bikeMin/60);
+    const bikeLegTot = add(bikeTot, t1Add);
+    addRow(tb,bikeStart+bikeMin,'seg-green','Bike Total (incl. T1)',{cho:`${fmt(bikeLegTot.cho,0)} / ${fmt(bPC,0)}`,kcal:bikeLegTot.kcal,fluid:`${fmt(bikeLegTot.fluid,0)} / ${fmt(bPM,0)}`,na:`${fmt(bikeLegTot.na,0)} / ${fmt(bPN,0)}`,k:bikeLegTot.k,caf:bikeLegTot.caf},'','total');
+
+    const preRun=bikeStart+bikeMin;
+    if(trans.t2On){const r=consumeTrans('t2');addRow(tb,preRun,'seg-trans',`T2 (${fmt(trans.t2Time,0)} min)`,r.add,r.note,'transition');t2Add=r.add;allTrans=add(allTrans,t2Add);}
+    const runStart=preRun+trans.t2Time;
+
+    // RUN
+    let runRem=runMin,mir=0,runTot=zero();
+    const runAidT=stations.run.enabled?aidTimes(runMin,stations.run.freqMin):[];
+    let runHourIdx=0;
+
+    while(runRem>0){
+      const hm2=Math.min(60,runRem);const hfT=runMLhr*(hm2/60),hcT=choRunHr*(hm2/60),hnT=runNaHr*(hm2/60);
+      const qs=[];
+      for(let q=0;q<4&&q*15<hm2;q++){
+        const qS=runStart+mir+q*15,qM=Math.min(15,hm2-q*15);
+        const abs=mir+q*15;const qE=abs+qM;
+        const notes=mkNotes();const a2=sipBottles(rFlasks,hfT*(qM/hm2),notes);
+        if(runAidT.some(at=>at>=abs&&at<qE)){
+          for(let s=0;s<3;s++){const k=stations.run.drinks[s],cups=stations.run.cups[s];if(cups>0){const p=P[k];for(let c=0;c<cups;c++){a2.cho+=p.cho;a2.kcal+=p.kcal;a2.na+=p.na;a2.k+=p.k;a2.caf+=p.caf;a2.fluid+=p.fluid;addDN(notes,k,p.fluid);}}}
+        }
+        qs.push({qS,qM,add:a2,notes});
+      }
+      const hc=hrCons(qs);const gu=placeGelsFromPools(qs,hc,hcT,runGelPools);rGels-=gu;
+      placeTabs(qs,rTK,rTC,autoTabs,{strategy:race.cafStrategy,leg:'run',hourInLeg:runHourIdx,totalLegHours:totalRunHours});
+      const fhc=hrCons(qs);
+      for(let qi=0;qi<qs.length;qi++){const q=qs[qi];addRow(tb,q.qS,'seg-run',`Run ${legLabel(mir+qi*15,q.qM,runMin)}`,q.add,renderNotes(q.notes),'run');}
+      const hl=Math.floor(mir/60)+1;const lq=qs[qs.length-1];
+      addRow(tb,lq.qS+lq.qM,'seg-green',`Run Hour ${hl} summary`,{cho:`${fmt(fhc.cho,0)} / ${fmt(hcT,0)}`,kcal:fhc.kcal,fluid:`${fmt(fhc.fluid,0)} / ${fmt(hfT,0)}`,na:`${fmt(fhc.na,0)} / ${fmt(hnT,0)}`,k:fhc.k,caf:fhc.caf},'','summary');
+      hourlyData.push({label:`Run H${hl}`,cho:fhc.cho,choT:hcT,fluid:fhc.fluid,fluidT:hfT});
+      runTot=add(runTot,fhc);mir+=hm2;runRem-=hm2;runHourIdx++;
+    }
+    const rPC=choRunHr*(runMin/60),rPM=runMLhr*(runMin/60),rPN=runNaHr*(runMin/60);
+    const runLegTot = add(runTot, t2Add);
+    addRow(tb,runStart+runMin,'seg-green','Run Total (incl. T2)',{cho:`${fmt(runLegTot.cho,0)} / ${fmt(rPC,0)}`,kcal:runLegTot.kcal,fluid:`${fmt(runLegTot.fluid,0)} / ${fmt(rPM,0)}`,na:`${fmt(runLegTot.na,0)} / ${fmt(rPN,0)}`,k:runLegTot.k,caf:runLegTot.caf},'','total');
+
+    const raceAct=add(swimTot, add(bikeLegTot, runLegTot));
+    addRow(tb,runStart+runMin+1,'seg-green','Race Total',{cho:`${fmt(raceAct.cho,0)} / ${fmt(bPC+rPC,0)}`,kcal:raceAct.kcal,fluid:`${fmt(raceAct.fluid,0)} / ${fmt(bPM+rPM,0)}`,na:`${fmt(raceAct.na,0)} / ${fmt(bPN+rPN,0)}`,k:raceAct.k,caf:raceAct.caf},'','race-total');
+
+    renderPrerace();
+    renderGlycogen(t,{t0:t0Add, t1:t1Add, t2:t2Add},bikeTot,runTot,ath);
+    renderTimeline(hourlyData);
+    renderCheatSheet(tb);
+
+    const sc={
+      choAct:raceAct.cho, choTgt:bPC+rPC,
+      fluidAct:raceAct.fluid, fluidTgt:bPM+rPM,
+      naAct:raceAct.na, naTgt:bPN+rPN,
+      cafTotal:raceAct.caf, weight:ath.weight,
+      actualFluidInL:raceAct.fluid/1000,
+      totalSweatL:t.totalSweatL
+    };
+    renderScorecard(sc);
+
+    const bikeGelBreakdown = (carry.bikeGelPools || []).map((orig, i) => ({
+      key: orig.key,
+      planned: orig.count,
+      used: orig.count - (bikeGelPools[i]?.remaining ?? 0),
+      left: bikeGelPools[i]?.remaining ?? 0,
+    }));
+    const runGelBreakdown = (carry.runGelPools || []).map((orig, i) => ({
+      key: orig.key,
+      planned: orig.count,
+      used: orig.count - (runGelPools[i]?.remaining ?? 0),
+      left: runGelPools[i]?.remaining ?? 0,
+    }));
+    const inv={
+      bikeGelsUsed:initBG-bGels, bikeGelsLeft:bGels,
+      runGelsUsed:initRG-rGels, runGelsLeft:rGels,
+      bikeGelBreakdown, runGelBreakdown,
+      bikeTabsUsed:[initBTC[0]-bTC[0],initBTC[1]-bTC[1]],
+      bikeTabsLeft:[...bTC],
+      runTabsUsed:[initRTC[0]-rTC[0],initRTC[1]-rTC[1]],
+      runTabsLeft:[...rTC],
+      bottleMlLeft:bBots.reduce((s,b)=>s+b.ml,0),
+      flaskMlLeft:rFlasks.reduce((s,b)=>s+b.ml,0),
+      bikeTabKeys:carry.bikeTabKeys, runTabKeys:carry.runTabKeys
+    };
+    renderInventory(inv);
+
+    const cafMgKg=ath.weight>0?raceAct.caf/ath.weight:0;
+    if(cafMgKg>6){
+      const wDiv=$('warnings');
+      wDiv.innerHTML+=`<div class="warning warning-red">Total caffeine ${Math.round(raceAct.caf)} mg (${fmt(cafMgKg,1)} mg/kg) exceeds safe limit of 6 mg/kg. Risk of GI distress, anxiety, and cardiac issues.</div>`;
+    }else if(cafMgKg>3){
+      const wDiv=$('warnings');
+      wDiv.innerHTML+=`<div class="warning warning-yellow">Total caffeine ${Math.round(raceAct.caf)} mg (${fmt(cafMgKg,1)} mg/kg). Performance zone is 3–6 mg/kg. Monitor tolerance.</div>`;
+    }
+
+    hasBuilt=true;
+  }
+
+  /* ── GLYCOGEN TRAJECTORY ──────────────────────────────────────── */
+  function renderGlycogen(t,trans,bikeTot,runTot,ath){
+    const card=$('glycogenCard');card.style.display='';
+    const start=+$('startGlycogen').value||(ath.weight*7);
+    const swimBurn=t.burns.swim*0.70/4;
+    const bikeBurn=t.burns.bike*0.65/4;
+    const runBurn=t.burns.run*0.75/4;
+    const t0cho = trans && trans.t0 ? (trans.t0.cho || 0)
+                : (trans && typeof trans.cho === 'number' ? trans.cho : 0);
+    const t1cho = trans && trans.t1 ? (trans.t1.cho || 0) : 0;
+    const t2cho = trans && trans.t2 ? (trans.t2.cho || 0) : 0;
+    const pts=[
+      {label:'Start',                       val: start + t0cho},
+      {label:'After swim',                  val: start + t0cho - swimBurn},
+      {label:'Start bike (+T1)',            val: start + t0cho - swimBurn + t1cho},
+      {label:'After bike',                  val: start + t0cho - swimBurn + t1cho + bikeTot.cho - bikeBurn},
+      {label:'Start run (+T2)',             val: start + t0cho - swimBurn + t1cho + bikeTot.cho - bikeBurn + t2cho},
+      {label:'Finish',                      val: start + t0cho - swimBurn + t1cho + bikeTot.cho - bikeBurn + t2cho + runTot.cho - runBurn},
+    ];
+    const mx=pts[0].val;
+    let h='';
+    pts.forEach(p=>{
+      const pct=Math.max(0,Math.min(100,(p.val/mx)*100));
+      const color=pct>50?'#22c55e':pct>25?'#eab308':'#ef4444';
+      h+=`<div class="glycogen-row"><span class="glycogen-label">${p.label}</span><div class="glycogen-bar"><div class="glycogen-fill" style="width:${pct}%;background:${color}">${Math.round(p.val)}g</div></div></div>`;
+    });
+    $('glycogenChart').innerHTML=h;
+  }
+
+  /* ── FUELING TIMELINE ─────────────────────────────────────────── */
+  function renderTimeline(data){
+    const card=$('timelineCard');card.style.display='';
+    let h='<div class="tl-row"><div></div><div class="tl-head">CHO (g)</div><div class="tl-head">Fluid (ml)</div></div>';
+    data.forEach(d=>{
+      const cp=d.choT>0?Math.min(100,(d.cho/d.choT)*100):0;
+      const fp=d.fluidT>0?Math.min(100,(d.fluid/d.fluidT)*100):0;
+      const cc=cp>=90?'#22c55e':cp>=75?'#eab308':'#ef4444';
+      const fc=fp>=90?'#22c55e':fp>=75?'#eab308':'#ef4444';
+      h+=`<div class="tl-row">
+        <div class="tl-label">${d.label}</div>
+        <div class="tl-bar"><div class="tl-fill" style="width:${cp}%;background:${cc}" title="${fmt(d.cho,0)}/${fmt(d.choT,0)} g"></div></div>
+        <div class="tl-bar"><div class="tl-fill" style="width:${fp}%;background:${fc}" title="${fmt(d.fluid,0)}/${fmt(d.fluidT,0)} ml"></div></div>
+      </div>`;
+    });
+    $('timelineChart').innerHTML=h;
+  }
+
+  /* ── CHEAT SHEET ──────────────────────────────────────────────── */
+  function renderCheatSheet(tb){
+    const card=$('cheatSheetCard');card.style.display='';
+    const rows=Array.from(tb.querySelectorAll('tr'));
+    let h='',lastSeg='';
+    rows.forEach(tr=>{
+      const seg=tr.dataset.segment;
+      if(!seg||seg==='summary'||seg==='total'||seg==='race-total'||seg==='swim')return;
+      const tds=tr.querySelectorAll('td');if(tds.length<9)return;
+      const products=tds[8].textContent.trim();if(!products||products==='—')return;
+      const segLabel=seg==='bike'?'BIKE':seg==='run'?'RUN':seg==='transition'?'TRANSITION':'';
+      if(segLabel!==lastSeg){
+        const cls=seg==='bike'?'cheat-seg-bike':seg==='run'?'cheat-seg-run':'cheat-seg-trans';
+        h+=`<div class="cheat-seg ${cls}">${segLabel}</div>`;lastSeg=segLabel;
+      }
+      h+=`<div class="cheat-item"><span class="cheat-time">${tds[0].textContent}</span><span>${products}</span></div>`;
+    });
+    $('cheatSheet').innerHTML=h||'<p class="muted">Build the schedule first.</p>';
+  }
+
+  /* ── SAVE / LOAD ──────────────────────────────────────────────── */
+  const SAVE_KEY='ys-tri-fuel-plans';
+  function getSaved(){try{return JSON.parse(localStorage.getItem(SAVE_KEY))||{};}catch(e){return{};}}
+  function savePlan(){
+    const name=$('planName').value.trim();if(!name){alert('Enter a plan name.');return;}
+    const inputs={};
+    document.querySelectorAll('.fuel-plan-host input,.fuel-plan-host select').forEach(el=>{
+      if(!el.id)return;
+      if(el.type==='checkbox')inputs[el.id]=el.checked;
+      else inputs[el.id]=el.value;
+    });
+    const plans=getSaved();plans[name]=inputs;
+    localStorage.setItem(SAVE_KEY,JSON.stringify(plans));
+    refreshPlanList();$('planName').value='';
+  }
+  function loadPlan(){
+    const name=$('loadPlan').value;if(!name)return;
+    const plans=getSaved();const data=plans[name];if(!data)return;
+    Object.entries(data).forEach(([id,val])=>{
+      const el2=$(id);if(!el2)return;
+      if(el2.type==='checkbox')el2.checked=!!val;
+      else el2.value=val;
+    });
+    updateLive();
+  }
+  function deletePlan(){
+    const name=$('loadPlan').value;if(!name)return;
+    if(!confirm(`Delete plan "${name}"?`))return;
+    const plans=getSaved();delete plans[name];
+    localStorage.setItem(SAVE_KEY,JSON.stringify(plans));
+    refreshPlanList();
+  }
+  function refreshPlanList(){
+    const sel=$('loadPlan');sel.innerHTML='<option value="">Load plan...</option>';
+    Object.keys(getSaved()).forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);});
+  }
+
+  /* ── DEFAULTS & EXPORT ────────────────────────────────────────── */
+  function setDefaults(){
+    const k=$('raceDistance').value;const d=DIST_DEF[k];
+    $('swimMin').value=d.swim;$('bikeMin').value=d.bike;$('runMin').value=d.run;$('bikeW').value=d.w;
+    $('startGlycogen').value=Math.round((+$('weight').value||72)*7);
+    const cd=CARRY_DEF[k];
+    $('bikeCarryDrink1Cnt').value=cd.bd1;$('bikeCarryDrink2Cnt').value=cd.bd2;$('bikeCarryDrink3Cnt').value=cd.bd3;
+    $('bikeCarryGels').value=cd.bg;$('bikeCarryTabACnt').value=cd.bta;$('bikeCarryTabBCnt').value=cd.btb;
+    $('runCarryDrink1Cnt').value=cd.rd1;$('runCarryDrink2Cnt').value=cd.rd2;
+    $('runCarryGels').value=cd.rg;$('runCarryTabACnt').value=cd.rta;$('runCarryTabBCnt').value=cd.rtb;
+    updateLive();
+  }
+  function exportCSV(){
+    const hdr=['Time','Segment','CHO (g)','kcal','Fluid (ml)','Sodium (mg)','Potassium (mg)','Caffeine (mg)','Products / notes'];
+    const rows=[hdr];
+    Array.from($('schedule').querySelector('tbody').querySelectorAll('tr')).forEach(tr=>{
+      const cols=Array.from(tr.querySelectorAll('td')).map(td=>td.textContent.replace(/,/g,';'));
+      if(cols.length)rows.push(cols);
+    });
+    const csv=rows.map(r=>r.join(',')).join('\n');
+    const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;a.download='triathlon-fueling-schedule.csv';a.click();URL.revokeObjectURL(url);
+  }
+  function printCheat(){
+    const card = $('cheatSheetCard');
+    const cheat = $('cheatSheet');
+    if(!cheat || !cheat.children.length){
+      alert('Click "Build schedule" first — there’s nothing to print yet.');
+      return;
+    }
+    card.style.display='';
+
+    const hdr = $('printHeader');
+    const hdrTitle = $('printHeaderTitle');
+    const hdrMeta = $('printHeaderMeta');
+    if(hdr && hdrTitle && hdrMeta){
+      const distSel = $('raceDistance');
+      const distTxt = distSel ? distSel.options[distSel.selectedIndex]?.text : '';
+      const dateTxt = $('raceStart')?.value || '';
+      const weight = $('weight')?.value || '';
+      hdrTitle.textContent = 'Race-day fueling plan';
+      hdrMeta.textContent = [
+        distTxt ? `Distance: ${distTxt}` : '',
+        dateTxt ? `Race start: ${dateTxt}` : '',
+        weight ? `Athlete: ${weight} kg` : '',
+      ].filter(Boolean).join(' • ');
+
+      try {
+        const ath = getAthlete(), race = getRace(), hyd = getHydration();
+        const carry = getCarry();
+        const t = computeTargets(race, ath, hyd);
+        const bikeH = race.bikeMin / 60, runH = race.runMin / 60;
+        const fmtNum = (n, d=0) => (isFinite(n) ? n.toFixed(d) : '—');
+
+        const targets = $('briefTargets');
+        if(targets){
+          targets.innerHTML = `
+            <div><strong>Bike:</strong> ${fmtNum(t.choBikeHr)} g CHO • ${fmtNum(t.bikeMLhr)} ml fluid • ${fmtNum(t.bikeNaHr)} mg Na</div>
+            <div><strong>Run:</strong> ${fmtNum(t.choRunHr)} g CHO • ${fmtNum(t.runMLhr)} ml fluid • ${fmtNum(t.runNaHr)} mg Na</div>
+            <div style="color:#666; margin-top:2px;">Caffeine strategy: <strong>${race.cafStrategy}</strong></div>
+          `;
+        }
+
+        const totals = $('briefTotals');
+        if(totals){
+          const bPC = t.choBikeHr * bikeH, rPC = t.choRunHr * runH;
+          const bPM = t.bikeMLhr * bikeH, rPM = t.runMLhr * runH;
+          const bPN = t.bikeNaHr * bikeH, rPN = t.runNaHr * runH;
+          totals.innerHTML = `
+            <div><strong>CHO:</strong> ${fmtNum(bPC+rPC)} g <span style="color:#888;">(bike ${fmtNum(bPC)} + run ${fmtNum(rPC)})</span></div>
+            <div><strong>Fluid:</strong> ${fmtNum(bPM+rPM)} ml <span style="color:#888;">(bike ${fmtNum(bPM)} + run ${fmtNum(rPM)})</span></div>
+            <div><strong>Sodium:</strong> ${fmtNum(bPN+rPN)} mg</div>
+            <div style="color:#666; margin-top:2px;">Total race time: ${fmtNum(race.totalMin/60, 1)} h</div>
+          `;
+        }
+
+        const carryDiv = $('briefCarry');
+        if(carryDiv){
+          const bikeBottleCounts = {};
+          carry.bikeBottles.forEach(b => { bikeBottleCounts[b.key] = (bikeBottleCounts[b.key] || 0) + 1; });
+          const bikeBottlesList = Object.entries(bikeBottleCounts)
+            .map(([k, n]) => `${n}× ${P[k]?.name || k}`).join('<br>') || '<em style="color:#888;">none</em>';
+
+          const runFlaskCounts = {};
+          carry.runFlasks.forEach(b => { runFlaskCounts[b.key] = (runFlaskCounts[b.key] || 0) + 1; });
+          const runFlasksList = Object.entries(runFlaskCounts)
+            .map(([k, n]) => `${n}× ${P[k]?.name || k}`).join('<br>') || '<em style="color:#888;">none</em>';
+
+          const gelsList = (pools) => {
+            const active = (pools || []).filter(p => p.key && p.count > 0);
+            if(!active.length) return '<em style="color:#888;">none</em>';
+            return active.map(p => `${p.count}× ${P[p.key]?.name || p.key}`).join('<br>');
+          };
+          const tabsList = (keys, counts) => {
+            const items = [];
+            for(let i = 0; i < keys.length; i++){
+              if(counts[i] > 0 && keys[i]) items.push(`${counts[i]}× ${P[keys[i]]?.name || keys[i]}`);
+            }
+            return items.join('<br>') || '<em style="color:#888;">none</em>';
+          };
+
+          carryDiv.innerHTML = `
+            <div>
+              <div style="font-weight:700; color:#1e40af;">Bike</div>
+              <div style="margin:2px 0;"><strong>Bottles:</strong><br>${bikeBottlesList}</div>
+              <div style="margin:2px 0;"><strong>Gels:</strong><br>${gelsList(carry.bikeGelPools)}</div>
+              <div style="margin:2px 0;"><strong>Tablets:</strong><br>${tabsList(carry.bikeTabKeys, carry.bikeTabCounts)}</div>
+            </div>
+            <div>
+              <div style="font-weight:700; color:#dc2626;">Run</div>
+              <div style="margin:2px 0;"><strong>Flasks:</strong><br>${runFlasksList}</div>
+              <div style="margin:2px 0;"><strong>Gels:</strong><br>${gelsList(carry.runGelPools)}</div>
+              <div style="margin:2px 0;"><strong>Tablets:</strong><br>${tabsList(carry.runTabKeys, carry.runTabCounts)}</div>
+            </div>
+          `;
+        }
+
+        const stationsDiv = $('briefStations');
+        if(stationsDiv){
+          const stations = getStations(race);
+          const bikeItems = [];
+          for(let i = 0; i < 3; i++){
+            const k = stations.bike.drinks[i];
+            const n = stations.bike.counts[i] || 0;
+            if(k && n > 0) bikeItems.push(`${n}× ${P[k]?.name || k}`);
+          }
+          const runItems = [];
+          for(let i = 0; i < 3; i++){
+            const k = stations.run.drinks[i];
+            const c = stations.run.cups[i] || 0;
+            if(k && c > 0) runItems.push(`${c} cup${c>1?'s':''} ${P[k]?.name || k}`);
+          }
+          const bikeFreq = stations.bike.enabled
+            ? `every ~${stations.bike.freqMin} min (${+$('bikeAidKm').value||'?'} km)`
+            : 'disabled';
+          const runFreq = stations.run.enabled
+            ? `every ~${stations.run.freqMin} min (${+$('runAidKm').value||'?'} km)`
+            : 'disabled';
+          stationsDiv.innerHTML = `
+            <div>
+              <div style="font-weight:700; color:#1e40af;">Bike stations</div>
+              <div style="color:#666; font-size:10px;">${bikeFreq}</div>
+              <div style="margin-top:2px;">${
+                stations.bike.enabled
+                  ? (bikeItems.length ? `<strong>Grab per pass:</strong><br>${bikeItems.join('<br>')}` : '<em style="color:#888;">no bottles configured</em>')
+                  : '<em style="color:#888;">skipping aid stations</em>'
+              }</div>
+            </div>
+            <div>
+              <div style="font-weight:700; color:#dc2626;">Run stations</div>
+              <div style="color:#666; font-size:10px;">${runFreq}</div>
+              <div style="margin-top:2px;">${
+                stations.run.enabled
+                  ? (runItems.length ? `<strong>Take per stop:</strong><br>${runItems.join('<br>')}` : '<em style="color:#888;">no cups configured</em>')
+                  : '<em style="color:#888;">skipping aid stations</em>'
+              }</div>
+            </div>
+          `;
+        }
+
+        const transDiv = $('briefTransitions');
+        if(transDiv){
+          const transSummary = (pfx) => {
+            const parts = [];
+            [[pfx+'Drink1', pfx+'Drink1Cnt'], [pfx+'Drink2', pfx+'Drink2Cnt']].forEach(([s, c]) => {
+              const se = $(s), ce = $(c);
+              if(se && ce){
+                const n = +ce.value || 0;
+                if(n > 0) parts.push(`${n}× ${P[se.value]?.name || se.value}`);
+              }
+            });
+            const gs = $(pfx+'Gel'), gc = $(pfx+'GelCnt');
+            if(gs && gc){
+              const n = +gc.value || 0;
+              if(n > 0) parts.push(`${n}× ${P[gs.value]?.name || gs.value}`);
+            }
+            if(pfx === 't0'){
+              [['t0TabA', 't0TabACnt'], ['t0TabB', 't0TabBCnt']].forEach(([s, c]) => {
+                const se = $(s), ce = $(c);
+                if(se && ce){
+                  const n = +ce.value || 0;
+                  if(n > 0) parts.push(`${n}× ${P[se.value]?.name || se.value}`);
+                }
+              });
+            } else {
+              const ts = $(pfx+'Tab'), tc = $(pfx+'TabCnt');
+              if(ts && tc){
+                const n = +tc.value || 0;
+                if(n > 0) parts.push(`${n}× ${P[ts.value]?.name || ts.value}`);
+              }
+            }
+            return parts.join(' • ') || '<em style="color:#888;">skip</em>';
+          };
+          const trans = getTrans();
+          transDiv.innerHTML = `
+            <div style="margin:1px 0;"><strong>T0 (−15 min, pre-race):</strong> ${trans.t0On ? transSummary('t0') : '<em style=\"color:#888;\">disabled</em>'}</div>
+            <div style="margin:1px 0;"><strong>T1 (post-swim):</strong> ${trans.t1On ? transSummary('t1') : '<em style=\"color:#888;\">disabled</em>'}</div>
+            <div style="margin:1px 0;"><strong>T2 (post-bike):</strong> ${trans.t2On ? transSummary('t2') : '<em style=\"color:#888;\">disabled</em>'}</div>
+          `;
+        }
+      } catch(e){
+        console.warn('Briefing population failed (non-fatal):', e);
+      }
+    }
+
+    const appendSchedule = confirm(
+      'Append the full hour-by-hour schedule to the end of the PDF?\n\n' +
+      'OK = No, keep it short (cheat sheet + scorecard + charts)\n' +
+      'Cancel = Yes, include the full schedule at the end'
+    );
+    const scheduleCard = document.querySelector('.fuel-plan-host .card.printable');
+    if(scheduleCard){
+      scheduleCard.classList.toggle('print-include-schedule', !appendSchedule);
+    }
+
+    document.body.classList.add('print-cheat-only');
+    const cleanup = () => {
+      document.body.classList.remove('print-cheat-only');
+      if(scheduleCard) scheduleCard.classList.remove('print-include-schedule');
+      window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
+    window.print();
+    setTimeout(cleanup, 4000);
+  }
+
+  /* ── SCORECARD & INVENTORY RENDERERS ──────────────────────────── */
+  function renderScorecard(sc){
+    const card=$('scorecardCard');card.style.display='';
+    const actBWL=sc.totalSweatL-sc.actualFluidInL;
+    const actBWPct=sc.weight>0?(actBWL/sc.weight)*100:0;
+    const cafMgKg=sc.weight>0?sc.cafTotal/sc.weight:0;
+
+    function scItem(label,act,tgt,unit){
+      const pct=tgt>0?(act/tgt)*100:100;
+      const color=pct>=90?'#22c55e':pct>=75?'#eab308':'#ef4444';
+      return`<div class="sc-item"><div class="sc-label">${label}</div><div class="sc-val">${fmt(act,0)}${unit?(' '+unit):''}</div><div class="sc-sub">${fmt(act,0)} / ${fmt(tgt,0)} (${fmt(pct,0)}%)</div><div class="sc-bar"><div class="sc-fill" style="width:${Math.min(100,pct)}%;background:${color}"></div></div></div>`;
+    }
+    const bwColor=Math.abs(actBWPct)<2?'#22c55e':Math.abs(actBWPct)<3.5?'#eab308':'#ef4444';
+    const cafColor=cafMgKg<3?'#22c55e':cafMgKg<6?'#eab308':'#ef4444';
+
+    let h=`<div class="sc-grid">`;
+    h+=scItem('CHO',sc.choAct,sc.choTgt,'g');
+    h+=scItem('Fluid',sc.fluidAct,sc.fluidTgt,'ml');
+    h+=scItem('Sodium',sc.naAct,sc.naTgt,'mg');
+    h+=`<div class="sc-item"><div class="sc-label">BW change</div><div class="sc-val" style="color:${bwColor}">${fmt(actBWL,1)} kg</div><div class="sc-sub">${fmt(actBWPct,1)}% body weight</div></div>`;
+    h+=`<div class="sc-item"><div class="sc-label">Caffeine</div><div class="sc-val" style="color:${cafColor}">${fmt(sc.cafTotal,0)} mg</div><div class="sc-sub">${fmt(cafMgKg,1)} mg/kg</div></div>`;
+    h+=`</div>`;
+    $('scorecard').innerHTML=h;
+  }
+
+  function renderInventory(inv){
+    const items=[];
+    function addInv(label,used,left,isShort){
+      if(used===0&&left===0)return;
+      const cls=isShort?'inv-bad':left>0?'inv-warn':'inv-ok';
+      const txt=isShort?`${label}: ${used} used, ${Math.abs(left)} SHORT`:`${label}: ${used} used, ${left} left`;
+      items.push(`<span class="inv-item ${cls}">${txt}</span>`);
+    }
+
+    if (Array.isArray(inv.bikeGelBreakdown) && inv.bikeGelBreakdown.length) {
+      inv.bikeGelBreakdown.forEach(pool => {
+        if (pool.planned <= 0) return;
+        const nm = P[pool.key]?.name || pool.key;
+        addInv(`Bike ${nm}`, pool.used, pool.left, false);
+      });
+    } else {
+      const bgShort=inv.bikeGelsLeft<0;
+      addInv('Bike gels',inv.bikeGelsUsed,Math.max(0,inv.bikeGelsLeft),bgShort);
+    }
+    if (inv.bikeGelsLeft < 0) {
+      addInv('Bike gels shortage', inv.bikeGelsUsed, inv.bikeGelsLeft, true);
+    }
+
+    if (Array.isArray(inv.runGelBreakdown) && inv.runGelBreakdown.length) {
+      inv.runGelBreakdown.forEach(pool => {
+        if (pool.planned <= 0) return;
+        const nm = P[pool.key]?.name || pool.key;
+        addInv(`Run ${nm}`, pool.used, pool.left, false);
+      });
+    } else {
+      const rgShort=inv.runGelsLeft<0;
+      addInv('Run gels',inv.runGelsUsed,Math.max(0,inv.runGelsLeft),rgShort);
+    }
+    if (inv.runGelsLeft < 0) {
+      addInv('Run gels shortage', inv.runGelsUsed, inv.runGelsLeft, true);
+    }
+
+    for(let i=0;i<2;i++){
+      if(inv.bikeTabsUsed[i]>0||inv.bikeTabsLeft[i]>0){
+        const name=P[inv.bikeTabKeys[i]]?P[inv.bikeTabKeys[i]].name:'Tab';
+        addInv(`Bike ${name}`,inv.bikeTabsUsed[i],inv.bikeTabsLeft[i],false);
+      }
+    }
+    for(let i=0;i<2;i++){
+      if(inv.runTabsUsed[i]>0||inv.runTabsLeft[i]>0){
+        const name=P[inv.runTabKeys[i]]?P[inv.runTabKeys[i]].name:'Tab';
+        addInv(`Run ${name}`,inv.runTabsUsed[i],inv.runTabsLeft[i],false);
+      }
+    }
+    if(inv.bottleMlLeft>10)items.push(`<span class="inv-item inv-warn">Bike bottles: ${fmt(inv.bottleMlLeft,0)} ml remaining</span>`);
+    if(inv.flaskMlLeft>10)items.push(`<span class="inv-item inv-warn">Run flasks: ${fmt(inv.flaskMlLeft,0)} ml remaining</span>`);
+
+    if(items.length===0)items.push('<span class="inv-item inv-ok">All inventory used ✔</span>');
+    $('inventory').innerHTML=`<div style="font-size:12px;font-weight:600;color:var(--ys-navy);margin-bottom:4px;">Inventory</div><div class="inv-grid">${items.join('')}</div>`;
+  }
+
+  /* ── LIVE UPDATE & AUTO-BUILD ─────────────────────────────────── */
+  let hasBuilt=false;
+  let buildTimer=null;
+  function debouncedBuild(){
+    if(!hasBuilt)return;
+    clearTimeout(buildTimer);
+    buildTimer=setTimeout(buildSchedule,500);
+  }
+
+  function updateLive(){
+    const ath=getAthlete(),race=getRace(),hyd=getHydration();
+    const t=computeTargets(race,ath,hyd);
+    renderSummary(t,race);renderWarnings(t,ath);renderPrerace();renderPace(race);
+    debouncedBuild();
+  }
+
+  /* ── EVENT WIRING ─────────────────────────────────────────────── */
+  ['height','weight','sweatBike','sweatRun','sweatNa','raceDistance','raceStart','swimMin','bikeMin','runMin','bikeW','fuelMode','runCHOFactor','cafStrategy','bikeReplace','runReplace','bikeAidKm','runAidKm','startGlycogen','t1Time','t2Time']
+    .forEach(id=>{const e=$(id);if(e){e.addEventListener('input',updateLive);e.addEventListener('change',updateLive);}});
+
+  $('sweatType').addEventListener('change',function(){$('sweatNa').value=this.value;updateLive();});
+
+  let baseSweat={bike:1.0,run:1.2};
+  $('conditions').addEventListener('change',function(){
+    const c=CONDITIONS[this.value];
+    $('sweatBike').value=(baseSweat.bike*c.bikeMult).toFixed(1);
+    $('sweatRun').value=(baseSweat.run*c.runMult).toFixed(1);
+    $('conditionHint').textContent=c?c.label:'';
+    updateLive();
+  });
+  $('sweatBike').addEventListener('change',function(){
+    const mult=CONDITIONS[$('conditions').value].bikeMult;
+    baseSweat.bike=mult>0?(+this.value/mult):+this.value;
+  });
+  $('sweatRun').addEventListener('change',function(){
+    const mult=CONDITIONS[$('conditions').value].runMult;
+    baseSweat.run=mult>0?(+this.value/mult):+this.value;
+  });
+
+  document.querySelectorAll('.fuel-plan-host .section-title').forEach(title=>{
+    title.addEventListener('click',()=>{title.parentElement.classList.toggle('collapsed');});
+  });
+
+  $('resetBtn').addEventListener('click',setDefaults);
+  $('buildBtn').addEventListener('click',buildSchedule);
+  $('csvBtn').addEventListener('click',exportCSV);
+  $('cheatBtn').addEventListener('click',printCheat);
+  $('saveBtn').addEventListener('click',savePlan);
+  $('loadPlan').addEventListener('change',loadPlan);
+  $('deleteBtn').addEventListener('click',deletePlan);
+
+  $('weight').addEventListener('change',function(){
+    $('startGlycogen').value=Math.round((+this.value||72)*7);
+  });
+
+  document.querySelectorAll('.fuel-plan-host fieldset input, .fuel-plan-host fieldset select').forEach(el=>{
+    el.addEventListener('change',debouncedBuild);
+  });
+  ['autoUseTabs','t0On','t1On','t2On','enableBikeStations','enableRunStations'].forEach(id=>{
+    const e=$(id);if(e)e.addEventListener('change',debouncedBuild);
+  });
+
+  /* ── INIT ─────────────────────────────────────────────────────── */
+  function init(){
+    fillAll();
+    refreshPlanList();
+    setDefaults();
+    updateLive();
+    $('conditionHint').textContent=CONDITIONS[$('conditions').value].label;
+  }
+  init();
+  </script>
+
+</body>
+</html>
