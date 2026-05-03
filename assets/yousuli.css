@@ -891,14 +891,6 @@ p { margin: 0 0 1em; }
   color: var(--wf-coral);
   margin-top: 6px;
 }
-.ys-calc-card.redesigned {
-  border-left: 4px solid var(--wf-coral);
-}
-.ys-calc-card.redesigned .ys-calc-card-arrow::before {
-  content: "✓ Redesigned · ";
-  color: var(--wf-teal-deep);
-}
-
 .ys-calc-grid {
   display: grid;
   gap: 14px;
