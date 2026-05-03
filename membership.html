@@ -15,12 +15,42 @@
   <link rel="stylesheet" href="assets/yousuli.css" />
 
   <script>
+    /* Smooth-scroll for in-page anchors. Special-cased for #plans-below:
+       that anchor sits at the very bottom of the iframe and is meant to
+       deposit the user at the Wix plan widget that lives on the parent
+       page just below this iframe. When embedded in an iframe (Wix),
+       in-iframe scroll alone doesn't move the parent page — the user
+       perceives nothing happening. So when in an iframe, we navigate the
+       TOP frame to a Wix anchor named "plans" instead.
+       (User: drag a Wix Anchor element on /membership directly above the
+       pricing widget and name it "plans". Then top-frame nav lands the
+       parent page exactly there.) */
     document.addEventListener('DOMContentLoaded', function () {
+      var inIframe = (function(){ try { return window.self !== window.top; } catch (e) { return true; } })();
+      var WIX_PLANS_URL = 'https://www.yousuli.co/membership#plans';
+
       document.querySelectorAll('a[href^="#"]').forEach(function (a) {
         a.addEventListener('click', function (e) {
           var id = a.getAttribute('href').slice(1);
+
+          // Special case: "scroll past the iframe to the Wix widget"
+          if (id === 'plans-below') {
+            if (inIframe) {
+              // Top-frame nav so the Wix page itself jumps to the
+              // pricing widget (Wix anchor named "plans").
+              e.preventDefault();
+              try { window.top.location.href = WIX_PLANS_URL; }
+              catch (err) { window.open(WIX_PLANS_URL, '_top'); }
+              return;
+            }
+            // Standalone (non-iframe) — just smooth-scroll within the page.
+          }
+
           var el = id && document.getElementById(id);
-          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+          if (el) {
+            e.preventDefault();
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
         });
       });
     });
@@ -61,7 +91,10 @@
   </script>
 
   <!-- ============ ANNOUNCEMENT BAR — flag bottom widget ============ -->
-  <a href="#plans-below" class="ys-announce-bar">
+  <!-- href is the in-iframe anchor; the click handler upgrades it to a
+       top-frame nav at https://www.yousuli.co/membership#plans when
+       embedded so the parent Wix page jumps to the pricing widget. -->
+  <a href="#plans-below" class="ys-announce-bar" data-jump="plans">
     <strong>Plan selection &amp; checkout at the bottom of this page</strong> &mdash; tap to skip ahead <span class="ys-arrow">&darr;</span>
   </a>
 
