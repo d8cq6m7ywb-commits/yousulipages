@@ -1,0 +1,574 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FIT file sensor comparison — Yousuli calculators</title>
+  <meta name="description" content="Compare up to three FIT files from the same activity to diagnose sensor disagreement: power-meter offset, HR strap drift, GPS quality, cadence dropouts, and side-by-side power-duration curves with synced-zoom charts and a printable summary." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <!-- Leaflet CSS for the GPS map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ FIT-COMPARE TOOL STYLES (scoped to .fitcompare-host) ============ -->
+  <style>
+    /* Imported from fitdata_compare/style.css. Original used a dark "lab"
+       theme; preserved here as a designed contrast inside our brand chrome
+       (the FIT-compare panel reads as a power-tool dashboard, similar in
+       spirit to a GPU monitor or DAW interface). All selectors scoped
+       under .fitcompare-host so nothing leaks. */
+    .fitcompare-host {
+      background: #020617;
+      color: #e5e7eb;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+      border-radius: 14px;
+      padding: 8px;
+      box-shadow: 0 18px 40px rgba(2, 6, 23, 0.18);
+    }
+    .fitcompare-host *, .fitcompare-host *::before, .fitcompare-host *::after { box-sizing: border-box; }
+    .fitcompare-host h1, .fitcompare-host h2, .fitcompare-host h3, .fitcompare-host h4, .fitcompare-host h5, .fitcompare-host p, .fitcompare-host ul { margin: 0; padding: 0; }
+
+    .fitcompare-host .fc-wrapper { max-width: 1140px; margin: 0 auto; padding: 16px 16px 32px; }
+
+    /* Page header */
+    .fitcompare-host .page-header { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(148,163,184,0.15); }
+    .fitcompare-host .page-header h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; color: #f8fafc; }
+    .fitcompare-host .subtitle { margin-top: 4px; font-size: 0.88rem; color: #9ca3af; max-width: 620px; }
+    .fitcompare-host .brand { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: #9ca3af; white-space: nowrap; }
+    .fitcompare-host .brand-dot { width: 10px; height: 10px; border-radius: 999px; background: linear-gradient(135deg, #FA773C, #9966FF); }
+
+    /* Cards */
+    .fitcompare-host .card { background: #0f172a; border-radius: 12px; border: 1px solid rgba(148,163,184,0.18); padding: 18px 20px; margin-bottom: 16px; }
+    .fitcompare-host .section-title { font-size: 1.05rem; font-weight: 600; margin-bottom: 6px; color: #f8fafc; }
+    .fitcompare-host .subsection-title { font-size: 0.92rem; font-weight: 600; margin: 18px 0 8px; color: #cbd5e1; }
+    .fitcompare-host .hint { font-size: 0.82rem; color: #64748b; margin-bottom: 10px; }
+    .fitcompare-host .global-hint { margin-top: 10px; font-size: 0.78rem; color: #475569; }
+
+    /* Upload inputs */
+    .fitcompare-host .inputs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 20px; margin-bottom: 14px; }
+    .fitcompare-host .input-block label { display: block; font-size: 0.82rem; color: #94a3b8; margin-bottom: 3px; }
+    .fitcompare-host .input-block .file-label { margin-top: 8px; }
+    .fitcompare-host .input-block input[type="text"] { width: 100%; background: #1e293b; border: 1px solid rgba(148,163,184,0.25); border-radius: 6px; padding: 6px 10px; color: #e5e7eb; font-size: 0.85rem; }
+    .fitcompare-host .input-block input[type="text"]::placeholder { color: #475569; }
+    .fitcompare-host .input-block input[type="file"] { width: 100%; font-size: 0.82rem; color: #94a3b8; }
+    .fitcompare-host .input-block input[type="file"]::file-selector-button { background: #1e293b; border: 1px solid rgba(148,163,184,0.3); border-radius: 6px; color: #e5e7eb; padding: 4px 12px; cursor: pointer; font-size: 0.8rem; margin-right: 8px; }
+    .fitcompare-host .input-block input[type="file"]::file-selector-button:hover { background: #334155; }
+
+    .fitcompare-host .file-size { display: inline-block; font-size: 0.75rem; color: #64748b; margin-left: 4px; font-variant-numeric: tabular-nums; }
+
+    /* Buttons */
+    .fitcompare-host .actions-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .fitcompare-host .btn-primary { background: linear-gradient(135deg, #FA773C, #9966FF); color: #fff; border: none; border-radius: 8px; padding: 9px 22px; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: filter 0.15s; letter-spacing: 0.04em; text-transform: uppercase; }
+    .fitcompare-host .btn-primary:hover { filter: brightness(1.08); }
+    .fitcompare-host .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .fitcompare-host .btn-secondary { background: transparent; border: 1px solid rgba(148,163,184,0.4); border-radius: 8px; color: #cbd5e1; padding: 7px 16px; font-size: 0.84rem; cursor: pointer; transition: background 0.15s; }
+    .fitcompare-host .btn-secondary:hover { background: rgba(30,41,59,0.8); border-color: #FA773C; color: #FA773C; }
+    .fitcompare-host .btn-small { padding: 4px 12px; font-size: 0.78rem; }
+    .fitcompare-host .error { color: #f87171; font-size: 0.82rem; }
+
+    /* Spinner */
+    .fitcompare-host .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: fc-spin 0.6s linear infinite; vertical-align: middle; margin-right: 6px; }
+    @keyframes fc-spin { to { transform: rotate(360deg); } }
+
+    /* Controls bar */
+    .fitcompare-host .controls-bar { padding: 12px 20px; position: sticky; top: 0; z-index: 20; background: #0f172a; border-bottom: 1px solid rgba(148,163,184,0.25); }
+    .fitcompare-host .controls-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .fitcompare-host .control-group { display: flex; align-items: center; gap: 6px; }
+    .fitcompare-host .control-group label { font-size: 0.82rem; color: #94a3b8; }
+    .fitcompare-host .control-group select { background: #1e293b; border: 1px solid rgba(148,163,184,0.3); border-radius: 6px; color: #e5e7eb; padding: 4px 8px; font-size: 0.82rem; cursor: pointer; }
+
+    /* Alignment controls */
+    .fitcompare-host .align-info { font-size: 0.85rem; color: #94a3b8; margin-bottom: 12px; font-weight: 500; }
+    .fitcompare-host .offset-controls { display: flex; flex-direction: column; gap: 10px; }
+    .fitcompare-host .offset-row { display: flex; align-items: center; gap: 12px; }
+    .fitcompare-host .offset-row label { font-size: 0.84rem; color: #94a3b8; min-width: 130px; }
+    .fitcompare-host .offset-row input[type="range"] { flex: 1; max-width: 300px; accent-color: #FA773C; }
+    .fitcompare-host .offset-value { font-size: 0.85rem; font-weight: 600; color: #e5e7eb; min-width: 45px; text-align: right; font-variant-numeric: tabular-nums; }
+    .fitcompare-host .offset-actions { display: flex; gap: 10px; margin-top: 4px; }
+
+    /* Device sources */
+    .fitcompare-host .device-sources { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 8px; }
+    .fitcompare-host .device-col { background: #1e293b; border-radius: 10px; padding: 12px 14px; }
+    .fitcompare-host .device-col h3 { font-size: 0.9rem; margin-bottom: 6px; font-weight: 600; color: #e5e7eb; }
+    .fitcompare-host .device-info { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+    .fitcompare-host .device-tag { font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; background: rgba(148,163,184,0.1); color: #94a3b8; }
+    .fitcompare-host .device-empty { font-size: 0.82rem; color: #475569; }
+    .fitcompare-host .device-metric-list { list-style: none; font-size: 0.82rem; }
+    .fitcompare-host .device-metric-list li { padding: 1px 0; }
+    .fitcompare-host .metric-ok { color: #22c55e; font-weight: 500; }
+    .fitcompare-host .metric-missing { color: #475569; }
+
+    /* Diagnosis panel */
+    .fitcompare-host .diagnosis-panel { display: flex; flex-direction: column; gap: 6px; }
+    .fitcompare-host .diag-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; font-size: 0.84rem; border-left: 3px solid; }
+    .fitcompare-host .diag-icon { font-size: 1rem; min-width: 18px; text-align: center; }
+    .fitcompare-host .diag-ok { background: rgba(34,197,94,0.08); border-left-color: #22c55e; color: #86efac; }
+    .fitcompare-host .diag-low { background: rgba(234,179,8,0.06); border-left-color: #eab308; color: #fde047; }
+    .fitcompare-host .diag-moderate { background: rgba(249,115,22,0.08); border-left-color: #f97316; color: #fdba74; }
+    .fitcompare-host .diag-high { background: rgba(239,68,68,0.08); border-left-color: #ef4444; color: #fca5a5; }
+
+    /* Charts */
+    .fitcompare-host .chart-card { padding-bottom: 12px; }
+    .fitcompare-host .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .fitcompare-host .chart-header h2 { font-size: 1rem; font-weight: 600; color: #f8fafc; }
+    .fitcompare-host .chart-hint { font-size: 0.75rem; color: #64748b; margin-bottom: 6px; }
+    .fitcompare-host .chart-label-hint { font-size: 0.72rem; color: #475569; font-style: italic; }
+    .fitcompare-host .chart-wrap { position: relative; height: 260px; }
+    .fitcompare-host .chart-wrap canvas { width: 100% !important; height: 100% !important; }
+
+    /* Zoom overlay */
+    .fitcompare-host .zoom-overlay { position: absolute; background: rgba(250,119,60,0.15); border-left: 1px solid rgba(250,119,60,0.5); border-right: 1px solid rgba(250,119,60,0.5); pointer-events: none; z-index: 5; }
+
+    /* GPS Map */
+    .fitcompare-host #routeMap { width: 100%; height: 340px; border-radius: 8px; overflow: hidden; }
+    .fitcompare-host .leaflet-container { font-size: 0.8rem; }
+
+    /* Summary tables */
+    .fitcompare-host .summary-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 6px; }
+    .fitcompare-host .summary-table th, .fitcompare-host .summary-table td { border: 1px solid rgba(51,65,85,0.7); padding: 5px 8px; text-align: center; }
+    .fitcompare-host .summary-table th { background: #1e293b; color: #94a3b8; font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; }
+    .fitcompare-host .summary-table td { color: #cbd5e1; }
+    .fitcompare-host .summary-table tbody tr:hover { background: rgba(30,41,59,0.5); }
+
+    /* Device badges */
+    .fitcompare-host .device-badge { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
+    .fitcompare-host .device-badge-A { background: rgba(34,197,94,0.15); color: #22c55e; }
+    .fitcompare-host .device-badge-B { background: rgba(59,130,246,0.15); color: #3b82f6; }
+    .fitcompare-host .device-badge-C { background: rgba(245,158,11,0.15); color: #f59e0b; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .fitcompare-host .inputs-grid,
+      .fitcompare-host .device-sources { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+    }
+    @media (max-width: 640px) {
+      .fitcompare-host .page-header { flex-direction: column; align-items: flex-start; }
+      .fitcompare-host .chart-wrap { height: 220px; }
+      .fitcompare-host .offset-row { flex-wrap: wrap; }
+      .fitcompare-host .offset-row input[type="range"] { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 40px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Data tools</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">FIT file sensor comparison.</h1>
+      <div class="wf-subhead">Compare up to 3 FIT files &middot; offset, drift, dropouts &middot; synced-zoom charts &middot; PDC + diagnosis</div>
+      <p class="lede" style="max-width: 680px;">Wear two power meters on the same ride? Run a Garmin and a Wahoo simultaneously? Drop both FIT files in. The tool auto-aligns them, shows where each sensor disagrees, runs a power-duration curve for each, and gives you a plain-English diagnosis (offset, drift, dropouts, smoothing differences). All processing is in your browser &mdash; files never leave your device.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Drop your FIT files &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">How it works</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 24px 0 48px;">
+    <div class="ys-container">
+      <div class="fitcompare-host">
+        <div class="fc-wrapper">
+
+          <!-- Header -->
+          <header class="page-header">
+            <div>
+              <h1>Sensor comparison tool</h1>
+              <p class="subtitle">Compare up to three FIT files from the same activity to diagnose sensor disagreement &mdash; offsets, drift, dropouts, smoothing.</p>
+            </div>
+            <div class="brand">
+              <span class="brand-dot"></span>
+              <span class="brand-name">YOUSULI LAB</span>
+            </div>
+          </header>
+
+          <!-- ─── UPLOAD CARD ─── -->
+          <section class="card">
+            <h2 class="section-title">Upload FIT files</h2>
+            <p class="hint">Device A is the reference baseline. Label your devices for clearer charts.</p>
+
+            <div class="inputs-grid">
+              <div class="input-block">
+                <label for="labelA">Device A label</label>
+                <input id="labelA" type="text" placeholder="e.g. Garmin Rally" />
+                <label for="fileA" class="file-label">FIT file (reference)</label>
+                <input id="fileA" type="file" accept=".fit" />
+                <span class="file-size"></span>
+              </div>
+
+              <div class="input-block">
+                <label for="labelB">Device B label</label>
+                <input id="labelB" type="text" placeholder="e.g. Wahoo Kickr" />
+                <label for="fileB" class="file-label">FIT file</label>
+                <input id="fileB" type="file" accept=".fit" />
+                <span class="file-size"></span>
+              </div>
+
+              <div class="input-block">
+                <label for="labelC">Device C label (optional)</label>
+                <input id="labelC" type="text" placeholder="e.g. Stages LR" />
+                <label for="fileC" class="file-label">FIT file (optional)</label>
+                <input id="fileC" type="file" accept=".fit" />
+                <span class="file-size"></span>
+              </div>
+            </div>
+
+            <div class="actions-row">
+              <button id="analyzeBtn" class="btn-primary">Analyze files</button>
+              <button id="resetBtn" class="btn-secondary">Reset</button>
+              <div id="error" class="error"></div>
+            </div>
+
+            <p class="global-hint">Drag horizontally on any chart to zoom &mdash; all charts zoom together. Double-click to reset.</p>
+          </section>
+
+          <!-- ─── RESULTS (hidden until analysis) ─── -->
+          <div id="resultsSection">
+
+            <!-- ─── CHART CONTROLS BAR ─── -->
+            <section class="card controls-bar">
+              <div class="controls-row">
+                <div class="control-group">
+                  <label for="smoothingSelect">Smoothing:</label>
+                  <select id="smoothingSelect">
+                    <option value="1" selected>Raw (1s)</option>
+                    <option value="5">5s avg</option>
+                    <option value="10">10s avg</option>
+                    <option value="30">30s avg</option>
+                  </select>
+                </div>
+                <div class="control-group">
+                  <button id="paceToggle" class="btn-secondary btn-small">Show pace</button>
+                </div>
+                <div class="control-group">
+                  <button id="exportCsvBtn" class="btn-secondary btn-small">Export CSV</button>
+                </div>
+                <div class="control-group">
+                  <button class="btn-secondary btn-small" data-reset="all">Reset all zoom</button>
+                </div>
+              </div>
+            </section>
+
+            <!-- ─── ALIGNMENT CONTROLS ─── -->
+            <section class="card">
+              <h2 class="section-title">Time alignment</h2>
+              <p class="hint">Auto-alignment uses cross-correlation on the strongest shared signal. Adjust manually if needed.</p>
+
+              <div id="alignInfo" class="align-info"></div>
+
+              <div class="offset-controls">
+                <div class="offset-row">
+                  <label>Device B offset:</label>
+                  <input id="offsetB" type="range" min="-120" max="120" value="0" step="1" />
+                  <span id="offsetBValue" class="offset-value">+0s</span>
+                </div>
+                <div class="offset-row">
+                  <label>Device C offset:</label>
+                  <input id="offsetC" type="range" min="-120" max="120" value="0" step="1" />
+                  <span id="offsetCValue" class="offset-value">+0s</span>
+                </div>
+                <div class="offset-actions">
+                  <button id="autoAlignBtn" class="btn-secondary">Auto-align</button>
+                  <button id="reAlignBtn" class="btn-primary btn-small">Re-analyze with offsets</button>
+                </div>
+              </div>
+            </section>
+
+            <!-- ─── DEVICE SOURCES ─── -->
+            <section class="card">
+              <h2 class="section-title">Detected data sources</h2>
+              <div id="deviceSources" class="device-sources"></div>
+            </section>
+
+            <!-- ─── DIAGNOSIS ─── -->
+            <section class="card">
+              <h2 class="section-title">Sensor diagnosis</h2>
+              <p class="hint">Automated assessment of disagreement patterns between devices.</p>
+              <div id="diagnosisPanel" class="diagnosis-panel"></div>
+            </section>
+
+            <!-- ─── GPS MAP ─── -->
+            <section class="card">
+              <h2 class="section-title">GPS tracks</h2>
+              <p class="hint">Overlaid GPS traces. Misalignment here usually indicates GPS quality differences.</p>
+              <div id="routeMap"></div>
+            </section>
+
+            <!-- ─── POWER ─── -->
+            <section class="card chart-card">
+              <div class="chart-header"><h2>Power</h2><span class="chart-label-hint">synced zoom</span></div>
+              <div class="chart-wrap"><canvas id="powerChart"></canvas></div>
+            </section>
+            <section class="card chart-card">
+              <div class="chart-header"><h2>Power difference</h2><span class="chart-label-hint">synced zoom</span></div>
+              <p class="chart-hint">Positive = other device reads higher than reference.</p>
+              <div class="chart-wrap"><canvas id="powerDiffChart"></canvas></div>
+            </section>
+
+            <!-- ─── HEART RATE ─── -->
+            <section class="card chart-card">
+              <div class="chart-header"><h2>Heart rate</h2><span class="chart-label-hint">synced zoom</span></div>
+              <div class="chart-wrap"><canvas id="hrChart"></canvas></div>
+            </section>
+            <section class="card chart-card">
+              <div class="chart-header"><h2>Heart rate difference</h2><span class="chart-label-hint">synced zoom</span></div>
+              <div class="chart-wrap"><canvas id="hrDiffChart"></canvas></div>
+            </section>
+
+            <!-- ─── CADENCE ─── -->
+            <section class="card chart-card">
+              <div class="chart-header"><h2>Cadence</h2><span class="chart-label-hint">synced zoom</span></div>
+              <div class="chart-wrap"><canvas id="cadenceChart"></canvas></div>
+            </section>
+            <section class="card chart-card">
+              <div class="chart-header"><h2>Cadence difference</h2><span class="chart-label-hint">synced zoom</span></div>
+              <div class="chart-wrap"><canvas id="cadenceDiffChart"></canvas></div>
+            </section>
+
+            <!-- ─── SPEED ─── -->
+            <section class="card chart-card">
+              <div class="chart-header"><h2>Speed</h2><span class="chart-label-hint">synced zoom</span></div>
+              <div class="chart-wrap"><canvas id="speedChart"></canvas></div>
+            </section>
+            <section class="card chart-card">
+              <div class="chart-header"><h2>Speed difference</h2><span class="chart-label-hint">synced zoom</span></div>
+              <div class="chart-wrap"><canvas id="speedDiffChart"></canvas></div>
+            </section>
+
+            <!-- ─── ELEVATION ─── -->
+            <section class="card chart-card">
+              <div class="chart-header"><h2>Elevation</h2><span class="chart-label-hint">synced zoom</span></div>
+              <div class="chart-wrap"><canvas id="elevChart"></canvas></div>
+            </section>
+
+            <!-- ─── POWER DURATION CURVE ─── -->
+            <section class="card chart-card">
+              <div class="chart-header">
+                <h2>Power-duration curve</h2>
+                <button class="btn-secondary btn-small" data-reset="pdc">Reset zoom</button>
+              </div>
+              <p class="chart-hint">Mean max power across standard durations. Shows how device choice affects peak power claims.</p>
+              <div class="chart-wrap"><canvas id="pdcChart"></canvas></div>
+            </section>
+
+            <!-- ─── SUMMARY TABLE ─── -->
+            <section class="card">
+              <h2 class="section-title">Statistical summary</h2>
+              <div id="summaryTable"></div>
+            </section>
+
+          </div><!-- /resultsSection -->
+
+        </div><!-- /fc-wrapper -->
+      </div><!-- /fitcompare-host -->
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="wf-section alt" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How sensor comparison works</h2>
+        <div class="ys-rule"></div>
+      </div>
+      <div class="ys-grid-3" style="gap: 22px;">
+        <div>
+          <div class="ys-meta" style="color: var(--wf-coral);">1. Upload</div>
+          <h3 style="margin-top: 4px;">Drop two or three FIT files</h3>
+          <p>From the same ride or run. Different head units recording the same activity. Device A is the reference. Files are parsed entirely in your browser &mdash; nothing is uploaded. Works with FIT from Garmin, Wahoo, Hammerhead, Stages, Quarq, Zwift, Rouvy, anything that exports FIT.</p>
+        </div>
+        <div>
+          <div class="ys-meta" style="color: var(--wf-coral);">2. Auto-align</div>
+          <h3 style="margin-top: 4px;">Cross-correlation on the strongest shared signal</h3>
+          <p>Even if both head units started recording at slightly different times, the tool finds the offset that maximises agreement on power (or HR, or speed, whichever is shared and strongest). You can override it manually with the offset sliders.</p>
+        </div>
+        <div>
+          <div class="ys-meta" style="color: var(--wf-coral);">3. Detect what each file actually contains</div>
+          <h3 style="margin-top: 4px;">Power / HR / cadence / speed / GPS / elevation</h3>
+          <p>Some files have power but no GPS (smart trainer). Some have HR + power but no cadence. The Detected Sources panel shows what each file holds &mdash; useful when you&rsquo;re comparing a head unit log against a Zwift export.</p>
+        </div>
+        <div>
+          <div class="ys-meta" style="color: var(--wf-coral);">4. Diagnose</div>
+          <h3 style="margin-top: 4px;">Plain-English assessment</h3>
+          <p>Categorised as OK / low / moderate / high disagreement. Examples: &ldquo;Device B reads 4.2% lower than A across the whole ride&rdquo; (calibration offset). &ldquo;Power agreement degrades after minute 90&rdquo; (drift, possible temperature compensation issue). &ldquo;HR strap shows 12 dropouts&rdquo; (electrode contact). &ldquo;Cadence missing on Device C&rdquo;.</p>
+        </div>
+        <div>
+          <div class="ys-meta" style="color: var(--wf-coral);">5. Charts with synced zoom</div>
+          <h3 style="margin-top: 4px;">Time series + difference chart for every metric</h3>
+          <p>Drag horizontally on any chart to zoom into a specific interval &mdash; all charts (power, HR, cadence, speed, elevation) zoom to the same window. Double-click resets. Smoothing options: raw, 5s, 10s, 30s averages.</p>
+        </div>
+        <div>
+          <div class="ys-meta" style="color: var(--wf-coral);">6. Power-duration curve</div>
+          <h3 style="margin-top: 4px;">Side-by-side mean-max for each device</h3>
+          <p>If your Garmin says you hit 1100 W peak and your Stages says 870 W, the PDC chart shows the gap across every duration from 1s to the full ride. This is what your CP estimate is built on &mdash; device choice can shift it by 5&ndash;15 watts.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COACH NOTE ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
+        <h2 style="margin-top: 4px;">When to actually run this comparison.</h2>
+        <p>Most athletes never look at sensor disagreement until a number doesn&rsquo;t make sense &mdash; an FTP test that doesn&rsquo;t match feel, a race-day power that&rsquo;s 30 W lower than training, a HR that pegs at 200 bpm for two minutes mid-climb. The fix is rarely &ldquo;the meter is wrong&rdquo; &mdash; it&rsquo;s usually offset, drift, or a recording gap. Three real uses:</p>
+        <ul class="ys-card-bullets" style="margin-top: 12px;">
+          <li><strong>New power meter.</strong> Ride a familiar course with both meters for a week, drop two of the FIT files in here. If you see a consistent &plusmn;3% offset, recalibrate. If you see drift, your <a href="calculator-critical-power.html" style="color: var(--wf-coral);">CP test</a> on the new meter will be biased.</li>
+          <li><strong>Pre-race calibration check.</strong> Race wheel + training wheel + spindown your trainer + record all three on the same indoor session. Confirm they agree before you commit to race-day power numbers.</li>
+          <li><strong>HR strap troubleshooting.</strong> Optical wrist HR vs. chest strap. Drop the activity, see exactly where the dropouts happen. Usually correlates with contact (chest strap) or grip pressure (wrist).</li>
+        </ul>
+        <p style="margin-top: 12px;"><strong>What this tool can&rsquo;t do:</strong> tell you which device is &ldquo;correct.&rdquo; That requires a known reference (lab dyno, calibrated HR ECG). What it can do is show you when two devices agree (one of them is probably right), when they disagree consistently (calibration), and when disagreement varies with conditions (drift, environmental).</p>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED CALCULATORS ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Related calculators</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card redesigned" href="calculator-cda.html">
+          <span class="ys-calc-card-title">CdA estimate (FIT-based)</span>
+          <p>Drop a single FIT file from a steady-power flat lap, get your aerodynamic drag &mdash; same FIT-parser, different calculation.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card redesigned" href="calculator-critical-power.html">
+          <span class="ys-calc-card-title">Critical power (CP)</span>
+          <p>Once you trust your numbers, get your sustainable power threshold from short + long efforts.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card redesigned" href="calculator-power-to-finish.html">
+          <span class="ys-calc-card-title">Power to finish (course-based)</span>
+          <p>Use confirmed power numbers to predict race time on 132+ real triathlon courses.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want a coach to interpret the comparison?</h2>
+          <p>Sensor disagreement is rarely random. The pattern tells you what&rsquo;s actually happening &mdash; bad calibration, dying battery, position change, temperature drift, software firmware mismatch. Send your two FIT files plus the comparison output and we&rsquo;ll tell you what to fix and what to trust.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=FIT%20file%20sensor%20comparison">Send for analysis</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Bug, missing metric, or feedback? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20FIT%20file%20compare" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ EXTERNAL LIBS + ENGINE ============ -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- FIT parser bundle (from yousuli-platform's fitdata_compare repo) -->
+  <script src="assets/fitcompare-fit-entry.js"></script>
+  <!-- Comparison engine -->
+  <script src="assets/fitcompare-analyzer.js"></script>
+
+</body>
+</html>
