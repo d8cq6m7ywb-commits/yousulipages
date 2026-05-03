@@ -86,7 +86,7 @@
       <span class="wf-eyebrow">Calculator &middot; Swim</span>
       <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">VO₂ → Swim time.</h1>
       <div class="wf-subhead">Time &middot; pace per 100 m/yd &middot; pool/OW/wetsuit modifiers</div>
-      <p class="lede" style="max-width: 660px;">Predict swim times from VO<sub>2</sub>max + Cost of Transport. Includes environment modifiers (pool 25 / 50, open water fresh / salt, wetsuit), drafting, chop, sighting, and VO<sub>2</sub> kinetics for short swims (≤ 400 m). Calibration mode back-solves Cr from a known race time.</p>
+      <p class="lede" style="max-width: 660px;">Predict swim times from VO<sub>2</sub>max + Cost of Transport. Includes environment modifiers (pool 25 yd / 25 m / 50 m, open water fresh / salt, wetsuit), drafting, chop, sighting, and VO<sub>2</sub> kinetics for short swims (≤ 400 m). Calibration mode back-solves Cr from a known race time.</p>
       <div class="ys-btn-row" style="margin-top: 6px;">
         <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
         <a class="ys-btn ys-btn-ghost" href="#how">How it&rsquo;s built</a>
@@ -152,6 +152,7 @@
             <div>
               <label>Environment</label>
               <select id="env">
+                <option value="pool25y">Pool 25 yd / SCY (× 0.982)</option>
                 <option value="pool25">Pool 25 m (× 0.985)</option>
                 <option value="pool50" selected>Pool 50 m (× 0.993)</option>
                 <option value="ow_fresh">Open water · fresh (× 1.000)</option>
@@ -316,7 +317,9 @@
       function safeNum(v) { const x = parseFloat(v); return Number.isFinite(x) ? x : NaN; }
 
       const ENV_FACTORS = {
-        pool25: 0.985, pool50: 0.993,
+        // 25 y is shorter than 25 m → ~9% more wall pushes per 100 m,
+        // so a slightly larger free-meter benefit than SCM.
+        pool25y: 0.982, pool25: 0.985, pool50: 0.993,
         ow_fresh: 1.000, ow_salt: 0.985,
         wetsuit: 0.920, wetsuit_salt: 0.905
       };

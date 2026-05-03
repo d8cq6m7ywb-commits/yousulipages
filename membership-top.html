@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Yousuli Membership &amp; Coaching — pick your plan (top)</title>
+  <meta name="description" content="Yousuli membership and coaching: Social Club, Structured Coaching, Bespoke Performance, Full Performance. Top half of the embedded membership page — sits above the Wix pricing widget on /membership." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Membership &amp; Coaching</span>
+      <h1>Pick your plan.</h1>
+      <div class="wf-subhead">Membership · Coaching · Testing &mdash; built around efficiency</div>
+      <p class="lede">Join the Yousuli Club for community and structure, add coaching when you want guidance, and use the Yousuli Lab to convert your work into real speed. Three layers, one idea: efficiency is the shortest path to speed.</p>
+      <div class="ys-btn-row">
+        <a class="ys-btn ys-btn-coral" href="#layers">See the 3 layers &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#decide">Help me pick</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STICKY QUICK-NAV ============ -->
+  <nav class="ys-quicknav" aria-label="Section navigation">
+    <div class="ys-container ys-quicknav-row">
+      <span class="ys-quicknav-label">Jump to</span>
+      <a href="#layers">The 3 layers</a>
+      <a href="#decide">Help me pick</a>
+    </div>
+  </nav>
+
+  <!-- ============ THREE LAYERS OVERVIEW ============ -->
+  <section class="wf-section" id="layers">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>The three layers</h2>
+        <div class="ys-rule"></div>
+        <p>Stack what you need. Skip what you don&rsquo;t. Move up when you&rsquo;re ready.</p>
+      </div>
+
+      <div class="ys-grid">
+        <article class="ys-card">
+          <div class="ys-meta">Layer 01 · Community</div>
+          <h3>Yousuli Social Club</h3>
+          <p>Accessible membership for ordinary humans doing unordinary things. Free or $49/yr with perks. The entry point into the world.</p>
+          <ul class="ys-card-bullets">
+            <li>Online community + WhatsApp group chat</li>
+            <li>Weekly group training (swim, bike, run)</li>
+            <li>Members-only content: webinars, Q&amp;As, case studies</li>
+            <li>Template plans (first 70.3, first 10K, return from layoff)</li>
+            <li>Member pricing &amp; priority booking on testing</li>
+          </ul>
+          <p style="font-size: 0.88rem; color: var(--ys-muted);">No individual weekly coaching · no daily session feedback · no fully custom programming.</p>
+          <a class="ys-btn ys-btn-dark" href="socialclub.html">Learn about YSC</a>
+        </article>
+
+        <article class="ys-card featured">
+          <span class="ys-best-badge" style="position: absolute; top: -10px; left: 24px; background: linear-gradient(135deg, var(--wf-coral), var(--wf-coral-deep)); color: #fff; font-family: var(--ys-font-display); letter-spacing: 0.16em; text-transform: uppercase; font-size: 0.7rem; padding: 5px 12px; border-radius: 999px; box-shadow: 0 4px 12px rgba(250, 119, 60, 0.32);">Most chosen</span>
+          <div class="ys-meta">Layer 02 · Coaching</div>
+          <h3>Coaching memberships</h3>
+          <p>When you want a guide, not just a plan. Testing-driven coaching aimed at one thing: more speed per hour of training.</p>
+          <ul class="ys-card-bullets">
+            <li>Ongoing personalised support</li>
+            <li>Customised dynamic plans</li>
+            <li>Frequent direct access to coach</li>
+            <li>Testing &amp; analysis (RMR, VO₂, gait, aero) to remove wasted effort</li>
+          </ul>
+          <p style="font-size: 0.88rem; color: var(--ys-muted);">Three tiers: Structured ($200/mo) · Bespoke Performance ($350/mo) · Full Performance (by application).</p>
+          <a class="ys-btn ys-btn-coral" href="coaching.html">See coaching tiers</a>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Layer 03 · Testing</div>
+          <h3>Performance Lab</h3>
+          <p>Lab-grade testing &mdash; on-demand or as part of a structured package. The data that turns coaching into precision.</p>
+          <ul class="ys-card-bullets">
+            <li>VO₂max, RMR, CdA, swim &amp; gait analysis, full-stack profiling</li>
+            <li>Standalone single tests OR bundled performance packages</li>
+            <li>Member pricing for Club + Coaching athletes</li>
+            <li>Mobile lab covers greater LA + race-week travel</li>
+          </ul>
+          <p style="font-size: 0.88rem; color: var(--ys-muted);">Performance packages: from $300 (Basic) up to $1,500 (Elite Full-Stack). Move up within 60 days &mdash; full credit applies.</p>
+          <a class="ys-btn ys-btn-dark" href="performancelab.html">Browse the Lab</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DECIDE ============ -->
+  <section class="wf-section alt" id="decide">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Help me pick</h2>
+        <div class="ys-rule"></div>
+        <p>Five-second answer for the most common situations.</p>
+      </div>
+
+      <div class="ys-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+        <article class="ys-fit-card yes">
+          <h3>Mainly want community + structure</h3>
+          <ul>
+            <li>Comfortable making most calls yourself</li>
+            <li>Want others to train with</li>
+          </ul>
+          <p style="margin-top: 10px;"><strong>&rarr; Yousuli Social Club</strong></p>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>Want a real plan + regular feedback</h3>
+          <ul>
+            <li>Better use of every training hour</li>
+            <li>No need for daily contact</li>
+          </ul>
+          <p style="margin-top: 10px;"><strong>&rarr; Structured Coaching</strong> ($200/mo)</p>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>Big goal + complex constraints</h3>
+          <ul>
+            <li>Limited time, high target</li>
+            <li>Want someone to own the process</li>
+          </ul>
+          <p style="margin-top: 10px;"><strong>&rarr; Bespoke or Full Performance</strong></p>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>Just want the numbers</h3>
+          <ul>
+            <li>Don&rsquo;t need ongoing coaching</li>
+            <li>You&rsquo;ll DIY from data</li>
+          </ul>
+          <p style="margin-top: 10px;"><strong>&rarr; Performance Lab test</strong></p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HANDOFF TO WIX PRICING WIDGET ============ -->
+  <section style="padding: 28px 16px 36px; background: var(--ys-bg-soft); text-align: center; border-top: 1px solid var(--ys-line);">
+    <div class="ys-container" style="max-width: 720px;">
+      <div style="font-family: var(--ys-font-display); text-transform: uppercase; letter-spacing: 0.16em; font-size: 0.78rem; color: var(--wf-coral); margin-bottom: 10px;">Plan selection &amp; checkout</div>
+      <h3 style="font-family: var(--ys-font-display); color: var(--ys-navy); font-size: 1.4rem; margin: 0 0 12px;">&darr; Pick your plan in the widget below &darr;</h3>
+      <p style="color: var(--ys-muted); font-size: 0.95rem; margin: 0;">Free Yousuli Social Club, Performance Tier ($49/yr), Structured Coaching ($200/mo), Bespoke ($350/mo), and Full Performance (by application).</p>
+    </div>
+  </section>
+
+</body>
+</html>
