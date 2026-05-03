@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VO₂ → Run finish time — Yousuli calculators</title>
+  <meta name="description" content="Predict running finish time, pace per km/mile, and running power from VO₂max + running economy + fraction. Per-distance fraction plausibility checks." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <style>
+    .v2r-host { width: 100%; }
+    .v2r-host .field-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; background: var(--ys-bg-soft); padding: 18px; border-radius: 10px; margin-bottom: 16px; }
+    @media (max-width: 760px) { .v2r-host .field-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { .v2r-host .field-grid { grid-template-columns: 1fr; } }
+    .v2r-host label { display: block; font-family: var(--ys-font-display); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.7rem; color: var(--ys-navy); margin-bottom: 6px; }
+    .v2r-host .row { display: flex; align-items: stretch; }
+    .v2r-host input[type="number"], .v2r-host select { width: 100%; padding: 10px 12px; border: 1.5px solid var(--ys-line); border-radius: 6px; font-size: 0.96rem; font-family: var(--ys-font-body); background: #fff; color: var(--ys-navy); box-sizing: border-box; transition: border-color 0.15s ease, box-shadow 0.15s ease; }
+    .v2r-host input:focus, .v2r-host select:focus { outline: none; border-color: var(--wf-coral); box-shadow: 0 0 0 3px rgba(250, 119, 60, 0.18); }
+    .v2r-host .row > input:first-child { border-radius: 6px 0 0 6px; }
+    .v2r-host .row > .unit { padding: 0 12px; background: var(--ys-navy); color: #fff; font-family: var(--ys-font-display); letter-spacing: 0.06em; font-size: 0.74rem; display: flex; align-items: center; border-radius: 0 6px 6px 0; min-width: 60px; justify-content: center; white-space: nowrap; }
+    .v2r-host .field-help { font-size: 0.78rem; color: var(--ys-muted); margin-top: 4px; }
+
+    .v2r-host .results-block { margin-top: 18px; padding: 22px; background: var(--ys-navy); color: #fff; border-radius: 12px; }
+    .v2r-host .results-block h4 { font-family: var(--ys-font-display); letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.78rem; color: var(--wf-coral); margin: 0 0 12px; }
+    .v2r-host .res-headline { text-align: center; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.12); margin-bottom: 12px; }
+    .v2r-host .res-headline .res-time { font-family: var(--ys-font-display); font-weight: 700; font-size: 2.2rem; color: var(--wf-coral); letter-spacing: 0.04em; }
+    .v2r-host .res-headline .res-paces { font-family: var(--ys-font-display); letter-spacing: 0.06em; font-size: 0.92rem; color: rgba(255,255,255,0.85); margin-top: 4px; display: block; }
+    .v2r-host .res-row { display: flex; justify-content: space-between; padding: 7px 0; font-size: 0.9rem; }
+    .v2r-host .res-row .res-label { color: rgba(255,255,255,0.7); }
+    .v2r-host .res-row .res-value { color: #fff; font-family: var(--ys-font-display); font-weight: 700; letter-spacing: 0.02em; }
+
+    .v2r-host .feedback { margin-top: 12px; padding: 10px 14px; border-radius: 6px; font-size: 0.88rem; line-height: 1.4; display: none; }
+    .v2r-host .feedback.active { display: block; }
+    .v2r-host .feedback.green { background: rgba(46, 125, 79, 0.10); border-left: 4px solid #2e7d4f; color: #1e5234; }
+    .v2r-host .feedback.yellow { background: rgba(250, 119, 60, 0.10); border-left: 4px solid var(--wf-coral); color: var(--ys-navy); }
+    .v2r-host .feedback.red { background: rgba(201, 57, 57, 0.08); border-left: 4px solid #c93939; color: #7a1f1f; }
+  </style>
+</head>
+<body>
+
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){var t=document.querySelector('.ys-site-mobile-toggle');if(!t)return;t.addEventListener('click',function(){var h=t.closest('.ys-site-header');var open=h.classList.toggle('open');t.setAttribute('aria-expanded',open?'true':'false');});})();
+  </script>
+
+  <section class="wf-hero" style="padding: 72px 0 56px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Run</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">VO₂ → Run finish time.</h1>
+      <div class="wf-subhead">Finish time &middot; pace per km/mile &middot; running power</div>
+      <p class="lede" style="max-width: 660px;">From VO<sub>2</sub>max + running economy (Cr) + fraction-of-VO<sub>2</sub>max → predicted finish time, pace, and running power. Per-distance plausibility checks tell you when your fraction is unrealistic for the chosen distance.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">How it&rsquo;s built</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="wf-section" id="tool" style="padding: 32px 0 48px;">
+    <div class="ys-container">
+      <div class="ys-tool" style="max-width: 920px;">
+        <h3>Plug in your numbers</h3>
+        <p class="ys-tool-pre">VO<sub>2</sub>max from a lab test ideally; or use a published predictor from a recent race. Cr defaults to 200 ml O<sub>2</sub>/kg/km (trained range); adjust if you have measured economy.</p>
+
+        <div class="v2r-host">
+          <div class="field-grid">
+            <div>
+              <label>VO<sub>2</sub>max</label>
+              <div class="row"><input type="number" id="vo2max" min="15" max="100" step="0.1" value="55" /><span class="unit">ml/kg/min</span></div>
+            </div>
+            <div>
+              <label>Distance</label>
+              <select id="distance">
+                <option value="1.0">1 km</option>
+                <option value="1.5">1500 m</option>
+                <option value="3.0">3 km</option>
+                <option value="5.0" selected>5 km</option>
+                <option value="10.0">10 km</option>
+                <option value="21.0975">Half marathon</option>
+                <option value="42.195">Marathon</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
+            <div id="customDistField" style="display: none;">
+              <label>Custom distance</label>
+              <div class="row"><input type="number" id="customDist" min="0.1" step="0.1" value="8" /><span class="unit">km</span></div>
+            </div>
+
+            <div>
+              <label>Body mass</label>
+              <div class="row"><input type="number" id="mass" min="30" max="200" step="0.1" value="70" /><span class="unit">kg</span></div>
+            </div>
+            <div>
+              <label>Fraction of VO<sub>2</sub>max</label>
+              <div class="row"><input type="number" id="fraction" min="50" max="120" step="1" value="85" /><span class="unit">%</span></div>
+              <div class="field-help">Auto-set by distance.</div>
+            </div>
+            <div>
+              <label>Running economy (Cr)</label>
+              <div class="row"><input type="number" id="cr" min="120" max="350" step="1" value="200" /><span class="unit">ml/kg/km</span></div>
+              <div class="field-help">Elite ~180 · trained ~200 · recreational ~220.</div>
+            </div>
+
+            <div>
+              <label>Running effectiveness (RE)</label>
+              <div class="row"><input type="number" id="re" min="0.50" max="1.50" step="0.01" value="1.05" /><span class="unit">m/s per W/kg</span></div>
+              <div class="field-help">Typical 0.98–1.10. Used to estimate W/kg.</div>
+            </div>
+            <div></div>
+            <div></div>
+          </div>
+
+          <div class="results-block">
+            <h4>Result</h4>
+            <div class="res-headline">
+              <span class="res-time" id="outTime">—</span>
+              <span class="res-paces"><strong id="outPaceKm">—</strong> /km · <strong id="outPaceMi">—</strong> /mile</span>
+            </div>
+            <div class="res-row"><span class="res-label">Speed</span><span class="res-value" id="outSpeed">—</span></div>
+            <div class="res-row"><span class="res-label">Running power</span><span class="res-value" id="outPower">—</span></div>
+            <div class="res-row"><span class="res-label">Total power</span><span class="res-value" id="outWatts">—</span></div>
+          </div>
+
+          <div class="feedback" id="fbFraction">—</div>
+          <div class="feedback" id="fbSanity">—</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wf-section alt" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How it&rsquo;s built</h2>
+        <div class="ys-rule"></div>
+        <p>Three formulas turn VO<sub>2</sub>max into a finish time.</p>
+      </div>
+      <div class="ys-grid">
+        <div class="ys-step"><div class="ys-step-num">01</div><h3>Speed from VO<sub>2</sub></h3><p><code style="background: var(--ys-bg-soft); padding: 2px 8px; border-radius: 4px;">v (km/min) = VO<sub>2</sub>max × fraction / Cr</code></p><p style="margin-top: 8px;">Cr = oxygen cost per km. Lower Cr = better economy = faster at the same VO<sub>2</sub>.</p></div>
+        <div class="ys-step"><div class="ys-step-num">02</div><h3>Fraction by distance</h3><p>The % of VO<sub>2</sub>max you can hold drops with distance. ~98% at 1 km, ~85% at 5 km, ~78% at half marathon, ~73% at marathon. Auto-set by the distance dropdown.</p></div>
+        <div class="ys-step"><div class="ys-step-num">03</div><h3>Power from speed</h3><p><code style="background: var(--ys-bg-soft); padding: 2px 8px; border-radius: 4px;">W/kg = speed (m/s) / RE</code></p><p style="margin-top: 8px;">Running effectiveness (RE) translates speed to power. Default 1.05 m/s per W/kg is the well-trained adult range.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
+        <h2 style="margin-top: 4px;">Cr matters more than VO<sub>2</sub>max for most runners.</h2>
+        <p>Two athletes with identical VO<sub>2</sub>max can run very different times: a Cr of 180 vs 220 is a ~20% speed difference at the same fraction. Lab-measured Cr from a treadmill protocol is the cleanest input here. Plug measured Cr in and the predictions tighten dramatically.</p>
+        <p style="margin-top: 10px;">If your fraction-plausibility flag goes red, your VO<sub>2</sub>max may be over-estimated — re-test, or reduce VO<sub>2</sub>max until the predicted time matches your honest race PR for that distance.</p>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Run lab testing</a>
+          <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head"><h2>Related calculators</h2><div class="ys-rule"></div></div>
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card redesigned" href="calculator-vo2-power.html"><span class="ys-calc-card-title">VO<sub>2</sub> → cycling power</span><p>Same logic for the bike: VO<sub>2</sub>max + efficiency → target power.</p><span class="ys-calc-card-arrow">Open &rarr;</span></a>
+        <a class="ys-calc-card redesigned" href="calculator-advanced-running-predictor.html"><span class="ys-calc-card-title">Advanced running predictor</span><p>3-point race predictor without VO<sub>2</sub>max — better when you have race times instead of lab data.</p><span class="ys-calc-card-arrow">Open &rarr;</span></a>
+        <a class="ys-calc-card" href="calculators.html"><span class="ys-calc-card-title">All calculators</span><p>Back to the full catalog.</p><span class="ys-calc-card-arrow">Browse &rarr;</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div><h2>Want measured VO<sub>2</sub>max + Cr?</h2><p>Treadmill lab test gives both directly — VO<sub>2</sub>max from gas analysis, running economy from sub-maximal stages. Plug both into this calculator and the prediction error drops from ±5% to ±2%.</p></div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Book run testing</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20VO2%20Run">Send feedback</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Spotted a bug? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20VO2%20Run" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand"><img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" /><p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p></div>
+        <div class="ys-site-footer-col"><h5>Services</h5><a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a><a href="https://www.yousuli.co/coaching" target="_top">Coaching</a><a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a><a href="https://www.yousuli.co/calculators" target="_top">Calculators</a></div>
+        <div class="ys-site-footer-col"><h5>Community</h5><a href="https://www.yousuli.co/social-club" target="_top">Social Club</a><a href="https://www.yousuli.co/mission" target="_top">Mission</a><a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a><a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a></div>
+        <div class="ys-site-footer-col"><h5>About</h5><a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a><a href="https://www.yousuli.co/science" target="_top">Science</a><a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a><a href="https://www.yousuli.co/contact" target="_top">Contact</a></div>
+      </div>
+      <div class="ys-site-footer-bottom"><span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span><span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span></div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const $ = id => document.getElementById(id);
+      function safeNum(v) { const x = parseFloat(v); return Number.isFinite(x) ? x : NaN; }
+
+      // Distance defaults: [fraction%, Cr]
+      const DIST_DEFAULTS = {
+        '1.0':     [98, 200], '1.5': [95, 200], '3.0': [92, 200],
+        '5.0':     [85, 200], '10.0': [82, 200],
+        '21.0975': [78, 210], '42.195': [73, 215]
+      };
+      // Fraction plausibility bands per distance
+      const FRACTION_BANDS = {
+        '1.0':     { low: 92, typLo: 95, typHi: 100, high: 105, label: '1 km' },
+        '1.5':     { low: 90, typLo: 93, typHi: 98,  high: 102, label: '1500 m' },
+        '3.0':     { low: 87, typLo: 90, typHi: 95,  high: 100, label: '3 km' },
+        '5.0':     { low: 80, typLo: 83, typHi: 90,  high: 95,  label: '5 km' },
+        '10.0':    { low: 78, typLo: 80, typHi: 87,  high: 92,  label: '10 km' },
+        '21.0975': { low: 72, typLo: 75, typHi: 82,  high: 88,  label: 'Half marathon' },
+        '42.195':  { low: 65, typLo: 70, typHi: 78,  high: 85,  label: 'Marathon' }
+      };
+
+      function fmtMmSs(s) { const t = Math.round(s); const m = Math.floor(t / 60); const sec = (t % 60).toString().padStart(2, '0'); return m + ':' + sec; }
+      function fmtHHMMSS(s) { const t = Math.round(s); const h = Math.floor(t / 3600); const m = Math.floor((t % 3600) / 60); const sec = (t % 60).toString().padStart(2, '0'); return (h > 0 ? h + ':' + m.toString().padStart(2, '0') + ':' + sec : m + ':' + sec); }
+
+      function getDistKm() {
+        const sel = $('distance').value;
+        if (sel === 'custom') return safeNum($('customDist').value);
+        return parseFloat(sel);
+      }
+
+      function onDistChange() {
+        const sel = $('distance').value;
+        $('customDistField').style.display = (sel === 'custom') ? '' : 'none';
+        if (DIST_DEFAULTS[sel]) {
+          $('fraction').value = DIST_DEFAULTS[sel][0];
+          $('cr').value = DIST_DEFAULTS[sel][1];
+        }
+      }
+
+      function fbFraction(distKey, fracPct) {
+        const b = FRACTION_BANDS[distKey];
+        if (!b) return null;
+        if (fracPct > b.high)   return { cls: 'red',    msg: 'Fraction ' + fracPct + '% is unusually high for ' + b.label + '. Above ' + b.high + '% is rarely sustainable. Re-check VO₂max or pick a shorter distance.' };
+        if (fracPct > b.typHi)  return { cls: 'yellow', msg: 'Fraction ' + fracPct + '% is above typical (' + b.typLo + '–' + b.typHi + '%) for ' + b.label + '. Achievable for elite athletes with strong fractional utilization.' };
+        if (fracPct >= b.typLo) return { cls: 'green',  msg: 'Fraction ' + fracPct + '% is within typical range (' + b.typLo + '–' + b.typHi + '%) for ' + b.label + '.' };
+        if (fracPct >= b.low)   return { cls: 'yellow', msg: 'Fraction ' + fracPct + '% is below typical for ' + b.label + '. May indicate conservative pacing or lower endurance conditioning.' };
+        return { cls: 'red', msg: 'Fraction ' + fracPct + '% is very low for ' + b.label + ' (expected > ' + b.low + '%). Results may be overly pessimistic.' };
+      }
+
+      function calc() {
+        const vo2max = safeNum($('vo2max').value);
+        const distKm = getDistKm();
+        const frac = safeNum($('fraction').value) / 100;
+        const cr   = safeNum($('cr').value);
+        const re   = safeNum($('re').value);
+        const mass = safeNum($('mass').value);
+
+        if ([vo2max, distKm, frac, cr, re, mass].some(v => !Number.isFinite(v) || v <= 0)) return;
+
+        const speedKmMin = (vo2max * frac) / cr;
+        const speedMs = speedKmMin * 1000 / 60;
+        const timeSec = (distKm / speedKmMin) * 60;
+        const paceKm = 60 / speedKmMin;
+        const paceMi = paceKm * 1.60934;
+        const wkg = speedMs / re;
+        const watts = wkg * mass;
+
+        $('outTime').textContent = fmtHHMMSS(timeSec);
+        $('outPaceKm').textContent = fmtMmSs(paceKm);
+        $('outPaceMi').textContent = fmtMmSs(paceMi);
+        $('outSpeed').textContent = (speedKmMin * 60).toFixed(2) + ' km/h';
+        $('outPower').textContent = wkg.toFixed(2) + ' W/kg';
+        $('outWatts').textContent = Math.round(watts) + ' W';
+
+        // Fraction plausibility
+        const distKey = $('distance').value;
+        const fracPct = safeNum($('fraction').value);
+        const fb = fbFraction(distKey, fracPct);
+        const fbEl = $('fbFraction');
+        if (fb) {
+          fbEl.textContent = fb.msg;
+          fbEl.className = 'feedback active ' + fb.cls;
+        } else {
+          fbEl.classList.remove('active');
+        }
+
+        // Sanity warnings
+        const warnings = [];
+        if (vo2max > 90) warnings.push('VO₂max > 90 ml/kg/min is extremely rare.');
+        if (vo2max < 20) warnings.push('VO₂max < 20 ml/kg/min is unusually low for a runner.');
+        if (cr < 150) warnings.push('Cr < 150 is unrealistically economical.');
+        if (cr > 280) warnings.push('Cr > 280 suggests very poor economy or a data-entry error.');
+        if (paceKm < 120) warnings.push('Predicted pace faster than 2:00/km is unrealistic.');
+        const sEl = $('fbSanity');
+        if (warnings.length) {
+          sEl.textContent = warnings.join(' ');
+          sEl.className = 'feedback active red';
+        } else {
+          sEl.classList.remove('active');
+        }
+      }
+
+      $('distance').addEventListener('change', () => { onDistChange(); calc(); });
+      ['vo2max','customDist','mass','fraction','cr','re'].forEach(id => {
+        $(id).addEventListener('input', calc);
+        $(id).addEventListener('change', calc);
+      });
+
+      onDistChange();
+      calc();
+    })();
+  </script>
+
+</body>
+</html>

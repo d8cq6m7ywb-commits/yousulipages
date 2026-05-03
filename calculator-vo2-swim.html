@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VO₂ → Swim time — Yousuli calculators</title>
+  <meta name="description" content="Predict swim times from VO₂max and cost-of-transport. Includes pool/open-water/wetsuit modifiers, drafting, chop and sighting factors, VO₂ kinetics for short swims, and Cr calibration from a known time." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <style>
+    .v2s-host { width: 100%; }
+    .v2s-host .field-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; background: var(--ys-bg-soft); padding: 18px; border-radius: 10px; margin-bottom: 16px; }
+    @media (max-width: 760px) { .v2s-host .field-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { .v2s-host .field-grid { grid-template-columns: 1fr; } }
+    .v2s-host label { display: block; font-family: var(--ys-font-display); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.7rem; color: var(--ys-navy); margin-bottom: 6px; }
+    .v2s-host .row { display: flex; align-items: stretch; }
+    .v2s-host input[type="number"], .v2s-host select { width: 100%; padding: 10px 12px; border: 1.5px solid var(--ys-line); border-radius: 6px; font-size: 0.96rem; font-family: var(--ys-font-body); background: #fff; color: var(--ys-navy); box-sizing: border-box; transition: border-color 0.15s ease, box-shadow 0.15s ease; }
+    .v2s-host input:focus, .v2s-host select:focus { outline: none; border-color: var(--wf-coral); box-shadow: 0 0 0 3px rgba(250, 119, 60, 0.18); }
+    .v2s-host .row > input:first-child { border-radius: 6px 0 0 6px; }
+    .v2s-host .row > .unit { padding: 0 12px; background: var(--ys-navy); color: #fff; font-family: var(--ys-font-display); letter-spacing: 0.06em; font-size: 0.74rem; display: flex; align-items: center; border-radius: 0 6px 6px 0; min-width: 60px; justify-content: center; white-space: nowrap; }
+    .v2s-host .field-help { font-size: 0.78rem; color: var(--ys-muted); margin-top: 4px; }
+    .v2s-host .checkbox-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #fff; border: 1.5px solid var(--ys-line); border-radius: 6px; cursor: pointer; }
+    .v2s-host .checkbox-row input { width: 18px; height: 18px; accent-color: var(--wf-coral); cursor: pointer; }
+    .v2s-host .checkbox-row label { margin: 0; font-family: var(--ys-font-body); font-size: 0.92rem; text-transform: none; letter-spacing: 0; color: var(--ys-navy); cursor: pointer; }
+
+    .v2s-host .accordion { background: var(--ys-bg-soft); border: 1px solid var(--ys-line); border-radius: 10px; padding: 14px 18px; margin-bottom: 16px; }
+    .v2s-host .accordion summary { cursor: pointer; font-family: var(--ys-font-display); letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.78rem; color: var(--wf-coral); list-style: none; }
+    .v2s-host .accordion summary::-webkit-details-marker { display: none; }
+    .v2s-host .accordion summary::before { content: '▸ '; color: var(--wf-coral); }
+    .v2s-host .accordion[open] summary::before { content: '▾ '; }
+    .v2s-host .acc-body { margin-top: 12px; }
+
+    .v2s-host .results-block { margin-top: 18px; padding: 22px; background: var(--ys-navy); color: #fff; border-radius: 12px; }
+    .v2s-host .results-block h4 { font-family: var(--ys-font-display); letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.78rem; color: var(--wf-coral); margin: 0 0 12px; }
+    .v2s-host .res-headline { text-align: center; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.12); margin-bottom: 12px; }
+    .v2s-host .res-headline .res-time { font-family: var(--ys-font-display); font-weight: 700; font-size: 2.2rem; color: var(--wf-coral); letter-spacing: 0.04em; }
+    .v2s-host .res-headline .res-paces { font-family: var(--ys-font-display); letter-spacing: 0.06em; font-size: 0.92rem; color: rgba(255,255,255,0.85); margin-top: 4px; display: block; }
+    .v2s-host .res-row { display: flex; justify-content: space-between; padding: 7px 0; font-size: 0.9rem; }
+    .v2s-host .res-row .res-label { color: rgba(255,255,255,0.7); }
+    .v2s-host .res-row .res-value { color: #fff; font-family: var(--ys-font-display); font-weight: 700; letter-spacing: 0.02em; }
+    .v2s-host .band-block { margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.12); }
+    .v2s-host .band-head { font-family: var(--ys-font-display); letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.74rem; color: rgba(255,255,255,0.7); margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){var t=document.querySelector('.ys-site-mobile-toggle');if(!t)return;t.addEventListener('click',function(){var h=t.closest('.ys-site-header');var open=h.classList.toggle('open');t.setAttribute('aria-expanded',open?'true':'false');});})();
+  </script>
+
+  <section class="wf-hero" style="padding: 72px 0 56px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Swim</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">VO₂ → Swim time.</h1>
+      <div class="wf-subhead">Time &middot; pace per 100 m/yd &middot; pool/OW/wetsuit modifiers</div>
+      <p class="lede" style="max-width: 660px;">Predict swim times from VO<sub>2</sub>max + Cost of Transport. Includes environment modifiers (pool 25 / 50, open water fresh / salt, wetsuit), drafting, chop, sighting, and VO<sub>2</sub> kinetics for short swims (≤ 400 m). Calibration mode back-solves Cr from a known race time.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">How it&rsquo;s built</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="wf-section" id="tool" style="padding: 32px 0 48px;">
+    <div class="ys-container">
+      <div class="ys-tool" style="max-width: 980px;">
+        <h3>Plug in your numbers</h3>
+        <p class="ys-tool-pre">Cr (cost of transport) tier-presets: elite 0.55 · trained 0.70 · recreational 0.90 · poor 1.10 ml O<sub>2</sub>/kg/m. Or back-solve Cr from a real swim time using the calibration block.</p>
+
+        <div class="v2s-host">
+          <div class="field-grid">
+            <div>
+              <label>Distance</label>
+              <select id="distance">
+                <option value="50">50 m</option>
+                <option value="100">100 m</option>
+                <option value="200">200 m</option>
+                <option value="400" selected>400 m</option>
+                <option value="800">800 m</option>
+                <option value="1500">1500 m</option>
+                <option value="1900">1900 m (sprint tri)</option>
+                <option value="3800">3800 m (Ironman)</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
+            <div id="customDistField" style="display: none;">
+              <label>Custom distance</label>
+              <div class="row"><input type="number" id="customDist" min="25" step="25" value="1000" /><span class="unit">m</span></div>
+            </div>
+            <div>
+              <label>VO<sub>2</sub>max</label>
+              <div class="row"><input type="number" id="vo2" min="15" max="100" step="0.1" value="55" /><span class="unit">ml/kg/min</span></div>
+            </div>
+
+            <div>
+              <label>Body mass</label>
+              <div class="row"><input type="number" id="mass" min="30" max="200" step="0.1" value="75" /><span class="unit">kg</span></div>
+            </div>
+            <div>
+              <label>Economy tier</label>
+              <select id="crTier">
+                <option value="custom">Custom</option>
+                <option value="elite">Elite (Cr 0.55)</option>
+                <option value="trained" selected>Well-trained (Cr 0.70)</option>
+                <option value="recreational">Recreational (Cr 0.90)</option>
+                <option value="poor">Poor (Cr 1.10)</option>
+              </select>
+            </div>
+            <div>
+              <label>Cr (cost of transport)</label>
+              <div class="row"><input type="number" id="cr" min="0.20" max="2.00" step="0.01" value="0.70" /><span class="unit">ml O₂/kg/m</span></div>
+            </div>
+
+            <div>
+              <label>Fraction of VO<sub>2</sub>max</label>
+              <div class="row"><input type="number" id="fraction" min="50" max="120" step="1" value="85" /><span class="unit">%</span></div>
+              <div class="field-help">Auto-set by distance.</div>
+            </div>
+            <div>
+              <label>Environment</label>
+              <select id="env">
+                <option value="pool25">Pool 25 m (× 0.985)</option>
+                <option value="pool50" selected>Pool 50 m (× 0.993)</option>
+                <option value="ow_fresh">Open water · fresh (× 1.000)</option>
+                <option value="ow_salt">Open water · salt (× 0.985)</option>
+                <option value="wetsuit">Wetsuit · fresh (× 0.920)</option>
+                <option value="wetsuit_salt">Wetsuit · salt (× 0.905)</option>
+              </select>
+            </div>
+            <div>
+              <label>Drafting</label>
+              <select id="draft">
+                <option value="1.00" selected>None (× 1.00)</option>
+                <option value="0.97">Light (× 0.97)</option>
+                <option value="0.92">Strong (× 0.92)</option>
+              </select>
+            </div>
+
+            <div>
+              <label>Chop / conditions</label>
+              <select id="chop">
+                <option value="1.00" selected>Calm (× 1.00)</option>
+                <option value="1.03">Moderate (× 1.03)</option>
+                <option value="1.07">Rough (× 1.07)</option>
+              </select>
+            </div>
+            <div>
+              <label>Sighting frequency</label>
+              <select id="sight">
+                <option value="1.00" selected>Low (× 1.00)</option>
+                <option value="1.01">Typical (× 1.01)</option>
+                <option value="1.03">High (× 1.03)</option>
+              </select>
+            </div>
+            <div>
+              <label>VO<sub>2</sub> kinetics (≤ 400 m)</label>
+              <div class="checkbox-row"><input type="checkbox" id="kinetics" checked /><label for="kinetics">Apply kinetics adjustment</label></div>
+            </div>
+
+            <div>
+              <label>Tau (kinetics constant)</label>
+              <div class="row"><input type="number" id="tau" min="10" max="60" step="1" value="25" /><span class="unit">s</span></div>
+            </div>
+            <div>
+              <label>Uncertainty band</label>
+              <div class="checkbox-row"><input type="checkbox" id="showBand" /><label for="showBand">Show Cr ± 10%</label></div>
+            </div>
+            <div></div>
+          </div>
+
+          <details class="accordion">
+            <summary>Calibration — back-solve Cr from a known swim time</summary>
+            <div class="acc-body">
+              <p style="font-size: 0.92rem; color: var(--ys-muted); margin-bottom: 12px;">If you have a recent honest swim time, we&rsquo;ll work backward to find your Cr. That gets pushed into the main calculator.</p>
+              <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 12px; align-items: end;">
+                <div>
+                  <label>Known distance</label>
+                  <div class="row"><input type="number" id="calDist" min="25" step="25" value="400" /><span class="unit">m</span></div>
+                </div>
+                <div>
+                  <label>Time minutes</label>
+                  <div class="row"><input type="number" id="calMin" min="0" max="120" step="1" value="6" /><span class="unit">min</span></div>
+                </div>
+                <div>
+                  <label>Time seconds</label>
+                  <div class="row"><input type="number" id="calSec" min="0" max="59" step="1" value="0" /><span class="unit">s</span></div>
+                </div>
+                <button class="ys-btn ys-btn-coral" type="button" id="calBtn" style="white-space: nowrap;">Calibrate</button>
+              </div>
+              <div style="margin-top: 12px; font-size: 0.92rem; color: var(--ys-navy);">Implied Cr: <strong id="calResult" style="color: var(--wf-coral); font-family: var(--ys-font-display);">—</strong></div>
+            </div>
+          </details>
+
+          <div class="results-block">
+            <h4>Result</h4>
+            <div class="res-headline">
+              <span class="res-time" id="outTime">—</span>
+              <span class="res-paces"><strong id="outPace100m">—</strong> /100 m · <strong id="outPace100y">—</strong> /100 yd</span>
+            </div>
+            <div class="res-row"><span class="res-label">VO<sub>2</sub> at pace</span><span class="res-value" id="outVo2Pace">—</span></div>
+            <div class="res-row"><span class="res-label">Effective Cr</span><span class="res-value" id="outCrEff">—</span></div>
+            <div class="res-row"><span class="res-label">Speed</span><span class="res-value" id="outSpeed">—</span></div>
+
+            <div class="band-block" id="bandBlock" style="display: none;">
+              <div class="band-head">Uncertainty band (Cr ± 10%)</div>
+              <div class="res-row"><span class="res-label">Faster (Cr − 10%)</span><span class="res-value" id="outBandFast">—</span></div>
+              <div class="res-row"><span class="res-label">Slower (Cr + 10%)</span><span class="res-value" id="outBandSlow">—</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wf-section alt" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head"><h2>How it&rsquo;s built</h2><div class="ys-rule"></div><p>Same shape as the cycling and run versions; swim-specific modifiers.</p></div>
+      <div class="ys-grid">
+        <div class="ys-step"><div class="ys-step-num">01</div><h3>Speed from VO<sub>2</sub></h3><p><code style="background: var(--ys-bg-soft); padding: 2px 8px; border-radius: 4px;">v (m/s) = (VO<sub>2</sub>/60) × fraction / Cr_eff</code></p><p style="margin-top: 8px;">Cr is liters O<sub>2</sub> per kg per meter — swim is 4–8× more expensive than running for the same metabolic rate.</p></div>
+        <div class="ys-step"><div class="ys-step-num">02</div><h3>Effective Cr</h3><p><code style="background: var(--ys-bg-soft); padding: 2px 8px; border-radius: 4px;">Cr_eff = Cr × env × draft × chop × sight</code></p><p style="margin-top: 8px;">Wetsuit reduces Cr ≈ 8% (more buoyancy, less drag). Drafting in OW saves ~3–8%. Chop &amp; sighting cost time.</p></div>
+        <div class="ys-step"><div class="ys-step-num">03</div><h3>VO<sub>2</sub> kinetics for short swims</h3><p>For ≤ 400 m, the iterative on-kinetics adjustment uses <code>τ = 25 s</code> (default). Mean VO<sub>2</sub> over the effort is reduced by the slow ramp; matters most at 50–200 m.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
+        <h2 style="margin-top: 4px;">Cr is the swim-economy lever — measure yours.</h2>
+        <p>Cr varies enormously between swimmers — 0.55 for an Olympic-level swimmer, 1.10+ for adult-onset triathletes. Same VO<sub>2</sub>max, the elite swimmer goes <strong>2× as fast</strong> at the same metabolic rate. That&rsquo;s why technique matters more than fitness for swim improvement.</p>
+        <p style="margin-top: 10px;">Run the calibrator with your honest 400 m TT time to get your true Cr. Then use the main calculator to project race times under different conditions (wetsuit vs not, drafting vs not, calm vs choppy).</p>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/on-site-swim-coaching" target="_top">On-site swim coaching</a>
+          <a class="ys-btn ys-btn-ghost" href="calculator-ebt-2.html">EBT-2 (tipping points)</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head"><h2>Related calculators</h2><div class="ys-rule"></div></div>
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card redesigned" href="calculator-css.html"><span class="ys-calc-card-title">Critical swim speed (CSS)</span><p>Two-effort threshold pace + training zones for swim training.</p><span class="ys-calc-card-arrow">Open &rarr;</span></a>
+        <a class="ys-calc-card redesigned" href="calculator-ebt-1.html"><span class="ys-calc-card-title">EBT-1 — Stroke efficiency</span><p>Distance per stroke + rate analysis. Pair with VO<sub>2</sub> data for full picture.</p><span class="ys-calc-card-arrow">Open &rarr;</span></a>
+        <a class="ys-calc-card" href="calculators.html"><span class="ys-calc-card-title">All calculators</span><p>Back to the full catalog.</p><span class="ys-calc-card-arrow">Browse &rarr;</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div><h2>Want measured VO<sub>2</sub>max + Cr in the pool?</h2><p>Yousuli&rsquo;s swim protocol uses Slipstream stationary-swim setup with EO SwimBETTER force pads — measures VO<sub>2</sub>max and stroke economy together. The calibrated Cr you walk out with makes this calculator&rsquo;s predictions race-grade.</p></div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Swim lab testing</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20VO2%20Swim">Send feedback</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Spotted a bug? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20VO2%20Swim" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand"><img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" /><p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p></div>
+        <div class="ys-site-footer-col"><h5>Services</h5><a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a><a href="https://www.yousuli.co/coaching" target="_top">Coaching</a><a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a><a href="https://www.yousuli.co/calculators" target="_top">Calculators</a></div>
+        <div class="ys-site-footer-col"><h5>Community</h5><a href="https://www.yousuli.co/social-club" target="_top">Social Club</a><a href="https://www.yousuli.co/mission" target="_top">Mission</a><a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a><a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a></div>
+        <div class="ys-site-footer-col"><h5>About</h5><a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a><a href="https://www.yousuli.co/science" target="_top">Science</a><a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a><a href="https://www.yousuli.co/contact" target="_top">Contact</a></div>
+      </div>
+      <div class="ys-site-footer-bottom"><span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span><span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span></div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const $ = id => document.getElementById(id);
+      function safeNum(v) { const x = parseFloat(v); return Number.isFinite(x) ? x : NaN; }
+
+      const ENV_FACTORS = {
+        pool25: 0.985, pool50: 0.993,
+        ow_fresh: 1.000, ow_salt: 0.985,
+        wetsuit: 0.920, wetsuit_salt: 0.905
+      };
+      const DIST_DEFAULTS = {
+        '50': 98, '100': 95, '200': 92, '400': 85,
+        '800': 82, '1500': 80, '1900': 78, '3800': 75
+      };
+      const TIER_CR = { elite: 0.55, trained: 0.70, recreational: 0.90, poor: 1.10 };
+
+      function fmtMmSs(s) { const t = Math.round(s); const m = Math.floor(t / 60); const sec = (t % 60).toString().padStart(2, '0'); return m + ':' + sec; }
+      function fmtHHMMSS(s) { const t = Math.round(s); const h = Math.floor(t / 3600); const m = Math.floor((t % 3600) / 60); const sec = (t % 60).toString().padStart(2, '0'); return (h > 0 ? h + ':' + m.toString().padStart(2, '0') + ':' + sec : m + ':' + sec); }
+
+      function meanFraction(fmax, Tsec, tau) { if (Tsec <= 0) return fmax; return fmax * (1 - (tau / Tsec) * (1 - Math.exp(-Tsec / tau))); }
+
+      function getDistance() { const sel = $('distance').value; if (sel === 'custom') return safeNum($('customDist').value); return parseInt(sel); }
+      function onDistChange() {
+        const sel = $('distance').value;
+        $('customDistField').style.display = (sel === 'custom') ? '' : 'none';
+        if (DIST_DEFAULTS[sel]) $('fraction').value = DIST_DEFAULTS[sel];
+      }
+      function onTierChange() { const t = $('crTier').value; if (TIER_CR[t]) $('cr').value = TIER_CR[t]; }
+      function onCrEdit() { $('crTier').value = 'custom'; }
+
+      function compute(d, vo2, crBase, frac, envKey, draft, chop, sight, useKinetics, tau) {
+        const envF = ENV_FACTORS[envKey] || 1.0;
+        const crEff = crBase * envF * draft * chop * sight;
+        let v, T, fUse;
+        if (useKinetics && d <= 400) {
+          v = (vo2 / 60) * frac / crEff;
+          T = d / v;
+          for (let i = 0; i < 3; i++) {
+            fUse = meanFraction(frac, T, tau);
+            v = (vo2 / 60) * fUse / crEff;
+            T = d / v;
+          }
+        } else {
+          fUse = frac;
+          v = (vo2 / 60) * fUse / crEff;
+          T = d / v;
+        }
+        const pace100m = 100 / v;
+        const pace100y = pace100m * 0.9144;
+        const vo2AtPace = crEff * v * 60;
+        return { T, v, pace100m, pace100y, vo2AtPace, crEff, fUse };
+      }
+
+      function calc() {
+        const d = getDistance();
+        const vo2 = safeNum($('vo2').value);
+        const crBase = safeNum($('cr').value);
+        const frac = safeNum($('fraction').value) / 100;
+        const envKey = $('env').value;
+        const draft = safeNum($('draft').value);
+        const chop = safeNum($('chop').value);
+        const sight = safeNum($('sight').value);
+        const useKinetics = $('kinetics').checked;
+        const tau = safeNum($('tau').value);
+        const showBand = $('showBand').checked;
+        const mass = safeNum($('mass').value);
+
+        if ([d, vo2, crBase, frac, draft, chop, sight, tau, mass].some(v => !Number.isFinite(v) || v <= 0)) return;
+
+        const r = compute(d, vo2, crBase, frac, envKey, draft, chop, sight, useKinetics, tau);
+
+        $('outTime').textContent = fmtHHMMSS(r.T);
+        $('outPace100m').textContent = fmtMmSs(r.pace100m);
+        $('outPace100y').textContent = fmtMmSs(r.pace100y);
+        $('outVo2Pace').textContent = r.vo2AtPace.toFixed(1) + ' ml/kg/min';
+        $('outCrEff').textContent = r.crEff.toFixed(3) + ' ml O₂/kg/m';
+        $('outSpeed').textContent = (r.v).toFixed(2) + ' m/s';
+
+        const bandBlock = $('bandBlock');
+        if (showBand) {
+          const rFast = compute(d, vo2, crBase * 0.90, frac, envKey, draft, chop, sight, useKinetics, tau);
+          const rSlow = compute(d, vo2, crBase * 1.10, frac, envKey, draft, chop, sight, useKinetics, tau);
+          $('outBandFast').textContent = fmtHHMMSS(rFast.T) + ' (' + fmtMmSs(rFast.pace100m) + '/100 m)';
+          $('outBandSlow').textContent = fmtHHMMSS(rSlow.T) + ' (' + fmtMmSs(rSlow.pace100m) + '/100 m)';
+          bandBlock.style.display = 'block';
+        } else {
+          bandBlock.style.display = 'none';
+        }
+      }
+
+      function calibrate() {
+        const calDist = safeNum($('calDist').value);
+        const cm = safeNum($('calMin').value) || 0;
+        const cs = safeNum($('calSec').value) || 0;
+        const calT = cm * 60 + cs;
+
+        const vo2 = safeNum($('vo2').value);
+        const frac = safeNum($('fraction').value) / 100;
+        const envKey = $('env').value;
+        const draft = safeNum($('draft').value);
+        const chop = safeNum($('chop').value);
+        const sight = safeNum($('sight').value);
+
+        if ([calDist, calT, vo2, frac, draft, chop, sight].some(v => !Number.isFinite(v) || v <= 0)) {
+          $('calResult').textContent = 'enter valid values';
+          return;
+        }
+        const v = calDist / calT;
+        const envF = ENV_FACTORS[envKey] || 1.0;
+        const mods = envF * draft * chop * sight;
+        const crEff = (vo2 / 60) * frac / v;
+        const crBase = crEff / mods;
+        $('calResult').textContent = crBase.toFixed(3) + ' ml O₂/kg/m';
+        $('cr').value = crBase.toFixed(3);
+        $('crTier').value = 'custom';
+        calc();
+      }
+
+      $('distance').addEventListener('change', () => { onDistChange(); calc(); });
+      $('crTier').addEventListener('change', () => { onTierChange(); calc(); });
+      $('cr').addEventListener('input', () => { onCrEdit(); calc(); });
+      ['vo2','customDist','mass','fraction','env','draft','chop','sight','kinetics','tau','showBand'].forEach(id => {
+        $(id).addEventListener('input', calc);
+        $(id).addEventListener('change', calc);
+      });
+      $('calBtn').addEventListener('click', calibrate);
+
+      onDistChange();
+      onTierChange();
+      calc();
+    })();
+  </script>
+
+</body>
+</html>
