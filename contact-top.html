@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contact Yousuli — get in touch (top)</title>
+  <meta name="description" content="Get in touch with Yousuli — coaching applications, lab booking, partner program, calculator feedback, or media. Top half of the embedded contact page; sits above the form on /contact." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/membership" target="_top">Membership</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Contact</span>
+      <h1>Get in touch.</h1>
+      <div class="wf-subhead">Coaching · testing · partner program · calculators · everything else</div>
+      <p class="lede">The form below reaches Coach Fred directly. Real reply within 24&ndash;48 hours on weekdays. If your question is faster handled by email or phone, those are listed under the form &mdash; pick whatever works for you.</p>
+      <div class="ys-btn-row">
+        <a class="ys-btn ys-btn-coral" href="#channels">Pick the right channel &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#what-to-include">What to include in your message</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STICKY QUICK-NAV ============ -->
+  <nav class="ys-quicknav" aria-label="Section navigation">
+    <div class="ys-container ys-quicknav-row">
+      <span class="ys-quicknav-label">Jump to</span>
+      <a href="#channels">Best channel for&hellip;</a>
+      <a href="#what-to-include">What to include</a>
+      <a href="#response">Response time</a>
+    </div>
+  </nav>
+
+  <!-- ============ BEST CHANNEL ============ -->
+  <section class="wf-section" id="channels">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Best channel for what you need</h2>
+        <div class="ys-rule"></div>
+        <p>The form below works for everything. These shortcuts get you to the right person faster for specific topics.</p>
+      </div>
+
+      <div class="ys-grid">
+        <article class="ys-card">
+          <div class="ys-meta">Most common</div>
+          <h3>Coaching application</h3>
+          <p>Want to start with Structured ($200/mo), Bespoke ($350/mo), or Full Performance (by application)? Use the form below with subject &ldquo;Coaching application&rdquo; and a few lines about your goal, current training, and timeline.</p>
+          <p style="font-size: 0.88rem; color: var(--ys-muted); margin-top: 8px;"><em>Or browse first:</em> <a href="https://www.yousuli.co/coaching" target="_top" style="color: var(--wf-coral);">coaching tiers</a> &middot; <a href="https://www.yousuli.co/membership" target="_top" style="color: var(--wf-coral);">membership</a>.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Lab</div>
+          <h3>Performance Lab booking</h3>
+          <p>VO<sub>2</sub>max, RMR, CdA, swim or gait analysis, full-stack profiling. Use the form with subject &ldquo;Lab booking&rdquo; and tell us which test(s) and your timing window. Mobile lab covers greater LA + race-week travel.</p>
+          <p style="font-size: 0.88rem; color: var(--ys-muted); margin-top: 8px;"><em>Or browse:</em> <a href="https://www.yousuli.co/performancelab" target="_top" style="color: var(--wf-coral);">tests &amp; packages</a>.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">B2B</div>
+          <h3>Partner program (gyms, clubs, brands)</h3>
+          <p>Bringing the lab on-site, white-labelled testing, athlete deals, retail. Use subject &ldquo;Partner inquiry&rdquo; and include your organisation, the format you have in mind, and your typical athlete count.</p>
+          <p style="font-size: 0.88rem; color: var(--ys-muted); margin-top: 8px;"><em>Or browse:</em> <a href="https://www.yousuli.co/partners" target="_top" style="color: var(--wf-coral);">partner program</a>.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Calculators</div>
+          <h3>Calculator feedback or bug</h3>
+          <p>Spotted a bug, want a course / product / metric added, or a new calculator entirely? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback" style="color: var(--wf-coral);">info@yousuli.co</a> directly with the calculator name in the subject &mdash; goes straight to the dev queue.</p>
+          <p style="font-size: 0.88rem; color: var(--ys-muted); margin-top: 8px;"><em>Browse all:</em> <a href="https://www.yousuli.co/calculators" target="_top" style="color: var(--wf-coral);">30+ calculators</a>.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Press &amp; podcasts</div>
+          <h3>Media inquiries</h3>
+          <p>Interview, podcast, written piece, or asking Coach Fred to speak? Email <a href="mailto:info@yousuli.co?subject=Media%20inquiry" style="color: var(--wf-coral);">info@yousuli.co</a> with topic, format, audience, and timing. Specialty topics: aero, fueling, run economy, swim biomechanics, race-week protocols, women&rsquo;s endurance physiology.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Just want to chat</div>
+          <h3>Already a member or athlete</h3>
+          <p>If you&rsquo;re already in coaching or the Club, the WhatsApp group + your direct coach contact are faster than the form. New athletes: form below.</p>
+          <p style="font-size: 0.88rem; color: var(--ys-muted); margin-top: 8px;"><em>Lost your group access?</em> Email <a href="mailto:info@yousuli.co?subject=Member%20access" style="color: var(--wf-coral);">info@yousuli.co</a> with your name and we&rsquo;ll re-invite.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHAT TO INCLUDE ============ -->
+  <section class="wf-section alt" id="what-to-include">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What to include in your message</h2>
+        <div class="ys-rule"></div>
+        <p>The more concrete your message, the faster a useful reply. Doesn&rsquo;t need to be polished &mdash; just specific.</p>
+      </div>
+
+      <div class="ys-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+        <article class="ys-fit-card yes">
+          <h3>For coaching inquiries</h3>
+          <ul>
+            <li>Goal &amp; timeline (e.g. sub-3 marathon Boston 2026)</li>
+            <li>Current weekly training hours</li>
+            <li>Recent races / PRs / setbacks</li>
+            <li>Constraints (injury history, schedule, equipment)</li>
+          </ul>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>For lab bookings</h3>
+          <ul>
+            <li>Which test(s) you want</li>
+            <li>Your location (we travel within LA + race-week)</li>
+            <li>Time window (next 2&ndash;6 weeks ideal)</li>
+            <li>Goal context: race date, training block</li>
+          </ul>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>For partner / B2B</h3>
+          <ul>
+            <li>Your org + role</li>
+            <li>Format you have in mind</li>
+            <li>Typical athlete count + cadence</li>
+            <li>Geographic scope</li>
+          </ul>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>For calculator bugs</h3>
+          <ul>
+            <li>Which calculator (page name)</li>
+            <li>What you expected vs. what you got</li>
+            <li>Browser + device if it&rsquo;s a UI issue</li>
+            <li>Screenshot helps but optional</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HANDOFF TO WIX FORM ============ -->
+  <section style="padding: 28px 16px 36px; background: var(--ys-bg-soft); text-align: center; border-top: 1px solid var(--ys-line);">
+    <div class="ys-container" style="max-width: 720px;">
+      <div style="font-family: var(--ys-font-display); text-transform: uppercase; letter-spacing: 0.16em; font-size: 0.78rem; color: var(--wf-coral); margin-bottom: 10px;">Send your message</div>
+      <h3 style="font-family: var(--ys-font-display); color: var(--ys-navy); font-size: 1.4rem; margin: 0 0 12px;">&darr; Use the form just below &darr;</h3>
+      <p style="color: var(--ys-muted); font-size: 0.95rem; margin: 0;">Reply within 24&ndash;48 hours on weekdays. Response time + alternate channels (email, phone) are listed below the form.</p>
+    </div>
+  </section>
+
+</body>
+</html>

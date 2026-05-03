@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contact Yousuli — response time &amp; alternate channels (bottom)</title>
+  <meta name="description" content="Response time, alternate ways to reach Yousuli (email, phone), and service area. Bottom half of the embedded contact page; sits below the form on /contact." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+
+  <!-- ============ HANDOFF FROM WIX FORM ============ -->
+  <section style="padding: 28px 16px 22px; background: var(--ys-bg-soft); text-align: center; border-bottom: 1px solid var(--ys-line);">
+    <div class="ys-container" style="max-width: 720px;">
+      <div style="font-family: var(--ys-font-display); text-transform: uppercase; letter-spacing: 0.16em; font-size: 0.78rem; color: var(--wf-coral); margin-bottom: 8px;">After you send</div>
+      <h3 style="font-family: var(--ys-font-display); color: var(--ys-navy); font-size: 1.2rem; margin: 0 0 6px;">What happens next &middot; alternate channels &middot; service area</h3>
+      <p style="color: var(--ys-muted); font-size: 0.9rem; margin: 0;">Real reply within 24&ndash;48 hours on weekdays. If your matter is urgent or sensitive, the alternate channels below are faster.</p>
+    </div>
+  </section>
+
+  <!-- ============ RESPONSE TIME ============ -->
+  <section class="wf-section" id="response">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What happens next</h2>
+        <div class="ys-rule"></div>
+        <p>Yousuli is small on purpose &mdash; messages get a real reply, not a templated auto-response.</p>
+      </div>
+
+      <div class="ys-grid">
+        <article class="ys-card">
+          <div class="ys-meta">Reply time</div>
+          <h3>24&ndash;48 hours, weekdays</h3>
+          <p>Coaching applications and lab bookings: same-day or next-day. Calculator bugs and partner inquiries: 1&ndash;3 business days. Weekends and holidays go into the Monday queue.</p>
+          <p style="font-size: 0.88rem; color: var(--ys-muted); margin-top: 8px;">If you haven&rsquo;t heard back within 3 business days, please email <a href="mailto:info@yousuli.co?subject=Following%20up" style="color: var(--wf-coral);">info@yousuli.co</a> &mdash; sometimes form submissions get caught in spam.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">For coaching applications</div>
+          <h3>Discovery call within a week</h3>
+          <p>If the goal and timeline look like a fit, the next step is a 20&ndash;30 minute discovery call. We talk about your training history, what you&rsquo;ve tried, what you want, and whether the tier you&rsquo;re asking for is the right one. No commitment.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">For lab bookings</div>
+          <h3>Confirmation + intake form same day</h3>
+          <p>Booking gets confirmed by reply with date / location / parking / what to bring. An intake form (training history, current numbers, recent results) lands in your inbox so the test is set up to your data before you arrive.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ALTERNATE CHANNELS ============ -->
+  <section class="wf-section alt" id="alt-channels">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Other ways to reach us</h2>
+        <div class="ys-rule"></div>
+        <p>The form is the main channel. Use these when something doesn&rsquo;t fit a form.</p>
+      </div>
+
+      <div class="ys-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+        <article class="ys-fit-card yes">
+          <h3>Email</h3>
+          <p style="margin-top: 6px;"><a href="mailto:info@yousuli.co" style="color: var(--wf-coral); font-weight: 600;">info@yousuli.co</a></p>
+          <ul>
+            <li>Direct &mdash; same person who reads form submissions</li>
+            <li>Best for: attachments, calculator bugs, B2B</li>
+            <li>Same 24&ndash;48 hour reply time</li>
+          </ul>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>Phone &amp; text</h3>
+          <p style="margin-top: 6px;"><a href="tel:+19099794118" style="color: var(--wf-coral); font-weight: 600;">(909) 979-4118</a></p>
+          <ul>
+            <li>Voicemail returned within 24h on weekdays</li>
+            <li>Text OK for quick race-week / member questions</li>
+            <li>For new inquiries, the form or email is faster</li>
+          </ul>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>Members &amp; coached athletes</h3>
+          <ul>
+            <li>WhatsApp group for community</li>
+            <li>Direct DM to your coach via TrainingPeaks / WhatsApp</li>
+            <li>Lost access? Email <a href="mailto:info@yousuli.co?subject=Member%20access" style="color: var(--wf-coral);">info@yousuli.co</a></li>
+          </ul>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>In person &mdash; lab &amp; sessions</h3>
+          <ul>
+            <li>Walnut, CA &mdash; weekly group sessions</li>
+            <li>Mobile lab covers greater LA + race-week travel</li>
+            <li>Booking via the form / email above</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SERVICE AREA + LOGISTICS ============ -->
+  <section class="wf-section" id="service-area">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Where we are &middot; where we travel</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-grid">
+        <article class="ys-card">
+          <div class="ys-meta">Home base</div>
+          <h3>Walnut, California</h3>
+          <p>Greater Los Angeles &mdash; weekly group swim, bike, and run sessions for Club members. Performance Lab testing in studio or via mobile setup. Specific addresses provided after booking.</p>
+          <p style="font-size: 0.88rem; color: var(--ys-muted); margin-top: 8px;"><strong>Time zone:</strong> Pacific (UTC&minus;8 / UTC&minus;7 DST).</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Mobile lab</div>
+          <h3>Greater LA + race-week travel</h3>
+          <p>The aero / sweat / RMR / VO<sub>2</sub> rigs travel. We come to you for team testing days, individual race-week tune-ups, and partner gym events. Travel beyond LA County: discussed per booking.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Online</div>
+          <h3>Coached athletes worldwide</h3>
+          <p>Coaching, calculator support, and consulting work fully remotely &mdash; current athletes in the US, Europe, Israel, and Asia. The Lab and in-person sessions are LA-based; everything else is online-friendly.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/membership" target="_top">Membership</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; <a href="tel:+19099794118">(909) 979-4118</a></span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
