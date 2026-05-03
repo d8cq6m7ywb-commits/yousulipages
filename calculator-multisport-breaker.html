@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Multisport FIT splitter — Yousuli calculators</title>
+  <meta name="description" content="Upload a multisport .FIT file (triathlon, duathlon, swim/run, brick), review the auto-detected legs with confidence scores, drag boundary handles to refine, then export per-leg TCX or FIT files for WKO5 / TrainingPeaks. Includes timeline, route map, sanity-check chart, and sport-type override." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ MULTISPORT-BREAKER STYLES (scoped to .msbreaker-host) ============ -->
+  <style>
+    /* Imported from Multisport-breaker/style.css. Dark "lab" theme
+       preserved as a designed contrast inside the brand chrome.
+       Selectors scoped under .msbreaker-host. */
+    .msbreaker-host {
+      --bg-page: #050712;
+      --bg-card: #0d101f;
+      --bg-card-alt: #111427;
+      --bg-table-header: #151933;
+      --bg-table-row: #0f1224;
+      --bg-table-row-alt: #14172a;
+      --border-soft: #262a40;
+      --text-main: #f5f6ff;
+      --text-muted: #9aa0c2;
+      --accent: #FA773C;
+      --accent-soft: rgba(250, 119, 60, 0.18);
+      --accent-strong: #FA773C;
+      --danger: #ff5b7a;
+      --warning: #ffc857;
+      --font-main: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+
+      background: radial-gradient(circle at top, #14172a 0, #050712 55%);
+      color: var(--text-main);
+      font-family: var(--font-main);
+      border-radius: 14px;
+      padding: 4px;
+      box-shadow: 0 18px 40px rgba(2, 6, 23, 0.18);
+    }
+    .msbreaker-host *, .msbreaker-host *::before, .msbreaker-host *::after { box-sizing: border-box; }
+    .msbreaker-host h1, .msbreaker-host h2, .msbreaker-host h3, .msbreaker-host h4, .msbreaker-host p, .msbreaker-host ul { margin: 0; padding: 0; }
+
+    .msbreaker-host .page { display: flex; align-items: flex-start; justify-content: center; padding: 20px 12px; }
+
+    .msbreaker-host .tool-card {
+      width: 100%; max-width: 1120px;
+      background: linear-gradient(145deg, var(--bg-card), #070916);
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 28px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.02);
+      padding: 24px 26px 28px;
+    }
+
+    .msbreaker-host .tool-header { margin-bottom: 20px; border-bottom: 1px solid var(--border-soft); padding-bottom: 12px; }
+    .msbreaker-host .tool-title-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .msbreaker-host .tool-title { font-size: 1.6rem; font-weight: 650; letter-spacing: 0.01em; margin: 0; color: #f8fafc; }
+    .msbreaker-host .tool-subtitle { margin: 6px 0 0; font-size: 0.92rem; color: var(--text-muted); }
+    .msbreaker-host .tool-subtitle code { background: rgba(255,255,255,0.06); padding: 1px 5px; border-radius: 4px; font-size: 0.85em; }
+    .msbreaker-host .version-tag {
+      display: inline-block; background: var(--accent-soft); color: var(--accent);
+      font-size: 0.72rem; font-weight: 600; padding: 1px 6px; border-radius: 4px;
+      margin-left: 4px; vertical-align: middle;
+    }
+
+    .msbreaker-host .lab-tag {
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+      border-radius: 999px;
+      background: radial-gradient(circle at top left, #1e2a40, #050712);
+      border: 1px solid rgba(250, 119, 60, 0.4);
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.10em;
+    }
+    .msbreaker-host .lab-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
+      box-shadow: 0 0 0 5px var(--accent-soft), 0 0 15px var(--accent-strong);
+    }
+    .msbreaker-host .lab-text { color: var(--accent); font-weight: 600; }
+
+    .msbreaker-host .tool-section { margin-top: 18px; padding-top: 8px; border-top: 1px dashed rgba(154, 160, 194, 0.35); }
+    .msbreaker-host .section-title { margin: 0 0 10px; font-size: 1.05rem; font-weight: 600; color: #f8fafc; }
+    .msbreaker-host .section-block { margin-top: 10px; }
+    .msbreaker-host .block-title { margin: 0 0 4px; font-size: 0.95rem; font-weight: 600; color: #e5e7eb; }
+    .msbreaker-host .block-help { margin: 0 0 8px; font-size: 0.86rem; color: var(--text-muted); }
+
+    .msbreaker-host .upload-row { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: center; }
+    .msbreaker-host .upload-input { display: flex; flex-direction: column; gap: 4px; }
+    .msbreaker-host .field-label { font-size: 0.88rem; font-weight: 550; color: #cbd5e1; }
+    .msbreaker-host #fitFile { display: block; font-size: 0.86rem; color: var(--text-main); }
+    .msbreaker-host #fitFile::file-selector-button {
+      background: #1e293b; border: 1px solid rgba(148,163,184,0.3); border-radius: 6px;
+      color: #e5e7eb; padding: 4px 12px; cursor: pointer; font-size: 0.8rem; margin-right: 8px;
+    }
+    .msbreaker-host .status-text { font-size: 0.84rem; color: var(--text-muted); }
+    .msbreaker-host .status-text--export { margin-top: 8px; }
+
+    .msbreaker-host .file-warning {
+      margin-top: 8px; padding: 8px 12px; border-radius: 8px;
+      background: rgba(255, 200, 87, 0.1);
+      border: 1px solid rgba(255, 200, 87, 0.3);
+      color: var(--warning); font-size: 0.84rem;
+    }
+
+    .msbreaker-host .diagnostics-panel {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 8px; margin-top: 12px; padding: 10px; border-radius: 10px;
+      background: rgba(15, 18, 36, 0.7); border: 1px solid var(--border-soft);
+    }
+    .msbreaker-host .diag-card { padding: 8px 10px; border-radius: 8px; background: rgba(21, 25, 51, 0.6); border: 1px solid rgba(38, 42, 64, 0.6); }
+    .msbreaker-host .diag-card--wide { grid-column: 1 / -1; }
+    .msbreaker-host .diag-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 2px; }
+    .msbreaker-host .diag-value { font-size: 0.84rem; font-weight: 550; color: var(--text-main); word-break: break-word; }
+    .msbreaker-host .diag-warning { color: var(--warning); font-weight: 500; }
+
+    .msbreaker-host .timeline-bar { display: flex; align-items: center; height: 32px; border-radius: 8px; overflow: hidden; background: rgba(4, 6, 18, 0.8); border: 1px solid var(--border-soft); position: relative; margin-bottom: 6px; min-height: 32px; }
+    .msbreaker-host .timeline-block { height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; transition: filter 0.12s ease; position: relative; min-width: 2px; }
+    .msbreaker-host .timeline-block:hover { filter: brightness(1.25); }
+    .msbreaker-host .timeline-label { font-size: 0.7rem; font-weight: 600; color: #000; text-shadow: 0 0 3px rgba(255,255,255,0.3); pointer-events: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 2px; }
+    .msbreaker-host .timeline-boundary { width: 6px; height: 100%; background: rgba(255, 255, 255, 0.5); cursor: col-resize; flex-shrink: 0; transition: background 0.1s; z-index: 2; }
+    .msbreaker-host .timeline-boundary:hover { background: rgba(255, 255, 255, 0.85); }
+
+    .msbreaker-host .table-wrapper { margin-top: 4px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border-soft); background: rgba(4, 6, 18, 0.8); overflow-x: auto; }
+    .msbreaker-host .data-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+    .msbreaker-host .data-table thead { background: var(--bg-table-header); }
+    .msbreaker-host .data-table th, .msbreaker-host .data-table td { padding: 6px 10px; text-align: left; border-bottom: 1px solid rgba(30, 36, 64, 0.9); color: var(--text-main); }
+    .msbreaker-host .data-table th { font-weight: 600; color: rgba(235, 239, 255, 0.92); white-space: nowrap; }
+    .msbreaker-host .data-table tbody tr:nth-child(odd) { background: var(--bg-table-row); }
+    .msbreaker-host .data-table tbody tr:nth-child(even) { background: var(--bg-table-row-alt); }
+    .msbreaker-host .data-table tbody tr:hover { background: rgba(250, 119, 60, 0.10); }
+
+    .msbreaker-host .leg-radio-cell { text-align: center; width: 40px; }
+    .msbreaker-host .leg-radio { width: 14px; height: 14px; }
+
+    .msbreaker-host .sport-select { background: rgba(8, 10, 22, 0.9); border: 1px solid var(--border-soft); color: var(--text-main); font-size: 0.8rem; padding: 2px 4px; border-radius: 4px; cursor: pointer; min-width: 80px; }
+    .msbreaker-host .sport-select:hover { border-color: var(--accent); }
+    .msbreaker-host .sport-select:focus { outline: 1px solid var(--accent); outline-offset: 1px; }
+
+    .msbreaker-host .chart-canvas { display: block; width: 100%; max-width: 980px; height: 320px; margin-top: 4px; background: radial-gradient(circle at top, #151933, #050712); border-radius: 10px; border: 1px solid var(--border-soft); }
+    .msbreaker-host .ds-indicator { font-size: 0.78rem; color: var(--warning); font-style: italic; }
+
+    .msbreaker-host .route-map { margin-top: 6px; width: 100%; max-width: 980px; height: 280px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border-soft); background: #070814; position: relative; }
+    .msbreaker-host .route-map-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 0.85rem; padding: 16px; text-align: center; }
+    .msbreaker-host .leaflet-container { background: #050712; }
+
+    .msbreaker-host .export-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+    .msbreaker-host .btn { font-family: var(--font-main); font-size: 0.84rem; padding: 8px 16px; border-radius: 8px; border: 1px solid transparent; cursor: pointer; transition: filter 0.15s ease, border-color 0.15s ease, transform 0.06s ease; white-space: nowrap; font-weight: 600; letter-spacing: 0.02em; }
+    .msbreaker-host .btn-primary { background: linear-gradient(135deg, #FA773C, #9966FF); border-color: transparent; color: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 0 10px 25px rgba(250, 119, 60, 0.30); }
+    .msbreaker-host .btn-primary:hover { filter: brightness(1.10); transform: translateY(-1px); }
+    .msbreaker-host .btn-ghost { background: rgba(8, 10, 22, 0.9); border-color: var(--border-soft); color: var(--text-main); }
+    .msbreaker-host .btn-ghost:hover { background: rgba(24, 29, 55, 0.9); border-color: var(--accent); color: var(--accent); }
+
+    @media (max-width: 768px) {
+      .msbreaker-host .tool-card { padding: 18px 14px 22px; }
+      .msbreaker-host .tool-title-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .msbreaker-host .chart-canvas, .msbreaker-host .route-map { height: 260px; }
+      .msbreaker-host .diagnostics-panel { grid-template-columns: 1fr 1fr; }
+      .msbreaker-host .timeline-bar { height: 28px; }
+    }
+    @media (max-width: 480px) {
+      .msbreaker-host .diagnostics-panel { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 40px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Data tools</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">Multisport FIT splitter.</h1>
+      <div class="wf-subhead">Detect legs &middot; refine boundaries &middot; export per-leg TCX or FIT for WKO5 / TrainingPeaks</div>
+      <p class="lede" style="max-width: 680px;">Triathlons, duathlons, swim/run, brick workouts &mdash; all recorded as a single multisport .FIT file by your watch. Most analytics platforms struggle with these. Drop the file in: the splitter detects each leg (swim / T1 / bike / T2 / run), shows you a draggable timeline with confidence scores, lets you override sport types, and exports each leg as a clean per-sport TCX or FIT file ready to drag into WKO5, TrainingPeaks, intervals.icu, or Zwift Companion.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Upload your FIT &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">How it works</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 24px 0 48px;">
+    <div class="ys-container">
+      <div class="msbreaker-host">
+        <main class="page">
+          <section class="tool-card">
+            <header class="tool-header">
+              <div class="tool-title-row">
+                <h1 class="tool-title">Multisport FIT splitter</h1>
+                <div class="lab-tag">
+                  <span class="lab-dot"></span>
+                  <span class="lab-text">YOUSULI LAB</span>
+                </div>
+              </div>
+              <p class="tool-subtitle">
+                Upload a multisport <code>.fit</code> file, review detected legs,
+                adjust boundaries, and export per-leg TCX or FIT files for WKO5 / TrainingPeaks.
+                <span class="version-tag">v3.0</span>
+              </p>
+            </header>
+
+            <!-- 1. Upload & diagnostics -->
+            <section class="tool-section">
+              <h2 class="section-title">1. Upload &amp; file info</h2>
+
+              <div class="upload-row">
+                <div class="upload-input">
+                  <label for="fitFile" class="field-label">Upload multisport .FIT file</label>
+                  <input type="file" id="fitFile" accept=".fit" />
+                </div>
+                <div id="status" class="status-text">No file loaded.</div>
+              </div>
+
+              <div id="fileSizeWarning" class="file-warning" style="display:none;"></div>
+
+              <div id="diagnosticsPanel" class="diagnostics-panel" style="display:none;">
+                <div class="diag-card" id="diagDevice">
+                  <div class="diag-label">Device</div>
+                  <div class="diag-value" id="diagDeviceValue">—</div>
+                </div>
+                <div class="diag-card" id="diagDetection">
+                  <div class="diag-label">Detection method</div>
+                  <div class="diag-value" id="diagDetectionValue">—</div>
+                </div>
+                <div class="diag-card" id="diagCounts">
+                  <div class="diag-label">Messages</div>
+                  <div class="diag-value" id="diagCountsValue">—</div>
+                </div>
+                <div class="diag-card" id="diagFields">
+                  <div class="diag-label">Data fields</div>
+                  <div class="diag-value" id="diagFieldsValue">—</div>
+                </div>
+                <div class="diag-card" id="diagDuration">
+                  <div class="diag-label">Total</div>
+                  <div class="diag-value" id="diagDurationValue">—</div>
+                </div>
+                <div class="diag-card diag-card--wide" id="diagWarnings" style="display:none;">
+                  <div class="diag-label">Warnings</div>
+                  <div class="diag-value diag-warning" id="diagWarningsValue">—</div>
+                </div>
+              </div>
+
+              <div class="section-block">
+                <h3 class="block-title">Raw FIT sessions</h3>
+                <p class="block-help">These come directly from session messages in the FIT file.</p>
+
+                <div class="table-wrapper">
+                  <table class="data-table" id="sessionTable">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Sport</th>
+                        <th>Subsport</th>
+                        <th>Start time</th>
+                        <th>End time</th>
+                        <th>Duration</th>
+                      </tr>
+                    </thead>
+                    <tbody id="sessionTableBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+
+            <!-- 2. Chart, route & legs -->
+            <section class="tool-section">
+              <h2 class="section-title">2. Chart, route &amp; legs</h2>
+
+              <div class="section-block">
+                <h3 class="block-title">Leg timeline</h3>
+                <p class="block-help">
+                  Colored blocks proportional to duration. Drag boundary handles to adjust. Click a block to focus the chart.
+                </p>
+                <div id="timelineBar" class="timeline-bar"></div>
+              </div>
+
+              <div class="section-block">
+                <h3 class="block-title">Sanity-check chart</h3>
+                <p class="block-help">
+                  Power (blue), heart rate (red), and speed (orange) over time.
+                  Dashed vertical lines mark leg boundaries &mdash; drag them to refine transitions.
+                  <span id="downsampleIndicator" class="ds-indicator" style="display:none;"></span>
+                </p>
+                <canvas id="mainChart" class="chart-canvas"></canvas>
+              </div>
+
+              <div class="section-block">
+                <h3 class="block-title">Route map</h3>
+                <p class="block-help">Full GPS track colored by leg. Zoom and pan as needed.</p>
+                <div id="routeMap" class="route-map">
+                  <div class="route-map-placeholder">
+                    Load a multisport file with GPS positions to see the map.
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-block">
+                <h3 class="block-title">Legs for splitting</h3>
+                <p class="block-help">
+                  Detected legs with confidence scores. Override sport labels if needed.
+                  Select legs to export, or use <strong>Export all</strong>.
+                </p>
+
+                <div class="table-wrapper">
+                  <table class="data-table" id="legTable">
+                    <thead>
+                      <tr>
+                        <th>Sel</th>
+                        <th>#</th>
+                        <th>Sport</th>
+                        <th>Override</th>
+                        <th>Subsport</th>
+                        <th>Trans?</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Duration</th>
+                        <th>Records</th>
+                        <th class="swim-col" style="display:none;">Strokes</th>
+                        <th class="swim-col" style="display:none;">SWOLF</th>
+                        <th>Confidence</th>
+                        <th>Source</th>
+                      </tr>
+                    </thead>
+                    <tbody id="legTableBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+
+            <!-- 3. Export -->
+            <section class="tool-section">
+              <h2 class="section-title">3. Export</h2>
+
+              <p class="block-help">
+                TCX and FIT exports include power, cadence, speed, heart rate, altitude, GPS, and
+                temperature. Distance is rebased to start from 0 for each leg.
+                Sport type is mapped for WKO5 compatibility (override sport if needed).
+              </p>
+
+              <div class="export-row">
+                <button id="downloadJsonBtn" type="button" class="btn btn-ghost">Download legs JSON (debug)</button>
+                <button id="downloadTcxBtn" type="button" class="btn btn-primary">Download selected leg TCX</button>
+                <button id="downloadAllTcxBtn" type="button" class="btn btn-primary">Export all legs as TCX</button>
+                <button id="downloadAllFitBtn" type="button" class="btn btn-primary">Export all legs as FIT</button>
+              </div>
+              <div id="exportStatus" class="status-text status-text--export"></div>
+            </section>
+          </section>
+        </main>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="wf-section alt" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How the splitter detects and exports legs</h2>
+        <div class="ys-rule"></div>
+      </div>
+      <div class="ys-grid-3" style="gap: 22px;">
+        <div>
+          <div class="ys-meta" style="color: var(--wf-coral);">1. Parse</div>
+          <h3 style="margin-top: 4px;">Reads the FIT file in your browser</h3>
+          <p>No upload &mdash; the multisport file (Garmin, Wahoo, Polar, Suunto, COROS) is parsed locally. Pulls every record (timestamp, position, power, HR, cadence, speed, altitude, temp), every session message, every event, plus device metadata.</p>
+        </div>
+        <div>
+          <div class="ys-meta" style="color: var(--wf-coral);">2. Detect legs</div>
+          <h3 style="margin-top: 4px;">Multiple strategies, ranked by confidence</h3>
+          <p>Strategy 1: session messages (the FIT spec way) &mdash; most reliable when present. Strategy 2: sport-change events. Strategy 3: timer events. Strategy 4 (fallback): infer from records (sport flips + GPS gaps + speed/HR transitions). Each leg is tagged with the detection source and a confidence score.</p>
+        </div>
+        <div>
+          <div class="ys-meta" style="color: var(--wf-coral);">3. Refine</div>
+          <h3 style="margin-top: 4px;">Drag the timeline boundaries</h3>
+          <p>Auto-detection is rarely perfect at transitions &mdash; T1 might land 8s into the bike or 5s before the swim ends. Drag the boundary handles on the timeline bar to nudge each transition by the second. The chart updates live so you can see exactly where power picks up or HR settles.</p>
+        </div>
+        <div>
+          <div class="ys-meta" style="color: var(--wf-coral);">4. Override sport</div>
+          <h3 style="margin-top: 4px;">When the auto-tag is wrong</h3>
+          <p>If your watch logged the swim as &ldquo;cardio&rdquo; or labelled the bike as a generic activity, override the sport per-leg before export. Sport mapping follows the TCX / FIT enum WKO5 + TrainingPeaks expect (running, cycling, swimming, transition, multisport).</p>
+        </div>
+        <div>
+          <div class="ys-meta" style="color: var(--wf-coral);">5. Export</div>
+          <h3 style="margin-top: 4px;">Per-leg TCX or FIT, distance rebased</h3>
+          <p>One leg as TCX, all legs as TCX zip, or all legs as FIT zip. Each exported file starts at distance 0 (so per-leg pacing/normalisation works) and contains every channel that was in the original. Drag-and-drop into WKO5, TrainingPeaks, intervals.icu, Strava upload, or Zwift Companion.</p>
+        </div>
+        <div>
+          <div class="ys-meta" style="color: var(--wf-coral);">6. Debug JSON</div>
+          <h3 style="margin-top: 4px;">For when the auto-detection is weird</h3>
+          <p>The debug JSON dump gives you the raw leg structure, all detection candidates, and timestamps. Helpful when a file has unusual structure (Polar &uArr; or Suunto multisport, old firmware) and you want to see why the splitter chose what it chose.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COACH NOTE ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card" style="display: block;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
+        <h2 style="margin-top: 4px;">Why splitting matters for analysis.</h2>
+        <p>A single multisport FIT file is one normalised power, one TSS, one TRIMP, one IF &mdash; averaged across swim + T1 + bike + T2 + run. That number is meaningless. Split into per-leg files and suddenly:</p>
+        <ul class="ys-card-bullets" style="margin-top: 12px;">
+          <li><strong>Bike NP and IF</strong> are accurate &mdash; not diluted by 2 minutes of T1 sitting at zero watts.</li>
+          <li><strong>Run pace zones</strong> reflect actual run effort, not the swim/bike average dragging the GAP up or down.</li>
+          <li><strong>HR drift</strong> per leg shows you whether the bike pace was too hot (drift &gt; 5%) or whether you went out too hard on the run. Single-file averages hide it.</li>
+          <li><strong>WKO5 power-duration curve</strong> per leg is the right input for race-specific FTP &mdash; bike-only PD curve from race files is gold for setting next season&rsquo;s targets.</li>
+        </ul>
+        <p style="margin-top: 12px;"><strong>Pro tip:</strong> after splitting, re-upload the per-leg files into <a href="calculator-fit-compare.html" style="color: var(--wf-coral);">FIT file sensor compare</a> to compare your race-day power against your training power on the same course / same effort &mdash; race vs. training pacing discipline shows up immediately.</p>
+        <div class="ys-btn-row" style="margin-top: 16px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RELATED CALCULATORS ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Related calculators</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-calc-grid">
+        <a class="ys-calc-card redesigned" href="calculator-fit-compare.html">
+          <span class="ys-calc-card-title">FIT file sensor comparison</span>
+          <p>After splitting, compare per-leg files against another device or another race &mdash; offset, drift, dropouts diagnosed automatically.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card redesigned" href="calculator-cda.html">
+          <span class="ys-calc-card-title">CdA estimate (FIT-based)</span>
+          <p>Once you have a clean bike-only FIT from a steady-power flat lap, drop it here for aerodynamic drag.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+        <a class="ys-calc-card redesigned" href="calculator-triathlon-finish-time.html">
+          <span class="ys-calc-card-title">Triathlon finish time</span>
+          <p>Predict your next race finish from your current swim / bike / run capacities &mdash; companion to splitting your last race for analysis.</p>
+          <span class="ys-calc-card-arrow">Open &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FALLBACK CTA ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-cta-card">
+        <div>
+          <h2>Want a coach to interpret the per-leg breakdown?</h2>
+          <p>Splitting the file is step one. The interesting part is reading the per-leg numbers in context: was the bike pacing too hot for the run, where did fueling fail, how did the heat affect HR drift? Send your race FIT and we&rsquo;ll do the analysis and write up the lessons.</p>
+        </div>
+        <div>
+          <div class="ys-btn-row">
+            <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Race-day analysis</a>
+            <a class="ys-btn ys-btn-ghost" href="mailto:info@yousuli.co?subject=Multisport%20FIT%20analysis">Send your FIT</a>
+          </div>
+          <p style="margin-top: 14px; font-size: 0.88rem; color: rgba(255,255,255,0.7);">Bug, weird detection, or feedback? Email <a href="mailto:info@yousuli.co?subject=Calculator%20feedback%3A%20Multisport%20FIT%20splitter" style="color: var(--wf-coral);">info@yousuli.co</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ EXTERNAL LIBS + ENGINE ============ -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- FitParser as ESM module (offline-capable) -->
+  <script type="module">
+    import FitParser from "./assets/msbreaker-lib/fit-file-parser.esm.js";
+    window.FitParser = FitParser;
+    window.dispatchEvent(new Event("fitparser-ready"));
+  </script>
+
+  <!-- JSZip for bundled export -->
+  <script src="assets/msbreaker-lib/jszip.min.js"></script>
+
+  <!-- Multisport splitter logic -->
+  <script src="assets/msbreaker.js"></script>
+
+</body>
+</html>
