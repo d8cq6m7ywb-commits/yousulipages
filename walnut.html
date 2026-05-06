@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Walnut neighbours — discounted metabolic testing | 胡桃市邻里代谢测试</title>
+  <meta name="description" content="Discounted metabolic testing for Walnut neighbours — RMR, VO2max, body composition. A one-off neighbourhood service from Coach Fred at Yousuli, ENG/中文. 胡桃市邻里专属：基础代谢率、最大摄氧量、身体成分测试，邻居优惠价。" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Walnut neighbours — Yousuli metabolic testing" />
+  <meta property="og:description" content="A one-off neighbourhood service: RMR + VO2max + body composition at a Walnut-only rate. Most past participants are local Chinese-speaking neighbours. 胡桃市邻里优惠价。" />
+  <meta property="og:url" content="https://www.yousuli.co/walnut" />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <style>
+    /* Bilingual eyebrow + photo grid scoped to this page */
+    .ys-bi-eyebrow { display: inline-flex; gap: 10px; align-items: center; }
+    .ys-bi-eyebrow .zh { color: var(--wf-coral); font-weight: 600; letter-spacing: 0.04em; }
+    .wn-zh { color: var(--ys-muted); font-size: 0.92rem; margin-top: 2px; display: block; font-style: normal; }
+    .wn-zh.tight { margin-top: 0; }
+    .wn-photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-top: 12px; }
+    .wn-photo { position: relative; border-radius: 10px; overflow: hidden; aspect-ratio: 1 / 1; box-shadow: 0 2px 12px rgba(47, 45, 86, 0.08); border: 1px solid var(--ys-line); background: var(--ys-bg-soft); }
+    .wn-photo img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+    .wn-photo:hover img { transform: scale(1.04); }
+    .wn-photo-name { position: absolute; left: 0; right: 0; bottom: 0; padding: 6px 10px; font-family: var(--ys-font-display); letter-spacing: 0.06em; font-size: 0.74rem; color: #fff; background: linear-gradient(to top, rgba(47,45,86,0.85), rgba(47,45,86,0)); text-transform: uppercase; }
+
+    .wn-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-top: 16px; }
+    .wn-stat { padding: 18px; background: var(--ys-bg-soft); border-radius: 10px; border: 1px solid var(--ys-line); text-align: center; }
+    .wn-stat-num { font-family: var(--ys-font-display); font-size: 2rem; font-weight: 700; color: var(--wf-coral); letter-spacing: 0.02em; }
+    .wn-stat-label { font-family: var(--ys-font-display); text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.74rem; color: var(--ys-navy); margin-top: 4px; }
+    .wn-stat-zh { font-size: 0.78rem; color: var(--ys-muted); margin-top: 2px; }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero">
+    <div class="ys-container">
+      <span class="wf-eyebrow ys-bi-eyebrow">Walnut neighbours <span class="zh">· 胡桃市邻里</span></span>
+      <h1>Metabolic testing for our neighbours.</h1>
+      <div class="wf-subhead">Lab-grade RMR + VO<sub>2</sub>max + body composition &mdash; at a neighbourhood rate</div>
+      <span class="wn-zh">实验室级别的代谢测试 &mdash; 基础代谢率、最大摄氧量、体成分。仅限胡桃市邻里，邻居优惠价。</span>
+      <p class="lede" style="max-width: 640px; margin-top: 12px;">A one-off, Walnut-only service from Coach Fred. Same equipment as the Yousuli Performance Lab, same coach reading the report &mdash; but at a discounted rate, for the people who live around the corner. Most of our neighbours have already been through it; their photos are below.</p>
+      <p style="max-width: 640px; color: rgba(255,255,255,0.85); font-size: 0.95rem; margin-top: 8px;"><em>胡桃市专属服务，由 Fred 教练亲自完成测试与解读。设备与 Yousuli 实验室完全相同 &mdash; 但价格为邻居优惠价。下方为已完成测试的邻居们。</em></p>
+      <div class="ys-btn-row" style="margin-top: 18px;">
+        <a class="ys-btn ys-btn-coral" href="#book">Book a slot &darr; · 预约</a>
+        <a class="ys-btn ys-btn-ghost" href="#what-you-get">What you get · 测什么</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STICKY QUICK-NAV ============ -->
+  <nav class="ys-quicknav" aria-label="Section navigation">
+    <div class="ys-container ys-quicknav-row">
+      <span class="ys-quicknav-label">Jump to</span>
+      <a href="#what-you-get">What you get · 测什么</a>
+      <a href="#who-its-for">Who it&rsquo;s for · 适合谁</a>
+      <a href="#neighbours">Our neighbours · 邻居们</a>
+      <a href="#how">How it works · 流程</a>
+      <a href="#faq">FAQ · 常见问题</a>
+      <a href="#book">Book · 预约</a>
+    </div>
+  </nav>
+
+  <!-- ============ STATS BAND ============ -->
+  <section class="wf-section" style="padding: 28px 0 20px;">
+    <div class="ys-container">
+      <div class="wn-stats">
+        <div class="wn-stat">
+          <div class="wn-stat-num">16+</div>
+          <div class="wn-stat-label">Walnut neighbours tested</div>
+          <div class="wn-stat-zh">已测试邻居</div>
+        </div>
+        <div class="wn-stat">
+          <div class="wn-stat-num">~60 min</div>
+          <div class="wn-stat-label">Per session</div>
+          <div class="wn-stat-zh">每次测试约 60 分钟</div>
+        </div>
+        <div class="wn-stat">
+          <div class="wn-stat-num">3 tests</div>
+          <div class="wn-stat-label">RMR · VO<sub>2</sub>max · Body comp</div>
+          <div class="wn-stat-zh">基础代谢 · 最大摄氧 · 体成分</div>
+        </div>
+        <div class="wn-stat">
+          <div class="wn-stat-num">In Walnut</div>
+          <div class="wn-stat-label">No driving across LA</div>
+          <div class="wn-stat-zh">就在胡桃市，无需远行</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHAT YOU GET ============ -->
+  <section class="wf-section" id="what-you-get">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What you get <span class="wn-zh tight" style="font-size: 1rem; color: var(--ys-muted);">测什么</span></h2>
+        <div class="ys-rule"></div>
+        <p>Three measurements. One coach who reads them with you. A clear plan for what to do with the numbers.</p>
+        <p class="wn-zh tight">三项测试 &mdash; 由教练亲自解读，并给出可执行的具体建议。</p>
+      </div>
+
+      <div class="ys-grid">
+        <article class="ys-card">
+          <div class="ys-meta">Test 01 · 测试一</div>
+          <h3>RMR &mdash; Resting metabolic rate <span class="wn-zh tight" style="font-size: 0.95rem;">基础代谢率</span></h3>
+          <p>How many calories your body burns at rest, measured directly from breath gas (not estimated from a formula). The single most useful number for weight loss, fueling, and screening for under-eating (RED-S).</p>
+          <p class="wn-zh tight">通过呼气分析直接测量您的基础代谢率 (BMR/RMR)，比公式估算精确得多。是减重、补给和筛查能量不足 (RED-S) 的关键数据。</p>
+          <p style="font-size: 0.88rem; color: var(--ys-muted); margin-top: 8px;">Why it matters: most diet apps use formulas that miss your real number by 200&ndash;500 kcal. Walking out with the actual number changes how you eat and how you train.</p>
+          <p class="wn-zh tight">大多数手机 App 使用的公式可能与您的真实数值相差 200&ndash;500 大卡。带走真实数值，能改变饮食与训练方式。</p>
+        </article>
+
+        <article class="ys-card featured">
+          <div class="ys-meta">Test 02 · 测试二</div>
+          <h3>VO<sub>2</sub>max <span class="wn-zh tight" style="font-size: 0.95rem;">最大摄氧量</span></h3>
+          <p>The single best predictor of fitness and longevity. Measured from breath gas during a graded test (treadmill or stationary bike). High VO<sub>2</sub>max correlates with longer healthspan, lower all-cause mortality, and better quality of life as you age.</p>
+          <p class="wn-zh tight">VO<sub>2</sub>max 是健康与长寿最重要的指标之一。本测试通过逐级递增的运动 (跑步机或自行车) 中的呼气分析直接测量。数值越高，预期寿命越长，年长后生活质量越好。</p>
+          <p style="font-size: 0.88rem; color: var(--ys-muted); margin-top: 8px;">Used by athletes for training zones; used by everyone else as a vital sign. We&rsquo;ll plot you against your age &amp; sex norms so the number means something concrete.</p>
+          <p class="wn-zh tight">运动员用它确定训练区间，普通人则将其视为关键体检指标。我们会按您的年龄与性别给出对照，让数字真正有意义。</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Test 03 · 测试三</div>
+          <h3>Body composition <span class="wn-zh tight" style="font-size: 0.95rem;">身体成分分析</span></h3>
+          <p>Lean muscle mass, fat mass, body fat percentage, segmental breakdown (left/right, arms/legs/trunk). Repeat over time to see whether weight changes are coming from fat or from muscle &mdash; the scale alone can&rsquo;t tell you.</p>
+          <p class="wn-zh tight">瘦体重、脂肪量、体脂百分比、四肢/躯干分段数据。多次测量可以看出体重的变化究竟来自脂肪还是肌肉 &mdash; 普通体重秤无法分辨。</p>
+        </article>
+      </div>
+
+      <p style="margin-top: 22px; text-align: center; color: var(--ys-muted); font-size: 0.95rem;">
+        All three together give a real picture: how much you burn, how fit you are, and what you&rsquo;re built of.
+        <br />
+        <span class="wn-zh tight" style="display: inline; font-size: 0.92rem;">三项合在一起，呈现完整画面：燃烧多少、心肺多强、身体由什么构成。</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ WHO IT'S FOR ============ -->
+  <section class="wf-section alt" id="who-its-for">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Who it&rsquo;s for <span class="wn-zh tight" style="font-size: 1rem; color: var(--ys-muted);">适合谁</span></h2>
+        <div class="ys-rule"></div>
+        <p>You don&rsquo;t need to be an athlete. Most of our neighbours aren&rsquo;t.</p>
+        <p class="wn-zh tight">不是运动员也完全合适，邻居中大部分都不是运动员。</p>
+      </div>
+
+      <div class="ys-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+        <article class="ys-fit-card yes">
+          <h3>Trying to lose weight <span class="wn-zh tight" style="font-size: 0.85rem;">想减重</span></h3>
+          <ul>
+            <li>Diets stalled, not sure why</li>
+            <li>Want a real calorie target, not a guess</li>
+            <li>Track fat vs. muscle changes over time</li>
+            <li class="wn-zh">想确定真实热量需求与体脂变化</li>
+          </ul>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>Health-conscious 40+ <span class="wn-zh tight" style="font-size: 0.85rem;">关注健康的中老年人</span></h3>
+          <ul>
+            <li>Want a fitness baseline before it&rsquo;s too late</li>
+            <li>Family history of heart disease, diabetes, or stroke</li>
+            <li>Aging well &mdash; muscle, mobility, capacity</li>
+            <li class="wn-zh">建立健康基线、关注心脏与代谢、追求老有所为</li>
+          </ul>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>Recreational athletes <span class="wn-zh tight" style="font-size: 0.85rem;">休闲运动爱好者</span></h3>
+          <ul>
+            <li>Hike, cycle, run, swim regularly</li>
+            <li>Want training zones from real data</li>
+            <li>Curious where you sit vs. peers</li>
+            <li class="wn-zh">想用真实数据确定训练区间</li>
+          </ul>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>Parents &amp; grandparents <span class="wn-zh tight" style="font-size: 0.85rem;">父母与祖辈</span></h3>
+          <ul>
+            <li>Stay-with-the-grandkids fitness</li>
+            <li>Catch problems early via VO<sub>2</sub>max trend</li>
+            <li>Bring the whole family on the same day</li>
+            <li class="wn-zh">关心健康长寿、想为家人做榜样</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ NEIGHBOURS PHOTO GRID ============ -->
+  <section class="wf-section" id="neighbours">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Our Walnut neighbours <span class="wn-zh tight" style="font-size: 1rem; color: var(--ys-muted);">已完成测试的邻居</span></h2>
+        <div class="ys-rule"></div>
+        <p>Sixteen neighbours have already been through the testing. Most live within a few blocks of the lab.</p>
+        <p class="wn-zh tight">十六位邻居已完成测试，大部分都住在实验室附近几个街区内。</p>
+      </div>
+
+      <div class="wn-photo-grid">
+        <div class="wn-photo"><img src="assets/walnut/callalily.jpg" alt="Calla Lily" loading="lazy" /><span class="wn-photo-name">Calla Lily</span></div>
+        <div class="wn-photo"><img src="assets/walnut/chenyang.jpg" alt="Chen Yang" loading="lazy" /><span class="wn-photo-name">Chen Yang · 陈阳</span></div>
+        <div class="wn-photo"><img src="assets/walnut/corinna.jpg" alt="Corinna" loading="lazy" /><span class="wn-photo-name">Corinna</span></div>
+        <div class="wn-photo"><img src="assets/walnut/daliliu.jpeg" alt="Dali Liu" loading="lazy" /><span class="wn-photo-name">Dali Liu · 刘大利</span></div>
+        <div class="wn-photo"><img src="assets/walnut/jessica.jpg" alt="Jessica" loading="lazy" /><span class="wn-photo-name">Jessica</span></div>
+        <div class="wn-photo"><img src="assets/walnut/lili-baba.jpg" alt="Lili Baba" loading="lazy" /><span class="wn-photo-name">Lili Baba · 莉莉爸爸</span></div>
+        <div class="wn-photo"><img src="assets/walnut/lixin.jpg" alt="Lixin" loading="lazy" /><span class="wn-photo-name">Lixin · 立新</span></div>
+        <div class="wn-photo"><img src="assets/walnut/stuart.jpg" alt="Stuart" loading="lazy" /><span class="wn-photo-name">Stuart</span></div>
+        <div class="wn-photo"><img src="assets/walnut/wangfeng.jpg" alt="Wang Feng" loading="lazy" /><span class="wn-photo-name">Wang Feng · 王峰</span></div>
+        <div class="wn-photo"><img src="assets/walnut/weina.jpeg" alt="Wei Na" loading="lazy" /><span class="wn-photo-name">Wei Na · 玮娜</span></div>
+        <div class="wn-photo"><img src="assets/walnut/william-zhou.jpg" alt="William Zhou" loading="lazy" /><span class="wn-photo-name">William Zhou · 周</span></div>
+        <div class="wn-photo"><img src="assets/walnut/xiaochen.jpg" alt="Xiao Chen" loading="lazy" /><span class="wn-photo-name">Xiao Chen · 小陈</span></div>
+        <div class="wn-photo"><img src="assets/walnut/yangshujuan.jpg" alt="Yang Shujuan" loading="lazy" /><span class="wn-photo-name">Yang Shujuan · 杨淑娟</span></div>
+        <div class="wn-photo"><img src="assets/walnut/yesen.jpg" alt="Ye Sen" loading="lazy" /><span class="wn-photo-name">Ye Sen · 叶森</span></div>
+        <div class="wn-photo"><img src="assets/walnut/youzi.jpg" alt="Youzi" loading="lazy" /><span class="wn-photo-name">Youzi · 柚子</span></div>
+        <div class="wn-photo"><img src="assets/walnut/zhangjun.jpg" alt="Zhang Jun" loading="lazy" /><span class="wn-photo-name">Zhang Jun · 张军</span></div>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); font-size: 0.92rem; margin-top: 18px;">
+        Many tested with their parents or partner, and several have come back for follow-ups.
+        <br />
+        <span class="wn-zh tight" style="display: inline; font-size: 0.9rem;">不少邻居与父母或伴侣一同测试，部分人已多次回访复测。</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="wf-section alt" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How it works <span class="wn-zh tight" style="font-size: 1rem; color: var(--ys-muted);">流程</span></h2>
+        <div class="ys-rule"></div>
+        <p>From booking to walking out with your report &mdash; about 60 minutes on the day.</p>
+        <p class="wn-zh tight">从预约到拿到报告，当天约 60 分钟。</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="ys-step">
+          <div class="ys-step-num">01</div>
+          <h3>Book a slot <span class="wn-zh tight" style="font-size: 0.92rem; font-weight: 400;">预约时间</span></h3>
+          <p>Use the Wix booking widget at the bottom of this page. Pick the date and time that works for you. We&rsquo;ll send the address (in Walnut) and a short pre-test checklist.</p>
+          <p class="wn-zh tight">通过页面下方预约模块选择时间。我们会发送实验室地址 (位于胡桃市) 与测试前注意事项。</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">02</div>
+          <h3>The day of <span class="wn-zh tight" style="font-size: 0.92rem; font-weight: 400;">测试当天</span></h3>
+          <p>Come in fasted (overnight, no caffeine). Body comp first, then RMR (15&ndash;20 min lying down with a mask), then short break, then VO<sub>2</sub>max test (8&ndash;15 min progressive effort). Bring water + workout clothes.</p>
+          <p class="wn-zh tight">空腹前来 (前一晚不进食、不喝咖啡)。先做体成分测试，然后是 RMR (戴面罩静卧 15&ndash;20 分钟)，短暂休息后进行 VO<sub>2</sub>max 测试 (递增运动 8&ndash;15 分钟)。请携带饮用水与运动服装。</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">03</div>
+          <h3>Read the numbers together <span class="wn-zh tight" style="font-size: 0.92rem; font-weight: 400;">一起解读数据</span></h3>
+          <p>Coach Fred walks you through every number. What it means for you specifically &mdash; nutrition, training zones, longevity benchmarks. Question time built in. Bilingual where helpful (English / 中文).</p>
+          <p class="wn-zh tight">Fred 教练逐项讲解。结合您的具体情况说明 &mdash; 饮食建议、训练区间、长寿对照。设有问答时间。中英文皆可。</p>
+        </div>
+        <div class="ys-step">
+          <div class="ys-step-num">04</div>
+          <h3>Take the report home <span class="wn-zh tight" style="font-size: 0.92rem; font-weight: 400;">带走报告</span></h3>
+          <p>PDF report in your inbox by the next day, plus a one-page summary you can put on the fridge. Email Fred any time afterwards if numbers don&rsquo;t make sense or anything changes.</p>
+          <p class="wn-zh tight">次日 PDF 报告发送至邮箱，另有一页可贴冰箱的简明摘要。后续如有疑问随时邮件联系。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="wf-section" id="faq">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>FAQ <span class="wn-zh tight" style="font-size: 1rem; color: var(--ys-muted);">常见问题</span></h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-faq-grid">
+        <article class="ys-faq">
+          <h3>Why is this discounted vs. the regular Lab? <span class="wn-zh tight" style="font-size: 0.85rem; font-weight: 400;">为什么比正常实验室便宜？</span></h3>
+          <p>Because you&rsquo;re a neighbour. No commercial overhead, no travel, no marketing &mdash; just walking-distance testing for the people in our community. The equipment and the protocol are identical to what we use with elite athletes.</p>
+          <p class="wn-zh tight">因为是邻居。没有商业附加成本，无需出差，无需推广 &mdash; 只是为社区里的人提供步行可达的测试。设备与流程与高水平运动员所用完全相同。</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>I don&rsquo;t exercise. Will the VO<sub>2</sub>max test be too hard? <span class="wn-zh tight" style="font-size: 0.85rem; font-weight: 400;">我不运动，VO<sub>2</sub>max 测试会不会太累？</span></h3>
+          <p>The test is graded &mdash; we start very easy and only increase intensity if you can. We stop at the point that&rsquo;s right for you. We&rsquo;ve tested neighbours from age 14 to age 80+, including non-athletes; nobody has had a problem.</p>
+          <p class="wn-zh tight">测试为渐进式 &mdash; 起始非常轻松，只在您能承受时才加大强度，并在合适的点停止。从 14 岁到 80 多岁的邻居都做过 (包括完全不运动的人)，无一人出现问题。</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>Can I bring my parents / spouse / kids on the same day? <span class="wn-zh tight" style="font-size: 0.85rem; font-weight: 400;">能和父母/伴侣/孩子同一天测试吗？</span></h3>
+          <p>Yes, and most neighbours do. Pick a slot for each person back-to-back. Family rate available &mdash; ask when booking.</p>
+          <p class="wn-zh tight">可以，大部分邻居都会带家人一起。请按家人数量分别预约。提供家庭优惠 &mdash; 预约时请告知。</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>Do you speak Chinese? <span class="wn-zh tight" style="font-size: 0.85rem; font-weight: 400;">能用中文交流吗？</span></h3>
+          <p>The session can be done bilingually. The reports are in English; key sections will be summarised verbally in 中文 if that&rsquo;s easier. We&rsquo;ve done this with most of the neighbours in the photo grid above.</p>
+          <p class="wn-zh tight">可以中英文双语进行。报告以英文为主，但关键部分会用中文口头解读。上方照片中的大部分邻居都是这样完成测试的。</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>Is this medical advice? <span class="wn-zh tight" style="font-size: 0.85rem; font-weight: 400;">这是医疗建议吗？</span></h3>
+          <p>No. RMR, VO<sub>2</sub>max, and body composition are physiological measurements; we read them in a fitness / longevity / nutrition context. If something looks concerning we&rsquo;ll suggest you see your physician &mdash; we don&rsquo;t replace medical care.</p>
+          <p class="wn-zh tight">不是。RMR、VO<sub>2</sub>max、体成分均为生理测量，我们仅在运动、长寿与营养层面解读。若发现异常，会建议就医 &mdash; 我们不替代医疗。</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>What if I&rsquo;m not a Walnut resident? <span class="wn-zh tight" style="font-size: 0.85rem; font-weight: 400;">不是胡桃市居民可以做吗？</span></h3>
+          <p>This rate is reserved for Walnut neighbours and their immediate family. If you&rsquo;re elsewhere in greater LA, the regular <a href="https://www.yousuli.co/performancelab" target="_top" style="color: var(--wf-coral);">Performance Lab</a> covers the same testing &mdash; and the mobile lab travels.</p>
+          <p class="wn-zh tight">本优惠仅限胡桃市居民及其直系家属。其他洛杉矶地区可使用正常的 <a href="https://www.yousuli.co/performancelab" target="_top" style="color: var(--wf-coral);">Performance Lab</a> 服务 (移动实验室可上门)。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HANDOFF TO WIX BOOKING WIDGET ============ -->
+  <section id="book" style="padding: 36px 16px 28px; background: var(--ys-bg-soft); text-align: center; border-top: 1px solid var(--ys-line);">
+    <div class="ys-container" style="max-width: 720px;">
+      <div style="font-family: var(--ys-font-display); text-transform: uppercase; letter-spacing: 0.16em; font-size: 0.78rem; color: var(--wf-coral); margin-bottom: 10px;">Book a slot &middot; 预约</div>
+      <h3 style="font-family: var(--ys-font-display); color: var(--ys-navy); font-size: 1.5rem; margin: 0 0 12px;">&darr; Pick your time in the booking widget below &darr;</h3>
+      <p style="color: var(--ys-muted); font-size: 0.95rem; margin: 0 0 6px;">Wix booking widget below this section. After you book, we&rsquo;ll email the address in Walnut and a short pre-test checklist.</p>
+      <p class="wn-zh tight" style="display: block; margin-top: 4px;">下方为 Wix 预约模块。预约成功后会发送地址 (胡桃市) 与测试前注意事项。</p>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/membership" target="_top">Membership</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; <a href="tel:+19099794118">(909) 979-4118</a></span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
