@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Yousuli online programs — next steps (bottom)</title>
+  <meta name="description" content="Where to go next after browsing Yousuli online programs — calculators, science page, lab testing, coaching, club. Bottom half of the embedded programs catalogue page." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+
+  <!-- ============ HANDOFF FROM WIX FEED ============ -->
+  <section style="padding: 28px 16px 22px; background: var(--ys-bg-soft); text-align: center; border-bottom: 1px solid var(--ys-line);">
+    <div class="ys-container" style="max-width: 720px;">
+      <div style="font-family: var(--ys-font-display); text-transform: uppercase; letter-spacing: 0.16em; font-size: 0.78rem; color: var(--wf-coral); margin-bottom: 8px;">After the catalogue</div>
+      <h3 style="font-family: var(--ys-font-display); color: var(--ys-navy); font-size: 1.2rem; margin: 0 0 6px;">Where programs fit in the wider Yousuli system</h3>
+      <p style="color: var(--ys-muted); font-size: 0.9rem; margin: 0;">Programs are one layer. Calculators, the science page, lab testing, and coaching are the others. Pick what matches where you are right now.</p>
+    </div>
+  </section>
+
+  <!-- ============ WHERE PROGRAMS FIT ============ -->
+  <section class="wf-section" id="ladder">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Programs vs. coaching vs. lab</h2>
+        <div class="ys-rule"></div>
+        <p>Same coach, three different depths of access.</p>
+      </div>
+
+      <div class="ys-grid">
+        <article class="ys-card">
+          <div class="ys-meta">Lightest touch</div>
+          <h3>Calculators &amp; science page</h3>
+          <p>30+ free calculators for any specific number you need to plug in. The Yousuli science page covers the &ldquo;why&rdquo; behind testing &mdash; VO<sub>2</sub>max as a longevity vital sign, RMR as a RED-S front-door, the oxygen cascade limiter map.</p>
+          <div class="ys-btn-row" style="margin-top: 12px;">
+            <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+            <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/science" target="_top">Science</a>
+          </div>
+        </article>
+
+        <article class="ys-card featured">
+          <div class="ys-meta">You are here</div>
+          <h3>Online programs</h3>
+          <p>Self-paced, structured material. Learn a topic end-to-end. Cheaper than coaching, deeper than calculators. Best when you&rsquo;ve identified what you want to learn but don&rsquo;t need ongoing 1:1 contact.</p>
+          <p style="font-size: 0.88rem; color: var(--ys-muted); margin-top: 6px;">Free funnels exist &mdash; start there if you&rsquo;re unsure.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Real numbers</div>
+          <h3>Performance Lab testing</h3>
+          <p>VO<sub>2</sub>max, RMR, CdA, swim &amp; gait analysis. Lab-grade data turns programs from generic into personal. Several programs are designed to pair with specific lab tests.</p>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/performancelab" target="_top">Browse tests</a>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Deepest touch</div>
+          <h3>Coaching</h3>
+          <p>When you want a guide, not just a plan. Three tiers &mdash; Structured ($200/mo), Bespoke ($350/mo), Full Performance (by application). Programs feed into coaching curriculum where helpful.</p>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/coaching" target="_top">See coaching tiers</a>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Community</div>
+          <h3>Yousuli Social Club</h3>
+          <p>Free or $49/yr. Group sessions, online community, members-only content (webinars, Q&amp;As, case studies), template plans. Many program purchasers are also Club members.</p>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/social-club" target="_top">Join the Club</a>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Tell us what&rsquo;s missing</div>
+          <h3>Suggest a program</h3>
+          <p>Topic you wish was covered? Calculator you&rsquo;d like to see explained step-by-step? Email it in &mdash; goes straight to Coach Fred. The catalogue grows in response to actual requests.</p>
+          <a class="ys-btn ys-btn-dark" href="mailto:info@yousuli.co?subject=Program%20suggestion">Email a suggestion</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="wf-section alt" id="program-faq">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Common program questions</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-faq-grid">
+        <article class="ys-faq">
+          <h3>Are programs the same as coaching?</h3>
+          <p>No. Programs teach a topic. Coaching applies it to your specific situation, week by week, with weekly contact and accountability. Many athletes do both &mdash; the program teaches the principle, coaching enforces the practice.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>Lifetime access &mdash; really?</h3>
+          <p>Yes. One purchase, no recurring charges, the program stays in your account. If we update content (we do), updates land in your version automatically.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>Can I get a refund?</h3>
+          <p>14-day money back, no questions, on any paid program. We&rsquo;d rather you opt out cleanly than feel stuck.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>Free funnels &mdash; what&rsquo;s the catch?</h3>
+          <p>None. Free programs are real programs with the same standards. We use them as the entry point because the easiest way to know if Yousuli&rsquo;s teaching style works for you is to actually take some.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>Are programs included in coaching?</h3>
+          <p>Coaching athletes get free access to most paid programs as part of their tier. If a program is directly relevant to your training block, your coach will assign it.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>I&rsquo;m not a triathlete &mdash; are these for me?</h3>
+          <p>Many programs are sport-agnostic (physiology, fueling, testing literacy). Triathlon-specific ones are flagged in the catalogue. Run-only and bike-only athletes use the calculators &amp; programs heavily.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/membership" target="_top">Membership</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; <a href="tel:+19099794118">(909) 979-4118</a></span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

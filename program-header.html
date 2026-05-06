@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Yousuli online program (header)</title>
+  <meta name="description" content="Yousuli site header for individual online program pages — site nav + a small breadcrumb back to the programs catalogue. Embed this above the Wix course content on any program detail page." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ BREADCRUMB ============ -->
+  <nav aria-label="Breadcrumb"
+       style="background: var(--ys-bg-soft); border-bottom: 1px solid var(--ys-line);
+              padding: 12px 0; font-family: var(--ys-font-body);">
+    <div class="ys-container" style="display: flex; align-items: center; gap: 8px; font-size: 0.88rem; color: var(--ys-muted);">
+      <a href="https://www.yousuli.co/" target="_top" style="color: var(--ys-muted); text-decoration: none;">Home</a>
+      <span aria-hidden="true">&rsaquo;</span>
+      <a href="https://www.yousuli.co/programs" target="_top" style="color: var(--ys-muted); text-decoration: none;">Online programs</a>
+      <span aria-hidden="true">&rsaquo;</span>
+      <span style="color: var(--ys-navy); font-weight: 600;">This program</span>
+    </div>
+  </nav>
+
+</body>
+</html>
