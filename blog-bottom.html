@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Yousuli Blog — keep reading &amp; stay in touch (bottom)</title>
+  <meta name="description" content="Stay in touch — newsletter signup, related Yousuli pages (calculators, science, club, coaching), and footer. Bottom half of the embedded blog page; sits below the Wix blog feed on /blog." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+
+  <!-- ============ HANDOFF FROM WIX BLOG FEED ============ -->
+  <section style="padding: 28px 16px 22px; background: var(--ys-bg-soft); text-align: center; border-bottom: 1px solid var(--ys-line);">
+    <div class="ys-container" style="max-width: 720px;">
+      <div style="font-family: var(--ys-font-display); text-transform: uppercase; letter-spacing: 0.16em; font-size: 0.78rem; color: var(--wf-coral); margin-bottom: 8px;">After the feed</div>
+      <h3 style="font-family: var(--ys-font-display); color: var(--ys-navy); font-size: 1.2rem; margin: 0 0 6px;">Keep reading &middot; stay in touch &middot; useful tools</h3>
+      <p style="color: var(--ys-muted); font-size: 0.9rem; margin: 0;">If something in the feed sparked a question, here&rsquo;s where to take it next.</p>
+    </div>
+  </section>
+
+  <!-- ============ TAKE IT FURTHER ============ -->
+  <section class="wf-section" id="take-it-further">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Take a topic further</h2>
+        <div class="ys-rule"></div>
+        <p>Most blog posts come with companion calculators, science explainers, or actual coaching pathways. Here&rsquo;s the map.</p>
+      </div>
+
+      <div class="ys-grid">
+        <article class="ys-card">
+          <div class="ys-meta">Hands-on</div>
+          <h3>Plug in your own numbers</h3>
+          <p>30+ free calculators &mdash; race fueling, sweat rate, CdA, Crr, gear ratios, RMR, critical power, VO<sub>2</sub> &rarr; cycling/run/swim, course-based race simulators (Kona, Lanzarote, Roth + every 70.3).</p>
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/calculators" target="_top">Browse calculators</a>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Receipts</div>
+          <h3>Read the science</h3>
+          <p>VO<sub>2</sub>max as a longevity vital sign, RMR as a RED-S front-door, the oxygen cascade limiter map, three ways to measure efficiency. Plain language, references included.</p>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/science" target="_top">Read the science page</a>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Test it on you</div>
+          <h3>Performance Lab</h3>
+          <p>Lab-grade VO<sub>2</sub>max, RMR, CdA, swim &amp; gait analysis. Mobile lab covers greater LA + race-week travel. Standalone tests or bundled performance packages.</p>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/performancelab" target="_top">Browse tests</a>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Apply it</div>
+          <h3>Coaching</h3>
+          <p>When you want a guide, not just a plan. Three tiers &mdash; Structured ($200/mo), Bespoke ($350/mo), Full Performance (by application). Everything testing-driven.</p>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/coaching" target="_top">See coaching tiers</a>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Community</div>
+          <h3>Yousuli Social Club</h3>
+          <p>Free or $49/yr with perks. Group sessions, online community, members-only content (webinars, Q&amp;As, case studies), template plans. The entry point into the world.</p>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/social-club" target="_top">Join the Club</a>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Suggest a topic</div>
+          <h3>Ask us to write something</h3>
+          <p>Got a question that&rsquo;s not covered, a bug to flag in a calculator, or a request for a clinic at your gym / club? Email straight in &mdash; goes to Coach Fred.</p>
+          <a class="ys-btn ys-btn-dark" href="mailto:info@yousuli.co?subject=Blog%20suggestion">Email a suggestion</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STAY UPDATED ============ -->
+  <section class="wf-section alt" id="stay-updated">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Stay updated</h2>
+        <div class="ys-rule"></div>
+        <p>Three ways to not miss new posts.</p>
+      </div>
+
+      <div class="ys-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+        <article class="ys-fit-card yes">
+          <h3>Yousuli Social Club</h3>
+          <ul>
+            <li>Free tier &mdash; community + new-post alerts</li>
+            <li>$49/yr tier adds perks &amp; member pricing</li>
+            <li>WhatsApp group for ongoing chat</li>
+          </ul>
+          <p style="margin-top: 8px;"><a href="https://www.yousuli.co/social-club" target="_top" style="color: var(--wf-coral); font-weight: 600;">Join YSC &rarr;</a></p>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>Email</h3>
+          <ul>
+            <li>Send <code>info@yousuli.co</code> a note</li>
+            <li>Ask to be added to the post-update list</li>
+            <li>No newsletter spam &mdash; only when new posts ship</li>
+          </ul>
+          <p style="margin-top: 8px;"><a href="mailto:info@yousuli.co?subject=Add%20me%20to%20blog%20updates" style="color: var(--wf-coral); font-weight: 600;">Email Coach Fred &rarr;</a></p>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>Bookmark this page</h3>
+          <ul>
+            <li>The Wix feed above always shows latest first</li>
+            <li>Categories filter inside the feed widget</li>
+            <li>RSS available via the Wix blog feed</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/membership" target="_top">Membership</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; <a href="tel:+19099794118">(909) 979-4118</a></span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Yousuli Blog — endurance science, lab notes, athlete case studies (top)</title>
+  <meta name="description" content="Practical material from the Yousuli lab — VO2 / RMR / CdA explainers, athlete case studies, race-week protocols, and clinics. Top half of the embedded blog page; sits above the Wix blog feed on /blog." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Blog &amp; education</span>
+      <h1>Lab notes &middot; case studies &middot; clinics.</h1>
+      <div class="wf-subhead">Practical material from the lab &mdash; not warmed-over generalities</div>
+      <p class="lede">Articles, athlete case studies, podcast clips, and clinic write-ups. The throughline: efficiency is the shortest path to speed, and most athletes leave a lot of free time on the table because nobody told them where to look.</p>
+      <div class="ys-btn-row">
+        <a class="ys-btn ys-btn-coral" href="#topics">Topics &amp; categories &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/calculators" target="_top">Or jump to calculators</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STICKY QUICK-NAV ============ -->
+  <nav class="ys-quicknav" aria-label="Section navigation">
+    <div class="ys-container ys-quicknav-row">
+      <span class="ys-quicknav-label">Jump to</span>
+      <a href="#topics">Topics</a>
+      <a href="#what-to-expect">What to expect</a>
+      <a href="#stay-updated">Stay updated</a>
+    </div>
+  </nav>
+
+  <!-- ============ TOPICS / CATEGORIES ============ -->
+  <section class="wf-section" id="topics">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What we write about</h2>
+        <div class="ys-rule"></div>
+        <p>Six recurring topic clusters &mdash; the questions athletes actually ask in coaching calls and the lab.</p>
+      </div>
+
+      <div class="ys-grid">
+        <article class="ys-card">
+          <div class="ys-meta">Cluster 01 · Physiology</div>
+          <h3>VO<sub>2</sub>, RMR, lactate, RER</h3>
+          <p>What the numbers mean, how they&rsquo;re measured, and how to read your own report without a coach in the room. RED-S front-doors. The oxygen cascade. Heat &amp; altitude work. Kinetics.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Cluster 02 · Aero &amp; equipment</div>
+          <h3>CdA, Crr, fitting</h3>
+          <p>Field-based CdA protocols, what really moves the needle on tri bikes, what doesn&rsquo;t, and how to test your own setup. Tire pressure, rolling resistance, helmet choice, race-day setup.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Cluster 03 · Fueling</div>
+          <h3>Race-day &amp; intra-workout nutrition</h3>
+          <p>Concrete plans athletes actually execute. Sweat-rate testing, sodium math, gut training, how Neversecond / Maurten / SiS / etc. compare in practice. Race-week glycogen logistics.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Cluster 04 · Technique</div>
+          <h3>Swim, run, &amp; bike biomechanics</h3>
+          <p>Stroke mechanics that actually translate to open water. Run-form fixes that survive fatigue. Pedal-stroke economy. Specific cues you can use when the coach isn&rsquo;t there.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Cluster 05 · Athlete stories</div>
+          <h3>Coached athlete case studies</h3>
+          <p>What we tested, what we changed, what happened. Real numbers, real timelines. The good blocks and the ones that didn&rsquo;t go to plan. Sub-3 marathon, first IRONMAN, 70.3 podiums, BQ.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Cluster 06 · Clinics &amp; podcasts</div>
+          <h3>Talks, group sessions, interviews</h3>
+          <p>Recap notes from clinics at clubs and gyms. Podcast appearances and our own conversations with researchers, coaches, and elite athletes. Slides &amp; references included where possible.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHAT TO EXPECT ============ -->
+  <section class="wf-section alt" id="what-to-expect">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What to expect</h2>
+        <div class="ys-rule"></div>
+        <p>The Yousuli house style.</p>
+      </div>
+
+      <div class="ys-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+        <article class="ys-fit-card yes">
+          <h3>Practical &gt; theoretical</h3>
+          <ul>
+            <li>If you can&rsquo;t use it on Saturday, we don&rsquo;t write it</li>
+            <li>Numbers, ranges, protocols &mdash; not vibes</li>
+            <li>Worked examples from real athletes</li>
+          </ul>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>Plain language</h3>
+          <ul>
+            <li>Jargon defined the first time it appears</li>
+            <li>Diagrams where they earn their keep</li>
+            <li>Calculator links so you can plug in your own numbers</li>
+          </ul>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>References when they matter</h3>
+          <ul>
+            <li>Peer-reviewed sources cited</li>
+            <li>Honest about strength of evidence</li>
+            <li>Case studies labelled as case studies, not "data"</li>
+          </ul>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>No hot takes</h3>
+          <ul>
+            <li>If we change our minds, we say so</li>
+            <li>We&rsquo;d rather be slow and right than fast and wrong</li>
+            <li>Cycling/running/swim equally welcome</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HANDOFF TO WIX BLOG FEED ============ -->
+  <section style="padding: 28px 16px 36px; background: var(--ys-bg-soft); text-align: center; border-top: 1px solid var(--ys-line);">
+    <div class="ys-container" style="max-width: 720px;">
+      <div style="font-family: var(--ys-font-display); text-transform: uppercase; letter-spacing: 0.16em; font-size: 0.78rem; color: var(--wf-coral); margin-bottom: 10px;">Latest posts</div>
+      <h3 style="font-family: var(--ys-font-display); color: var(--ys-navy); font-size: 1.4rem; margin: 0 0 12px;">&darr; Browse the feed below &darr;</h3>
+      <p style="color: var(--ys-muted); font-size: 0.95rem; margin: 0;">Recent articles, case studies, and lab notes &mdash; sorted newest first. Filter by category in the widget below.</p>
+    </div>
+  </section>
+
+</body>
+</html>
