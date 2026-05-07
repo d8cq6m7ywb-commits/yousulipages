@@ -1294,6 +1294,42 @@
     $('warnings').innerHTML=w.map(x=>`<div class="warning ${x.cls}">${x.msg}</div>`).join('');
   }
 
+  /* Bike/run CHO deficit warnings — fired after the schedule actually
+     computes leg totals so we can compare planned vs target. The math is
+     real: e.g. for an Ironman bike at 100 g/h × 5 h = 500 g target. If
+     the user packs too few gels (or low-CHO bottles), the gel pool
+     drains before all hours hit target and the leg total stays short.
+     Without an explicit alert this deficit is only legible by reading
+     hourly rows side-by-side. */
+  function appendDeficitWarnings(bikeAct, bikeTgt, runAct, runTgt){
+    const wDiv = $('warnings'); if(!wDiv) return;
+    const out = [];
+    const bikeShort = bikeTgt - bikeAct;
+    const runShort  = runTgt  - runAct;
+
+    // Bike: 15 g threshold (any meaningful gap matters at IM scale)
+    if (bikeShort > 15) {
+      const gelsNeeded = Math.ceil(bikeShort / 25); // assume ~25 g per gel
+      out.push({
+        cls: 'warning-yellow',
+        msg: `&#9888; Bike is <strong>${fmt(bikeShort,0)} g short of CHO target</strong> (${fmt(bikeAct,0)} / ${fmt(bikeTgt,0)} g). Add ~${gelsNeeded} more bike gels &mdash; or switch a bottle to a higher-CHO mix (Maurten 320, 40% super-syrup, or PF 60 Drink Mix doubled) to close the gap. At rates above 90 g/h you usually can&rsquo;t reach target on standard sports drink alone.`
+      });
+    }
+    // Run: tighter 10 g threshold (run target is already lower & GI is fragile)
+    if (runShort > 10) {
+      const gelsNeeded = Math.ceil(runShort / 25);
+      out.push({
+        cls: 'warning-yellow',
+        msg: `&#9888; Run is <strong>${fmt(runShort,0)} g short of CHO target</strong> (${fmt(runAct,0)} / ${fmt(runTgt,0)} g). Add ~${gelsNeeded} more run gels (or switch a flask / aid-station cup to a higher-CHO drink). Run gut tolerance is fragile &mdash; if the gap is large, also consider pre-loading more on the bike to reduce run intake demand.`
+      });
+    }
+
+    if (out.length) {
+      wDiv.insertAdjacentHTML('beforeend',
+        out.map(x => `<div class="warning ${x.cls}">${x.msg}</div>`).join(''));
+    }
+  }
+
   function renderPrerace(){
     const pe=$('prerace');if(!pe)return;
     const w=+$('weight').value||72;
@@ -1511,6 +1547,11 @@
 
     const raceAct=add(swimTot, add(bikeLegTot, runLegTot));
     addRow(tb,runStart+runMin+1,'seg-green','Race Total',{cho:`${fmt(raceAct.cho,0)} / ${fmt(bPC+rPC,0)}`,kcal:raceAct.kcal,fluid:`${fmt(raceAct.fluid,0)} / ${fmt(bPM+rPM,0)}`,na:`${fmt(raceAct.na,0)} / ${fmt(bPN+rPN,0)}`,k:raceAct.k,caf:raceAct.caf},'','race-total');
+
+    // Deficit warnings — append after leg totals are computed so the user
+    // sees in plain text exactly how short bike / run are vs. target
+    // and what to add to close the gap.
+    appendDeficitWarnings(bikeLegTot.cho, bPC, runLegTot.cho, rPC);
 
     renderPrerace();
     renderGlycogen(t,{t0:t0Add, t1:t1Add, t2:t2Add},bikeTot,runTot,ath);
