@@ -1087,23 +1087,30 @@
     pf60:{name:"PF 60 Gel",cho:60,kcal:240,na:100,k:0,caf:0,fluid:0,kind:"gel"},
     pf60_caf:{name:"PF 60 Caffeine",cho:60,kcal:240,na:100,k:0,caf:100,fluid:0,kind:"gel"},
     pf90:{name:"PF 90 Gel",cho:90,kcal:360,na:110,k:0,caf:0,fluid:0,kind:"gel"},
-    ns_c30:{name:"Neversecond C30 gel",cho:30,kcal:120,na:40,k:0,caf:0,fluid:0,kind:"gel"},
-    ns_c30_caf:{name:"Neversecond C30 Caffeine gel",cho:30,kcal:120,na:40,k:0,caf:75,fluid:0,kind:"gel"},
-    ns_c90:{name:"Neversecond C90 gel (mega)",cho:90,kcal:360,na:0,k:0,caf:0,fluid:0,kind:"gel"},
-    // Neversecond Sports Drink Mix — single sachet dissolved in bottle
-    ns_mix_c30_500:{name:"Neversecond Mix C30 (500 ml)",cho:30,kcal:120,na:250,k:0,caf:0,fluid:500,kind:"drink"},
-    ns_mix_c30_650:{name:"Neversecond Mix C30 (650 ml)",cho:30,kcal:120,na:250,k:0,caf:0,fluid:650,kind:"drink"},
-    ns_mix_c30_750:{name:"Neversecond Mix C30 (750 ml)",cho:30,kcal:120,na:250,k:0,caf:0,fluid:750,kind:"drink"},
-    // Neversecond Mix C90 — sachet is CHO + Na (~660 mg Na, that's its
-    // differentiator vs. C30). Bug fix (A.3): was 100 mg; corrected to
-    // 660 mg per sachet (same on all bottle sizes — only dilution differs).
-    ns_mix_c90_500:{name:"Neversecond Mix C90 (500 ml)",cho:90,kcal:360,na:660,k:0,caf:0,fluid:500,kind:"drink"},
-    ns_mix_c90_650:{name:"Neversecond Mix C90 (650 ml)",cho:90,kcal:360,na:660,k:0,caf:0,fluid:650,kind:"drink"},
-    ns_mix_c90_750:{name:"Neversecond Mix C90 (750 ml)",cho:90,kcal:360,na:660,k:0,caf:0,fluid:750,kind:"drink"},
-    // Neversecond Energy Bar (solid)
-    ns_bar_c40:{name:"Neversecond Energy Bar C40",cho:40,kcal:200,na:100,k:0,caf:0,fluid:0,kind:"solid"},
-    // Neversecond Hydro Mineral electrolyte tab
-    ns_hydro_tab:{name:"Neversecond Hydro Mineral tab",cho:0,kcal:0,na:750,k:0,caf:0,fluid:0,kind:"tablet"},
+    // Neversecond — values verified against neversecond.com label panels
+    // (May 2026). Their C-series formula is uniform: ~200 mg Na per 30 g
+    // of carbohydrate, applied to gels, sports drink mix, and C90 mix.
+    ns_c30:{name:"Neversecond C30 gel",cho:30,kcal:120,na:200,k:0,caf:0,fluid:0,kind:"gel"},
+    ns_c30_caf:{name:"Neversecond C30 Caffeine gel",cho:30,kcal:120,na:200,k:0,caf:75,fluid:0,kind:"gel"},
+    // (No Neversecond C90 gel — C90 only exists as a drink mix.)
+    // Neversecond Sports Drink Mix — single sachet dissolved in bottle.
+    // Label: 200 mg Na per 30 g CHO sachet.
+    ns_mix_c30_500:{name:"Neversecond Mix C30 (500 ml)",cho:30,kcal:120,na:200,k:0,caf:0,fluid:500,kind:"drink"},
+    ns_mix_c30_650:{name:"Neversecond Mix C30 (650 ml)",cho:30,kcal:120,na:200,k:0,caf:0,fluid:650,kind:"drink"},
+    ns_mix_c30_750:{name:"Neversecond Mix C30 (750 ml)",cho:30,kcal:120,na:200,k:0,caf:0,fluid:750,kind:"drink"},
+    // Neversecond Mix C90 — 94 g sachet, label panel: 90 g CHO, 360 kcal,
+    // 200 mg Na (same Na as the C30 sachet — uniform 200 mg per 30 g CHO
+    // does NOT scale up). Hub-checklist 660 mg figure was misinformation.
+    ns_mix_c90_500:{name:"Neversecond Mix C90 (500 ml)",cho:90,kcal:360,na:200,k:0,caf:0,fluid:500,kind:"drink"},
+    ns_mix_c90_650:{name:"Neversecond Mix C90 (650 ml)",cho:90,kcal:360,na:200,k:0,caf:0,fluid:650,kind:"drink"},
+    ns_mix_c90_750:{name:"Neversecond Mix C90 (750 ml)",cho:90,kcal:360,na:200,k:0,caf:0,fluid:750,kind:"drink"},
+    // Neversecond C30 Fuel Bar — actual product (no "C40" SKU exists).
+    // Label: 30 g CHO, 180 kcal, 30 mg Na, 5 g fat, 3 g protein.
+    ns_bar_c30:{name:"Neversecond C30 Fuel Bar",cho:30,kcal:180,na:30,k:0,caf:0,fluid:0,kind:"solid"},
+    // Neversecond S200 Sodium Booster — LIQUID sodium additive (not a
+    // tablet). 200 mg Na per capful. Functionally fills the "salt tab"
+    // role for athletes building plans on Neversecond's C-series mix.
+    ns_s200:{name:"Neversecond S200 Sodium Booster (capful)",cho:0,kcal:0,na:200,k:0,caf:0,fluid:0,kind:"tablet"},
     maurten160:{name:"Maurten Gel 160",cho:40,kcal:160,na:0,k:0,caf:0,fluid:0,kind:"gel"},
     maurten_solid160:{name:"Maurten SOLID 160",cho:44,kcal:230,na:0,k:0,caf:0,fluid:0,kind:"solid"},
     maurten_solid225:{name:"Maurten SOLID 225",cho:43,kcal:225,na:0,k:0,caf:100,fluid:0,kind:"solid"},
@@ -1142,7 +1149,7 @@
     gelsAndSolids: Object.keys(P).filter(k=>P[k].kind==='gel').concat([
       'clif_bar','nature_valley','coffee_cup',
       'maurten_solid160','maurten_solid225',
-      'ns_bar_c40',
+      'ns_bar_c30',
       'banana_half','banana_whole','orange_slice','pretzels_30g','cookie_im','rice_cake_small',
     ]),
     tablets: Object.keys(P).filter(k=>P[k].kind==='tablet')
