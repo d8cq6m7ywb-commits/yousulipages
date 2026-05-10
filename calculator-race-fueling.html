@@ -548,8 +548,16 @@
                   <label>Starting glycogen (g) <span class="tip" tabindex="0">&#9432;<span class="tip-text">Estimated glycogen stores after carb loading. Default = weight &times; 7g (well carb-loaded). Range: 5&ndash;10 g/kg depending on loading protocol.</span></span></label>
                   <input id="startGlycogen" type="number" value="504" step="10">
                 </div>
+                <div>
+                  <label>Bike CHO override (g/h) <span class="tip" tabindex="0">&#9432;<span class="tip-text">Leave empty to use the auto-computed bike target from race duration. Set a value if the athlete has trained their gut to a specific intake (e.g. 100 g/h).</span></span></label>
+                  <input id="bikeChoOverride" type="number" min="20" max="160" step="5" placeholder="auto">
+                </div>
+                <div>
+                  <label>Run CHO override (g/h) <span class="tip" tabindex="0">&#9432;<span class="tip-text">Leave empty to use the auto-computed run target (default = bike target &times; run factor, typically 75%). Override if the athlete has trained their run gut higher.</span></span></label>
+                  <input id="runChoOverride" type="number" min="20" max="120" step="5" placeholder="auto">
+                </div>
               </div>
-              <div class="muted">CHO targets based on total race duration. Run discount reflects reduced GI tolerance. Glycogen default = weight &times; 7.</div>
+              <div class="muted">CHO targets based on total race duration. Run discount reflects reduced GI tolerance. Glycogen default = weight &times; 7. Overrides bypass the auto-computation per leg.</div>
             </div>
 
             <!-- ═══ HYDRATION ═══ -->
@@ -1022,12 +1030,15 @@
     gatorade500:{name:"Gatorade 500 ml",cho:30,kcal:120,na:300,k:90,caf:0,fluid:500,kind:"drink"},
     gatorade650:{name:"Gatorade 650 ml",cho:39,kcal:156,na:390,k:117,caf:0,fluid:650,kind:"drink"},
     gatorade750:{name:"Gatorade 750 ml",cho:45,kcal:180,na:450,k:135,caf:0,fluid:750,kind:"drink"},
-    mortal150:{name:"Mortal 150 ml",cho:7.5,kcal:30,na:150,k:0,caf:0,fluid:150,kind:"drink"},
-    mortal250:{name:"Mortal 250 ml",cho:12.5,kcal:50,na:250,k:0,caf:0,fluid:250,kind:"drink"},
-    mortal350:{name:"Mortal 350 ml",cho:17.5,kcal:70,na:350,k:0,caf:0,fluid:350,kind:"drink"},
-    mortal500:{name:"Mortal 500 ml",cho:25,kcal:100,na:500,k:0,caf:0,fluid:500,kind:"drink"},
-    mortal650:{name:"Mortal 650 ml",cho:32.5,kcal:130,na:650,k:0,caf:0,fluid:650,kind:"drink"},
-    mortal750:{name:"Mortal 750 ml",cho:37.5,kcal:150,na:750,k:0,caf:0,fluid:750,kind:"drink"},
+    // Mortal Hydration — high-sodium, ZERO carbs. Flagship mix ≈ 2900 mg Na/L.
+    // Bug fix (A.1): was modelled as 5% CHO drink — corrected to 0 CHO,
+    // sodium = bottle_ml × 2.9. Verify against current packaging.
+    mortal150:{name:"Mortal 150 ml",cho:0,kcal:0,na:435,k:0,caf:0,fluid:150,kind:"drink"},
+    mortal250:{name:"Mortal 250 ml",cho:0,kcal:0,na:725,k:0,caf:0,fluid:250,kind:"drink"},
+    mortal350:{name:"Mortal 350 ml",cho:0,kcal:0,na:1015,k:0,caf:0,fluid:350,kind:"drink"},
+    mortal500:{name:"Mortal 500 ml",cho:0,kcal:0,na:1450,k:0,caf:0,fluid:500,kind:"drink"},
+    mortal650:{name:"Mortal 650 ml",cho:0,kcal:0,na:1885,k:0,caf:0,fluid:650,kind:"drink"},
+    mortal750:{name:"Mortal 750 ml",cho:0,kcal:0,na:2175,k:0,caf:0,fluid:750,kind:"drink"},
     cho8_150:{name:"CHO 8% 150 ml",cho:12,kcal:48,na:0,k:0,caf:0,fluid:150,kind:"drink"},
     cho10_150:{name:"CHO 10% 150 ml",cho:15,kcal:60,na:0,k:0,caf:0,fluid:150,kind:"drink"},
     cho14_150:{name:"CHO 14% 150 ml",cho:21,kcal:84,na:0,k:0,caf:0,fluid:150,kind:"drink"},
@@ -1068,8 +1079,14 @@
     sis_gel:{name:"SiS GO Isotonic",cho:22,kcal:87,na:40,k:0,caf:0,fluid:0,kind:"gel"},
     sis_caf:{name:"SiS GO Caffeine",cho:22,kcal:87,na:40,k:0,caf:75,fluid:0,kind:"gel"},
     sis_beta:{name:"SiS Beta Fuel",cho:40,kcal:160,na:30,k:0,caf:0,fluid:0,kind:"gel"},
-    pf30:{name:"PF 30 Gel",cho:30,kcal:120,na:0,k:0,caf:0,fluid:0,kind:"gel"},
-    pf30_caf:{name:"PF 30 Caffeine",cho:30,kcal:120,na:0,k:0,caf:100,fluid:0,kind:"gel"},
+    // Precision Fuel — gels are CHO + Na dual-purpose. Bug fix (A.2):
+    // PF 30 sodium was 0, corrected to 50 mg. PF 60 / 90 added — common
+    // for IM athletes targeting 60–90 g/h.
+    pf30:{name:"PF 30 Gel",cho:30,kcal:120,na:50,k:0,caf:0,fluid:0,kind:"gel"},
+    pf30_caf:{name:"PF 30 Caffeine",cho:30,kcal:120,na:50,k:0,caf:100,fluid:0,kind:"gel"},
+    pf60:{name:"PF 60 Gel",cho:60,kcal:240,na:100,k:0,caf:0,fluid:0,kind:"gel"},
+    pf60_caf:{name:"PF 60 Caffeine",cho:60,kcal:240,na:100,k:0,caf:100,fluid:0,kind:"gel"},
+    pf90:{name:"PF 90 Gel",cho:90,kcal:360,na:110,k:0,caf:0,fluid:0,kind:"gel"},
     ns_c30:{name:"Neversecond C30 gel",cho:30,kcal:120,na:40,k:0,caf:0,fluid:0,kind:"gel"},
     ns_c30_caf:{name:"Neversecond C30 Caffeine gel",cho:30,kcal:120,na:40,k:0,caf:75,fluid:0,kind:"gel"},
     ns_c90:{name:"Neversecond C90 gel (mega)",cho:90,kcal:360,na:0,k:0,caf:0,fluid:0,kind:"gel"},
@@ -1077,9 +1094,12 @@
     ns_mix_c30_500:{name:"Neversecond Mix C30 (500 ml)",cho:30,kcal:120,na:250,k:0,caf:0,fluid:500,kind:"drink"},
     ns_mix_c30_650:{name:"Neversecond Mix C30 (650 ml)",cho:30,kcal:120,na:250,k:0,caf:0,fluid:650,kind:"drink"},
     ns_mix_c30_750:{name:"Neversecond Mix C30 (750 ml)",cho:30,kcal:120,na:250,k:0,caf:0,fluid:750,kind:"drink"},
-    ns_mix_c90_500:{name:"Neversecond Mix C90 (500 ml)",cho:90,kcal:360,na:100,k:0,caf:0,fluid:500,kind:"drink"},
-    ns_mix_c90_650:{name:"Neversecond Mix C90 (650 ml)",cho:90,kcal:360,na:100,k:0,caf:0,fluid:650,kind:"drink"},
-    ns_mix_c90_750:{name:"Neversecond Mix C90 (750 ml)",cho:90,kcal:360,na:100,k:0,caf:0,fluid:750,kind:"drink"},
+    // Neversecond Mix C90 — sachet is CHO + Na (~660 mg Na, that's its
+    // differentiator vs. C30). Bug fix (A.3): was 100 mg; corrected to
+    // 660 mg per sachet (same on all bottle sizes — only dilution differs).
+    ns_mix_c90_500:{name:"Neversecond Mix C90 (500 ml)",cho:90,kcal:360,na:660,k:0,caf:0,fluid:500,kind:"drink"},
+    ns_mix_c90_650:{name:"Neversecond Mix C90 (650 ml)",cho:90,kcal:360,na:660,k:0,caf:0,fluid:650,kind:"drink"},
+    ns_mix_c90_750:{name:"Neversecond Mix C90 (750 ml)",cho:90,kcal:360,na:660,k:0,caf:0,fluid:750,kind:"drink"},
     // Neversecond Energy Bar (solid)
     ns_bar_c40:{name:"Neversecond Energy Bar C40",cho:40,kcal:200,na:100,k:0,caf:0,fluid:0,kind:"solid"},
     // Neversecond Hydro Mineral electrolyte tab
@@ -1248,8 +1268,13 @@
   /* ── TARGETS COMPUTATION ──────────────────────────────────────── */
   function computeTargets(race,ath,hyd){
     const baseCHO=carbPerHour(race.fuelMode,race.totalMin);
-    const choBikeHr=baseCHO;
-    const choRunHr=Math.round(baseCHO*race.runCHOFactor);
+    // Manual per-leg CHO overrides (B.1): empty input → fall back to
+    // auto. Coach can pin bike to e.g. 100 g/h once gut tolerance is
+    // verified, decoupling from the race-distance default.
+    const bikeOverride = parseFloat($('bikeChoOverride')?.value);
+    const runOverride  = parseFloat($('runChoOverride')?.value);
+    const choBikeHr = Number.isFinite(bikeOverride) && bikeOverride > 0 ? bikeOverride : baseCHO;
+    const choRunHr  = Number.isFinite(runOverride)  && runOverride  > 0 ? runOverride  : Math.round(baseCHO*race.runCHOFactor);
     const intakeBikeL=hyd.bikeReplace*ath.sweatBike;
     let intakeRunL;
     if(hyd.runReplaceRaw==='auto'){const loss=0.02*ath.weight;const rh=Math.max(0.1,race.runMin/60);intakeRunL=Math.max(0,ath.sweatRun-loss/rh);}
@@ -1276,7 +1301,7 @@
       <div class="stat"><h4>Expected burn</h4><p>Swim ${b.swim} • Bike ${b.bike} • Run ${b.run}</p><p><strong>Total: ${b.swim+b.bike+b.run} kcal</strong></p></div>
       <div class="stat"><h4>Carbohydrates</h4><p>Bike ${t.choBikeHr} g/h • Run ${t.choRunHr} g/h</p><p><strong>Total target: ${choT} g</strong></p></div>
       <div class="stat"><h4>Hydration &amp; sodium</h4><p>Bike ${fmt(t.bikeMLhr)} ml/h • Na ~${Math.round(t.bikeNaHr)} mg/h</p><p>Run ${fmt(t.runMLhr)} ml/h • Na ~${Math.round(t.runNaHr)} mg/h</p></div>
-      <div class="stat"><h4>Projected BW change</h4><p>Sweat loss: ~${fmt(t.totalSweatL,1)} L</p><p style="${bwCls};font-weight:700">${fmt(t.bwLossKg,1)} kg (${fmt(t.bwLossPct,1)}%)</p></div>
+      <div class="stat"><h4>Projected BW change</h4><p>Sweat loss: ~${fmt(t.totalSweatL,1)} L</p><p style="${bwCls};font-weight:700">${fmt(Math.abs(t.bwLossKg),1)} kg ${t.bwLossKg>=0?'loss':'gain'} (${fmt(Math.abs(t.bwLossPct),1)}%)</p></div>
     </div>`;
   }
 
@@ -1289,8 +1314,16 @@
     const maxFluid=Math.max(t.bikeMLhr,t.runMLhr);
     if(maxFluid>1200)w.push({cls:'warning-red',msg:`Fluid target ${fmt(maxFluid)} ml/h is very high. Risk of GI distress or hyponatremia. Consider reducing.`});
     else if(maxFluid>1000)w.push({cls:'warning-yellow',msg:`Fluid target ${fmt(maxFluid)} ml/h is high. Monitor tolerance carefully.`});
-    if(Math.abs(t.bwLossPct)>3.5)w.push({cls:'warning-red',msg:`Projected BW loss ${fmt(t.bwLossPct,1)}% exceeds safe threshold (>3.5%). Increase fluid intake or reduce sweat rate expectations.`});
-    else if(Math.abs(t.bwLossPct)>2.5)w.push({cls:'warning-yellow',msg:`Projected BW loss ${fmt(t.bwLossPct,1)}% is borderline. Target <2% for optimal performance.`});
+    // BW: separate handling for loss (positive bwLossKg) vs gain
+    // (negative bwLossKg = over-drinking). Gain > 1 kg flags
+    // potential hyponatremia risk (B.2).
+    if(t.bwLossKg < -1){
+      w.push({cls:'warning-yellow',msg:`Projected fluid gain of ${fmt(Math.abs(t.bwLossKg),1)} kg (${fmt(Math.abs(t.bwLossPct),1)}% BW) &mdash; intake exceeds sweat loss. Hyponatremia risk, especially with low-sodium fluids. Reduce fluid intake or shift toward higher-sodium products (PH 1000 / 1500, Mortal Mix, salt tabs).`});
+    } else if(t.bwLossPct>3.5){
+      w.push({cls:'warning-red',msg:`Projected BW loss ${fmt(t.bwLossPct,1)}% exceeds safe threshold (&gt;3.5%). Increase fluid intake or reduce sweat rate expectations.`});
+    } else if(t.bwLossPct>2.5){
+      w.push({cls:'warning-yellow',msg:`Projected BW loss ${fmt(t.bwLossPct,1)}% is borderline. Target &lt;2% for optimal performance.`});
+    }
     $('warnings').innerHTML=w.map(x=>`<div class="warning ${x.cls}">${x.msg}</div>`).join('');
   }
 
@@ -1328,6 +1361,32 @@
       wDiv.insertAdjacentHTML('beforeend',
         out.map(x => `<div class="warning ${x.cls}">${x.msg}</div>`).join(''));
     }
+  }
+
+  /* Per-hour CHO gap warning (B.3) — catches the case where the leg
+     total *looks* on-target but one or two hours quietly drop below
+     intake demand (e.g. an all-Mortal bike hour with no gels). Surface
+     hours where actual CHO < 85% of target AND the absolute gap is
+     >= 10 g so the coach can patch the offending hour specifically. */
+  function appendHourlyDeficitWarnings(hourlyData){
+    const wDiv = $('warnings'); if(!wDiv) return;
+    if(!Array.isArray(hourlyData) || !hourlyData.length) return;
+    const bad = [];
+    hourlyData.forEach(h => {
+      const tgt = h.choT || 0;
+      if (tgt <= 0) return;
+      const act = h.cho || 0;
+      const pct = act / tgt;
+      const gap = tgt - act;
+      if (pct < 0.85 && gap >= 10) bad.push({label: h.label, act, tgt, pct, gap});
+    });
+    if (!bad.length) return;
+    const rows = bad.map(b =>
+      `<div style="margin-left:1em;">&bull; <strong>${b.label}</strong>: ${fmt(b.act,0)} / ${fmt(b.tgt,0)} g (${fmt(b.pct*100,0)}%) &mdash; ${fmt(b.gap,0)} g short</div>`
+    ).join('');
+    wDiv.insertAdjacentHTML('beforeend',
+      `<div class="warning warning-yellow">&#9888; <strong>Per-hour CHO gap</strong> (target &lt; 85%):${rows}<div style="margin-top:6px;font-style:italic;">Add a gel (or swap a bottle for a higher-CHO mix) in each flagged hour.</div></div>`
+    );
   }
 
   function renderPrerace(){
@@ -1552,6 +1611,7 @@
     // sees in plain text exactly how short bike / run are vs. target
     // and what to add to close the gap.
     appendDeficitWarnings(bikeLegTot.cho, bPC, runLegTot.cho, rPC);
+    appendHourlyDeficitWarnings(hourlyData);
 
     renderPrerace();
     renderGlycogen(t,{t0:t0Add, t1:t1Add, t2:t2Add},bikeTot,runTot,ath);
@@ -1610,9 +1670,20 @@
   function renderGlycogen(t,trans,bikeTot,runTot,ath){
     const card=$('glycogenCard');card.style.display='';
     const start=+$('startGlycogen').value||(ath.weight*7);
+    // Race-pace (~Z3) CHO fractions of total energy burn:
+    //   swim 70%  bike 65%  run 75%   (divide by 4 to get grams of CHO)
+    // These reflect a hard-paced race effort; the trajectory should be
+    // read as a worst-case substrate cost.
     const swimBurn=t.burns.swim*0.70/4;
     const bikeBurn=t.burns.bike*0.65/4;
     const runBurn=t.burns.run*0.75/4;
+    // Z2 alternate substrate split (B.4) — typical IM target intensity.
+    // CHO:fat ≈ 1:1 ⇒ ~half the CHO burn. Surfacing this lets coaches
+    // see the lower bound rather than treating the Z3 bar as a hard
+    // prediction.
+    const swimBurnZ2=t.burns.swim*0.35/4;
+    const bikeBurnZ2=t.burns.bike*0.32/4;
+    const runBurnZ2 =t.burns.run *0.38/4;
     const t0cho = trans && trans.t0 ? (trans.t0.cho || 0)
                 : (trans && typeof trans.cho === 'number' ? trans.cho : 0);
     const t1cho = trans && trans.t1 ? (trans.t1.cho || 0) : 0;
@@ -1625,6 +1696,9 @@
       {label:'Start run (+T2)',             val: start + t0cho - swimBurn + t1cho + bikeTot.cho - bikeBurn + t2cho},
       {label:'Finish',                      val: start + t0cho - swimBurn + t1cho + bikeTot.cho - bikeBurn + t2cho + runTot.cho - runBurn},
     ];
+    const finishZ2 = start + t0cho - swimBurnZ2 + t1cho + bikeTot.cho - bikeBurnZ2 + t2cho + runTot.cho - runBurnZ2;
+    const finishRace = pts[pts.length-1].val;
+    const z2Delta = finishZ2 - finishRace;
     const mx=pts[0].val;
     let h='';
     pts.forEach(p=>{
@@ -1632,6 +1706,30 @@
       const color=pct>50?'#22c55e':pct>25?'#eab308':'#ef4444';
       h+=`<div class="glycogen-row"><span class="glycogen-label">${p.label}</span><div class="glycogen-bar"><div class="glycogen-fill" style="width:${pct}%;background:${color}">${Math.round(p.val)}g</div></div></div>`;
     });
+    // Z2 alternate finish bar (B.4) — only show if it's materially
+    // different from the race-pace finish (> 5 g) so we don't add a
+    // redundant row when the durations are tiny.
+    if (Math.abs(z2Delta) > 5) {
+      const pctZ2 = Math.max(0, Math.min(100, (finishZ2 / mx) * 100));
+      const colorZ2 = pctZ2>50?'#22c55e':pctZ2>25?'#eab308':'#ef4444';
+      h += `<div class="glycogen-row" style="border-top:1px dashed var(--ys-line);padding-top:6px;margin-top:8px;">
+              <span class="glycogen-label" style="font-style:italic;">Finish (Z2 pace)</span>
+              <div class="glycogen-bar" style="border:1px dashed ${colorZ2};background:transparent;">
+                <div class="glycogen-fill" style="width:${pctZ2}%;background:${colorZ2};opacity:0.7;">${Math.round(finishZ2)}g</div>
+              </div>
+            </div>`;
+    }
+    // Substrate-assumption note (B.4)
+    h += `<div style="margin-top:14px;padding:10px 14px;background:#f0f9ff;border-left:4px solid #0284c7;font-size:0.86rem;color:#0c4a6e;border-radius:0 6px 6px 0;-webkit-print-color-adjust:exact;print-color-adjust:exact;">
+            <strong style="color:#0284c7;">Substrate assumption.</strong>
+            The main trajectory uses race-pace CHO fractions (swim 70% / bike 65% / run 75%) &mdash; close to ~Z3 effort. At Z2 (typical IM target), the CHO:fat split is closer to 1:1, roughly halving CHO burn.
+            <br/>
+            <strong>Race-pace finish:</strong> ${Math.round(finishRace)} g &middot;
+            <strong>Z2 finish:</strong> ${Math.round(finishZ2)} g &middot;
+            <strong>Delta:</strong> ${z2Delta >= 0 ? '+' : ''}${Math.round(z2Delta)} g
+            <br/>
+            <em>Treat the main bars as worst-case; if you race at true Z2 you have more headroom.</em>
+          </div>`;
     $('glycogenChart').innerHTML=h;
   }
 
@@ -1955,7 +2053,7 @@
     h+=scItem('CHO',sc.choAct,sc.choTgt,'g');
     h+=scItem('Fluid',sc.fluidAct,sc.fluidTgt,'ml');
     h+=scItem('Sodium',sc.naAct,sc.naTgt,'mg');
-    h+=`<div class="sc-item"><div class="sc-label">BW change</div><div class="sc-val" style="color:${bwColor}">${fmt(actBWL,1)} kg</div><div class="sc-sub">${fmt(actBWPct,1)}% body weight</div></div>`;
+    h+=`<div class="sc-item"><div class="sc-label">BW change</div><div class="sc-val" style="color:${bwColor}">${fmt(Math.abs(actBWL),1)} kg ${actBWL>=0?'loss':'gain'}</div><div class="sc-sub">${fmt(Math.abs(actBWPct),1)}% body weight</div></div>`;
     h+=`<div class="sc-item"><div class="sc-label">Caffeine</div><div class="sc-val" style="color:${cafColor}">${fmt(sc.cafTotal,0)} mg</div><div class="sc-sub">${fmt(cafMgKg,1)} mg/kg</div></div>`;
     h+=`</div>`;
     $('scorecard').innerHTML=h;
@@ -2034,7 +2132,7 @@
   }
 
   /* ── EVENT WIRING ─────────────────────────────────────────────── */
-  ['height','weight','sweatBike','sweatRun','sweatNa','raceDistance','raceStart','swimMin','bikeMin','runMin','bikeW','fuelMode','runCHOFactor','cafStrategy','bikeReplace','runReplace','bikeAidKm','runAidKm','startGlycogen','t1Time','t2Time']
+  ['height','weight','sweatBike','sweatRun','sweatNa','raceDistance','raceStart','swimMin','bikeMin','runMin','bikeW','fuelMode','runCHOFactor','cafStrategy','bikeReplace','runReplace','bikeAidKm','runAidKm','startGlycogen','bikeChoOverride','runChoOverride','t1Time','t2Time']
     .forEach(id=>{const e=$(id);if(e){e.addEventListener('input',updateLive);e.addEventListener('change',updateLive);}});
 
   $('sweatType').addEventListener('change',function(){$('sweatNa').value=this.value;updateLive();});
