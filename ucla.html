@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UCLA Triathlon — summer playbook with Coach Fred</title>
+  <meta name="description" content="UCLA Triathlon Team summer training playbook from Coach Fred: weekly minimums, off-season strength, fueling to avoid RED-S, the 20 high-efficiency levers free course, calculator companions, TrainingPeaks coach attach, and Yousuli hub access." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <style>
+    /* Subtle UCLA accent (Bruin blue + gold) — kept light, doesn't fight Yousuli navy/coral */
+    :root {
+      --ucla-blue: #2774AE;
+      --ucla-gold: #FFD100;
+    }
+    .ucla-stripe {
+      display: flex; height: 6px; width: 100%;
+      background: linear-gradient(to right, var(--ucla-blue) 0%, var(--ucla-blue) 50%, var(--ucla-gold) 50%, var(--ucla-gold) 100%);
+    }
+    .ucla-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: var(--ucla-blue); color: #fff;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      border-radius: 999px;
+      box-shadow: 0 2px 6px rgba(39, 116, 174, 0.32);
+    }
+    .ucla-badge.gold { background: var(--ucla-gold); color: var(--ys-navy); box-shadow: 0 2px 6px rgba(255, 209, 0, 0.45); }
+
+    /* Video placeholder cards */
+    .video-ph {
+      aspect-ratio: 16 / 9;
+      background:
+        linear-gradient(135deg, rgba(47,45,86,0.92), rgba(47,45,86,0.78)),
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="120"><circle cx="100" cy="60" r="32" fill="rgba(250,119,60,0.16)"/></svg>');
+      background-size: cover;
+      background-position: center;
+      border-radius: 12px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: #fff;
+      text-align: center;
+      padding: 18px;
+      position: relative;
+      border: 1px dashed rgba(255,255,255,0.18);
+    }
+    .video-ph::before {
+      content: '▶';
+      display: block;
+      font-size: 2.4rem;
+      color: var(--wf-coral);
+      margin-bottom: 8px;
+      filter: drop-shadow(0 2px 8px rgba(250, 119, 60, 0.6));
+    }
+    .video-ph .ph-eyebrow {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      color: var(--wf-coral);
+      margin-bottom: 6px;
+    }
+    .video-ph h4 {
+      font-family: var(--ys-font-display);
+      font-size: 1rem;
+      letter-spacing: 0.04em;
+      margin: 0 0 4px;
+      color: #fff;
+    }
+    .video-ph .ph-note {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.6);
+      font-style: italic;
+      margin: 0;
+    }
+
+    /* Tight-rule callouts — strength / fueling / etc. */
+    .ucla-callout {
+      padding: 18px 22px;
+      border-left: 4px solid var(--wf-coral);
+      background: var(--ys-bg-soft);
+      border-radius: 0 10px 10px 0;
+      margin: 14px 0;
+    }
+    .ucla-callout.blue { border-left-color: var(--ucla-blue); }
+    .ucla-callout.gold { border-left-color: var(--ucla-gold); }
+    .ucla-callout-tag {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      color: var(--wf-coral);
+      margin-bottom: 6px;
+    }
+    .ucla-callout.blue .ucla-callout-tag { color: var(--ucla-blue); }
+    .ucla-callout.gold .ucla-callout-tag { color: #8a6f00; }
+
+    /* Inline "lever" mini-pill */
+    .lever {
+      display: inline-block;
+      padding: 2px 9px;
+      background: rgba(250, 119, 60, 0.14);
+      color: var(--wf-coral);
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin: 0 2px;
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Programs</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- UCLA accent stripe right under the header -->
+  <div class="ucla-stripe" aria-hidden="true"></div>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero">
+    <div class="ys-container">
+      <span class="wf-eyebrow"><span class="ucla-badge">UCLA Triathlon</span> &nbsp; Summer 2026 playbook</span>
+      <h1>Welcome to the squad.</h1>
+      <div class="wf-subhead">Off-season groundwork &middot; in-season speed &middot; less guessing</div>
+      <p class="lede">Hi, I&rsquo;m Coach Fred. As the new coach for the UCLA Triathlon roster, my job this summer is simple: get you stronger, more efficient, and more durable before the fall season starts &mdash; without burning you out or wrecking your finals brain. This page is your summer playbook. Bookmark it, share it, argue with it. Below: the framework, the weekly minimums, the off-season strength work that actually matters, and how not to wreck yourself with under-fueling. <strong style="color:#fff;">Plus a free course that&rsquo;s the single fastest way to level up.</strong></p>
+      <div class="ys-btn-row">
+        <a class="ys-btn ys-btn-coral" href="#course">The 20 levers (free course) &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#weekly">Weekly minimums</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STICKY QUICK-NAV ============ -->
+  <nav class="ys-quicknav" aria-label="Section navigation">
+    <div class="ys-container ys-quicknav-row">
+      <span class="ys-quicknav-label">Jump to</span>
+      <a href="#course">Free course</a>
+      <a href="#weekly">Weekly mins</a>
+      <a href="#strength">Strength</a>
+      <a href="#fueling">Fueling &amp; RED-S</a>
+      <a href="#calcs">Calculators</a>
+      <a href="#hub">Hub &amp; TP</a>
+      <a href="#faq">Q&amp;A</a>
+    </div>
+  </nav>
+
+  <!-- ============ FEATURED FREE COURSE ============ -->
+  <section class="wf-section" id="course" style="padding: 24px 0 28px;">
+    <div class="ys-container">
+      <a href="https://www.yousuli.co/challenge-page/42edf6c0-be10-4449-85bd-b62bbfb8b06e" target="_top"
+         style="display: block; text-decoration: none; color: inherit;
+                background: linear-gradient(135deg, var(--ys-navy) 0%, #3d3a6e 100%);
+                border-radius: 14px;
+                padding: 32px 28px;
+                position: relative;
+                overflow: hidden;
+                box-shadow: 0 8px 28px rgba(47, 45, 86, 0.18);
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+                border: 2px solid var(--wf-coral);"
+         onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 14px 36px rgba(47,45,86,0.28)';"
+         onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 8px 28px rgba(47,45,86,0.18)';">
+
+        <div aria-hidden="true" style="position: absolute; top: -40%; right: -8%; width: 280px; height: 280px;
+                                       background: radial-gradient(circle, rgba(250, 119, 60, 0.32), transparent 65%);
+                                       pointer-events: none;"></div>
+
+        <div style="display: grid; grid-template-columns: 1fr auto; gap: 22px; align-items: center; position: relative;">
+          <div>
+            <div style="font-family: var(--ys-font-display); text-transform: uppercase; letter-spacing: 0.18em;
+                        font-size: 0.74rem; color: var(--wf-coral); margin-bottom: 10px;">
+              Start here &middot; free, ~2 hours of video
+            </div>
+            <h3 style="font-family: var(--ys-font-display); font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+                       color: #fff; margin: 0 0 8px; letter-spacing: 0.02em; line-height: 1.2;">
+              20 high-efficiency levers for triathletes.
+            </h3>
+            <p style="color: rgba(255,255,255,0.85); font-size: 0.96rem; margin: 0 0 4px; max-width: 640px;">
+              The shortcuts most age-group triathletes miss &mdash; pacing, fueling, aero, swim mechanics, run economy, recovery, gear setup. Each lever is small on its own. Stack them and you find 5&ndash;15 min over a half-IM without training more.
+            </p>
+            <p style="color: rgba(255,255,255,0.65); font-size: 0.86rem; margin: 6px 0 0;">
+              <strong style="color: var(--ucla-gold);">Required reading for the squad.</strong> Finish before our first fall meeting.
+            </p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
+            <span style="display: inline-flex; align-items: center; gap: 8px;
+                         background: var(--wf-coral); color: #fff;
+                         font-family: var(--ys-font-display); letter-spacing: 0.14em; text-transform: uppercase;
+                         font-size: 0.78rem; padding: 12px 22px; border-radius: 999px; white-space: nowrap;
+                         box-shadow: 0 4px 14px rgba(250, 119, 60, 0.4);">
+              Start the course &rarr;
+            </span>
+            <span style="font-size: 0.78rem; color: rgba(255,255,255,0.55); letter-spacing: 0.06em;">No credit card</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ SUMMER MISSION ============ -->
+  <section class="wf-section" id="mission">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What summer is actually for</h2>
+        <div class="ys-rule"></div>
+        <p>If you only read one section: this is it.</p>
+      </div>
+
+      <div class="ys-grid">
+        <article class="ys-card">
+          <div class="ys-meta">Goal 01</div>
+          <h3>Build a base that doesn&rsquo;t break</h3>
+          <p>The fall race calendar lands on you fast. Show up in September with a body that&rsquo;s ready to absorb hard training &mdash; not one that&rsquo;s already cracked from a spring of cramming. Volume here is moderate, consistency is everything.</p>
+        </article>
+
+        <article class="ys-card featured">
+          <div class="ys-meta">Goal 02</div>
+          <h3>Lift heavy. Yes, really.</h3>
+          <p>Off-season is when you build the strength that pays interest the rest of the year. Anatomical adaptation block, then hypertrophy. Not bodybuilding &mdash; just enough to make your tendons happy and your aerobic engine sit on a bigger chassis.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Goal 03</div>
+          <h3>Find your fueling baseline</h3>
+          <p>College athletes under-eat. We&rsquo;ll fix that in the summer when the stakes are low, not in October when they&rsquo;re high. RED-S is real, and the cost compounds.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WEEKLY MINIMUMS ============ -->
+  <section class="wf-section alt" id="weekly">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Weekly minimum standard</h2>
+        <div class="ys-rule"></div>
+        <p>The non-negotiable: <strong>1 swim + 1 bike + 1 run, every week, all summer.</strong> Anything beyond that is bonus.</p>
+      </div>
+
+      <div class="ucla-callout blue">
+        <div class="ucla-callout-tag">Why three sports, even when you&rsquo;re tired</div>
+        <p style="margin: 0;">If you drop a discipline for 6+ weeks, the sport-specific neural patterns and tissue tolerance fade fast &mdash; especially the swim. You&rsquo;ll spend the first 4 weeks of fall just rebuilding what you lost, instead of getting faster. One short session of each per week keeps the lights on.</p>
+      </div>
+
+      <div class="ys-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
+        <article class="ys-fit-card yes">
+          <h3>Swim &mdash; 1× / week minimum</h3>
+          <ul>
+            <li>Pool or open water, 30&ndash;60 min</li>
+            <li>Technique-first. Drills + steady aerobic</li>
+            <li>If only 1 swim/wk: keep it short &amp; clean (3 × 200 m smooth + drills)</li>
+          </ul>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>Bike &mdash; 1× / week minimum</h3>
+          <ul>
+            <li>One long aerobic ride OR an FTP-zone session</li>
+            <li>60&ndash;120 min is the sweet spot</li>
+            <li>Trainer counts. Group rides count more</li>
+          </ul>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>Run &mdash; 1× / week minimum</h3>
+          <ul>
+            <li>Easy aerobic, 30&ndash;60 min, zone 2</li>
+            <li>Add strides (6 &times; 20 s) at the end</li>
+            <li>Trail / grass over pavement when possible</li>
+          </ul>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>Strength &mdash; 2× / week ideal</h3>
+          <ul>
+            <li>One full-body lower, one upper-pull / core</li>
+            <li>30&ndash;45 min, compound lifts</li>
+            <li>Details below in the strength section</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="ucla-callout gold" style="margin-top: 22px;">
+        <div class="ucla-callout-tag">⚠ Exception &mdash; fast-fall points hunters</div>
+        <p style="margin: 0;"><strong>If you&rsquo;re targeting early-fall races for conference points</strong> (first 4&ndash;6 weeks of the season), the summer block needs more sport-specific volume, not less. Talk to me directly &mdash; we&rsquo;ll build something custom in TrainingPeaks. Default weekly minimum doesn&rsquo;t apply to you.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ VIDEO PLACEHOLDER ROW 1 ============ -->
+  <section class="wf-section" id="videos-1">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Walk-throughs &middot; how I actually run a week</h2>
+        <div class="ys-rule"></div>
+        <p>Short videos &mdash; recording these over the summer. Placeholders for now.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="video-ph">
+          <div class="ph-eyebrow">Video 01 &middot; ~6 min</div>
+          <h4>Reading a TrainingPeaks week</h4>
+          <p class="ph-note">Coming soon</p>
+        </div>
+        <div class="video-ph">
+          <div class="ph-eyebrow">Video 02 &middot; ~8 min</div>
+          <h4>How to plan around finals / midterms</h4>
+          <p class="ph-note">Coming soon</p>
+        </div>
+        <div class="video-ph">
+          <div class="ph-eyebrow">Video 03 &middot; ~5 min</div>
+          <h4>What &ldquo;easy&rdquo; actually means</h4>
+          <p class="ph-note">Coming soon</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STRENGTH IN THE OFF-SEASON ============ -->
+  <section class="wf-section alt" id="strength">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Strength training &mdash; the off-season superpower</h2>
+        <div class="ys-rule"></div>
+        <p>The single highest-ROI thing you&rsquo;re probably not doing enough of.</p>
+      </div>
+
+      <p style="max-width: 740px; margin: 0 auto 24px; font-size: 1.02rem;">
+        Cyclists, runners, triathletes &mdash; we have a habit of treating strength like a chore we&rsquo;ll &ldquo;get back to later.&rdquo; That&rsquo;s how you end up with chronic patella tendon issues at 21, a stress reaction at 22, and a back that complains every time you sit in the aero position. <strong>Summer is when we fix that.</strong>
+      </p>
+
+      <div class="ys-grid">
+        <article class="ys-card">
+          <div class="ys-meta">Phase 01 &middot; June &ndash; mid-July</div>
+          <h3>Anatomical adaptation (AA)</h3>
+          <p>4&ndash;6 weeks of high-rep, low-load work (12&ndash;20 reps, 2&ndash;3 sets). Goal: wake up tendons, ligaments, stabilisers, connective tissue. Movements include split squats, single-leg RDLs, push-ups, rows, Pallof presses, deadbugs.</p>
+          <p style="font-size: 0.88rem; color: var(--ys-muted); margin-top: 8px;"><strong>Why:</strong> tendons adapt 3&ndash;5&times; slower than muscle. Skipping AA = stress injuries when intensity ramps in August.</p>
+        </article>
+
+        <article class="ys-card featured">
+          <div class="ys-meta">Phase 02 &middot; mid-July &ndash; August</div>
+          <h3>Hypertrophy &amp; strength</h3>
+          <p>4&ndash;6 weeks of moderate-load work (6&ndash;10 reps, 3&ndash;4 sets). Goal: actual muscle mass + maximal strength. Movements include back squats, deadlifts, bench press, pull-ups, single-leg work, hip thrusts, weighted core.</p>
+          <p style="font-size: 0.88rem; color: var(--ys-muted); margin-top: 8px;"><strong>Yes, hypertrophy is the goal.</strong> The &ldquo;I&rsquo;ll get bulky&rdquo; fear is for people who don&rsquo;t run 25+ km/week. You won&rsquo;t. Trust me.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Phase 03 &middot; September onwards</div>
+          <h3>In-season maintenance</h3>
+          <p>Once racing starts: 1&ndash;2 short sessions/wk (20&ndash;30 min). Heavy but low volume, mostly to retain what you built. Stop dieting yourself out of the muscle you just gained.</p>
+        </article>
+      </div>
+
+      <div class="ucla-callout">
+        <div class="ucla-callout-tag">Sets, reps, and the rule that matters most</div>
+        <p style="margin: 0 0 8px;"><strong>Form &gt; load. Always.</strong> If your knees cave in on a squat or your back rounds on a deadlift, the strength you build is the strength to hurt yourself. Film one set from the side per session, send it in the WhatsApp group, get feedback.</p>
+        <p style="margin: 0; font-size: 0.92rem; color: var(--ys-muted);"><strong>UCLA Wooden Center weight room hours</strong> &mdash; check the rec sports schedule. Group sessions on Tuesdays/Thursdays once school starts.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ VIDEO PLACEHOLDER ROW 2 ============ -->
+  <section class="wf-section" id="videos-2">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Strength walk-throughs</h2>
+        <div class="ys-rule"></div>
+        <p>Form videos for the lifts that matter most. Placeholders for now &mdash; filming over summer.</p>
+      </div>
+
+      <div class="ys-grid">
+        <div class="video-ph">
+          <div class="ph-eyebrow">Video 04 &middot; ~4 min</div>
+          <h4>Single-leg RDL &middot; the most important movement</h4>
+          <p class="ph-note">Coming soon</p>
+        </div>
+        <div class="video-ph">
+          <div class="ph-eyebrow">Video 05 &middot; ~5 min</div>
+          <h4>Back squat technique for runners</h4>
+          <p class="ph-note">Coming soon</p>
+        </div>
+        <div class="video-ph">
+          <div class="ph-eyebrow">Video 06 &middot; ~4 min</div>
+          <h4>Core that actually transfers to bike/run</h4>
+          <p class="ph-note">Coming soon</p>
+        </div>
+        <div class="video-ph">
+          <div class="ph-eyebrow">Video 07 &middot; ~6 min</div>
+          <h4>20-min minimum strength session (dorm-room version)</h4>
+          <p class="ph-note">Coming soon</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FUELING & RED-S ============ -->
+  <section class="wf-section alt" id="fueling">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Fueling &mdash; eat enough, race ready</h2>
+        <div class="ys-rule"></div>
+        <p>RED-S (Relative Energy Deficiency in Sport) is the single biggest hidden problem in collegiate endurance athletes. Let&rsquo;s not be that statistic.</p>
+      </div>
+
+      <div class="ucla-callout blue">
+        <div class="ucla-callout-tag">What RED-S is &middot; the 30-second version</div>
+        <p style="margin: 0;">When your training energy expenditure consistently exceeds your intake, your body shuts down &ldquo;optional&rdquo; systems: hormones drop, immune function dips, periods stop (women), libido / morning erections vanish (men), bone density falls. You feel slow, you keep getting sick, performance plateaus and then drops. It can take years to unwind. <strong>Easier to prevent than fix.</strong></p>
+      </div>
+
+      <div class="ys-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+        <article class="ys-fit-card yes">
+          <h3>Eat breakfast within 60 min of waking</h3>
+          <ul>
+            <li>Carbs + protein + a little fat</li>
+            <li>Skipping breakfast + training = RED-S fast lane</li>
+            <li>Oats + Greek yogurt + banana = 90 seconds</li>
+          </ul>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>Refuel within 60 min after sessions</h3>
+          <ul>
+            <li>~30 g carbs + ~20 g protein minimum</li>
+            <li>Chocolate milk, recovery shake, rice + chicken, PB&amp;J</li>
+            <li>Not optional, even after &ldquo;easy&rdquo; days</li>
+          </ul>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>Fuel during sessions &gt; 75 min</h3>
+          <ul>
+            <li>30&ndash;60 g carbs/hr on bike + long runs</li>
+            <li>Gels, Maurten, Neversecond C30, real food</li>
+            <li>Train your gut to tolerate intake &mdash; it&rsquo;s a skill</li>
+          </ul>
+        </article>
+
+        <article class="ys-fit-card yes">
+          <h3>Don&rsquo;t under-eat on rest days</h3>
+          <ul>
+            <li>RMR keeps running. Recovery needs fuel</li>
+            <li>Calorie cycling is fine; calorie crashing is not</li>
+            <li>Rule of thumb: never below body weight (kg) &times; 30 kcal</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="ucla-callout gold" style="margin-top: 22px;">
+        <div class="ucla-callout-tag">⚠ Signs you might be under-fueling</div>
+        <ul style="margin: 6px 0 0; padding-left: 18px;">
+          <li>Resting HR creeping up week-over-week</li>
+          <li>Constant low-grade fatigue / disturbed sleep</li>
+          <li>Frequent colds, slow recovery from minor injuries</li>
+          <li>Loss of menstrual cycle (women) / loss of morning erections, libido (men)</li>
+          <li>Stalled or declining performance despite more training</li>
+        </ul>
+        <p style="margin: 10px 0 0; font-style: italic; color: var(--ys-muted);">If three of these are happening: stop, talk to me, see a sports physician. We test for it.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ VIDEO PLACEHOLDER ROW 3 ============ -->
+  <section class="wf-section" id="videos-3">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Race-day &amp; fueling walk-throughs</h2>
+        <div class="ys-rule"></div>
+      </div>
+
+      <div class="ys-grid">
+        <div class="video-ph">
+          <div class="ph-eyebrow">Video 08 &middot; ~7 min</div>
+          <h4>What to eat the day before a race</h4>
+          <p class="ph-note">Coming soon</p>
+        </div>
+        <div class="video-ph">
+          <div class="ph-eyebrow">Video 09 &middot; ~6 min</div>
+          <h4>Sweat-rate test &mdash; do it once, use it forever</h4>
+          <p class="ph-note">Coming soon</p>
+        </div>
+        <div class="video-ph">
+          <div class="ph-eyebrow">Video 10 &middot; ~5 min</div>
+          <h4>Aid station strategy at collegiate races</h4>
+          <p class="ph-note">Coming soon</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CALCULATORS INVITE ============ -->
+  <section class="wf-section" id="calcs">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Tools you should know &middot; the calculator catalogue</h2>
+        <div class="ys-rule"></div>
+        <p>30+ free calculators on yousuli.co. Below: the seven I use with athletes most often. Bookmark these.</p>
+      </div>
+
+      <div class="ys-grid">
+        <a class="ys-card" href="https://www.yousuli.co/triathlonracefuelingstrategy" target="_top" style="text-decoration:none;color:inherit;">
+          <div class="ys-meta">Calc 01</div>
+          <h3>Race-day fueling planner</h3>
+          <p>Full bike + run fueling plan from sweat rate, race time, products. Catches under-fueling and over-drinking.</p>
+        </a>
+        <a class="ys-card" href="https://www.yousuli.co/sweat-rate-calculator" target="_top" style="text-decoration:none;color:inherit;">
+          <div class="ys-meta">Calc 02</div>
+          <h3>Sweat rate</h3>
+          <p>Test once with a kitchen scale and a watch. Get the number that every fueling plan needs. 15-minute investment.</p>
+        </a>
+        <a class="ys-card" href="https://www.yousuli.co/vo2-to-cycling-power" target="_top" style="text-decoration:none;color:inherit;">
+          <div class="ys-meta">Calc 03</div>
+          <h3>VO<sub>2</sub> &rarr; cycling power</h3>
+          <p>Target watts from VO<sub>2</sub>max, efficiency, RER, duration. Useful for setting race-day power without an FTP test.</p>
+        </a>
+        <a class="ys-card" href="https://www.yousuli.co/critical-power-calculator" target="_top" style="text-decoration:none;color:inherit;">
+          <div class="ys-meta">Calc 04</div>
+          <h3>Critical power</h3>
+          <p>From a 3-min and 12-min test. Defines your sustainable ceiling &mdash; the number that should anchor your bike zones.</p>
+        </a>
+        <a class="ys-card" href="https://www.yousuli.co/power-to-finish" target="_top" style="text-decoration:none;color:inherit;">
+          <div class="ys-meta">Calc 05</div>
+          <h3>Power to finish (course-based)</h3>
+          <p>130+ race courses pre-loaded. Enter a power strategy or target time, get the splits, route map, elevation. Game it before race day.</p>
+        </a>
+        <a class="ys-card" href="https://www.yousuli.co/runningtimepredictioncalculator" target="_top" style="text-decoration:none;color:inherit;">
+          <div class="ys-meta">Calc 06</div>
+          <h3>Running time predictor</h3>
+          <p>One effort in, 1.6 km &rarr; marathon estimates out. Three columns (Perfect / Normal / Poor) for the realistic range.</p>
+        </a>
+        <a class="ys-card" href="https://www.yousuli.co/calorieburn" target="_top" style="text-decoration:none;color:inherit;">
+          <div class="ys-meta">Calc 07</div>
+          <h3>Triathlon calorie burn</h3>
+          <p>How much you actually burn over a session. Pair with the RMR calculator below for total daily intake targets.</p>
+        </a>
+        <a class="ys-card" href="https://www.yousuli.co/resting-metabolic-rate-calculator" target="_top" style="text-decoration:none;color:inherit;">
+          <div class="ys-meta">Calc 08</div>
+          <h3>RMR (resting metabolic rate)</h3>
+          <p>Real number for what your body burns at rest. The foundation under any RED-S-proof fueling plan.</p>
+        </a>
+      </div>
+
+      <p style="text-align:center; margin-top: 22px; color: var(--ys-muted); font-size: 0.95rem;">
+        Browse all 30+ at <a href="https://www.yousuli.co/calculators" target="_top" style="color: var(--wf-coral); font-weight:600;">yousuli.co/calculators</a>.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ HUB + TRAINING PEAKS ============ -->
+  <section class="wf-section alt" id="hub">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Hub access &amp; TrainingPeaks attach</h2>
+        <div class="ys-rule"></div>
+        <p>Two things to set up this week.</p>
+      </div>
+
+      <div class="ys-grid">
+        <article class="ys-card">
+          <div class="ys-meta">Step 01</div>
+          <h3>Connect your TrainingPeaks to me</h3>
+          <p>If you don&rsquo;t have a TrainingPeaks account, sign up (free Basic tier is fine to start). Then attach Coach Fred as your coach so I can see your sessions, write your plan, and react in real time.</p>
+          <p style="margin-top: 10px;"><strong>Coach attach URL:</strong> email me and I&rsquo;ll send the team invite link &mdash; <a href="mailto:info@yousuli.co?subject=UCLA%20Tri%20-%20TrainingPeaks%20attach&amp;body=Hi%20Fred%2C%0A%0AI%27d%20like%20to%20attach%20my%20TrainingPeaks%20account%20to%20the%20UCLA%20Tri%20coaching%20setup.%0A%0AMy%20TrainingPeaks%20username%20%2F%20email%3A%20%0A%0AThanks%21" style="color: var(--wf-coral); font-weight:600;">info@yousuli.co</a>.</p>
+        </article>
+
+        <article class="ys-card featured">
+          <div class="ys-meta">Step 02</div>
+          <h3>Yousuli hub access</h3>
+          <p>The Yousuli platform (&ldquo;the hub&rdquo;) is where your testing data, plans, and lab reports live across the year. Athletes who go through lab testing get an account; coached athletes get one automatically. UCLA roster: I&rsquo;ll set you up after the first call.</p>
+          <p style="margin-top: 10px;"><strong>What&rsquo;s on it:</strong> calculator results saved to your athlete profile, lab reports (VO<sub>2</sub>max / RMR / CdA), race-day fueling plans, training-block notes &mdash; one source of truth, not a folder of PDFs.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Step 03</div>
+          <h3>Join the comms channel</h3>
+          <p>Team WhatsApp / Slack / whatever we land on &mdash; logistics, sessions, accountability, memes. I&rsquo;ll send the invite link via the team captain once you&rsquo;re attached on TP.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Lab testing (optional, recommended)</div>
+          <h3>Get baseline data before fall</h3>
+          <p>VO<sub>2</sub>max + RMR + body comp before September. Sets training zones, exposes any under-fueling, gives you a real number to track. Special UCLA roster rate &mdash; ask me.</p>
+          <p style="margin-top: 10px;"><a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/performancelab" target="_top">See the Performance Lab</a></p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="wf-section" id="faq">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Squad Q&amp;A</h2>
+        <div class="ys-rule"></div>
+        <p>Stuff that&rsquo;ll come up. Email me anything not covered.</p>
+      </div>
+
+      <div class="ys-faq-grid">
+        <article class="ys-faq">
+          <h3>I&rsquo;m brand-new to one of the three sports. Help.</h3>
+          <p>Great. Summer is the time to be bad at things. Pick the weakest sport, do <em>two</em> short sessions/week minimum, focus 80% on technique. You&rsquo;ll be embarrassingly improved by September. Promise.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>I have an injury / niggle. What now?</h3>
+          <p>Tell me before you train through it for three weeks and turn a niggle into surgery. We&rsquo;ll modify the plan, swap sessions, get you to a PT if needed. Most niggles get fixed in a week of smart loading &mdash; if you act early.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>How much sleep should I actually get?</h3>
+          <p>8&ndash;9 hours is the honest answer. 7 if you&rsquo;re a freak. Below 7 you&rsquo;re training for resistance, not adaptation. Sleep is the single most powerful legal PED. Treat it that way.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>Can I race in the summer?</h3>
+          <p>Yes &mdash; a low-key Olympic or 70.3 in July/August is a great fitness check. Tell me 4&ndash;6 weeks out so we can plan the taper. Don&rsquo;t race a half-IM with two weeks&rsquo; notice. (You know who you are.)</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>How much will all this gear / testing / nutrition cost me?</h3>
+          <p>The free version of this plan is genuinely free. Calculators, the 20-levers course, training plan in TrainingPeaks, summer guidance &mdash; all included. Lab testing &amp; race-fuel products are paid. UCLA roster gets a discount on testing &mdash; talk to me. Don&rsquo;t feel pressure to spend money you don&rsquo;t have.</p>
+        </article>
+
+        <article class="ys-faq">
+          <h3>What if my goal is just to have fun and finish?</h3>
+          <p>Perfect. The plan still applies &mdash; just at lower volume. Triathlon is for everyone; performance is a spectrum. Show up, train consistently, finish your races. That&rsquo;s already 90th percentile of human beings.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT BAND ============ -->
+  <section class="wf-section alt" id="contact">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Talk to Coach Fred</h2>
+        <div class="ys-rule"></div>
+        <p>Questions, screw-ups, wins, niggles, fueling weirdness, race plans &mdash; all welcome.</p>
+      </div>
+
+      <div class="ys-grid">
+        <article class="ys-card" style="text-align:center;">
+          <div class="ys-meta">Email</div>
+          <h3>info@yousuli.co</h3>
+          <p style="font-size: 0.92rem; color: var(--ys-muted);">Best for anything that needs more than a line. Reply within 24&ndash;48h on weekdays.</p>
+          <a class="ys-btn ys-btn-coral" href="mailto:info@yousuli.co?subject=UCLA%20Tri%20question" style="margin-top: 10px;">Email Fred &rarr;</a>
+        </article>
+
+        <article class="ys-card featured" style="text-align:center;">
+          <div class="ys-meta">Quick / urgent</div>
+          <h3>Text / WhatsApp</h3>
+          <p style="font-size: 0.92rem; color: var(--ys-muted);"><strong>(909) 979-4118</strong> &mdash; race-week questions, sudden niggle, &ldquo;is this thing in my knee normal?&rdquo;</p>
+          <a class="ys-btn ys-btn-coral" href="tel:+19099794118" style="margin-top: 10px;">Call / text &rarr;</a>
+        </article>
+
+        <article class="ys-card" style="text-align:center;">
+          <div class="ys-meta">Application</div>
+          <h3>Want 1:1 coaching?</h3>
+          <p style="font-size: 0.92rem; color: var(--ys-muted);">If the team plan isn&rsquo;t enough and you want fully personalised coaching &mdash; talk to me about Yousuli coaching tiers.</p>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/coaching" target="_top" style="margin-top: 10px;">See tiers</a>
+        </article>
+      </div>
+
+      <p style="text-align:center; margin-top: 28px; font-style: italic; color: var(--ys-muted);">
+        Looking forward to a strong summer.<br/>
+        &mdash; <span style="color: var(--ys-navy); font-weight: 700;">Coach Fred</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- UCLA accent stripe before footer -->
+  <div class="ucla-stripe" aria-hidden="true"></div>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Online programs</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/membership" target="_top">Membership</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; <a href="tel:+19099794118">(909) 979-4118</a></span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
