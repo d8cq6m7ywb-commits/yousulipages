@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>404 — Off course | Yousuli</title>
-  <meta name="description" content="Lost your line? Play the Yousuli bike-leg 404: stay out of the draft zone, pass the rider ahead within 20 seconds, dodge cones on the road. Or just find your way back home." />
+  <meta name="description" content="Lost your line? Play the Yousuli bike-leg 404: stay out of the draft zone, pass the rider ahead within 20 seconds, dodge traffic and banana peels, grab bottles and bananas for effort. Or just find your way back home." />
 
   <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
   <link rel="stylesheet" href="assets/yousuli.css" />
@@ -203,7 +203,7 @@
       <span class="wf-eyebrow">404 &middot; Off course</span>
       <h1 style="font-size: clamp(2rem, 4.8vw, 3.4rem);">You missed the turn.</h1>
       <div class="wf-subhead">Take a quick lap while you reorient</div>
-      <p class="lede" style="max-width: 640px;">The page you wanted isn&rsquo;t here. While you decide where to go next, race the bike leg of a non-draft-legal triathlon: stay out of the draft zone, pass the rider ahead inside 20 seconds when you slot in behind them, and don&rsquo;t hit the cones.</p>
+      <p class="lede" style="max-width: 640px;">The page you wanted isn&rsquo;t here. While you decide where to go next, race the bike leg of a non-draft-legal triathlon: stay out of the draft zone, pass the rider ahead inside 20 seconds when you slot in behind them, grab bottles + bananas for effort, and don&rsquo;t hit the traffic or a banana peel.</p>
     </div>
   </section>
 
@@ -349,23 +349,23 @@
     'use strict';
 
     /* =====================================================================
-       Yousuli 404 — Bike leg game (v3, side-scrolling).
+       Yousuli 404 — Bike leg game (v4, sprite-art version).
 
-       Concept:
-         - Player rides a TT bike facing RIGHT, fixed on the left of the
-           canvas. The world scrolls right-to-left, so obstacles, rivals,
-           bottles, cars, trucks, and the occasional bus all come at the
-           player from the right edge.
-         - Road has 3 horizontal lanes. UP / DOWN switch lanes. RIGHT or
-           SPACE-held surges (burns effort). LEFT eases off (recovers
-           effort).
-         - Non-draft-legal: if a rival sits in your lane and you slot in
-           behind them (close range), a 20-second draft countdown starts.
-           Surge past or change lane before it hits zero.
-         - Bottles are pickups (+effort). Vehicles and cones are crash
-           hazards. Wheel-touching a rival = crash.
+       Now uses real pixel-art sprite assets supplied by the user:
+         /assets/404/bg-long.png        (scrolling background w/ road)
+         /assets/404/bike.png           (cyclist — player + rivals)
+         /assets/404/car.png            (navy 404 car)
+         /assets/404/bus-back.png       (city bus, same direction)
+         /assets/404/bottle.png         (triathlon water bottle)
+         /assets/404/banana.png         (whole banana — +effort pickup)
+         /assets/404/banana-peel.png    (peel — slip hazard, not a crash)
 
-       Style: Yousuli navy + coral + teal; pixel-art-flavoured shapes.
+       Mechanics carried over from v3:
+         - Player fixed left at x=130, world scrolls right-to-left
+         - 3 lanes mapped to road area of the background image
+         - Up/Down lane switch; Right/Space surge; Left coast
+         - Draft zone: 20-second pass timer if you slot behind a rival
+         - Bottles + banana = pickups; banana peel = slip; car/bus = crash
     ===================================================================== */
 
     var canvas = document.getElementById('gameCanvas');
@@ -373,7 +373,7 @@
     var W = canvas.width;
     var H = canvas.height;
 
-    // HUD elements
+    // HUD
     var hudDist    = document.getElementById('hudDist');
     var hudPasses  = document.getElementById('hudPasses');
     var hudEffort  = document.getElementById('hudEffort');
@@ -388,96 +388,101 @@
     var btnStart   = document.getElementById('btnStart');
     var btnRestart = document.getElementById('btnRestart');
 
-    // Palette
-    var COL = {
-      skyHi:       '#272453',
-      sky:         '#1a1834',
-      mountainBack:  '#2f2d56',
-      mountainFront: '#1e1c45',
-      sun:         '#FFD66B',
-      grass:       '#21204a',
-      grassEdge:   '#403d75',
-      road:        '#15142d',
-      roadLine:    '#f7ecd8',
-      roadEdge:    '#3d3a6e',
-      coral:       '#FA773C',
-      coralDeep:   '#d65626',
-      coralPale:   '#ffd9c4',
-      teal:        '#00B3A4',
-      tealDeep:    '#007d72',
-      navy:        '#2F2D56',
-      rival:       '#7a82c2',
-      rivalDeep:   '#3d4170',
-      bottle:      '#3aa8ff',
-      bottleCap:   '#FA773C',
-      car1:        '#cf3a47',
-      car1Deep:    '#7a1c25',
-      car2:        '#6cb8c4',
-      car2Deep:    '#3d6e7a',
-      car3:        '#dedede',
-      car3Deep:    '#7a7a7a',
-      truck:       '#f5c542',
-      truckDeep:   '#8a6e16',
-      bus:         '#2c8a4b',
-      busDeep:     '#1a4f2d',
-      tyre:        '#0a0918',
-      glass:       'rgba(140, 170, 220, 0.55)'
+    /* ---------- Sprite preloading ---------- */
+    var SPRITES = {
+      bg:        'assets/404/bg-long.png',
+      bike:      'assets/404/bike.png',
+      car:       'assets/404/car.png',
+      bus:       'assets/404/bus-back.png',
+      bottle:    'assets/404/bottle.png',
+      banana:    'assets/404/banana.png',
+      bananaPeel:'assets/404/banana-peel.png'
     };
+    var IMG = {};
+    var loadedCount = 0;
+    var loadTotal = Object.keys(SPRITES).length;
+    var allLoaded = false;
+    Object.keys(SPRITES).forEach(function(k){
+      var im = new Image();
+      im.onload = function(){
+        loadedCount++;
+        if (loadedCount === loadTotal) {
+          allLoaded = true;
+          render();  // first paint
+        }
+      };
+      im.onerror = function(){ loadedCount++; if (loadedCount === loadTotal) { allLoaded = true; render(); } };
+      im.src = SPRITES[k];
+      IMG[k] = im;
+    });
 
-    // States
-    var STATE_TITLE = 'title', STATE_PLAY = 'play', STATE_OVER = 'over', STATE_PAUSE = 'pause';
-    var state = STATE_TITLE;
-
-    // Track / world
-    var ROAD_TOP = H * 0.50;        // road top (y)
-    var ROAD_BOT = H - 12;          // road bottom (y)
-    var LANE_Y   = [
+    /* ---------- World layout ----------
+       Background image has a road built into the bottom ~38% of it. I'll
+       fit the background to the canvas height and treat the bottom 36%
+       of the canvas as the 3-lane road area. */
+    var ROAD_TOP = Math.round(H * 0.62);
+    var ROAD_BOT = H - 14;
+    var LANE_Y = [
       ROAD_TOP + (ROAD_BOT - ROAD_TOP) * 0.20,
       ROAD_TOP + (ROAD_BOT - ROAD_TOP) * 0.50,
       ROAD_TOP + (ROAD_BOT - ROAD_TOP) * 0.80
     ];
-    var LANE_H   = (ROAD_BOT - ROAD_TOP) / 3;
 
-    // Game vars
+    /* ---------- Game state ---------- */
+    var STATE_TITLE = 'title', STATE_PLAY = 'play', STATE_OVER = 'over', STATE_PAUSE = 'pause';
+    var state = STATE_TITLE;
+
     var distance = 0;
     var cleanPasses = 0;
     var effort = 100;
     var bestDist = parseInt(localStorage.getItem('ys_404_best') || '0', 10) || 0;
     hudBest.textContent = bestDist + ' m';
 
-    // Player
     var PLAYER_X = 130;
     var player = {
       lane: 1,
       laneFloat: 1,
-      speed: 0.55,       // baseline 0.55, max ~0.95, min ~0.35
+      speed: 0.55,
       targetSpeed: 0.55,
-      animFrame: 0
+      animFrame: 0,
+      slipTimer: 0   // > 0 = currently slipping from banana peel
     };
 
-    // Entities: { kind, x, lane, w, h, relSpeed?, passed?, taken?, baseColor? }
-    // kind: 'rival' | 'bottle' | 'cone' | 'car' | 'truck' | 'bus'
     var entities = [];
 
-    // Spawn timers
     var spawnTimers = {
-      rival:  2400,
-      cone:   1700,
-      bottle: 2200,
-      car:    3500,
-      truck:  6500,
-      bus:    14000
+      rival:      2400,
+      bottle:     2200,
+      banana:     4800,
+      bananaPeel: 4200,
+      car:        3500,
+      bus:        14000
     };
 
-    // Background scroll
     var bgScroll = 0;
-    var midScroll = 0;
-    var roadScroll = 0;
 
-    // Draft state
     var inDraftZone = false;
     var draftEntity = null;
     var draftCountdown = 20000;
+
+    /* ---------- Sprite render sizes (target draw widths in px) ---------- */
+    var SIZE = {
+      bike:       72,
+      car:        100,
+      bus:        150,
+      bottle:     18,
+      banana:     26,
+      bananaPeel: 30
+    };
+
+    function drawSprite(img, key, cx, by){
+      // by = bottom-centre y (ground line). cx = horizontal centre.
+      if (!img || !img.naturalWidth) return;
+      var w = SIZE[key];
+      var aspect = img.naturalHeight / img.naturalWidth;
+      var h = w * aspect;
+      ctx.drawImage(img, cx - w / 2, by - h, w, h);
+    }
 
     /* ---------- Input ---------- */
     var keys = {};
@@ -487,7 +492,6 @@
                   || /^[wasdWASD]$/.test(k) || k === ' ');
       if (gameKey && (state === STATE_PLAY || k === ' ')) e.preventDefault();
       keys[k.toLowerCase()] = true;
-
       if (k === ' ') {
         if (state === STATE_TITLE) startGame();
         else if (state === STATE_PLAY) pauseGame();
@@ -495,38 +499,38 @@
         else if (state === STATE_OVER) resetAndStart();
         return;
       }
-      // Lane change on keydown (not held), only while playing
       if (state !== STATE_PLAY) return;
       if (k === 'ArrowUp'   || k === 'w' || k === 'W') { if (player.lane > 0) player.lane--; }
       if (k === 'ArrowDown' || k === 's' || k === 'S') { if (player.lane < 2) player.lane++; }
     });
     document.addEventListener('keyup', function(e){ keys[e.key.toLowerCase()] = false; });
-
     btnStart.addEventListener('click', startGame);
     btnRestart.addEventListener('click', resetAndStart);
 
     /* ---------- State transitions ---------- */
     function startGame(){
       if (state !== STATE_TITLE) return;
+      if (!allLoaded) {
+        // Wait for assets, then auto-start
+        setTimeout(startGame, 80);
+        return;
+      }
       overlayTitle.classList.add('hidden');
       state = STATE_PLAY;
       lastTime = performance.now();
       requestAnimationFrame(loop);
     }
     function resetAndStart(){
-      distance = 0;
-      cleanPasses = 0;
-      effort = 100;
-      player.lane = 1;
-      player.laneFloat = 1;
-      player.speed = 0.55;
-      player.targetSpeed = 0.55;
+      distance = 0; cleanPasses = 0; effort = 100;
+      player.lane = 1; player.laneFloat = 1;
+      player.speed = 0.55; player.targetSpeed = 0.55;
+      player.slipTimer = 0;
       entities = [];
       spawnTimers.rival = 2400;
-      spawnTimers.cone = 1700;
       spawnTimers.bottle = 2200;
+      spawnTimers.banana = 4800;
+      spawnTimers.bananaPeel = 4200;
       spawnTimers.car = 3500;
-      spawnTimers.truck = 6500;
       spawnTimers.bus = 14000;
       inDraftZone = false;
       draftEntity = null;
@@ -557,8 +561,6 @@
     function laneFreeAt(lane, xMin, xMax){
       for (var i = 0; i < entities.length; i++) {
         var e = entities[i];
-        // Bus occupies its declared lane only (single lane in this view)
-        if (e.lane !== lane && !(e.kind === 'bus' && e.lane === lane)) continue;
         if (e.lane !== lane) continue;
         var er = e.x + e.w;
         var el = e.x;
@@ -569,44 +571,35 @@
     function spawnRival(){
       var l = Math.floor(Math.random() * 3);
       if (!laneFreeAt(l, W + 10, W + 90)) return;
-      var relSpeed = 0.42 + Math.random() * 0.16;  // 0.42..0.58 (player base 0.55)
-      entities.push({ kind: 'rival', x: W + 30, lane: l, w: 56, h: 38, relSpeed: relSpeed, passed: false, animFrame: 0 });
-    }
-    function spawnCone(){
-      var l = Math.floor(Math.random() * 3);
-      if (!laneFreeAt(l, W + 5, W + 30)) return;
-      entities.push({ kind: 'cone', x: W + 10, lane: l, w: 18, h: 22 });
+      var relSpeed = 0.42 + Math.random() * 0.16;
+      entities.push({ kind: 'rival', x: W + 30, lane: l, w: SIZE.bike, h: 44, relSpeed: relSpeed, passed: false });
     }
     function spawnBottle(){
       var l = Math.floor(Math.random() * 3);
-      if (!laneFreeAt(l, W + 5, W + 25)) return;
-      entities.push({ kind: 'bottle', x: W + 10, lane: l, w: 14, h: 22, taken: false, bob: 0 });
+      if (!laneFreeAt(l, W + 5, W + 30)) return;
+      entities.push({ kind: 'bottle', x: W + 10, lane: l, w: SIZE.bottle, h: 30, taken: false, bob: 0 });
+    }
+    function spawnBanana(){
+      var l = Math.floor(Math.random() * 3);
+      if (!laneFreeAt(l, W + 5, W + 40)) return;
+      entities.push({ kind: 'banana', x: W + 10, lane: l, w: SIZE.banana, h: 18, taken: false, bob: 0 });
+    }
+    function spawnBananaPeel(){
+      var l = Math.floor(Math.random() * 3);
+      if (!laneFreeAt(l, W + 5, W + 40)) return;
+      entities.push({ kind: 'bananaPeel', x: W + 10, lane: l, w: SIZE.bananaPeel, h: 16, triggered: false });
     }
     function spawnCar(){
       var l = Math.floor(Math.random() * 3);
-      if (!laneFreeAt(l, W + 5, W + 110)) return;
-      var colors = [
-        { main: COL.car1, deep: COL.car1Deep },
-        { main: COL.car2, deep: COL.car2Deep },
-        { main: COL.car3, deep: COL.car3Deep }
-      ];
-      var c = colors[Math.floor(Math.random() * colors.length)];
-      // Cars roll a bit slower than player (you're catching up)
+      if (!laneFreeAt(l, W + 5, W + 130)) return;
       var relSpeed = 0.30 + Math.random() * 0.18;
-      entities.push({ kind: 'car', x: W + 20, lane: l, w: 76, h: 30, relSpeed: relSpeed,
-                      colMain: c.main, colDeep: c.deep, animFrame: 0 });
-    }
-    function spawnTruck(){
-      var l = Math.floor(Math.random() * 3);
-      if (!laneFreeAt(l, W + 5, W + 140)) return;
-      var relSpeed = 0.22 + Math.random() * 0.16;   // slower than cars
-      entities.push({ kind: 'truck', x: W + 20, lane: l, w: 110, h: 36, relSpeed: relSpeed, animFrame: 0 });
+      entities.push({ kind: 'car', x: W + 20, lane: l, w: SIZE.car, h: 42, relSpeed: relSpeed });
     }
     function spawnBus(){
       var l = Math.floor(Math.random() * 3);
-      if (!laneFreeAt(l, W + 5, W + 170)) return;
+      if (!laneFreeAt(l, W + 5, W + 180)) return;
       var relSpeed = 0.28 + Math.random() * 0.14;
-      entities.push({ kind: 'bus', x: W + 20, lane: l, w: 140, h: 40, relSpeed: relSpeed, animFrame: 0 });
+      entities.push({ kind: 'bus', x: W + 20, lane: l, w: SIZE.bus, h: 60, relSpeed: relSpeed });
     }
 
     /* ---------- Update ---------- */
@@ -621,10 +614,17 @@
     }
 
     function update(dt){
-      // --- Speed / effort ---
-      var pushing = keys['arrowright'] || keys['d'] || keys[' '];
+      // Slip recovery
+      if (player.slipTimer > 0) player.slipTimer = Math.max(0, player.slipTimer - dt);
+
+      // Speed / effort
+      var slipped = player.slipTimer > 0;
+      var pushing = (keys['arrowright'] || keys['d'] || keys[' ']) && !slipped;
       var easing  = keys['arrowleft']  || keys['a'];
-      if (pushing && effort > 0) {
+      if (slipped) {
+        player.targetSpeed = 0.32;  // slow during slip
+        // No effort change while slipping (already drained on hit)
+      } else if (pushing && effort > 0) {
         player.targetSpeed = 0.95;
         effort = Math.max(0, effort - dt * 0.045);
       } else if (easing) {
@@ -635,67 +635,59 @@
         effort = Math.min(100, effort + dt * 0.013);
       }
       player.speed += (player.targetSpeed - player.speed) * 0.06;
-      if (effort <= 0 && pushing) player.targetSpeed = 0.4;
 
-      // --- Player visual lane interpolation ---
+      // Player lane interpolation + anim
       player.laneFloat += (player.lane - player.laneFloat) * 0.22;
       player.animFrame += dt * 0.015;
 
-      // --- World scroll / distance ---
+      // World scroll
       var worldStep = player.speed * dt * 0.22;
       distance += worldStep * 0.45;
-      bgScroll   = (bgScroll   + worldStep * 0.05) % 240;
-      midScroll  = (midScroll  + worldStep * 0.15) % 320;
-      roadScroll = (roadScroll + worldStep * 1.4) % 50;
+      bgScroll = bgScroll + worldStep * 0.6;
 
-      // --- Spawn cadence ramps up gently with distance ---
+      // Spawn cadence with gentle ramp
       var ramp = 1 + Math.min(0.6, distance / 6000);
-      spawnTimers.rival  -= dt * ramp;
-      spawnTimers.cone   -= dt * ramp;
-      spawnTimers.bottle -= dt * 0.8;     // bottles slightly slower
-      spawnTimers.car    -= dt * ramp;
-      spawnTimers.truck  -= dt * ramp;
-      spawnTimers.bus    -= dt * 0.8;     // bus rarer
-      if (spawnTimers.rival  <= 0) { spawnRival();  spawnTimers.rival  = 2200 + Math.random() * 2000; }
-      if (spawnTimers.cone   <= 0) { spawnCone();   spawnTimers.cone   = 1500 + Math.random() * 1700; }
-      if (spawnTimers.bottle <= 0) { spawnBottle(); spawnTimers.bottle = 3200 + Math.random() * 3500; }
-      if (spawnTimers.car    <= 0) { spawnCar();    spawnTimers.car    = 4200 + Math.random() * 3500; }
-      if (spawnTimers.truck  <= 0) { spawnTruck();  spawnTimers.truck  = 8000 + Math.random() * 6000; }
-      if (spawnTimers.bus    <= 0) { spawnBus();    spawnTimers.bus    = 18000 + Math.random() * 12000; }
+      spawnTimers.rival      -= dt * ramp;
+      spawnTimers.bottle     -= dt * 0.85;
+      spawnTimers.banana     -= dt * 0.7;
+      spawnTimers.bananaPeel -= dt * 0.9;
+      spawnTimers.car        -= dt * ramp;
+      spawnTimers.bus        -= dt * 0.8;
+      if (spawnTimers.rival      <= 0) { spawnRival();      spawnTimers.rival      = 2200 + Math.random() * 2000; }
+      if (spawnTimers.bottle     <= 0) { spawnBottle();     spawnTimers.bottle     = 3000 + Math.random() * 3000; }
+      if (spawnTimers.banana     <= 0) { spawnBanana();     spawnTimers.banana     = 5000 + Math.random() * 4500; }
+      if (spawnTimers.bananaPeel <= 0) { spawnBananaPeel(); spawnTimers.bananaPeel = 4500 + Math.random() * 4000; }
+      if (spawnTimers.car        <= 0) { spawnCar();        spawnTimers.car        = 4000 + Math.random() * 3500; }
+      if (spawnTimers.bus        <= 0) { spawnBus();        spawnTimers.bus        = 18000 + Math.random() * 12000; }
 
-      // --- Move entities ---
+      // Move entities
       for (var i = entities.length - 1; i >= 0; i--) {
         var e = entities[i];
-        // Bottles/cones use full world speed; vehicles + rivals use relative speed
-        var entitySpeed = (e.kind === 'bottle' || e.kind === 'cone')
+        var entitySpeed = (e.kind === 'bottle' || e.kind === 'banana' || e.kind === 'bananaPeel')
           ? player.speed
           : (player.speed - e.relSpeed);
         e.x -= entitySpeed * dt * 0.32;
-        if (e.animFrame !== undefined) e.animFrame += dt * 0.015;
-        if (e.kind === 'bottle') e.bob = (e.bob || 0) + dt * 0.006;
-        // Off-screen left → drop
+        if (e.bob !== undefined) e.bob += dt * 0.006;
         if (e.x + e.w < -10) entities.splice(i, 1);
       }
 
-      // --- Collisions / draft ---
+      // Collisions / pickups / draft
       inDraftZone = false;
       draftEntity = null;
 
-      var playerBox = {
-        l: PLAYER_X - 24, r: PLAYER_X + 24,
-        t: LANE_Y[player.lane] - 18, b: LANE_Y[player.lane] + 18
+      var pBox = {
+        l: PLAYER_X - 26, r: PLAYER_X + 26,
+        t: LANE_Y[player.lane] - 22, b: LANE_Y[player.lane] + 6
       };
 
       for (var j = 0; j < entities.length; j++) {
         var en = entities[j];
         var eBox = {
           l: en.x, r: en.x + en.w,
-          t: LANE_Y[en.lane] - en.h / 2, b: LANE_Y[en.lane] + en.h / 2
+          t: LANE_Y[en.lane] - en.h, b: LANE_Y[en.lane] + 4
         };
-        // bottles get a smaller, more forgiving hitbox
-        var pad = (en.kind === 'bottle') ? 4 : 0;
-        var xOverlap = playerBox.r > eBox.l + pad && playerBox.l < eBox.r - pad;
-        var yOverlap = playerBox.b > eBox.t + pad && playerBox.t < eBox.b - pad;
+        var pad = (en.kind === 'bottle' || en.kind === 'banana') ? 3 : 0;
+        var xOverlap = pBox.r > eBox.l + pad && pBox.l < eBox.r - pad;
         var sameLane = (en.lane === player.lane);
 
         // Bottle pickup
@@ -703,30 +695,42 @@
           if (sameLane && xOverlap) {
             en.taken = true;
             effort = Math.min(100, effort + 22);
-            // Mark for fast removal (slide out then drop)
-            en.x = -200;
+            en.x = -300;
           }
           continue;
         }
-
-        // Cone crash
-        if (en.kind === 'cone' && sameLane && xOverlap) {
-          return gameOver('Crash', 'You hit a cone.', 'Lanes are narrower than you think when you’re aero.');
+        // Banana (whole) pickup → +effort
+        if (en.kind === 'banana' && !en.taken) {
+          if (sameLane && xOverlap) {
+            en.taken = true;
+            effort = Math.min(100, effort + 15);
+            en.x = -300;
+          }
+          continue;
         }
-
-        // Vehicles: car/truck/bus → crash if same lane and x-overlap
-        if ((en.kind === 'car' || en.kind === 'truck' || en.kind === 'bus') && sameLane && xOverlap) {
-          var what = en.kind === 'car' ? 'a car' : en.kind === 'truck' ? 'a truck' : 'a city bus';
-          return gameOver('Crash', 'You hit ' + what + '.',
-            'Open-road sections have traffic. Read the lane way before you commit.');
+        // Banana peel → slip (NOT game over)
+        if (en.kind === 'bananaPeel' && !en.triggered) {
+          if (sameLane && xOverlap) {
+            en.triggered = true;
+            player.slipTimer = 1600;     // 1.6 s slowed
+            effort = Math.max(0, effort - 18);
+            en.x = -300;
+          }
+          continue;
         }
-
+        // Cars → crash
+        if (en.kind === 'car' && sameLane && xOverlap) {
+          return gameOver('Crash', 'You hit a 404 car.', 'Open-road sections have traffic. Read the lane way before you commit.');
+        }
+        // Buses → crash
+        if (en.kind === 'bus' && sameLane && xOverlap) {
+          return gameOver('Crash', 'You hit a city bus.', 'It is, statistically, the largest thing on the road.');
+        }
         // Rival mechanics
         if (en.kind === 'rival') {
           var gap = en.x - PLAYER_X;
           if (sameLane && gap > -22 && gap < 22) {
-            return gameOver('Wheel touch', 'You touched the wheel ahead.',
-              'In a real race that is a crash for both of you.');
+            return gameOver('Wheel touch', 'You touched the wheel ahead.', 'In a real race that is a crash for both of you.');
           }
           if (!en.passed && sameLane && gap > 28 && gap < 140) {
             inDraftZone = true;
@@ -739,18 +743,17 @@
         }
       }
 
-      // --- Draft countdown ---
+      // Draft countdown
       if (inDraftZone) {
         draftCountdown -= dt;
         if (draftCountdown <= 0) {
-          return gameOver('Drafting penalty', 'Draft penalty: 20 seconds in the zone.',
-            'In a non-draft-legal race the marshal would have just blue-carded you.');
+          return gameOver('Drafting penalty', 'Draft penalty: 20 seconds in the zone.', 'In a non-draft-legal race the marshal would have just blue-carded you.');
         }
       } else {
         draftCountdown = 20000;
       }
 
-      // --- HUD ---
+      // HUD
       hudDist.textContent = Math.floor(distance) + ' m';
       hudPasses.textContent = cleanPasses;
       hudEffort.textContent = Math.round(effort) + '%';
@@ -768,77 +771,72 @@
 
     /* ---------- Render ---------- */
     function render(){
-      // Sky
-      var sg = ctx.createLinearGradient(0, 0, 0, ROAD_TOP);
-      sg.addColorStop(0, COL.skyHi);
-      sg.addColorStop(1, COL.sky);
-      ctx.fillStyle = sg;
-      ctx.fillRect(0, 0, W, ROAD_TOP);
-
-      // Sun
-      ctx.fillStyle = COL.sun;
-      ctx.globalAlpha = 0.18;
-      ctx.beginPath();
-      ctx.arc(W * 0.78, H * 0.22, 38, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.globalAlpha = 1;
-
-      // Mountains (parallax)
-      drawMountains(COL.mountainBack, ROAD_TOP - 30, 70, bgScroll * 0.7);
-      drawMountains(COL.mountainFront, ROAD_TOP - 4, 38, midScroll * 0.7);
-
-      // Grass band (top of road area)
-      ctx.fillStyle = COL.grass;
-      ctx.fillRect(0, ROAD_TOP - 6, W, 8);
-      ctx.fillStyle = COL.grassEdge;
-      ctx.fillRect(0, ROAD_TOP - 2, W, 1);
-
-      // Road
-      ctx.fillStyle = COL.road;
-      ctx.fillRect(0, ROAD_TOP, W, ROAD_BOT - ROAD_TOP);
-
-      // Road shoulder bottom
-      ctx.fillStyle = COL.grass;
-      ctx.fillRect(0, ROAD_BOT, W, H - ROAD_BOT);
-      ctx.fillStyle = COL.grassEdge;
-      ctx.fillRect(0, ROAD_BOT - 1, W, 1);
-
-      // Lane dividers (dashed, scrolling)
-      ctx.strokeStyle = COL.roadLine;
-      ctx.lineWidth = 2;
-      for (var ln = 1; ln <= 2; ln++) {
-        var y = ROAD_TOP + (ROAD_BOT - ROAD_TOP) * (ln / 3);
-        drawDashedH(y, 28, 22, roadScroll);
+      // Background — scrolling pixel-art image, scaled to canvas height.
+      // The image is wider than tall; we tile horizontally.
+      if (IMG.bg && IMG.bg.naturalWidth) {
+        var bg = IMG.bg;
+        var aspect = bg.naturalWidth / bg.naturalHeight;
+        var drawH = H;
+        var drawW = drawH * aspect;
+        var offset = bgScroll % drawW;
+        // Draw enough tiles to cover the canvas
+        var startX = -offset;
+        for (var x = startX; x < W; x += drawW) {
+          ctx.drawImage(bg, x, 0, drawW, drawH);
+        }
+      } else {
+        // fallback fill while bg loads
+        ctx.fillStyle = '#1a1834';
+        ctx.fillRect(0, 0, W, H);
+        ctx.fillStyle = '#272453';
+        ctx.fillRect(0, ROAD_TOP, W, ROAD_BOT - ROAD_TOP);
       }
-      // Outer road edge lines (solid)
-      ctx.fillStyle = COL.roadEdge;
-      ctx.fillRect(0, ROAD_TOP, W, 1.5);
-      ctx.fillRect(0, ROAD_BOT - 1, W, 1.5);
 
       // Painter-sort entities by lane (top lane first so lower lanes overlap)
       var sorted = entities.slice().sort(function(a, b){
         return LANE_Y[a.lane] - LANE_Y[b.lane];
       });
-
-      // Draw entities behind/above player line first
       for (var i = 0; i < sorted.length; i++) {
         var e = sorted[i];
         var y = LANE_Y[e.lane];
-        if (e.kind === 'rival')  drawCyclistSide(e.x, y, COL.rival, COL.rivalDeep, e.animFrame, false);
-        else if (e.kind === 'cone')   drawCone(e.x + e.w/2, y);
-        else if (e.kind === 'bottle' && !e.taken) drawBottle(e.x + e.w/2, y, e.bob);
-        else if (e.kind === 'car')    drawCar(e.x, y, e.colMain, e.colDeep, e.animFrame);
-        else if (e.kind === 'truck')  drawTruck(e.x, y, e.animFrame);
-        else if (e.kind === 'bus')    drawBus(e.x, y, e.animFrame);
+        var cx = e.x + e.w / 2;
+        if (e.kind === 'rival') {
+          drawSprite(IMG.bike, 'bike', cx, y + 6);
+        } else if (e.kind === 'car') {
+          drawSprite(IMG.car, 'car', cx, y + 6);
+        } else if (e.kind === 'bus') {
+          drawSprite(IMG.bus, 'bus', cx, y + 6);
+        } else if (e.kind === 'bottle' && !e.taken) {
+          var yo = Math.sin((e.bob || 0) * 1.4) * 1.5;
+          drawSprite(IMG.bottle, 'bottle', cx, y + 4 + yo);
+        } else if (e.kind === 'banana' && !e.taken) {
+          var yob = Math.sin((e.bob || 0) * 1.2) * 1.5;
+          drawSprite(IMG.banana, 'banana', cx, y + 4 + yob);
+        } else if (e.kind === 'bananaPeel' && !e.triggered) {
+          drawSprite(IMG.bananaPeel, 'bananaPeel', cx, y + 4);
+        }
       }
 
-      // Player
+      // Player — uses the same bike sprite. Flicker briefly when slipping
+      // for legibility (faster blink in last 0.4s).
       var py = LANE_Y[Math.floor(player.laneFloat)] +
                (LANE_Y[Math.min(2, Math.floor(player.laneFloat) + 1)] - LANE_Y[Math.floor(player.laneFloat)])
                  * (player.laneFloat - Math.floor(player.laneFloat));
-      drawCyclistSide(PLAYER_X - 28, py, COL.coral, COL.coralDeep, player.animFrame, true);
+      var drawPlayer = true;
+      if (player.slipTimer > 0) {
+        // blink every 120ms while slipping
+        drawPlayer = Math.floor(performance.now() / 120) % 2 === 0;
+      }
+      if (drawPlayer) drawSprite(IMG.bike, 'bike', PLAYER_X, py + 6);
 
-      // Draft zone visual
+      // Subtle marker under the player — coral dot so you can always
+      // tell which bike is you when a rival is nearby.
+      ctx.fillStyle = 'rgba(250,119,60,0.85)';
+      ctx.beginPath();
+      ctx.arc(PLAYER_X, py + 10, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Draft-zone visual
       if (inDraftZone && draftEntity) {
         var rx = draftEntity.x;
         var ry = LANE_Y[draftEntity.lane];
@@ -846,13 +844,22 @@
         ctx.lineWidth = 2;
         ctx.setLineDash([6, 6]);
         ctx.beginPath();
-        ctx.rect(PLAYER_X - 4, ry - 22, rx - PLAYER_X + 6, 44);
+        ctx.rect(PLAYER_X - 4, ry - 30, rx - PLAYER_X + 6, 38);
         ctx.stroke();
         ctx.setLineDash([]);
         ctx.fillStyle = 'rgba(239,68,68,0.95)';
         ctx.font = 'bold 14px monospace';
         ctx.textAlign = 'center';
-        ctx.fillText('PASS! ' + (draftCountdown / 1000).toFixed(1) + 's', (PLAYER_X + rx) / 2, ry - 28);
+        ctx.fillText('PASS! ' + (draftCountdown / 1000).toFixed(1) + 's', (PLAYER_X + rx) / 2, ry - 36);
+        ctx.textAlign = 'left';
+      }
+
+      // Slip toast
+      if (player.slipTimer > 0) {
+        ctx.fillStyle = 'rgba(255, 213, 0, 0.95)';
+        ctx.font = 'bold 14px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('SLIP!', PLAYER_X, py - 30);
         ctx.textAlign = 'left';
       }
 
@@ -871,449 +878,15 @@
       }
 
       // Effort bar (top-left)
-      ctx.fillStyle = 'rgba(255,255,255,0.12)';
-      ctx.fillRect(16, 14, 140, 8);
-      ctx.fillStyle = effort > 30 ? COL.teal : COL.coral;
+      ctx.fillStyle = 'rgba(0,0,0,0.5)';
+      ctx.fillRect(14, 12, 144, 12);
+      ctx.fillStyle = effort > 30 ? '#00B3A4' : '#FA773C';
       ctx.fillRect(16, 14, 140 * (effort / 100), 8);
       ctx.font = 'bold 10px monospace';
-      ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      ctx.fillStyle = 'rgba(255,255,255,0.85)';
       ctx.fillText('EFFORT', 16, 11);
     }
 
-    /* ---------- Background drawing ---------- */
-    function drawMountains(color, baseY, amp, offset){
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.moveTo(0, baseY);
-      var seg = 60;
-      for (var x = -seg; x <= W + seg; x += seg) {
-        var n = Math.sin((x + offset) * 0.012) + 0.6 * Math.sin((x + offset) * 0.031);
-        var y = baseY - amp * (0.55 + 0.4 * n);
-        ctx.lineTo(x, y);
-      }
-      ctx.lineTo(W, baseY);
-      ctx.closePath();
-      ctx.fill();
-    }
-    function drawDashedH(y, dashLen, gapLen, scroll){
-      ctx.beginPath();
-      var x = -scroll;
-      while (x < W) {
-        ctx.moveTo(x, y);
-        ctx.lineTo(x + dashLen, y);
-        x += dashLen + gapLen;
-      }
-      ctx.stroke();
-    }
-
-    /* ---------- Sprite: side-view cyclist (facing right) ----------
-       Anchored: (x, y) is the BOTTOM-LEFT of the rider/bike footprint.
-       Total footprint ~ 56 wide × 38 tall. Centre of bike is at (x+28, y-12). */
-    function drawCyclistSide(x, y, jersey, jerseyDark, animFrame, isPlayer){
-      var cx = x + 28;  // bike centre x
-      var by = y;       // ground line
-      var wheelR = 7;
-
-      // Shadow
-      ctx.fillStyle = 'rgba(0,0,0,0.45)';
-      ctx.beginPath();
-      ctx.ellipse(cx, by + 1, 24, 3, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      var wheelY = by - wheelR;
-
-      // Wheels (rear at x-16, front at x+16)
-      var rotPhase = animFrame * 6;
-      drawWheel(cx - 16, wheelY, wheelR, rotPhase);
-      drawWheel(cx + 16, wheelY, wheelR, rotPhase + 0.9);
-
-      // Bike frame (TT triangle: BB at cx, rear hub, head tube up)
-      ctx.strokeStyle = jerseyDark;
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      // BB (bottom bracket) sits between wheels at wheelY
-      // Down tube: head tube → BB
-      ctx.moveTo(cx + 16, wheelY - 1);   // head tube top
-      ctx.lineTo(cx - 1, wheelY + 1);    // BB
-      // Chainstay: BB → rear hub
-      ctx.moveTo(cx - 1, wheelY + 1);
-      ctx.lineTo(cx - 16, wheelY);
-      // Seat tube: BB → saddle base
-      ctx.moveTo(cx - 1, wheelY + 1);
-      ctx.lineTo(cx - 4, wheelY - 14);
-      // Top tube: head tube area → seat tube top
-      ctx.moveTo(cx + 16, wheelY - 7);
-      ctx.lineTo(cx - 4, wheelY - 14);
-      // Seat stay
-      ctx.moveTo(cx - 16, wheelY);
-      ctx.lineTo(cx - 4, wheelY - 14);
-      // Aero bar forward extension (from head tube)
-      ctx.moveTo(cx + 16, wheelY - 8);
-      ctx.lineTo(cx + 24, wheelY - 11);
-      ctx.stroke();
-
-      // Saddle (small black bar)
-      ctx.fillStyle = '#0e0d22';
-      ctx.fillRect(cx - 7, wheelY - 16, 8, 2);
-
-      // Rider — torso (leaning aero, forward and down)
-      // Torso runs from saddle area to handlebar
-      ctx.fillStyle = jersey;
-      ctx.beginPath();
-      ctx.moveTo(cx - 4, wheelY - 14);    // hip on saddle
-      ctx.lineTo(cx + 4,  wheelY - 19);   // back curving up
-      ctx.lineTo(cx + 18, wheelY - 16);   // shoulder forward & low
-      ctx.lineTo(cx + 14, wheelY - 12);   // chest line
-      ctx.lineTo(cx - 2,  wheelY - 11);   // belly back to hip
-      ctx.closePath();
-      ctx.fill();
-
-      // Side highlight
-      ctx.fillStyle = 'rgba(255,255,255,0.10)';
-      ctx.beginPath();
-      ctx.moveTo(cx - 4,  wheelY - 14);
-      ctx.lineTo(cx + 4,  wheelY - 19);
-      ctx.lineTo(cx + 2,  wheelY - 15);
-      ctx.closePath();
-      ctx.fill();
-
-      // 404 number patch on the player only
-      if (isPlayer) {
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(cx + 2, wheelY - 17, 9, 4);
-        ctx.fillStyle = jerseyDark;
-        ctx.font = 'bold 4px monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText('404', cx + 6.5, wheelY - 13.5);
-        ctx.textAlign = 'left';
-      }
-
-      // Arms going from shoulder forward to handlebar/aero bar
-      ctx.strokeStyle = jersey;
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.moveTo(cx + 17, wheelY - 16);
-      ctx.lineTo(cx + 23, wheelY - 10);
-      ctx.stroke();
-
-      // Aero TT helmet (elongated egg, tapered tail)
-      ctx.fillStyle = jerseyDark;
-      ctx.beginPath();
-      ctx.moveTo(cx + 19, wheelY - 22);
-      ctx.lineTo(cx + 26, wheelY - 22);
-      ctx.lineTo(cx + 24, wheelY - 18);
-      ctx.lineTo(cx + 12, wheelY - 18);
-      ctx.lineTo(cx + 12, wheelY - 21);
-      ctx.closePath();
-      ctx.fill();
-      // Visor (front of helmet)
-      ctx.fillStyle = 'rgba(255,255,255,0.22)';
-      ctx.beginPath();
-      ctx.moveTo(cx + 22, wheelY - 21);
-      ctx.lineTo(cx + 26, wheelY - 21);
-      ctx.lineTo(cx + 24, wheelY - 19);
-      ctx.lineTo(cx + 22, wheelY - 19);
-      ctx.closePath();
-      ctx.fill();
-      // Tiny coral marker on top of helmet for player
-      if (isPlayer) {
-        ctx.fillStyle = COL.coral;
-        ctx.fillRect(cx + 14, wheelY - 22.5, 9, 1.2);
-      }
-
-      // Pedaling leg (between wheels)
-      var pa = animFrame * 4;
-      var legX = cx - 1 + Math.cos(pa) * 4;
-      var legY = wheelY - 1 + Math.sin(pa) * 4;
-      ctx.strokeStyle = jerseyDark;
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.moveTo(cx - 4, wheelY - 13);
-      ctx.lineTo(legX, legY);
-      ctx.stroke();
-    }
-
-    function drawWheel(x, y, r, rot){
-      // Tyre
-      ctx.fillStyle = COL.tyre;
-      ctx.beginPath();
-      ctx.arc(x, y, r, 0, Math.PI * 2);
-      ctx.fill();
-      // Rim band
-      ctx.strokeStyle = '#5b5e93';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.arc(x, y, r - 1, 0, Math.PI * 2);
-      ctx.stroke();
-      // Spokes (4-arm)
-      ctx.strokeStyle = 'rgba(255,255,255,0.35)';
-      ctx.lineWidth = 1;
-      for (var s = 0; s < 4; s++) {
-        var a = rot + s * (Math.PI / 2);
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.lineTo(x + Math.cos(a) * (r - 1.5), y + Math.sin(a) * (r - 1.5));
-        ctx.stroke();
-      }
-      // Hub
-      ctx.fillStyle = '#bdbede';
-      ctx.beginPath();
-      ctx.arc(x, y, 1.6, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    /* ---------- Sprite: water bottle ---------- */
-    function drawBottle(cx, by, bob){
-      var yo = Math.sin((bob || 0) * 1.4) * 1.4;
-      var top = by - 18 + yo;
-      // Shadow
-      ctx.fillStyle = 'rgba(0,0,0,0.35)';
-      ctx.beginPath();
-      ctx.ellipse(cx, by + 1, 8, 2, 0, 0, Math.PI * 2);
-      ctx.fill();
-      // Body
-      ctx.fillStyle = COL.bottle;
-      ctx.fillRect(cx - 5, top + 4, 10, 14);
-      // Highlight stripe
-      ctx.fillStyle = 'rgba(255,255,255,0.30)';
-      ctx.fillRect(cx - 4, top + 5, 2, 11);
-      // Cap
-      ctx.fillStyle = COL.bottleCap;
-      ctx.fillRect(cx - 4, top + 1, 8, 3);
-      // Neck
-      ctx.fillRect(cx - 3, top + 3, 6, 2);
-      // Subtle glow ring
-      ctx.strokeStyle = 'rgba(58,168,255,0.25)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.ellipse(cx, by - 5 + yo, 9 + Math.sin((bob || 0) * 2) * 1.2, 4, 0, 0, Math.PI * 2);
-      ctx.stroke();
-    }
-
-    /* ---------- Sprite: cone ---------- */
-    function drawCone(cx, by){
-      ctx.fillStyle = 'rgba(0,0,0,0.4)';
-      ctx.beginPath();
-      ctx.ellipse(cx, by + 1, 11, 3, 0, 0, Math.PI * 2);
-      ctx.fill();
-      // Body
-      ctx.fillStyle = COL.coral;
-      ctx.beginPath();
-      ctx.moveTo(cx, by - 22);
-      ctx.lineTo(cx + 9, by);
-      ctx.lineTo(cx - 9, by);
-      ctx.closePath();
-      ctx.fill();
-      // Reflective stripes
-      ctx.fillStyle = '#fff7ea';
-      ctx.fillRect(cx - 7, by - 11, 14, 3);
-      ctx.fillRect(cx - 8, by - 4, 16, 3);
-      // Base plate
-      ctx.fillStyle = '#0e0d22';
-      ctx.fillRect(cx - 11, by - 1, 22, 3);
-    }
-
-    /* ---------- Sprite: car (side view, facing right) ---------- */
-    function drawCar(x, y, main, deep, animFrame){
-      var by = y + 14;  // ground line for car wheels
-      // Shadow
-      ctx.fillStyle = 'rgba(0,0,0,0.4)';
-      ctx.beginPath();
-      ctx.ellipse(x + 38, by + 1, 36, 4, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Wheels
-      var rot = animFrame * 8;
-      drawCarWheel(x + 14, by - 4, 6, rot);
-      drawCarWheel(x + 62, by - 4, 6, rot + 0.6);
-
-      // Body lower
-      ctx.fillStyle = main;
-      // Body main
-      ctx.beginPath();
-      ctx.moveTo(x + 4,  by - 12);
-      ctx.lineTo(x + 16, by - 22);   // hood up
-      ctx.lineTo(x + 56, by - 22);   // roof start
-      ctx.lineTo(x + 68, by - 12);   // trunk down
-      ctx.lineTo(x + 72, by - 4);
-      ctx.lineTo(x + 4,  by - 4);
-      ctx.closePath();
-      ctx.fill();
-
-      // Roof
-      ctx.beginPath();
-      ctx.moveTo(x + 20, by - 22);
-      ctx.lineTo(x + 28, by - 30);
-      ctx.lineTo(x + 50, by - 30);
-      ctx.lineTo(x + 56, by - 22);
-      ctx.closePath();
-      ctx.fill();
-
-      // Windows
-      ctx.fillStyle = COL.glass;
-      ctx.beginPath();
-      ctx.moveTo(x + 22, by - 22);
-      ctx.lineTo(x + 30, by - 28);
-      ctx.lineTo(x + 48, by - 28);
-      ctx.lineTo(x + 54, by - 22);
-      ctx.closePath();
-      ctx.fill();
-
-      // Headlight (front, right)
-      ctx.fillStyle = '#fff8b8';
-      ctx.fillRect(x + 68, by - 11, 4, 3);
-      // Tail (rear, left)
-      ctx.fillStyle = '#cc1f2a';
-      ctx.fillRect(x + 4, by - 11, 3, 3);
-
-      // Body shadow line (deep)
-      ctx.fillStyle = deep;
-      ctx.fillRect(x + 4, by - 5, 68, 1.5);
-    }
-    function drawCarWheel(x, y, r, rot){
-      ctx.fillStyle = COL.tyre;
-      ctx.beginPath();
-      ctx.arc(x, y, r, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#bdbede';
-      ctx.beginPath();
-      ctx.arc(x, y, r - 2.5, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = '#3a3a5a';
-      ctx.lineWidth = 1;
-      for (var s = 0; s < 3; s++) {
-        var a = rot + s * (Math.PI * 2 / 3);
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.lineTo(x + Math.cos(a) * (r - 2.5), y + Math.sin(a) * (r - 2.5));
-        ctx.stroke();
-      }
-    }
-
-    /* ---------- Sprite: truck (box truck) ---------- */
-    function drawTruck(x, y, animFrame){
-      var by = y + 16;
-      // Shadow
-      ctx.fillStyle = 'rgba(0,0,0,0.45)';
-      ctx.beginPath();
-      ctx.ellipse(x + 55, by + 1, 56, 5, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      var rot = animFrame * 7;
-      drawCarWheel(x + 18, by - 4, 7, rot);
-      drawCarWheel(x + 90, by - 4, 7, rot + 0.5);
-
-      // Box body
-      ctx.fillStyle = COL.truck;
-      ctx.fillRect(x + 30, by - 32, 78, 28);
-      // Box body shadow
-      ctx.fillStyle = COL.truckDeep;
-      ctx.fillRect(x + 30, by - 6, 78, 2);
-      // Door lines
-      ctx.strokeStyle = COL.truckDeep;
-      ctx.lineWidth = 1;
-      for (var d = 1; d < 4; d++) {
-        var xx = x + 30 + d * 19;
-        ctx.beginPath();
-        ctx.moveTo(xx, by - 30);
-        ctx.lineTo(xx, by - 6);
-        ctx.stroke();
-      }
-
-      // Cab
-      ctx.fillStyle = '#e4e4e4';
-      ctx.beginPath();
-      ctx.moveTo(x + 4,  by - 22);
-      ctx.lineTo(x + 14, by - 28);
-      ctx.lineTo(x + 28, by - 28);
-      ctx.lineTo(x + 28, by - 4);
-      ctx.lineTo(x + 4,  by - 4);
-      ctx.closePath();
-      ctx.fill();
-      // Cab window
-      ctx.fillStyle = COL.glass;
-      ctx.fillRect(x + 8, by - 26, 18, 8);
-      // Headlight
-      ctx.fillStyle = '#fff8b8';
-      ctx.fillRect(x + 4, by - 11, 3, 3);
-      // Cab base shadow
-      ctx.fillStyle = '#9e9e9e';
-      ctx.fillRect(x + 4, by - 5, 24, 1.5);
-
-      // YOUSULI brand patch on the box (a small navy stripe with coral)
-      ctx.fillStyle = COL.navy;
-      ctx.fillRect(x + 38, by - 22, 60, 8);
-      ctx.fillStyle = COL.coral;
-      ctx.fillRect(x + 38, by - 17, 60, 1.6);
-      ctx.fillStyle = '#fff';
-      ctx.font = 'bold 6px sans-serif';
-      ctx.fillText('YOUSULI', x + 56, by - 16);
-    }
-
-    /* ---------- Sprite: bus (city bus) ---------- */
-    function drawBus(x, y, animFrame){
-      var by = y + 18;
-      ctx.fillStyle = 'rgba(0,0,0,0.45)';
-      ctx.beginPath();
-      ctx.ellipse(x + 70, by + 1, 70, 5, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      var rot = animFrame * 7;
-      drawCarWheel(x + 22, by - 4, 7, rot);
-      drawCarWheel(x + 116, by - 4, 7, rot + 0.7);
-
-      // Bus body
-      ctx.fillStyle = COL.bus;
-      ctx.beginPath();
-      ctx.moveTo(x + 2,  by - 28);
-      ctx.lineTo(x + 8,  by - 34);
-      ctx.lineTo(x + 132, by - 34);
-      ctx.lineTo(x + 138, by - 28);
-      ctx.lineTo(x + 138, by - 4);
-      ctx.lineTo(x + 2,  by - 4);
-      ctx.closePath();
-      ctx.fill();
-
-      // Body shadow
-      ctx.fillStyle = COL.busDeep;
-      ctx.fillRect(x + 2, by - 6, 136, 2);
-
-      // Windows (long row + driver's window)
-      ctx.fillStyle = COL.glass;
-      // Driver windscreen (front)
-      ctx.beginPath();
-      ctx.moveTo(x + 128, by - 32);
-      ctx.lineTo(x + 136, by - 28);
-      ctx.lineTo(x + 136, by - 18);
-      ctx.lineTo(x + 122, by - 18);
-      ctx.closePath();
-      ctx.fill();
-      // Passenger windows
-      for (var w = 0; w < 5; w++) {
-        var wx = x + 14 + w * 22;
-        ctx.fillRect(wx, by - 30, 18, 12);
-      }
-
-      // Door (back)
-      ctx.fillStyle = '#0a3318';
-      ctx.fillRect(x + 6, by - 18, 6, 14);
-
-      // Headlight + tail
-      ctx.fillStyle = '#fff8b8';
-      ctx.fillRect(x + 134, by - 12, 4, 3);
-      ctx.fillStyle = '#cc1f2a';
-      ctx.fillRect(x + 2, by - 12, 3, 3);
-
-      // Route number panel (white on green)
-      ctx.fillStyle = '#fff';
-      ctx.fillRect(x + 6, by - 32, 18, 8);
-      ctx.fillStyle = '#0a3318';
-      ctx.font = 'bold 7px sans-serif';
-      ctx.fillText('YS-1', x + 8, by - 25);
-    }
-
-    // Initial render so the canvas isn't blank under the overlay
-    render();
   })();
   </script>
 
