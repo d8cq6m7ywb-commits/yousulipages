@@ -349,21 +349,23 @@
     'use strict';
 
     /* =====================================================================
-       Yousuli 404 — Bike leg game.
+       Yousuli 404 — Bike leg game (v3, side-scrolling).
 
-       Concept (non-draft-legal triathlon):
-         - You're cycling left-to-right on a 3-lane road. Stay smooth.
-         - Random "rivals" appear ahead. If you slot inside their draft
-           zone (close behind in the same lane), a 20-second pass timer
-           starts. You must move out of the zone — either by surging
-           past them or by switching lanes — before the timer runs out,
-           or you get a DRAFT PENALTY (race over).
-         - Cones spawn on the road. Hit one and your race ends.
-         - Every ~25 seconds, a TURN appears: the road bends, your
-           pacing must hold. Visually represented; gameplay continues.
-         - Effort meter: surging burns effort, easing recovers it.
+       Concept:
+         - Player rides a TT bike facing RIGHT, fixed on the left of the
+           canvas. The world scrolls right-to-left, so obstacles, rivals,
+           bottles, cars, trucks, and the occasional bus all come at the
+           player from the right edge.
+         - Road has 3 horizontal lanes. UP / DOWN switch lanes. RIGHT or
+           SPACE-held surges (burns effort). LEFT eases off (recovers
+           effort).
+         - Non-draft-legal: if a rival sits in your lane and you slot in
+           behind them (close range), a 20-second draft countdown starts.
+           Surge past or change lane before it hits zero.
+         - Bottles are pickups (+effort). Vehicles and cones are crash
+           hazards. Wheel-touching a rival = crash.
 
-       Style: pixel-art-flavoured, Yousuli navy + coral + teal.
+       Style: Yousuli navy + coral + teal; pixel-art-flavoured shapes.
     ===================================================================== */
 
     var canvas = document.getElementById('gameCanvas');
@@ -371,7 +373,7 @@
     var W = canvas.width;
     var H = canvas.height;
 
-    // UI elements
+    // HUD elements
     var hudDist    = document.getElementById('hudDist');
     var hudPasses  = document.getElementById('hudPasses');
     var hudEffort  = document.getElementById('hudEffort');
@@ -386,112 +388,124 @@
     var btnStart   = document.getElementById('btnStart');
     var btnRestart = document.getElementById('btnRestart');
 
-    // Brand palette
+    // Palette
     var COL = {
-      sky:        '#1a1834',
-      skyHi:      '#272453',
-      mountainBack: '#2f2d56',
+      skyHi:       '#272453',
+      sky:         '#1a1834',
+      mountainBack:  '#2f2d56',
       mountainFront: '#1e1c45',
-      road:       '#0d0c1f',
-      roadEdge:   '#3d3a6e',
-      roadLine:   '#f7ecd8',
-      grass:      '#272453',
-      coral:      '#FA773C',
-      coralDeep:  '#d65626',
-      teal:       '#00B3A4',
-      sun:        '#FFD66B',
-      navy:       '#2F2D56',
-      white:      '#ffffff',
-      rival:      '#7a82c2',  // muted blue-grey
-      cone:       '#FA773C',
-      coneStripe: '#fff7ea'
+      sun:         '#FFD66B',
+      grass:       '#21204a',
+      grassEdge:   '#403d75',
+      road:        '#15142d',
+      roadLine:    '#f7ecd8',
+      roadEdge:    '#3d3a6e',
+      coral:       '#FA773C',
+      coralDeep:   '#d65626',
+      coralPale:   '#ffd9c4',
+      teal:        '#00B3A4',
+      tealDeep:    '#007d72',
+      navy:        '#2F2D56',
+      rival:       '#7a82c2',
+      rivalDeep:   '#3d4170',
+      bottle:      '#3aa8ff',
+      bottleCap:   '#FA773C',
+      car1:        '#cf3a47',
+      car1Deep:    '#7a1c25',
+      car2:        '#6cb8c4',
+      car2Deep:    '#3d6e7a',
+      car3:        '#dedede',
+      car3Deep:    '#7a7a7a',
+      truck:       '#f5c542',
+      truckDeep:   '#8a6e16',
+      bus:         '#2c8a4b',
+      busDeep:     '#1a4f2d',
+      tyre:        '#0a0918',
+      glass:       'rgba(140, 170, 220, 0.55)'
     };
 
-    // Game state
+    // States
     var STATE_TITLE = 'title', STATE_PLAY = 'play', STATE_OVER = 'over', STATE_PAUSE = 'pause';
     var state = STATE_TITLE;
 
-    var distance = 0;        // metres travelled
+    // Track / world
+    var ROAD_TOP = H * 0.50;        // road top (y)
+    var ROAD_BOT = H - 12;          // road bottom (y)
+    var LANE_Y   = [
+      ROAD_TOP + (ROAD_BOT - ROAD_TOP) * 0.20,
+      ROAD_TOP + (ROAD_BOT - ROAD_TOP) * 0.50,
+      ROAD_TOP + (ROAD_BOT - ROAD_TOP) * 0.80
+    ];
+    var LANE_H   = (ROAD_BOT - ROAD_TOP) / 3;
+
+    // Game vars
+    var distance = 0;
     var cleanPasses = 0;
-    var effort = 100;        // 0..100
+    var effort = 100;
     var bestDist = parseInt(localStorage.getItem('ys_404_best') || '0', 10) || 0;
     hudBest.textContent = bestDist + ' m';
 
-    /* PERSPECTIVE WORLD MODEL
-       Entities are positioned by (lane: 0|1|2) and (depth: 0..1).
-       depth = 0 is the horizon, depth = 1 is right under the camera.
-       Player is at fixed depth ~0.82. Rivals/cones spawn at depth 0
-       and approach. Collision and draft logic use depth differences,
-       not screen-space x. Rendering scales sprites by depth so they
-       grow as they approach (behind-the-rider view). */
-    var PLAYER_DEPTH = 0.82;
-
     // Player
+    var PLAYER_X = 130;
     var player = {
-      lane: 1,        // integer target lane (0=left, 1=centre, 2=right)
-      laneFloat: 1,   // smooth visual lane position
-      speed: 0.55,
+      lane: 1,
+      laneFloat: 1,
+      speed: 0.55,       // baseline 0.55, max ~0.95, min ~0.35
       targetSpeed: 0.55,
       animFrame: 0
     };
 
-    // Rivals: appear ahead at horizon (depth 0). Each: lane, depth, relSpeed.
-    var rivals = [];
-    var rivalSpawnTimer = 2200;  // ms
+    // Entities: { kind, x, lane, w, h, relSpeed?, passed?, taken?, baseColor? }
+    // kind: 'rival' | 'bottle' | 'cone' | 'car' | 'truck' | 'bus'
+    var entities = [];
 
-    // Cones
-    var cones = [];
-    var coneSpawnTimer = 1500;
+    // Spawn timers
+    var spawnTimers = {
+      rival:  2400,
+      cone:   1700,
+      bottle: 2200,
+      car:    3500,
+      truck:  6500,
+      bus:    14000
+    };
 
-    // Background: parallax mountains
+    // Background scroll
     var bgScroll = 0;
     var midScroll = 0;
     var roadScroll = 0;
 
-    // Turn (visual): road bends every 25s for ~4s
-    var turnTimer = 25000;
-    var turnDuration = 0;
-    var turnDir = 0;   // -1 left, +1 right
-    var turnIntensity = 0;
-
     // Draft state
     var inDraftZone = false;
-    var draftRivalIdx = -1;
-    var draftCountdown = 20000;  // ms remaining when in zone
+    var draftEntity = null;
+    var draftCountdown = 20000;
 
-    // Inputs
+    /* ---------- Input ---------- */
     var keys = {};
     document.addEventListener('keydown', function(e){
-      // Don't hijack browser scroll if user isn't focused on game
       var k = e.key;
       var gameKey = (k === 'ArrowUp' || k === 'ArrowDown' || k === 'ArrowLeft' || k === 'ArrowRight'
-                  || k === 'w' || k === 'a' || k === 's' || k === 'd'
-                  || k === 'W' || k === 'A' || k === 'S' || k === 'D'
-                  || k === ' ');
-      if (!gameKey) return;
-      // Only block default if game is active OR overlay focused
-      if (state === STATE_PLAY || k === ' ') { e.preventDefault(); }
+                  || /^[wasdWASD]$/.test(k) || k === ' ');
+      if (gameKey && (state === STATE_PLAY || k === ' ')) e.preventDefault();
       keys[k.toLowerCase()] = true;
 
       if (k === ' ') {
-        if (state === STATE_TITLE) { startGame(); }
-        else if (state === STATE_PLAY) { pauseGame(); }
-        else if (state === STATE_PAUSE) { resumeGame(); }
-        else if (state === STATE_OVER) { resetAndStart(); }
+        if (state === STATE_TITLE) startGame();
+        else if (state === STATE_PLAY) pauseGame();
+        else if (state === STATE_PAUSE) resumeGame();
+        else if (state === STATE_OVER) resetAndStart();
+        return;
       }
-      // Lane switch on keydown (not held)
-      if (state === STATE_PLAY) {
-        if (k === 'ArrowLeft' || k === 'a' || k === 'A')  { if (player.lane > 0) player.lane--; }
-        if (k === 'ArrowRight' || k === 'd' || k === 'D') { if (player.lane < 2) player.lane++; }
-      }
+      // Lane change on keydown (not held), only while playing
+      if (state !== STATE_PLAY) return;
+      if (k === 'ArrowUp'   || k === 'w' || k === 'W') { if (player.lane > 0) player.lane--; }
+      if (k === 'ArrowDown' || k === 's' || k === 'S') { if (player.lane < 2) player.lane++; }
     });
-    document.addEventListener('keyup', function(e){
-      keys[e.key.toLowerCase()] = false;
-    });
+    document.addEventListener('keyup', function(e){ keys[e.key.toLowerCase()] = false; });
 
     btnStart.addEventListener('click', startGame);
     btnRestart.addEventListener('click', resetAndStart);
 
+    /* ---------- State transitions ---------- */
     function startGame(){
       if (state !== STATE_TITLE) return;
       overlayTitle.classList.add('hidden');
@@ -500,7 +514,6 @@
       requestAnimationFrame(loop);
     }
     function resetAndStart(){
-      // reset all state
       distance = 0;
       cleanPasses = 0;
       effort = 100;
@@ -508,26 +521,22 @@
       player.laneFloat = 1;
       player.speed = 0.55;
       player.targetSpeed = 0.55;
-      rivals = [];
-      cones = [];
-      rivalSpawnTimer = 2200;
-      coneSpawnTimer = 1500;
-      turnTimer = 25000;
-      turnDuration = 0;
-      turnDir = 0;
-      turnIntensity = 0;
+      entities = [];
+      spawnTimers.rival = 2400;
+      spawnTimers.cone = 1700;
+      spawnTimers.bottle = 2200;
+      spawnTimers.car = 3500;
+      spawnTimers.truck = 6500;
+      spawnTimers.bus = 14000;
       inDraftZone = false;
-      draftRivalIdx = -1;
+      draftEntity = null;
       draftCountdown = 20000;
       overlayGameOver.classList.add('hidden');
       state = STATE_PLAY;
       lastTime = performance.now();
       requestAnimationFrame(loop);
     }
-    function pauseGame(){
-      if (state !== STATE_PLAY) return;
-      state = STATE_PAUSE;
-    }
+    function pauseGame(){ if (state === STATE_PLAY) state = STATE_PAUSE; }
     function resumeGame(){
       if (state !== STATE_PAUSE) return;
       state = STATE_PLAY;
@@ -545,30 +554,66 @@
     }
 
     /* ---------- Spawning ---------- */
+    function laneFreeAt(lane, xMin, xMax){
+      for (var i = 0; i < entities.length; i++) {
+        var e = entities[i];
+        // Bus occupies its declared lane only (single lane in this view)
+        if (e.lane !== lane && !(e.kind === 'bus' && e.lane === lane)) continue;
+        if (e.lane !== lane) continue;
+        var er = e.x + e.w;
+        var el = e.x;
+        if (er > xMin && el < xMax) return false;
+      }
+      return true;
+    }
     function spawnRival(){
       var l = Math.floor(Math.random() * 3);
-      // Relative speed: slightly slower than player base, so player catches up if pushing.
-      // Larger value = closer to player's speed = slower approach. Player base 0.55.
-      var relSpeed = 0.45 + Math.random() * 0.15;  // 0.45..0.60
-      rivals.push({ lane: l, depth: 0, relSpeed: relSpeed, passed: false, animFrame: 0 });
+      if (!laneFreeAt(l, W + 10, W + 90)) return;
+      var relSpeed = 0.42 + Math.random() * 0.16;  // 0.42..0.58 (player base 0.55)
+      entities.push({ kind: 'rival', x: W + 30, lane: l, w: 56, h: 38, relSpeed: relSpeed, passed: false, animFrame: 0 });
     }
     function spawnCone(){
       var l = Math.floor(Math.random() * 3);
-      // Don't stack cones too close to an existing entity near horizon
-      for (var i = 0; i < rivals.length; i++) {
-        if (rivals[i].lane === l && rivals[i].depth < 0.08) return;
-      }
-      for (var j = 0; j < cones.length; j++) {
-        if (cones[j].lane === l && cones[j].depth < 0.08) return;
-      }
-      cones.push({ lane: l, depth: 0 });
+      if (!laneFreeAt(l, W + 5, W + 30)) return;
+      entities.push({ kind: 'cone', x: W + 10, lane: l, w: 18, h: 22 });
+    }
+    function spawnBottle(){
+      var l = Math.floor(Math.random() * 3);
+      if (!laneFreeAt(l, W + 5, W + 25)) return;
+      entities.push({ kind: 'bottle', x: W + 10, lane: l, w: 14, h: 22, taken: false, bob: 0 });
+    }
+    function spawnCar(){
+      var l = Math.floor(Math.random() * 3);
+      if (!laneFreeAt(l, W + 5, W + 110)) return;
+      var colors = [
+        { main: COL.car1, deep: COL.car1Deep },
+        { main: COL.car2, deep: COL.car2Deep },
+        { main: COL.car3, deep: COL.car3Deep }
+      ];
+      var c = colors[Math.floor(Math.random() * colors.length)];
+      // Cars roll a bit slower than player (you're catching up)
+      var relSpeed = 0.30 + Math.random() * 0.18;
+      entities.push({ kind: 'car', x: W + 20, lane: l, w: 76, h: 30, relSpeed: relSpeed,
+                      colMain: c.main, colDeep: c.deep, animFrame: 0 });
+    }
+    function spawnTruck(){
+      var l = Math.floor(Math.random() * 3);
+      if (!laneFreeAt(l, W + 5, W + 140)) return;
+      var relSpeed = 0.22 + Math.random() * 0.16;   // slower than cars
+      entities.push({ kind: 'truck', x: W + 20, lane: l, w: 110, h: 36, relSpeed: relSpeed, animFrame: 0 });
+    }
+    function spawnBus(){
+      var l = Math.floor(Math.random() * 3);
+      if (!laneFreeAt(l, W + 5, W + 170)) return;
+      var relSpeed = 0.28 + Math.random() * 0.14;
+      entities.push({ kind: 'bus', x: W + 20, lane: l, w: 140, h: 40, relSpeed: relSpeed, animFrame: 0 });
     }
 
-    /* ---------- Update loop ---------- */
+    /* ---------- Update ---------- */
     var lastTime = 0;
     function loop(now){
       if (state !== STATE_PLAY) return;
-      var dt = Math.min(40, now - lastTime);  // clamp big tab-out gaps
+      var dt = Math.min(40, now - lastTime);
       lastTime = now;
       update(dt);
       render();
@@ -576,124 +621,121 @@
     }
 
     function update(dt){
-      // --- Effort / speed control ---
-      var pushing = keys['arrowup'] || keys['w'];
-      var easing  = keys['arrowdown'] || keys['s'];
+      // --- Speed / effort ---
+      var pushing = keys['arrowright'] || keys['d'] || keys[' '];
+      var easing  = keys['arrowleft']  || keys['a'];
       if (pushing && effort > 0) {
-        player.targetSpeed = 0.92;
+        player.targetSpeed = 0.95;
         effort = Math.max(0, effort - dt * 0.045);
       } else if (easing) {
         player.targetSpeed = 0.38;
-        effort = Math.min(100, effort + dt * 0.025);
+        effort = Math.min(100, effort + dt * 0.028);
       } else {
         player.targetSpeed = 0.62;
-        effort = Math.min(100, effort + dt * 0.012);
+        effort = Math.min(100, effort + dt * 0.013);
       }
-      // smooth speed
       player.speed += (player.targetSpeed - player.speed) * 0.06;
-      // Bonk: if effort is zero, you can't push
       if (effort <= 0 && pushing) player.targetSpeed = 0.4;
 
-      // --- Smooth player visual lane position ---
+      // --- Player visual lane interpolation ---
       player.laneFloat += (player.lane - player.laneFloat) * 0.22;
       player.animFrame += dt * 0.015;
 
-      // --- World scroll based on speed ---
+      // --- World scroll / distance ---
       var worldStep = player.speed * dt * 0.22;
       distance += worldStep * 0.45;
-      bgScroll  = (bgScroll  + worldStep * 0.08) % 240;
-      midScroll = (midScroll + worldStep * 0.25) % 320;
-      roadScroll = (roadScroll + worldStep * 1.2) % 60;
+      bgScroll   = (bgScroll   + worldStep * 0.05) % 240;
+      midScroll  = (midScroll  + worldStep * 0.15) % 320;
+      roadScroll = (roadScroll + worldStep * 1.4) % 50;
 
-      // --- Turn cycle (visual) ---
-      turnTimer -= dt;
-      if (turnTimer <= 0) {
-        turnTimer = 22000 + Math.random() * 12000;
-        turnDuration = 4000 + Math.random() * 2000;
-        turnDir = Math.random() < 0.5 ? -1 : 1;
-      }
-      if (turnDuration > 0) {
-        turnDuration -= dt;
-        var p = 1 - Math.abs(turnDuration - 2000) / 3000;
-        turnIntensity = Math.max(0, Math.min(1, p)) * turnDir;
-      } else {
-        turnIntensity *= 0.92;
-      }
+      // --- Spawn cadence ramps up gently with distance ---
+      var ramp = 1 + Math.min(0.6, distance / 6000);
+      spawnTimers.rival  -= dt * ramp;
+      spawnTimers.cone   -= dt * ramp;
+      spawnTimers.bottle -= dt * 0.8;     // bottles slightly slower
+      spawnTimers.car    -= dt * ramp;
+      spawnTimers.truck  -= dt * ramp;
+      spawnTimers.bus    -= dt * 0.8;     // bus rarer
+      if (spawnTimers.rival  <= 0) { spawnRival();  spawnTimers.rival  = 2200 + Math.random() * 2000; }
+      if (spawnTimers.cone   <= 0) { spawnCone();   spawnTimers.cone   = 1500 + Math.random() * 1700; }
+      if (spawnTimers.bottle <= 0) { spawnBottle(); spawnTimers.bottle = 3200 + Math.random() * 3500; }
+      if (spawnTimers.car    <= 0) { spawnCar();    spawnTimers.car    = 4200 + Math.random() * 3500; }
+      if (spawnTimers.truck  <= 0) { spawnTruck();  spawnTimers.truck  = 8000 + Math.random() * 6000; }
+      if (spawnTimers.bus    <= 0) { spawnBus();    spawnTimers.bus    = 18000 + Math.random() * 12000; }
 
-      // --- Rival spawn ---
-      rivalSpawnTimer -= dt;
-      if (rivalSpawnTimer <= 0) {
-        spawnRival();
-        rivalSpawnTimer = 2400 + Math.random() * 1800;
-      }
-
-      // --- Cone spawn ---
-      coneSpawnTimer -= dt;
-      if (coneSpawnTimer <= 0) {
-        spawnCone();
-        coneSpawnTimer = 1300 + Math.random() * 1100;
-      }
-
-      // --- Move rivals along depth axis ---
-      // Approach rate scales with (player.speed - rival.relSpeed).
-      // Tuned so a typical rival takes ~5–8s to reach player from horizon.
-      for (var i = rivals.length - 1; i >= 0; i--) {
-        var r = rivals[i];
-        var dDepth = (player.speed - r.relSpeed) * dt * 0.0009;
-        r.depth += dDepth;
-        r.animFrame += dt * 0.015;
-        // Off-screen behind = dropped (passed and out the back)
-        if (r.depth > 1.18) rivals.splice(i, 1);
+      // --- Move entities ---
+      for (var i = entities.length - 1; i >= 0; i--) {
+        var e = entities[i];
+        // Bottles/cones use full world speed; vehicles + rivals use relative speed
+        var entitySpeed = (e.kind === 'bottle' || e.kind === 'cone')
+          ? player.speed
+          : (player.speed - e.relSpeed);
+        e.x -= entitySpeed * dt * 0.32;
+        if (e.animFrame !== undefined) e.animFrame += dt * 0.015;
+        if (e.kind === 'bottle') e.bob = (e.bob || 0) + dt * 0.006;
+        // Off-screen left → drop
+        if (e.x + e.w < -10) entities.splice(i, 1);
       }
 
-      // --- Move cones along depth axis ---
-      for (var ci = cones.length - 1; ci >= 0; ci--) {
-        var cc = cones[ci];
-        cc.depth += player.speed * dt * 0.00085;
-        if (cc.depth > 1.18) cones.splice(ci, 1);
-      }
-
-      // --- Collision: cones ---
-      // A cone collides if it crosses the player's depth slice in the same lane.
-      var COLL_DEPTH_LO = PLAYER_DEPTH - 0.04;
-      var COLL_DEPTH_HI = PLAYER_DEPTH + 0.04;
-      for (var ci2 = 0; ci2 < cones.length; ci2++) {
-        var cn = cones[ci2];
-        if (cn.lane !== player.lane) continue;
-        if (cn.depth > COLL_DEPTH_LO && cn.depth < COLL_DEPTH_HI) {
-          return gameOver('Crash',
-            'You hit a cone.',
-            'Lanes are narrower than you think when you’re aero.');
-        }
-      }
-
-      // --- Draft-zone detection ---
-      // Rival in SAME lane, just AHEAD of player in depth (smaller depth = ahead).
-      // Draft zone: rival.depth in [player.depth - 0.20, player.depth - 0.05]
-      var DRAFT_AHEAD_NEAR = 0.05;
-      var DRAFT_AHEAD_FAR  = 0.20;
-      var WHEEL_TOUCH_NEAR = 0.025;
+      // --- Collisions / draft ---
       inDraftZone = false;
-      draftRivalIdx = -1;
-      for (var k = 0; k < rivals.length; k++) {
-        var rv = rivals[k];
-        if (rv.lane !== player.lane) continue;
-        var aheadBy = PLAYER_DEPTH - rv.depth;  // positive => rival is ahead
-        // Wheel touch: rival is just slightly ahead, same lane
-        if (aheadBy < WHEEL_TOUCH_NEAR && aheadBy > 0) {
-          return gameOver('Wheel touch',
-            'You touched the wheel ahead.',
-            'In a real race that is a crash for both of you.');
+      draftEntity = null;
+
+      var playerBox = {
+        l: PLAYER_X - 24, r: PLAYER_X + 24,
+        t: LANE_Y[player.lane] - 18, b: LANE_Y[player.lane] + 18
+      };
+
+      for (var j = 0; j < entities.length; j++) {
+        var en = entities[j];
+        var eBox = {
+          l: en.x, r: en.x + en.w,
+          t: LANE_Y[en.lane] - en.h / 2, b: LANE_Y[en.lane] + en.h / 2
+        };
+        // bottles get a smaller, more forgiving hitbox
+        var pad = (en.kind === 'bottle') ? 4 : 0;
+        var xOverlap = playerBox.r > eBox.l + pad && playerBox.l < eBox.r - pad;
+        var yOverlap = playerBox.b > eBox.t + pad && playerBox.t < eBox.b - pad;
+        var sameLane = (en.lane === player.lane);
+
+        // Bottle pickup
+        if (en.kind === 'bottle' && !en.taken) {
+          if (sameLane && xOverlap) {
+            en.taken = true;
+            effort = Math.min(100, effort + 22);
+            // Mark for fast removal (slide out then drop)
+            en.x = -200;
+          }
+          continue;
         }
-        // Draft zone band
-        if (!rv.passed && aheadBy > DRAFT_AHEAD_NEAR && aheadBy < DRAFT_AHEAD_FAR) {
-          inDraftZone = true;
-          draftRivalIdx = k;
+
+        // Cone crash
+        if (en.kind === 'cone' && sameLane && xOverlap) {
+          return gameOver('Crash', 'You hit a cone.', 'Lanes are narrower than you think when you’re aero.');
         }
-        // Clean pass: rival was ahead, now behind player's depth, same lane (recent)
-        if (!rv.passed && rv.depth > PLAYER_DEPTH + 0.02) {
-          rv.passed = true;
-          cleanPasses++;
+
+        // Vehicles: car/truck/bus → crash if same lane and x-overlap
+        if ((en.kind === 'car' || en.kind === 'truck' || en.kind === 'bus') && sameLane && xOverlap) {
+          var what = en.kind === 'car' ? 'a car' : en.kind === 'truck' ? 'a truck' : 'a city bus';
+          return gameOver('Crash', 'You hit ' + what + '.',
+            'Open-road sections have traffic. Read the lane way before you commit.');
+        }
+
+        // Rival mechanics
+        if (en.kind === 'rival') {
+          var gap = en.x - PLAYER_X;
+          if (sameLane && gap > -22 && gap < 22) {
+            return gameOver('Wheel touch', 'You touched the wheel ahead.',
+              'In a real race that is a crash for both of you.');
+          }
+          if (!en.passed && sameLane && gap > 28 && gap < 140) {
+            inDraftZone = true;
+            draftEntity = en;
+          }
+          if (!en.passed && gap < -20) {
+            en.passed = true;
+            cleanPasses++;
+          }
         }
       }
 
@@ -701,15 +743,14 @@
       if (inDraftZone) {
         draftCountdown -= dt;
         if (draftCountdown <= 0) {
-          return gameOver('Drafting penalty',
-            'Draft penalty: 20 seconds in the zone.',
+          return gameOver('Drafting penalty', 'Draft penalty: 20 seconds in the zone.',
             'In a non-draft-legal race the marshal would have just blue-carded you.');
         }
       } else {
         draftCountdown = 20000;
       }
 
-      // --- HUD updates ---
+      // --- HUD ---
       hudDist.textContent = Math.floor(distance) + ' m';
       hudPasses.textContent = cleanPasses;
       hudEffort.textContent = Math.round(effort) + '%';
@@ -725,129 +766,97 @@
       }
     }
 
-    /* ---------- Perspective helpers ---------- */
-    // Road horizon at H * 0.55; horizon half-widths and bottom half-widths.
-    function roadTopY(){ return H * 0.55; }
-    function roadBotY(){ return H; }
-    function roadCenterTopX(){ return W * 0.55 + turnIntensity * 40; }
-    function roadCenterBotX(){ return W * 0.55; }
-    function roadHalfTop(){ return W * 0.16; }
-    function roadHalfBot(){ return W * 0.50; }
-    var LANE_OFFSETS = [-0.62, 0, 0.62];   // fraction of road half-width per lane
-
-    function laneScreenX(laneFloat, depth){
-      var lo;
-      if (laneFloat === Math.floor(laneFloat)) {
-        lo = LANE_OFFSETS[laneFloat];
-      } else {
-        // smooth interpolate between adjacent lane offsets
-        var a = Math.floor(laneFloat), b = Math.min(2, a + 1);
-        var t = laneFloat - a;
-        lo = LANE_OFFSETS[a] * (1 - t) + LANE_OFFSETS[b] * t;
-      }
-      var topX = roadCenterTopX() + roadHalfTop() * lo;
-      var botX = roadCenterBotX() + roadHalfBot() * lo;
-      return topX + (botX - topX) * depth;
-    }
-    function depthScreenY(depth){
-      return roadTopY() + (roadBotY() - roadTopY()) * depth;
-    }
-    function depthScale(depth){
-      // small at horizon (0.18), large in foreground (1.0)
-      return 0.18 + 0.82 * depth;
-    }
-
     /* ---------- Render ---------- */
     function render(){
-      // Sky gradient
-      var skyGrad = ctx.createLinearGradient(0, 0, 0, H * 0.55);
-      skyGrad.addColorStop(0, COL.skyHi);
-      skyGrad.addColorStop(1, COL.sky);
-      ctx.fillStyle = skyGrad;
-      ctx.fillRect(0, 0, W, H);
+      // Sky
+      var sg = ctx.createLinearGradient(0, 0, 0, ROAD_TOP);
+      sg.addColorStop(0, COL.skyHi);
+      sg.addColorStop(1, COL.sky);
+      ctx.fillStyle = sg;
+      ctx.fillRect(0, 0, W, ROAD_TOP);
 
       // Sun
       ctx.fillStyle = COL.sun;
       ctx.globalAlpha = 0.18;
       ctx.beginPath();
-      ctx.arc(W * 0.78, H * 0.22, 36, 0, Math.PI * 2);
+      ctx.arc(W * 0.78, H * 0.22, 38, 0, Math.PI * 2);
       ctx.fill();
       ctx.globalAlpha = 1;
 
-      // Mountains parallax
-      drawMountains(COL.mountainBack, H * 0.42, 80, bgScroll * 0.5);
-      drawMountains(COL.mountainFront, H * 0.50, 50, midScroll * 0.5);
+      // Mountains (parallax)
+      drawMountains(COL.mountainBack, ROAD_TOP - 30, 70, bgScroll * 0.7);
+      drawMountains(COL.mountainFront, ROAD_TOP - 4, 38, midScroll * 0.7);
 
-      // Grass / shoulders
+      // Grass band (top of road area)
       ctx.fillStyle = COL.grass;
-      ctx.fillRect(0, H * 0.55, W, H * 0.45);
+      ctx.fillRect(0, ROAD_TOP - 6, W, 8);
+      ctx.fillStyle = COL.grassEdge;
+      ctx.fillRect(0, ROAD_TOP - 2, W, 1);
 
-      // Road perspective with turn skew
-      drawRoad();
+      // Road
+      ctx.fillStyle = COL.road;
+      ctx.fillRect(0, ROAD_TOP, W, ROAD_BOT - ROAD_TOP);
 
-      // Draw all depth-positioned entities in painter order (far-to-near).
-      var drawables = [];
-      for (var i = 0; i < cones.length; i++) drawables.push({ kind: 'cone', e: cones[i] });
-      for (var j = 0; j < rivals.length; j++) drawables.push({ kind: 'rival', e: rivals[j] });
-      drawables.push({ kind: 'player', e: player });
-      drawables.sort(function(a, b){
-        var da = (a.kind === 'player') ? PLAYER_DEPTH : a.e.depth;
-        var db = (b.kind === 'player') ? PLAYER_DEPTH : b.e.depth;
-        return da - db;  // smaller depth (further away) drawn first
+      // Road shoulder bottom
+      ctx.fillStyle = COL.grass;
+      ctx.fillRect(0, ROAD_BOT, W, H - ROAD_BOT);
+      ctx.fillStyle = COL.grassEdge;
+      ctx.fillRect(0, ROAD_BOT - 1, W, 1);
+
+      // Lane dividers (dashed, scrolling)
+      ctx.strokeStyle = COL.roadLine;
+      ctx.lineWidth = 2;
+      for (var ln = 1; ln <= 2; ln++) {
+        var y = ROAD_TOP + (ROAD_BOT - ROAD_TOP) * (ln / 3);
+        drawDashedH(y, 28, 22, roadScroll);
+      }
+      // Outer road edge lines (solid)
+      ctx.fillStyle = COL.roadEdge;
+      ctx.fillRect(0, ROAD_TOP, W, 1.5);
+      ctx.fillRect(0, ROAD_BOT - 1, W, 1.5);
+
+      // Painter-sort entities by lane (top lane first so lower lanes overlap)
+      var sorted = entities.slice().sort(function(a, b){
+        return LANE_Y[a.lane] - LANE_Y[b.lane];
       });
 
-      for (var di = 0; di < drawables.length; di++) {
-        var d = drawables[di];
-        if (d.kind === 'cone') {
-          var c = d.e;
-          drawCone(laneScreenX(c.lane, c.depth), depthScreenY(c.depth), depthScale(c.depth));
-        } else if (d.kind === 'rival') {
-          var rv = d.e;
-          drawCyclistBack(
-            laneScreenX(rv.lane, rv.depth),
-            depthScreenY(rv.depth),
-            depthScale(rv.depth),
-            COL.rival, '#3d4170', rv.animFrame, false
-          );
-        } else if (d.kind === 'player') {
-          var px = laneScreenX(player.laneFloat, PLAYER_DEPTH);
-          drawCyclistBack(
-            px,
-            depthScreenY(PLAYER_DEPTH),
-            depthScale(PLAYER_DEPTH),
-            COL.coral, COL.coralDeep, player.animFrame, true
-          );
-        }
+      // Draw entities behind/above player line first
+      for (var i = 0; i < sorted.length; i++) {
+        var e = sorted[i];
+        var y = LANE_Y[e.lane];
+        if (e.kind === 'rival')  drawCyclistSide(e.x, y, COL.rival, COL.rivalDeep, e.animFrame, false);
+        else if (e.kind === 'cone')   drawCone(e.x + e.w/2, y);
+        else if (e.kind === 'bottle' && !e.taken) drawBottle(e.x + e.w/2, y, e.bob);
+        else if (e.kind === 'car')    drawCar(e.x, y, e.colMain, e.colDeep, e.animFrame);
+        else if (e.kind === 'truck')  drawTruck(e.x, y, e.animFrame);
+        else if (e.kind === 'bus')    drawBus(e.x, y, e.animFrame);
       }
 
-      // Draft-zone visual: a flashing dashed "track" between rival (ahead) and player (behind)
-      if (inDraftZone && draftRivalIdx >= 0 && rivals[draftRivalIdx]) {
-        var rr = rivals[draftRivalIdx];
-        var rx = laneScreenX(rr.lane, rr.depth);
-        var ry = depthScreenY(rr.depth);
-        var rscale = depthScale(rr.depth);
-        var px2 = laneScreenX(player.laneFloat, PLAYER_DEPTH);
-        var py2 = depthScreenY(PLAYER_DEPTH);
+      // Player
+      var py = LANE_Y[Math.floor(player.laneFloat)] +
+               (LANE_Y[Math.min(2, Math.floor(player.laneFloat) + 1)] - LANE_Y[Math.floor(player.laneFloat)])
+                 * (player.laneFloat - Math.floor(player.laneFloat));
+      drawCyclistSide(PLAYER_X - 28, py, COL.coral, COL.coralDeep, player.animFrame, true);
+
+      // Draft zone visual
+      if (inDraftZone && draftEntity) {
+        var rx = draftEntity.x;
+        var ry = LANE_Y[draftEntity.lane];
         ctx.strokeStyle = 'rgba(239,68,68,' + (0.4 + 0.5 * Math.sin(performance.now() * 0.012)) + ')';
         ctx.lineWidth = 2;
         ctx.setLineDash([6, 6]);
         ctx.beginPath();
-        ctx.moveTo(rx - 18 * rscale, ry + 4);
-        ctx.lineTo(px2 - 22, py2 - 6);
-        ctx.moveTo(rx + 18 * rscale, ry + 4);
-        ctx.lineTo(px2 + 22, py2 - 6);
+        ctx.rect(PLAYER_X - 4, ry - 22, rx - PLAYER_X + 6, 44);
         ctx.stroke();
         ctx.setLineDash([]);
-
-        // Floating "PASS! N.Ns" label above the rival
         ctx.fillStyle = 'rgba(239,68,68,0.95)';
-        ctx.font = 'bold 16px monospace';
+        ctx.font = 'bold 14px monospace';
         ctx.textAlign = 'center';
-        ctx.fillText('PASS! ' + (draftCountdown / 1000).toFixed(1) + 's', rx, ry - 28 * rscale - 6);
+        ctx.fillText('PASS! ' + (draftCountdown / 1000).toFixed(1) + 's', (PLAYER_X + rx) / 2, ry - 28);
         ctx.textAlign = 'left';
       }
 
-      // Pause overlay text
+      // Pause overlay
       if (state === STATE_PAUSE) {
         ctx.fillStyle = 'rgba(17,16,42,0.6)';
         ctx.fillRect(0, 0, W, H);
@@ -871,242 +880,436 @@
       ctx.fillText('EFFORT', 16, 11);
     }
 
+    /* ---------- Background drawing ---------- */
     function drawMountains(color, baseY, amp, offset){
       ctx.fillStyle = color;
       ctx.beginPath();
-      ctx.moveTo(0, H);
+      ctx.moveTo(0, baseY);
       var seg = 60;
       for (var x = -seg; x <= W + seg; x += seg) {
-        var n = Math.sin((x + offset) * 0.01) + Math.sin((x + offset) * 0.027);
-        var y = baseY - amp * (0.6 + 0.4 * n);
+        var n = Math.sin((x + offset) * 0.012) + 0.6 * Math.sin((x + offset) * 0.031);
+        var y = baseY - amp * (0.55 + 0.4 * n);
         ctx.lineTo(x, y);
       }
-      ctx.lineTo(W, H);
+      ctx.lineTo(W, baseY);
       ctx.closePath();
       ctx.fill();
     }
-
-    function drawRoad(){
-      // Road occupies y from H*0.55 to H, perspective trapezoid
-      var topY = H * 0.55;
-      var botY = H;
-      var topHalf = W * 0.16;  // half-width at top (horizon)
-      var botHalf = W * 0.50;  // half-width at bottom
-      var cx = W * 0.55 + turnIntensity * 80;
-      var cxBot = W * 0.55;
-
-      // Fill road
+    function drawDashedH(y, dashLen, gapLen, scroll){
       ctx.beginPath();
-      ctx.moveTo(cx - topHalf, topY);
-      ctx.lineTo(cx + topHalf, topY);
-      ctx.lineTo(cxBot + botHalf, botY);
-      ctx.lineTo(cxBot - botHalf, botY);
-      ctx.closePath();
-      ctx.fillStyle = COL.road;
+      var x = -scroll;
+      while (x < W) {
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + dashLen, y);
+        x += dashLen + gapLen;
+      }
+      ctx.stroke();
+    }
+
+    /* ---------- Sprite: side-view cyclist (facing right) ----------
+       Anchored: (x, y) is the BOTTOM-LEFT of the rider/bike footprint.
+       Total footprint ~ 56 wide × 38 tall. Centre of bike is at (x+28, y-12). */
+    function drawCyclistSide(x, y, jersey, jerseyDark, animFrame, isPlayer){
+      var cx = x + 28;  // bike centre x
+      var by = y;       // ground line
+      var wheelR = 7;
+
+      // Shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.45)';
+      ctx.beginPath();
+      ctx.ellipse(cx, by + 1, 24, 3, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      // Road edges (light)
-      ctx.strokeStyle = COL.roadEdge;
-      ctx.lineWidth = 3;
+      var wheelY = by - wheelR;
+
+      // Wheels (rear at x-16, front at x+16)
+      var rotPhase = animFrame * 6;
+      drawWheel(cx - 16, wheelY, wheelR, rotPhase);
+      drawWheel(cx + 16, wheelY, wheelR, rotPhase + 0.9);
+
+      // Bike frame (TT triangle: BB at cx, rear hub, head tube up)
+      ctx.strokeStyle = jerseyDark;
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
-      ctx.moveTo(cx - topHalf, topY); ctx.lineTo(cxBot - botHalf, botY);
-      ctx.moveTo(cx + topHalf, topY); ctx.lineTo(cxBot + botHalf, botY);
+      // BB (bottom bracket) sits between wheels at wheelY
+      // Down tube: head tube → BB
+      ctx.moveTo(cx + 16, wheelY - 1);   // head tube top
+      ctx.lineTo(cx - 1, wheelY + 1);    // BB
+      // Chainstay: BB → rear hub
+      ctx.moveTo(cx - 1, wheelY + 1);
+      ctx.lineTo(cx - 16, wheelY);
+      // Seat tube: BB → saddle base
+      ctx.moveTo(cx - 1, wheelY + 1);
+      ctx.lineTo(cx - 4, wheelY - 14);
+      // Top tube: head tube area → seat tube top
+      ctx.moveTo(cx + 16, wheelY - 7);
+      ctx.lineTo(cx - 4, wheelY - 14);
+      // Seat stay
+      ctx.moveTo(cx - 16, wheelY);
+      ctx.lineTo(cx - 4, wheelY - 14);
+      // Aero bar forward extension (from head tube)
+      ctx.moveTo(cx + 16, wheelY - 8);
+      ctx.lineTo(cx + 24, wheelY - 11);
       ctx.stroke();
 
-      // Lane lines (2 inner dashed lines, perspective)
-      for (var ln = 1; ln <= 2; ln++) {
-        var tFrac = ln / 3;
-        var topX = (cx - topHalf) + (topHalf * 2) * tFrac;
-        var botX = (cxBot - botHalf) + (botHalf * 2) * tFrac;
-        drawDashed(topX, topY, botX, botY, roadScroll);
-      }
-    }
-    function drawDashed(x1, y1, x2, y2, scroll){
-      ctx.strokeStyle = COL.roadLine;
-      ctx.lineWidth = 2;
-      var dx = x2 - x1, dy = y2 - y1;
-      var totalLen = Math.sqrt(dx*dx + dy*dy);
-      var dashLen = 26, gapLen = 22;
-      var pos = -scroll;
-      while (pos < totalLen) {
-        var s1 = Math.max(0, pos);
-        var s2 = Math.min(totalLen, pos + dashLen);
-        if (s2 > s1) {
-          var t1 = s1 / totalLen, t2 = s2 / totalLen;
-          ctx.beginPath();
-          ctx.moveTo(x1 + dx * t1, y1 + dy * t1);
-          ctx.lineTo(x1 + dx * t2, y1 + dy * t2);
-          ctx.stroke();
-        }
-        pos += dashLen + gapLen;
-      }
-    }
-
-    /* Back-view cyclist sprite. (x, y) anchors to the ground point under
-       the rear wheel. scale is 1.0 at fullsize; sprite is drawn at unit
-       size (rear-wheel bottom at y=20) and the whole transform is scaled. */
-    function drawCyclistBack(x, y, scale, jerseyCol, darkCol, animFrame, isPlayer){
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.scale(scale, scale);
-
-      // --- Ground shadow ---
-      ctx.fillStyle = 'rgba(0,0,0,0.4)';
-      ctx.beginPath();
-      ctx.ellipse(0, 22, 22, 5, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // --- Rear wheel (visible as an ellipse from behind) ---
-      // The wheel "spins" — render a couple of motion-blur spokes.
+      // Saddle (small black bar)
       ctx.fillStyle = '#0e0d22';
-      ctx.beginPath();
-      ctx.ellipse(0, 8, 13, 18, 0, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.fillRect(cx - 7, wheelY - 16, 8, 2);
 
-      // Tyre highlight
-      ctx.strokeStyle = '#2c2a55';
-      ctx.lineWidth = 2;
+      // Rider — torso (leaning aero, forward and down)
+      // Torso runs from saddle area to handlebar
+      ctx.fillStyle = jersey;
       ctx.beginPath();
-      ctx.ellipse(0, 8, 13, 18, 0, 0, Math.PI * 2);
-      ctx.stroke();
-
-      // Spokes — fan rotating
-      var rot = animFrame * 5;
-      ctx.strokeStyle = 'rgba(255,255,255,0.32)';
-      ctx.lineWidth = 1.2;
-      for (var s = 0; s < 6; s++) {
-        var a = rot + s * (Math.PI / 3);
-        ctx.beginPath();
-        ctx.moveTo(0, 8);
-        ctx.lineTo(Math.cos(a) * 11, 8 + Math.sin(a) * 15);
-        ctx.stroke();
-      }
-      // Hub
-      ctx.fillStyle = '#5b5e93';
-      ctx.beginPath();
-      ctx.arc(0, 8, 2.5, 0, Math.PI * 2);
-      ctx.fill();
-
-      // --- Bike frame uprights (seat post, chainstays implied) ---
-      ctx.strokeStyle = darkCol;
-      ctx.lineWidth = 3;
-      // Seat post — wheel up to saddle
-      ctx.beginPath();
-      ctx.moveTo(0, 8);
-      ctx.lineTo(0, -6);
-      ctx.stroke();
-
-      // --- Rider lower body / saddle area ---
-      // Hip / butt — wider at the seat, narrower up the back
-      ctx.fillStyle = '#0d0c1f';   // dark cycling shorts
-      ctx.beginPath();
-      ctx.ellipse(0, -7, 11, 6, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // --- Rider torso (back of jersey) ---
-      // Trapezoid: narrower at top (leaning forward, shoulders dropped)
-      ctx.fillStyle = jerseyCol;
-      ctx.beginPath();
-      ctx.moveTo(-10, -8);   // lower-left
-      ctx.lineTo(-7, -22);   // upper-left shoulder
-      ctx.lineTo(7, -22);    // upper-right shoulder
-      ctx.lineTo(10, -8);    // lower-right
+      ctx.moveTo(cx - 4, wheelY - 14);    // hip on saddle
+      ctx.lineTo(cx + 4,  wheelY - 19);   // back curving up
+      ctx.lineTo(cx + 18, wheelY - 16);   // shoulder forward & low
+      ctx.lineTo(cx + 14, wheelY - 12);   // chest line
+      ctx.lineTo(cx - 2,  wheelY - 11);   // belly back to hip
       ctx.closePath();
       ctx.fill();
 
-      // Jersey side highlight (slight gradient feel via 2nd shape)
-      ctx.fillStyle = 'rgba(255,255,255,0.08)';
+      // Side highlight
+      ctx.fillStyle = 'rgba(255,255,255,0.10)';
       ctx.beginPath();
-      ctx.moveTo(-10, -8);
-      ctx.lineTo(-7, -22);
-      ctx.lineTo(-4, -22);
-      ctx.lineTo(-6, -8);
+      ctx.moveTo(cx - 4,  wheelY - 14);
+      ctx.lineTo(cx + 4,  wheelY - 19);
+      ctx.lineTo(cx + 2,  wheelY - 15);
       ctx.closePath();
       ctx.fill();
 
-      // Number patch on back (a small bib-style rectangle, only for player)
+      // 404 number patch on the player only
       if (isPlayer) {
         ctx.fillStyle = '#fff';
-        ctx.fillRect(-4, -18, 8, 6);
-        ctx.fillStyle = darkCol;
-        ctx.font = 'bold 5px monospace';
+        ctx.fillRect(cx + 2, wheelY - 17, 9, 4);
+        ctx.fillStyle = jerseyDark;
+        ctx.font = 'bold 4px monospace';
         ctx.textAlign = 'center';
-        ctx.fillText('404', 0, -13.5);
+        ctx.fillText('404', cx + 6.5, wheelY - 13.5);
         ctx.textAlign = 'left';
       }
 
-      // --- Arms extending forward (aero position): two thin lines going
-      //     forward from the shoulders, slightly visible left and right
-      //     of the torso ---
-      ctx.strokeStyle = jerseyCol;
-      ctx.lineWidth = 3;
+      // Arms going from shoulder forward to handlebar/aero bar
+      ctx.strokeStyle = jersey;
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
-      ctx.moveTo(-6, -20);
-      ctx.lineTo(-5, -25);
-      ctx.moveTo(6, -20);
-      ctx.lineTo(5, -25);
+      ctx.moveTo(cx + 17, wheelY - 16);
+      ctx.lineTo(cx + 23, wheelY - 10);
       ctx.stroke();
 
-      // --- Helmet (aero TT helmet, slightly elongated) ---
-      ctx.fillStyle = darkCol;
+      // Aero TT helmet (elongated egg, tapered tail)
+      ctx.fillStyle = jerseyDark;
       ctx.beginPath();
-      ctx.ellipse(0, -28, 7, 5, 0, 0, Math.PI * 2);
+      ctx.moveTo(cx + 19, wheelY - 22);
+      ctx.lineTo(cx + 26, wheelY - 22);
+      ctx.lineTo(cx + 24, wheelY - 18);
+      ctx.lineTo(cx + 12, wheelY - 18);
+      ctx.lineTo(cx + 12, wheelY - 21);
+      ctx.closePath();
       ctx.fill();
-      // Helmet visor (front edge)
-      ctx.fillStyle = 'rgba(255,255,255,0.18)';
+      // Visor (front of helmet)
+      ctx.fillStyle = 'rgba(255,255,255,0.22)';
       ctx.beginPath();
-      ctx.ellipse(0, -30, 6, 2, 0, 0, Math.PI * 2);
+      ctx.moveTo(cx + 22, wheelY - 21);
+      ctx.lineTo(cx + 26, wheelY - 21);
+      ctx.lineTo(cx + 24, wheelY - 19);
+      ctx.lineTo(cx + 22, wheelY - 19);
+      ctx.closePath();
       ctx.fill();
-
-      // --- Tiny coral stripe across the back of the helmet for player ID ---
+      // Tiny coral marker on top of helmet for player
       if (isPlayer) {
         ctx.fillStyle = COL.coral;
-        ctx.fillRect(-6, -29, 12, 1.5);
+        ctx.fillRect(cx + 14, wheelY - 22.5, 9, 1.2);
       }
 
-      ctx.restore();
+      // Pedaling leg (between wheels)
+      var pa = animFrame * 4;
+      var legX = cx - 1 + Math.cos(pa) * 4;
+      var legY = wheelY - 1 + Math.sin(pa) * 4;
+      ctx.strokeStyle = jerseyDark;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(cx - 4, wheelY - 13);
+      ctx.lineTo(legX, legY);
+      ctx.stroke();
     }
 
-    /* Back-view cone — vertical triangle that scales with depth. */
-    function drawCone(x, y, scale){
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.scale(scale, scale);
+    function drawWheel(x, y, r, rot){
+      // Tyre
+      ctx.fillStyle = COL.tyre;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+      // Rim band
+      ctx.strokeStyle = '#5b5e93';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(x, y, r - 1, 0, Math.PI * 2);
+      ctx.stroke();
+      // Spokes (4-arm)
+      ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+      ctx.lineWidth = 1;
+      for (var s = 0; s < 4; s++) {
+        var a = rot + s * (Math.PI / 2);
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + Math.cos(a) * (r - 1.5), y + Math.sin(a) * (r - 1.5));
+        ctx.stroke();
+      }
+      // Hub
+      ctx.fillStyle = '#bdbede';
+      ctx.beginPath();
+      ctx.arc(x, y, 1.6, 0, Math.PI * 2);
+      ctx.fill();
+    }
 
+    /* ---------- Sprite: water bottle ---------- */
+    function drawBottle(cx, by, bob){
+      var yo = Math.sin((bob || 0) * 1.4) * 1.4;
+      var top = by - 18 + yo;
+      // Shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.35)';
+      ctx.beginPath();
+      ctx.ellipse(cx, by + 1, 8, 2, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // Body
+      ctx.fillStyle = COL.bottle;
+      ctx.fillRect(cx - 5, top + 4, 10, 14);
+      // Highlight stripe
+      ctx.fillStyle = 'rgba(255,255,255,0.30)';
+      ctx.fillRect(cx - 4, top + 5, 2, 11);
+      // Cap
+      ctx.fillStyle = COL.bottleCap;
+      ctx.fillRect(cx - 4, top + 1, 8, 3);
+      // Neck
+      ctx.fillRect(cx - 3, top + 3, 6, 2);
+      // Subtle glow ring
+      ctx.strokeStyle = 'rgba(58,168,255,0.25)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.ellipse(cx, by - 5 + yo, 9 + Math.sin((bob || 0) * 2) * 1.2, 4, 0, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    /* ---------- Sprite: cone ---------- */
+    function drawCone(cx, by){
+      ctx.fillStyle = 'rgba(0,0,0,0.4)';
+      ctx.beginPath();
+      ctx.ellipse(cx, by + 1, 11, 3, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // Body
+      ctx.fillStyle = COL.coral;
+      ctx.beginPath();
+      ctx.moveTo(cx, by - 22);
+      ctx.lineTo(cx + 9, by);
+      ctx.lineTo(cx - 9, by);
+      ctx.closePath();
+      ctx.fill();
+      // Reflective stripes
+      ctx.fillStyle = '#fff7ea';
+      ctx.fillRect(cx - 7, by - 11, 14, 3);
+      ctx.fillRect(cx - 8, by - 4, 16, 3);
+      // Base plate
+      ctx.fillStyle = '#0e0d22';
+      ctx.fillRect(cx - 11, by - 1, 22, 3);
+    }
+
+    /* ---------- Sprite: car (side view, facing right) ---------- */
+    function drawCar(x, y, main, deep, animFrame){
+      var by = y + 14;  // ground line for car wheels
       // Shadow
       ctx.fillStyle = 'rgba(0,0,0,0.4)';
       ctx.beginPath();
-      ctx.ellipse(0, 16, 11, 3, 0, 0, Math.PI * 2);
+      ctx.ellipse(x + 38, by + 1, 36, 4, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      // Cone body (taller, slimmer than before)
-      ctx.fillStyle = COL.cone;
+      // Wheels
+      var rot = animFrame * 8;
+      drawCarWheel(x + 14, by - 4, 6, rot);
+      drawCarWheel(x + 62, by - 4, 6, rot + 0.6);
+
+      // Body lower
+      ctx.fillStyle = main;
+      // Body main
       ctx.beginPath();
-      ctx.moveTo(0, -18);
-      ctx.lineTo(10, 14);
-      ctx.lineTo(-10, 14);
+      ctx.moveTo(x + 4,  by - 12);
+      ctx.lineTo(x + 16, by - 22);   // hood up
+      ctx.lineTo(x + 56, by - 22);   // roof start
+      ctx.lineTo(x + 68, by - 12);   // trunk down
+      ctx.lineTo(x + 72, by - 4);
+      ctx.lineTo(x + 4,  by - 4);
       ctx.closePath();
       ctx.fill();
 
-      // Stripes (two reflective bands)
-      ctx.fillStyle = COL.coneStripe;
-      ctx.fillRect(-8, -4, 16, 3);
-      ctx.fillRect(-9, 4, 18, 3);
-
-      // Highlight down the left
-      ctx.fillStyle = 'rgba(255,255,255,0.18)';
+      // Roof
       ctx.beginPath();
-      ctx.moveTo(-1, -18);
-      ctx.lineTo(-7, 14);
-      ctx.lineTo(-3, 14);
+      ctx.moveTo(x + 20, by - 22);
+      ctx.lineTo(x + 28, by - 30);
+      ctx.lineTo(x + 50, by - 30);
+      ctx.lineTo(x + 56, by - 22);
       ctx.closePath();
       ctx.fill();
 
-      // Base plate
-      ctx.fillStyle = '#0e0d22';
-      ctx.fillRect(-12, 13, 24, 3);
+      // Windows
+      ctx.fillStyle = COL.glass;
+      ctx.beginPath();
+      ctx.moveTo(x + 22, by - 22);
+      ctx.lineTo(x + 30, by - 28);
+      ctx.lineTo(x + 48, by - 28);
+      ctx.lineTo(x + 54, by - 22);
+      ctx.closePath();
+      ctx.fill();
 
-      ctx.restore();
+      // Headlight (front, right)
+      ctx.fillStyle = '#fff8b8';
+      ctx.fillRect(x + 68, by - 11, 4, 3);
+      // Tail (rear, left)
+      ctx.fillStyle = '#cc1f2a';
+      ctx.fillRect(x + 4, by - 11, 3, 3);
+
+      // Body shadow line (deep)
+      ctx.fillStyle = deep;
+      ctx.fillRect(x + 4, by - 5, 68, 1.5);
+    }
+    function drawCarWheel(x, y, r, rot){
+      ctx.fillStyle = COL.tyre;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#bdbede';
+      ctx.beginPath();
+      ctx.arc(x, y, r - 2.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#3a3a5a';
+      ctx.lineWidth = 1;
+      for (var s = 0; s < 3; s++) {
+        var a = rot + s * (Math.PI * 2 / 3);
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + Math.cos(a) * (r - 2.5), y + Math.sin(a) * (r - 2.5));
+        ctx.stroke();
+      }
+    }
+
+    /* ---------- Sprite: truck (box truck) ---------- */
+    function drawTruck(x, y, animFrame){
+      var by = y + 16;
+      // Shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.45)';
+      ctx.beginPath();
+      ctx.ellipse(x + 55, by + 1, 56, 5, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      var rot = animFrame * 7;
+      drawCarWheel(x + 18, by - 4, 7, rot);
+      drawCarWheel(x + 90, by - 4, 7, rot + 0.5);
+
+      // Box body
+      ctx.fillStyle = COL.truck;
+      ctx.fillRect(x + 30, by - 32, 78, 28);
+      // Box body shadow
+      ctx.fillStyle = COL.truckDeep;
+      ctx.fillRect(x + 30, by - 6, 78, 2);
+      // Door lines
+      ctx.strokeStyle = COL.truckDeep;
+      ctx.lineWidth = 1;
+      for (var d = 1; d < 4; d++) {
+        var xx = x + 30 + d * 19;
+        ctx.beginPath();
+        ctx.moveTo(xx, by - 30);
+        ctx.lineTo(xx, by - 6);
+        ctx.stroke();
+      }
+
+      // Cab
+      ctx.fillStyle = '#e4e4e4';
+      ctx.beginPath();
+      ctx.moveTo(x + 4,  by - 22);
+      ctx.lineTo(x + 14, by - 28);
+      ctx.lineTo(x + 28, by - 28);
+      ctx.lineTo(x + 28, by - 4);
+      ctx.lineTo(x + 4,  by - 4);
+      ctx.closePath();
+      ctx.fill();
+      // Cab window
+      ctx.fillStyle = COL.glass;
+      ctx.fillRect(x + 8, by - 26, 18, 8);
+      // Headlight
+      ctx.fillStyle = '#fff8b8';
+      ctx.fillRect(x + 4, by - 11, 3, 3);
+      // Cab base shadow
+      ctx.fillStyle = '#9e9e9e';
+      ctx.fillRect(x + 4, by - 5, 24, 1.5);
+
+      // YOUSULI brand patch on the box (a small navy stripe with coral)
+      ctx.fillStyle = COL.navy;
+      ctx.fillRect(x + 38, by - 22, 60, 8);
+      ctx.fillStyle = COL.coral;
+      ctx.fillRect(x + 38, by - 17, 60, 1.6);
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 6px sans-serif';
+      ctx.fillText('YOUSULI', x + 56, by - 16);
+    }
+
+    /* ---------- Sprite: bus (city bus) ---------- */
+    function drawBus(x, y, animFrame){
+      var by = y + 18;
+      ctx.fillStyle = 'rgba(0,0,0,0.45)';
+      ctx.beginPath();
+      ctx.ellipse(x + 70, by + 1, 70, 5, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      var rot = animFrame * 7;
+      drawCarWheel(x + 22, by - 4, 7, rot);
+      drawCarWheel(x + 116, by - 4, 7, rot + 0.7);
+
+      // Bus body
+      ctx.fillStyle = COL.bus;
+      ctx.beginPath();
+      ctx.moveTo(x + 2,  by - 28);
+      ctx.lineTo(x + 8,  by - 34);
+      ctx.lineTo(x + 132, by - 34);
+      ctx.lineTo(x + 138, by - 28);
+      ctx.lineTo(x + 138, by - 4);
+      ctx.lineTo(x + 2,  by - 4);
+      ctx.closePath();
+      ctx.fill();
+
+      // Body shadow
+      ctx.fillStyle = COL.busDeep;
+      ctx.fillRect(x + 2, by - 6, 136, 2);
+
+      // Windows (long row + driver's window)
+      ctx.fillStyle = COL.glass;
+      // Driver windscreen (front)
+      ctx.beginPath();
+      ctx.moveTo(x + 128, by - 32);
+      ctx.lineTo(x + 136, by - 28);
+      ctx.lineTo(x + 136, by - 18);
+      ctx.lineTo(x + 122, by - 18);
+      ctx.closePath();
+      ctx.fill();
+      // Passenger windows
+      for (var w = 0; w < 5; w++) {
+        var wx = x + 14 + w * 22;
+        ctx.fillRect(wx, by - 30, 18, 12);
+      }
+
+      // Door (back)
+      ctx.fillStyle = '#0a3318';
+      ctx.fillRect(x + 6, by - 18, 6, 14);
+
+      // Headlight + tail
+      ctx.fillStyle = '#fff8b8';
+      ctx.fillRect(x + 134, by - 12, 4, 3);
+      ctx.fillStyle = '#cc1f2a';
+      ctx.fillRect(x + 2, by - 12, 3, 3);
+
+      // Route number panel (white on green)
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(x + 6, by - 32, 18, 8);
+      ctx.fillStyle = '#0a3318';
+      ctx.font = 'bold 7px sans-serif';
+      ctx.fillText('YS-1', x + 8, by - 25);
     }
 
     // Initial render so the canvas isn't blank under the overlay
