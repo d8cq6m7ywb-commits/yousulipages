@@ -1,0 +1,978 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>404 — Off course | Yousuli</title>
+  <meta name="description" content="Lost your line? Play the Yousuli bike-leg 404: stay out of the draft zone, pass the rider ahead within 20 seconds, dodge cones on the road. Or just find your way back home." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <style>
+    /* Game-specific styles, scoped to the 404 page */
+    .game-host {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+    .game-card {
+      background: #1a1834;
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .game-card::before {
+      content: "";
+      position: absolute;
+      top: -40%;
+      right: -10%;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(250,119,60,0.18), transparent 65%);
+      pointer-events: none;
+    }
+    .game-canvas-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 7;
+      max-height: 440px;
+      background: #11102a;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+    }
+    #gameCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+    .game-hud {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .hud-tile {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 8px 12px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .hud-tile .hud-label {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 0.66rem;
+      color: rgba(255,255,255,0.55);
+    }
+    .hud-tile .hud-value {
+      font-family: var(--ys-font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: #fff;
+      margin-top: 2px;
+    }
+    .hud-tile.warning .hud-value { color: var(--wf-coral); }
+    .hud-tile.danger { background: rgba(239,68,68,0.16); border-color: rgba(239,68,68,0.42); }
+    .hud-tile.danger .hud-value { color: #fecaca; }
+
+    .game-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 14px;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.86rem;
+    }
+    .game-controls strong { color: #fff; }
+    .key {
+      display: inline-block;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 1px 7px;
+      border-radius: 4px;
+      font-family: ui-monospace, monospace;
+      font-size: 0.78rem;
+      color: #fff;
+    }
+
+    /* Overlay states (title, paused, game over) */
+    .game-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-align: center;
+      background: rgba(17,16,42,0.78);
+      backdrop-filter: blur(2px);
+      color: #fff;
+      padding: 20px;
+    }
+    .game-overlay.hidden { display: none; }
+    .game-overlay h3 {
+      font-family: var(--ys-font-display);
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      color: #fff;
+      margin: 0;
+      letter-spacing: 0.04em;
+    }
+    .game-overlay .eyebrow {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      color: var(--wf-coral);
+    }
+    .game-overlay p {
+      max-width: 520px;
+      color: rgba(255,255,255,0.78);
+      margin: 4px 0 10px;
+    }
+    .game-overlay .game-btn {
+      background: var(--wf-coral);
+      color: #fff;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-size: 0.86rem;
+      border: none;
+      padding: 12px 22px;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(250,119,60,0.4);
+      transition: transform 0.12s ease;
+    }
+    .game-overlay .game-btn:hover { transform: translateY(-1px); }
+
+    @media (max-width: 560px) {
+      .game-canvas-wrap { aspect-ratio: 4 / 3; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Programs</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ 404 HERO ============ -->
+  <section class="wf-hero" style="padding: 56px 0 32px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">404 &middot; Off course</span>
+      <h1 style="font-size: clamp(2rem, 4.8vw, 3.4rem);">You missed the turn.</h1>
+      <div class="wf-subhead">Take a quick lap while you reorient</div>
+      <p class="lede" style="max-width: 640px;">The page you wanted isn&rsquo;t here. While you decide where to go next, race the bike leg of a non-draft-legal triathlon: stay out of the draft zone, pass the rider ahead inside 20 seconds when you slot in behind them, and don&rsquo;t hit the cones.</p>
+    </div>
+  </section>
+
+  <!-- ============ THE GAME ============ -->
+  <section class="wf-section" style="padding: 8px 0 32px;">
+    <div class="game-host">
+      <div class="game-card">
+        <div class="game-canvas-wrap" id="gameWrap">
+          <canvas id="gameCanvas" width="800" height="350" aria-label="Yousuli 404 bike-leg game"></canvas>
+
+          <div class="game-overlay" id="overlayTitle">
+            <div class="eyebrow">Bike leg &middot; non-draft-legal</div>
+            <h3>Hold your line. Pass clean.</h3>
+            <p>Use the arrow keys (or WASD). <span class="key">&uarr;</span> push pace, <span class="key">&darr;</span> ease off, <span class="key">&larr;</span><span class="key">&rarr;</span> change lane. If you slot inside the draft zone, you have <strong style="color: var(--wf-coral);">20 seconds</strong> to pass clean.</p>
+            <button class="game-btn" id="btnStart">Start &rarr;</button>
+            <p style="font-size: 0.78rem; margin-top: 12px; color: rgba(255,255,255,0.5);">Press <span class="key">Space</span> any time to play / pause.</p>
+          </div>
+
+          <div class="game-overlay hidden" id="overlayGameOver">
+            <div class="eyebrow" id="goReason">Race over</div>
+            <h3 id="goHeadline">Race finished.</h3>
+            <p id="goDetail">Nice ride. Want another lap?</p>
+            <button class="game-btn" id="btnRestart">Race again &rarr;</button>
+          </div>
+        </div>
+
+        <div class="game-hud" id="hud">
+          <div class="hud-tile">
+            <div class="hud-label">Distance</div>
+            <div class="hud-value" id="hudDist">0 m</div>
+          </div>
+          <div class="hud-tile">
+            <div class="hud-label">Clean passes</div>
+            <div class="hud-value" id="hudPasses">0</div>
+          </div>
+          <div class="hud-tile">
+            <div class="hud-label">Effort</div>
+            <div class="hud-value" id="hudEffort">100%</div>
+          </div>
+          <div class="hud-tile" id="hudDraftTile">
+            <div class="hud-label">Draft zone</div>
+            <div class="hud-value" id="hudDraft">clear</div>
+          </div>
+        </div>
+
+        <div class="game-controls">
+          <div>
+            <strong>Controls:</strong> <span class="key">&uarr;</span> push &middot; <span class="key">&darr;</span> ease &middot; <span class="key">&larr;</span><span class="key">&rarr;</span> lane &middot; <span class="key">Space</span> pause/start
+          </div>
+          <div style="text-align: right;">
+            <strong>Best:</strong> <span id="hudBest">0 m</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HELPFUL LINKS ============ -->
+  <section class="wf-section alt">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Or find your way back</h2>
+        <div class="ys-rule"></div>
+        <p>The most-used parts of the site, in case you were trying to get here.</p>
+      </div>
+
+      <div class="ys-grid">
+        <a class="ys-card" href="https://www.yousuli.co/" target="_top" style="text-decoration:none; color:inherit;">
+          <div class="ys-meta">Home</div>
+          <h3>yousuli.co</h3>
+          <p>Endurance performance lab, coaching, and community. Start here.</p>
+        </a>
+        <a class="ys-card" href="https://www.yousuli.co/calculators" target="_top" style="text-decoration:none; color:inherit;">
+          <div class="ys-meta">30+ free tools</div>
+          <h3>Calculators</h3>
+          <p>Race fueling, sweat rate, CdA, VO<sub>2</sub> &rarr; cycling/run/swim, course-based race simulators.</p>
+        </a>
+        <a class="ys-card" href="https://www.yousuli.co/performancelab" target="_top" style="text-decoration:none; color:inherit;">
+          <div class="ys-meta">Lab testing</div>
+          <h3>Performance Lab</h3>
+          <p>VO<sub>2</sub>max, RMR, CdA, swim &amp; gait analysis. Standalone tests or bundled packages.</p>
+        </a>
+        <a class="ys-card" href="https://www.yousuli.co/coaching" target="_top" style="text-decoration:none; color:inherit;">
+          <div class="ys-meta">1:1 coaching</div>
+          <h3>Coaching</h3>
+          <p>Three tiers, all testing-driven. When you want a guide, not just a plan.</p>
+        </a>
+        <a class="ys-card" href="https://www.yousuli.co/plans-courses" target="_top" style="text-decoration:none; color:inherit;">
+          <div class="ys-meta">Self-paced</div>
+          <h3>Online programs</h3>
+          <p>Free funnels, single-topic deep-dives, full curricula. Including the 20 high-efficiency levers.</p>
+        </a>
+        <a class="ys-card" href="https://www.yousuli.co/contact" target="_top" style="text-decoration:none; color:inherit;">
+          <div class="ys-meta">Stuck?</div>
+          <h3>Contact</h3>
+          <p>Email, form, or call. We&rsquo;ll point you at the right page.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Online programs</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/membership" target="_top">Membership</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; <a href="tel:+19099794118">(909) 979-4118</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ GAME ENGINE ============ -->
+  <script>
+  (function(){
+    'use strict';
+
+    /* =====================================================================
+       Yousuli 404 — Bike leg game.
+
+       Concept (non-draft-legal triathlon):
+         - You're cycling left-to-right on a 3-lane road. Stay smooth.
+         - Random "rivals" appear ahead. If you slot inside their draft
+           zone (close behind in the same lane), a 20-second pass timer
+           starts. You must move out of the zone — either by surging
+           past them or by switching lanes — before the timer runs out,
+           or you get a DRAFT PENALTY (race over).
+         - Cones spawn on the road. Hit one and your race ends.
+         - Every ~25 seconds, a TURN appears: the road bends, your
+           pacing must hold. Visually represented; gameplay continues.
+         - Effort meter: surging burns effort, easing recovers it.
+
+       Style: pixel-art-flavoured, Yousuli navy + coral + teal.
+    ===================================================================== */
+
+    var canvas = document.getElementById('gameCanvas');
+    var ctx = canvas.getContext('2d');
+    var W = canvas.width;
+    var H = canvas.height;
+
+    // UI elements
+    var hudDist    = document.getElementById('hudDist');
+    var hudPasses  = document.getElementById('hudPasses');
+    var hudEffort  = document.getElementById('hudEffort');
+    var hudDraft   = document.getElementById('hudDraft');
+    var hudDraftTile = document.getElementById('hudDraftTile');
+    var hudBest    = document.getElementById('hudBest');
+    var overlayTitle    = document.getElementById('overlayTitle');
+    var overlayGameOver = document.getElementById('overlayGameOver');
+    var goReason   = document.getElementById('goReason');
+    var goHeadline = document.getElementById('goHeadline');
+    var goDetail   = document.getElementById('goDetail');
+    var btnStart   = document.getElementById('btnStart');
+    var btnRestart = document.getElementById('btnRestart');
+
+    // Brand palette
+    var COL = {
+      sky:        '#1a1834',
+      skyHi:      '#272453',
+      mountainBack: '#2f2d56',
+      mountainFront: '#1e1c45',
+      road:       '#0d0c1f',
+      roadEdge:   '#3d3a6e',
+      roadLine:   '#f7ecd8',
+      grass:      '#272453',
+      coral:      '#FA773C',
+      coralDeep:  '#d65626',
+      teal:       '#00B3A4',
+      sun:        '#FFD66B',
+      navy:       '#2F2D56',
+      white:      '#ffffff',
+      rival:      '#7a82c2',  // muted blue-grey
+      cone:       '#FA773C',
+      coneStripe: '#fff7ea'
+    };
+
+    // Game state
+    var STATE_TITLE = 'title', STATE_PLAY = 'play', STATE_OVER = 'over', STATE_PAUSE = 'pause';
+    var state = STATE_TITLE;
+
+    var distance = 0;        // metres travelled
+    var cleanPasses = 0;
+    var effort = 100;        // 0..100
+    var bestDist = parseInt(localStorage.getItem('ys_404_best') || '0', 10) || 0;
+    hudBest.textContent = bestDist + ' m';
+
+    // Player
+    var LANE_Y = [H * 0.46, H * 0.62, H * 0.78];  // 3 lanes
+    var player = { lane: 1, x: W * 0.18, y: LANE_Y[1], speed: 0.55, targetSpeed: 0.55, animFrame: 0 };
+    // baseSpeed: how fast world scrolls per ms-equivalent unit. speed is multiplier.
+
+    // Rivals: appear ahead. Each: x, lane, relSpeed.
+    var rivals = [];
+    var rivalSpawnTimer = 2200;  // ms
+
+    // Cones
+    var cones = [];
+    var coneSpawnTimer = 1500;
+
+    // Background: parallax mountains
+    var bgScroll = 0;
+    var midScroll = 0;
+    var roadScroll = 0;
+
+    // Turn (visual): road bends every 25s for ~4s
+    var turnTimer = 25000;
+    var turnDuration = 0;
+    var turnDir = 0;   // -1 left, +1 right
+    var turnIntensity = 0;
+
+    // Draft state
+    var inDraftZone = false;
+    var draftRivalIdx = -1;
+    var draftCountdown = 20000;  // ms remaining when in zone
+
+    // Inputs
+    var keys = {};
+    document.addEventListener('keydown', function(e){
+      // Don't hijack browser scroll if user isn't focused on game
+      var k = e.key;
+      var gameKey = (k === 'ArrowUp' || k === 'ArrowDown' || k === 'ArrowLeft' || k === 'ArrowRight'
+                  || k === 'w' || k === 'a' || k === 's' || k === 'd'
+                  || k === 'W' || k === 'A' || k === 'S' || k === 'D'
+                  || k === ' ');
+      if (!gameKey) return;
+      // Only block default if game is active OR overlay focused
+      if (state === STATE_PLAY || k === ' ') { e.preventDefault(); }
+      keys[k.toLowerCase()] = true;
+
+      if (k === ' ') {
+        if (state === STATE_TITLE) { startGame(); }
+        else if (state === STATE_PLAY) { pauseGame(); }
+        else if (state === STATE_PAUSE) { resumeGame(); }
+        else if (state === STATE_OVER) { resetAndStart(); }
+      }
+      // Lane switch on keydown (not held)
+      if (state === STATE_PLAY) {
+        if (k === 'ArrowLeft' || k === 'a' || k === 'A')  { if (player.lane > 0) player.lane--; }
+        if (k === 'ArrowRight' || k === 'd' || k === 'D') { if (player.lane < 2) player.lane++; }
+      }
+    });
+    document.addEventListener('keyup', function(e){
+      keys[e.key.toLowerCase()] = false;
+    });
+
+    btnStart.addEventListener('click', startGame);
+    btnRestart.addEventListener('click', resetAndStart);
+
+    function startGame(){
+      if (state !== STATE_TITLE) return;
+      overlayTitle.classList.add('hidden');
+      state = STATE_PLAY;
+      lastTime = performance.now();
+      requestAnimationFrame(loop);
+    }
+    function resetAndStart(){
+      // reset all state
+      distance = 0;
+      cleanPasses = 0;
+      effort = 100;
+      player.lane = 1;
+      player.speed = 0.55;
+      player.targetSpeed = 0.55;
+      rivals = [];
+      cones = [];
+      rivalSpawnTimer = 2200;
+      coneSpawnTimer = 1500;
+      turnTimer = 25000;
+      turnDuration = 0;
+      turnDir = 0;
+      turnIntensity = 0;
+      inDraftZone = false;
+      draftRivalIdx = -1;
+      draftCountdown = 20000;
+      overlayGameOver.classList.add('hidden');
+      state = STATE_PLAY;
+      lastTime = performance.now();
+      requestAnimationFrame(loop);
+    }
+    function pauseGame(){
+      if (state !== STATE_PLAY) return;
+      state = STATE_PAUSE;
+    }
+    function resumeGame(){
+      if (state !== STATE_PAUSE) return;
+      state = STATE_PLAY;
+      lastTime = performance.now();
+      requestAnimationFrame(loop);
+    }
+    function gameOver(reasonShort, headline, detail){
+      state = STATE_OVER;
+      if (distance > bestDist) { bestDist = Math.floor(distance); localStorage.setItem('ys_404_best', String(bestDist)); }
+      hudBest.textContent = bestDist + ' m';
+      goReason.textContent = reasonShort;
+      goHeadline.textContent = headline;
+      goDetail.textContent = detail + ' Distance: ' + Math.floor(distance) + ' m · Clean passes: ' + cleanPasses + ' · Best: ' + bestDist + ' m.';
+      overlayGameOver.classList.remove('hidden');
+    }
+
+    /* ---------- Spawning ---------- */
+    function spawnRival(){
+      // Pick a lane different from player when possible (to make slot-behind risk dynamic).
+      var l = Math.floor(Math.random() * 3);
+      // Relative speed: slightly slower than player base, so player catches up if pushing
+      var relSpeed = 0.45 + Math.random() * 0.15;  // 0.45..0.60 (player base 0.55)
+      rivals.push({ x: W + 50, lane: l, relSpeed: relSpeed, passed: false, animFrame: 0 });
+    }
+    function spawnCone(){
+      var l = Math.floor(Math.random() * 3);
+      // Don't spawn cone in same lane right behind a rival (unfair stacking)
+      var ok = true;
+      for (var i = 0; i < rivals.length; i++) {
+        if (rivals[i].lane === l && Math.abs(rivals[i].x - (W + 40)) < 90) { ok = false; break; }
+      }
+      if (!ok) return;
+      cones.push({ x: W + 30, lane: l });
+    }
+
+    /* ---------- Update loop ---------- */
+    var lastTime = 0;
+    function loop(now){
+      if (state !== STATE_PLAY) return;
+      var dt = Math.min(40, now - lastTime);  // clamp big tab-out gaps
+      lastTime = now;
+      update(dt);
+      render();
+      requestAnimationFrame(loop);
+    }
+
+    function update(dt){
+      // --- Effort / speed control ---
+      var pushing = keys['arrowup'] || keys['w'];
+      var easing  = keys['arrowdown'] || keys['s'];
+      if (pushing && effort > 0) {
+        player.targetSpeed = 0.92;
+        effort = Math.max(0, effort - dt * 0.045);
+      } else if (easing) {
+        player.targetSpeed = 0.38;
+        effort = Math.min(100, effort + dt * 0.025);
+      } else {
+        player.targetSpeed = 0.62;
+        effort = Math.min(100, effort + dt * 0.012);
+      }
+      // smooth speed
+      player.speed += (player.targetSpeed - player.speed) * 0.06;
+
+      // Bonk: if effort is zero, you can't push
+      if (effort <= 0 && pushing) {
+        player.targetSpeed = 0.4;
+      }
+
+      // --- Smooth player y towards target lane ---
+      var targetY = LANE_Y[player.lane];
+      player.y += (targetY - player.y) * 0.25;
+      player.animFrame += dt * 0.015;
+
+      // --- Distance scrolls based on speed ---
+      var worldStep = player.speed * dt * 0.22;
+      distance += worldStep * 0.45;  // ~m per ms scale
+      bgScroll  = (bgScroll  + worldStep * 0.08) % 240;
+      midScroll = (midScroll + worldStep * 0.25) % 320;
+      roadScroll = (roadScroll + worldStep * 1.2) % 60;
+
+      // --- Turn cycle (visual) ---
+      turnTimer -= dt;
+      if (turnTimer <= 0) {
+        turnTimer = 22000 + Math.random() * 12000;
+        turnDuration = 4000 + Math.random() * 2000;
+        turnDir = Math.random() < 0.5 ? -1 : 1;
+      }
+      if (turnDuration > 0) {
+        turnDuration -= dt;
+        // ease in/out triangular intensity
+        var p = 1 - Math.abs(turnDuration - 2000) / 3000;
+        turnIntensity = Math.max(0, Math.min(1, p)) * turnDir;
+      } else {
+        turnIntensity *= 0.92;
+      }
+
+      // --- Rival spawn ---
+      rivalSpawnTimer -= dt;
+      if (rivalSpawnTimer <= 0) {
+        spawnRival();
+        rivalSpawnTimer = 2400 + Math.random() * 1800;
+      }
+
+      // --- Cone spawn ---
+      coneSpawnTimer -= dt;
+      if (coneSpawnTimer <= 0) {
+        spawnCone();
+        coneSpawnTimer = 1300 + Math.random() * 1100;
+      }
+
+      // --- Move rivals ---
+      for (var i = rivals.length - 1; i >= 0; i--) {
+        var r = rivals[i];
+        var relativeX = (player.speed - r.relSpeed) * dt * 0.32;
+        r.x -= relativeX;
+        r.animFrame += dt * 0.015;
+        // off-screen left = dropped
+        if (r.x < -80) {
+          if (!r.passed && r.lane === player.lane) {
+            // skipped off-screen without being passed (rare); ignore
+          }
+          rivals.splice(i, 1);
+        }
+      }
+
+      // --- Move cones ---
+      for (var ci = cones.length - 1; ci >= 0; ci--) {
+        var c = cones[ci];
+        c.x -= player.speed * dt * 0.32;
+        if (c.x < -40) cones.splice(ci, 1);
+      }
+
+      // --- Collision: cones ---
+      var pHitL = player.x - 22, pHitR = player.x + 22;
+      var pLaneCy = LANE_Y[player.lane];
+      for (var ci2 = 0; ci2 < cones.length; ci2++) {
+        var cc = cones[ci2];
+        if (cc.lane !== player.lane) continue;
+        if (cc.x > pHitL && cc.x < pHitR) {
+          return gameOver('Crash',
+            'You hit a cone.',
+            'Lanes are narrower than you think when you’re aero.');
+        }
+      }
+
+      // --- Draft-zone detection ---
+      // A rival in the SAME lane, AHEAD of player, within ~120 px is the draft zone.
+      var DRAFT_GAP_MIN = 30;   // closer than this = passing/overlap
+      var DRAFT_GAP_MAX = 140;  // farther than this = clear
+      inDraftZone = false;
+      draftRivalIdx = -1;
+      for (var j = 0; j < rivals.length; j++) {
+        var rv = rivals[j];
+        if (rv.passed) continue;
+        if (rv.lane !== player.lane) continue;
+        var gap = rv.x - player.x;
+        if (gap > DRAFT_GAP_MIN && gap < DRAFT_GAP_MAX) {
+          inDraftZone = true;
+          draftRivalIdx = j;
+          break;
+        }
+        // Detect a clean pass: rival moves from ahead to behind in same lane
+        if (gap < 0 && Math.abs(gap) < 160 && !rv.passed) {
+          rv.passed = true;
+          cleanPasses++;
+        }
+        // Touching same-lane rival (no draft warning ran but player slammed into the wheel)
+        if (gap > -25 && gap < DRAFT_GAP_MIN && rv.lane === player.lane) {
+          return gameOver('Wheel touch',
+            'You touched the wheel ahead.',
+            'In a real race that is a crash for both of you.');
+        }
+      }
+
+      // --- Draft countdown ---
+      if (inDraftZone) {
+        draftCountdown -= dt;
+        if (draftCountdown <= 0) {
+          return gameOver('Drafting penalty',
+            'Draft penalty: 20 seconds in the zone.',
+            'In a non-draft-legal race the marshal would have just blue-carded you.');
+        }
+      } else {
+        draftCountdown = 20000;  // reset when clear
+      }
+
+      // --- HUD updates ---
+      hudDist.textContent = Math.floor(distance) + ' m';
+      hudPasses.textContent = cleanPasses;
+      hudEffort.textContent = Math.round(effort) + '%';
+      if (inDraftZone) {
+        hudDraft.textContent = 'in zone ' + (draftCountdown / 1000).toFixed(1) + 's';
+        hudDraftTile.classList.add('warning');
+        if (draftCountdown < 5000) hudDraftTile.classList.add('danger');
+        else hudDraftTile.classList.remove('danger');
+      } else {
+        hudDraft.textContent = 'clear';
+        hudDraftTile.classList.remove('warning');
+        hudDraftTile.classList.remove('danger');
+      }
+    }
+
+    /* ---------- Render ---------- */
+    function render(){
+      // Sky gradient
+      var skyGrad = ctx.createLinearGradient(0, 0, 0, H * 0.55);
+      skyGrad.addColorStop(0, COL.skyHi);
+      skyGrad.addColorStop(1, COL.sky);
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, W, H);
+
+      // Sun
+      ctx.fillStyle = COL.sun;
+      ctx.globalAlpha = 0.18;
+      ctx.beginPath();
+      ctx.arc(W * 0.78, H * 0.22, 36, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      // Mountains — back layer (parallax)
+      drawMountains(COL.mountainBack, H * 0.42, 80, bgScroll * 0.5);
+      // Mountains — front layer
+      drawMountains(COL.mountainFront, H * 0.50, 50, midScroll * 0.5);
+
+      // Grass / shoulders
+      ctx.fillStyle = COL.grass;
+      ctx.fillRect(0, H * 0.55, W, H * 0.45);
+
+      // Road perspective with turn skew
+      drawRoad();
+
+      // Cones
+      for (var ci = 0; ci < cones.length; ci++) drawCone(cones[ci]);
+
+      // Rivals (further-back rivals draw first)
+      rivals.slice().sort(function(a,b){ return a.x - b.x; }).forEach(function(r){
+        drawCyclist(r.x, LANE_Y[r.lane], COL.rival, '#4a4e80', r.animFrame, false);
+      });
+
+      // Player
+      drawCyclist(player.x, player.y, COL.coral, COL.coralDeep, player.animFrame, true);
+
+      // Draft-zone visual: thin red bracket behind the rival being trailed
+      if (inDraftZone && draftRivalIdx >= 0 && rivals[draftRivalIdx]) {
+        var rr = rivals[draftRivalIdx];
+        ctx.strokeStyle = 'rgba(239,68,68,' + (0.5 + 0.5 * Math.sin(performance.now() * 0.01)) + ')';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(rr.x - 24, LANE_Y[rr.lane] - 16);
+        ctx.lineTo(rr.x - 130, LANE_Y[rr.lane] - 16);
+        ctx.lineTo(rr.x - 130, LANE_Y[rr.lane] + 16);
+        ctx.lineTo(rr.x - 24, LANE_Y[rr.lane] + 16);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Big countdown number above the rival
+        ctx.fillStyle = 'rgba(239,68,68,0.92)';
+        ctx.font = 'bold 18px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('PASS! ' + (draftCountdown / 1000).toFixed(1) + 's', rr.x - 80, LANE_Y[rr.lane] - 28);
+        ctx.textAlign = 'left';
+      }
+
+      // Pause overlay text
+      if (state === STATE_PAUSE) {
+        ctx.fillStyle = 'rgba(17,16,42,0.6)';
+        ctx.fillRect(0, 0, W, H);
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 28px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('PAUSED', W / 2, H / 2);
+        ctx.font = '14px sans-serif';
+        ctx.fillStyle = 'rgba(255,255,255,0.7)';
+        ctx.fillText('Press Space to resume', W / 2, H / 2 + 24);
+        ctx.textAlign = 'left';
+      }
+
+      // Effort bar (top-left)
+      ctx.fillStyle = 'rgba(255,255,255,0.12)';
+      ctx.fillRect(16, 14, 140, 8);
+      ctx.fillStyle = effort > 30 ? COL.teal : COL.coral;
+      ctx.fillRect(16, 14, 140 * (effort / 100), 8);
+      ctx.font = 'bold 10px monospace';
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      ctx.fillText('EFFORT', 16, 11);
+    }
+
+    function drawMountains(color, baseY, amp, offset){
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(0, H);
+      var seg = 60;
+      for (var x = -seg; x <= W + seg; x += seg) {
+        var n = Math.sin((x + offset) * 0.01) + Math.sin((x + offset) * 0.027);
+        var y = baseY - amp * (0.6 + 0.4 * n);
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(W, H);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function drawRoad(){
+      // Road occupies y from H*0.55 to H, perspective trapezoid
+      var topY = H * 0.55;
+      var botY = H;
+      var topHalf = W * 0.16;  // half-width at top (horizon)
+      var botHalf = W * 0.50;  // half-width at bottom
+      var cx = W * 0.55 + turnIntensity * 80;
+      var cxBot = W * 0.55;
+
+      // Fill road
+      ctx.beginPath();
+      ctx.moveTo(cx - topHalf, topY);
+      ctx.lineTo(cx + topHalf, topY);
+      ctx.lineTo(cxBot + botHalf, botY);
+      ctx.lineTo(cxBot - botHalf, botY);
+      ctx.closePath();
+      ctx.fillStyle = COL.road;
+      ctx.fill();
+
+      // Road edges (light)
+      ctx.strokeStyle = COL.roadEdge;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(cx - topHalf, topY); ctx.lineTo(cxBot - botHalf, botY);
+      ctx.moveTo(cx + topHalf, topY); ctx.lineTo(cxBot + botHalf, botY);
+      ctx.stroke();
+
+      // Lane lines (2 inner dashed lines, perspective)
+      for (var ln = 1; ln <= 2; ln++) {
+        var tFrac = ln / 3;
+        var topX = (cx - topHalf) + (topHalf * 2) * tFrac;
+        var botX = (cxBot - botHalf) + (botHalf * 2) * tFrac;
+        drawDashed(topX, topY, botX, botY, roadScroll);
+      }
+    }
+    function drawDashed(x1, y1, x2, y2, scroll){
+      ctx.strokeStyle = COL.roadLine;
+      ctx.lineWidth = 2;
+      var dx = x2 - x1, dy = y2 - y1;
+      var totalLen = Math.sqrt(dx*dx + dy*dy);
+      var dashLen = 26, gapLen = 22;
+      var pos = -scroll;
+      while (pos < totalLen) {
+        var s1 = Math.max(0, pos);
+        var s2 = Math.min(totalLen, pos + dashLen);
+        if (s2 > s1) {
+          var t1 = s1 / totalLen, t2 = s2 / totalLen;
+          ctx.beginPath();
+          ctx.moveTo(x1 + dx * t1, y1 + dy * t1);
+          ctx.lineTo(x1 + dx * t2, y1 + dy * t2);
+          ctx.stroke();
+        }
+        pos += dashLen + gapLen;
+      }
+    }
+
+    function drawCyclist(x, y, mainCol, darkCol, animFrame, isPlayer){
+      // Body shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.32)';
+      ctx.beginPath();
+      ctx.ellipse(x, y + 16, 24, 4, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Two wheels
+      var wheelRot = animFrame * 6;
+      ctx.strokeStyle = '#0e0d22';
+      ctx.lineWidth = 2;
+      ctx.fillStyle = '#181734';
+      ctx.beginPath(); ctx.arc(x - 18, y + 12, 8, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(x + 18, y + 12, 8, 0, Math.PI * 2); ctx.fill();
+      // Spokes (animated)
+      ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+      ctx.lineWidth = 1;
+      for (var w = 0; w < 2; w++) {
+        var wx = w === 0 ? x - 18 : x + 18;
+        for (var s = 0; s < 4; s++) {
+          var a = wheelRot + s * Math.PI / 2;
+          ctx.beginPath();
+          ctx.moveTo(wx, y + 12);
+          ctx.lineTo(wx + Math.cos(a) * 7, y + 12 + Math.sin(a) * 7);
+          ctx.stroke();
+        }
+      }
+
+      // Frame (triangle)
+      ctx.strokeStyle = mainCol;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(x - 16, y + 10);   // BB to rear hub
+      ctx.lineTo(x, y - 4);          // top of seat tube
+      ctx.lineTo(x + 16, y + 10);    // top tube to head tube
+      ctx.lineTo(x - 16, y + 10);
+      ctx.stroke();
+
+      // Aero bars (handlebar extension forward)
+      ctx.strokeStyle = darkCol;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x + 16, y + 10);
+      ctx.lineTo(x + 26, y + 2);
+      ctx.stroke();
+
+      // Rider torso (leaning forward)
+      ctx.fillStyle = mainCol;
+      ctx.beginPath();
+      ctx.moveTo(x - 2, y - 4);
+      ctx.lineTo(x + 14, y - 8);
+      ctx.lineTo(x + 12, y - 1);
+      ctx.lineTo(x - 4, y + 4);
+      ctx.closePath();
+      ctx.fill();
+      // Helmet
+      ctx.fillStyle = darkCol;
+      ctx.beginPath();
+      ctx.ellipse(x + 18, y - 9, 5, 4, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // Player highlight (small coral tab on helmet)
+      if (isPlayer) {
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(x + 19, y - 10, 3, 1);
+      }
+      // Leg (pedaling)
+      var pedalA = animFrame * 2;
+      ctx.strokeStyle = darkCol;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x, y + 4);
+      ctx.lineTo(x + Math.cos(pedalA) * 5, y + 12 + Math.sin(pedalA) * 4);
+      ctx.stroke();
+    }
+
+    function drawCone(c){
+      var x = c.x, y = LANE_Y[c.lane];
+      // Shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.32)';
+      ctx.beginPath(); ctx.ellipse(x, y + 14, 10, 3, 0, 0, Math.PI * 2); ctx.fill();
+      // Cone body
+      ctx.fillStyle = COL.cone;
+      ctx.beginPath();
+      ctx.moveTo(x, y - 12);
+      ctx.lineTo(x + 8, y + 12);
+      ctx.lineTo(x - 8, y + 12);
+      ctx.closePath();
+      ctx.fill();
+      // Stripe
+      ctx.fillStyle = COL.coneStripe;
+      ctx.fillRect(x - 6, y - 2, 12, 3);
+      // Base
+      ctx.fillStyle = '#0e0d22';
+      ctx.fillRect(x - 10, y + 11, 20, 3);
+    }
+
+    // Initial render so the canvas isn't blank under the overlay
+    render();
+  })();
+  </script>
+
+</body>
+</html>
