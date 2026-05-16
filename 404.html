@@ -672,22 +672,41 @@
       }
 
       // Collisions / pickups / draft
+      //
+      // Hitboxes are computed from the actual visible artwork inside each
+      // sprite PNG, NOT the full PNG bounds. The sprites have transparent
+      // padding (the bike artwork is only 38% of the bike.png width, the
+      // car is 62%, etc.) so naive PNG-bound collision triggered false
+      // positives — "you hit a car" when the visible art clearly hadn't
+      // touched. HITBOX_FRAC tightens each kind's collision box to roughly
+      // match what's actually drawn.
+      var HITBOX_FRAC = {
+        bike:       0.34,  // hazard for the player (rival wheel-touch)
+        car:        0.55,
+        bus:        0.62,
+        bottle:     0.34,  // wider than visible bottle for forgiving pickup
+        banana:     0.50,
+        bananaPeel: 0.45
+      };
+      function hitBox(kind, x, w, lane){
+        var f = HITBOX_FRAC[kind] || 0.7;
+        var inset = (w * (1 - f)) / 2;
+        return { l: x + inset, r: x + w - inset, lane: lane };
+      }
+      // Player hitbox uses the bike fraction; height kept generous so
+      // lane-overlap still counts.
+      var pHalf = (SIZE.bike * HITBOX_FRAC.bike) / 2;
+      var pBox = {
+        l: PLAYER_X - pHalf, r: PLAYER_X + pHalf
+      };
+
       inDraftZone = false;
       draftEntity = null;
 
-      var pBox = {
-        l: PLAYER_X - 26, r: PLAYER_X + 26,
-        t: LANE_Y[player.lane] - 22, b: LANE_Y[player.lane] + 6
-      };
-
       for (var j = 0; j < entities.length; j++) {
         var en = entities[j];
-        var eBox = {
-          l: en.x, r: en.x + en.w,
-          t: LANE_Y[en.lane] - en.h, b: LANE_Y[en.lane] + 4
-        };
-        var pad = (en.kind === 'bottle' || en.kind === 'banana') ? 3 : 0;
-        var xOverlap = pBox.r > eBox.l + pad && pBox.l < eBox.r - pad;
+        var eBox = hitBox(en.kind, en.x, en.w, en.lane);
+        var xOverlap = pBox.r > eBox.l && pBox.l < eBox.r;
         var sameLane = (en.lane === player.lane);
 
         // Bottle pickup
@@ -718,7 +737,7 @@
           }
           continue;
         }
-        // Cars → crash
+        // Cars → crash (uses tight hitbox)
         if (en.kind === 'car' && sameLane && xOverlap) {
           return gameOver('Crash', 'You hit a 404 car.', 'Open-road sections have traffic. Read the lane way before you commit.');
         }
@@ -726,17 +745,24 @@
         if (en.kind === 'bus' && sameLane && xOverlap) {
           return gameOver('Crash', 'You hit a city bus.', 'It is, statistically, the largest thing on the road.');
         }
-        // Rival mechanics
+        // Rival mechanics: use the tight hitbox for wheel-touch + draft,
+        // not the raw en.x (the rival sprite has wide transparent padding
+        // so en.x is far left of the visible bike).
         if (en.kind === 'rival') {
-          var gap = en.x - PLAYER_X;
-          if (sameLane && gap > -22 && gap < 22) {
+          // gap = how far the visible rival's left edge is past player.
+          // Positive = rival ahead. Negative = rival behind.
+          var visGap = eBox.l - PLAYER_X;
+          // Wheel touch: visible artworks overlap AND same lane
+          if (sameLane && xOverlap) {
             return gameOver('Wheel touch', 'You touched the wheel ahead.', 'In a real race that is a crash for both of you.');
           }
-          if (!en.passed && sameLane && gap > 28 && gap < 140) {
+          // Draft zone: rival in front of player by 6..120 visible px
+          if (!en.passed && sameLane && visGap > 6 && visGap < 120) {
             inDraftZone = true;
             draftEntity = en;
           }
-          if (!en.passed && gap < -20) {
+          // Clean pass: rival's visible body fully behind player centre
+          if (!en.passed && eBox.r < PLAYER_X - 4) {
             en.passed = true;
             cleanPasses++;
           }
