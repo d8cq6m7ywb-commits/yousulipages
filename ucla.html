@@ -110,6 +110,26 @@
       font-weight: 700;
       margin: 0 2px;
     }
+
+    /* Coach-on-site pill in the WCCTC calendar table */
+    .coach-on-site {
+      display: inline-block;
+      padding: 1px 8px;
+      background: var(--wf-coral);
+      color: #fff;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.62rem;
+      border-radius: 999px;
+      vertical-align: 1px;
+      white-space: nowrap;
+    }
+    .coach-on-site.soft {
+      background: transparent;
+      color: var(--wf-coral);
+      border: 1px solid var(--wf-coral);
+    }
   </style>
 
   <script>
@@ -226,68 +246,55 @@
     </div>
   </section>
 
-  <!-- ============ ROSTER PERKS ============ -->
+  <!-- ============ COACH + ROSTER ROLE ============ -->
   <section class="wf-section" id="perks">
     <div class="ys-container">
       <div class="ys-section-head">
-        <span class="ucla-badge gold" style="margin-bottom: 10px;">UCLA Tri roster &middot; all perks included</span>
-        <h2>Everything you get on the roster</h2>
+        <span class="ucla-badge gold" style="margin-bottom: 10px;">UCLA Tri roster &middot; head coach</span>
+        <h2>How I&rsquo;ll work with the team</h2>
         <div class="ys-rule"></div>
-        <p>As a UCLA Triathlon athlete you get the full <strong>Yousuli Social Club Performance Tier</strong>, plus lab-testing access, the Yousuli hub, and the team-coaching layer on top. All included. Nothing to sign up for, you&rsquo;re already in.</p>
+        <p>I&rsquo;ve been coaching triathletes for <strong>over 20 years</strong>, working with athletes from first-time finishers to elites and para-athletes. My approach leans heavily toward <strong>orthopedic coaching</strong>: durability, movement quality, and injury prevention sit upstream of any training plan. I love working on the <strong>efficiency of systems</strong>, the small leaks that compound matter more than chasing extra volume. The structure for our season together is below.</p>
         <p style="margin-top: 8px; color: var(--ys-muted); font-size: 0.95rem;"><strong style="color: var(--ucla-blue);">Para athletes and athletes with disabilities welcome.</strong> I&rsquo;m a certified paratriathlon coach and have worked with PTVI, PTWC, and PTS-class athletes. Plans are adapted to your classification, equipment, and goals from day one.</p>
       </div>
 
       <div class="ys-grid">
         <article class="ys-card">
-          <div class="ys-meta">Perk 01 &middot; Scheduling</div>
-          <h3>Team plan in TrainingPeaks</h3>
-          <p>The team plan in TrainingPeaks is your weekly scheduling tool: what sessions are happening, when, and how to fit them around your week. It&rsquo;s not a fully personalised plan. If you want me to look at your actual data and break down a block, ask, and I&rsquo;ll do it in the hub.</p>
-          <p style="font-size: 0.88rem; color: var(--ys-muted); margin-top: 8px;">The hub also populates with observations from me when relevant: technique feedback on a swim, a note on a run pacing trend, a flag on cumulative load. Not on every session, but on the ones that matter.</p>
+          <div class="ys-meta">01 &middot; Scheduling &amp; visibility</div>
+          <h3>TrainingPeaks + the Yousuli hub</h3>
+          <p>Your weekly schedule, sessions, and target zones live in TrainingPeaks. Calendar view on the Yousuli hub mirrors that and adds my coaching notes on the sessions that matter: technique feedback on a swim, a flag on cumulative load, a note on a run pacing trend.</p>
+          <p style="font-size: 0.88rem; color: var(--ys-muted); margin-top: 8px;">Both are free for roster athletes. If you upload training files (FIT, TCX, etc.) the hub also gives you extra analytics off your own data.</p>
         </article>
 
         <article class="ys-card featured">
-          <div class="ys-meta">Perk 02 &middot; Testing discount</div>
-          <h3>Special UCLA rate on lab testing</h3>
-          <p>VO<sub>2</sub>max, RMR, CdA, body composition, gait and swim analysis, all at the UCLA-roster rate (significantly below public pricing). Get baseline data before fall, retest mid-season to track adaptation.</p>
-          <p style="margin-top: 10px;"><a class="ys-btn ys-btn-coral" href="mailto:info@yousuli.co?subject=UCLA%20Tri%20-%20lab%20testing%20rate" style="font-size:0.84rem;">Ask about the roster rate</a></p>
+          <div class="ys-meta">02 &middot; On the ground</div>
+          <h3>Two team sessions a week (avg)</h3>
+          <p>I&rsquo;ll show up at <strong>two team practices per week on average</strong>. Default is the <strong>Tuesday swim (6:00&ndash;7:30 pm)</strong> and the <strong>Friday track (5:00&ndash;6:30 pm)</strong>, but the format will flex when something else brings more value to the team: a weekend brick clinic, a long ride, a transition workshop, a race-week walk-through.</p>
+          <p style="font-size: 0.88rem; color: var(--ys-muted); margin-top: 8px;">20 attended practices per quarter is the contract baseline. Missed weeks roll forward into the next quarter or get made up with a brick clinic or workshop.</p>
         </article>
 
         <article class="ys-card">
-          <div class="ys-meta">Perk 03 &middot; Data platform</div>
-          <h3>Hub access (testing + plans + reports)</h3>
-          <p>Personal athlete account on the Yousuli platform. Your test results, race-day fueling plans, training notes, calculator outputs, all saved to your profile. One source of truth instead of a folder of PDFs.</p>
-        </article>
-
-        <article class="ys-card">
-          <div class="ys-meta">Perk 04 &middot; In-person coaching</div>
-          <h3>Coach Fred at team sessions</h3>
-          <p>I&rsquo;ll be on deck at a minimum for the <strong>Tuesday swim sessions</strong> and the <strong>Friday track sessions</strong>, plus races. In practice I&rsquo;ll probably show up more often than that, depending on the week.</p>
-          <p style="font-size: 0.88rem; color: var(--ys-muted); margin-top: 8px;">Independent of UCLA, I also host periodic Yousuli training sessions in Greater LA that are open to anyone (members and non-members). You&rsquo;ll get the invites.</p>
-        </article>
-
-        <article class="ys-card">
-          <div class="ys-meta">Perk 05 &middot; Education</div>
-          <h3>Free funnels + 50% off paid courses</h3>
-          <p>Free Yousuli courses (like the &ldquo;20 high-efficiency levers&rdquo;) stay free, no roster requirement. For paid courses in the catalogue, the roster gets a <strong>50% discount</strong> on most of them.</p>
-          <p style="font-size: 0.85rem; color: var(--ys-muted); margin-top: 6px;"><a href="https://www.yousuli.co/plans-courses" target="_top" style="color: var(--wf-coral);">Browse programs &rarr;</a></p>
-        </article>
-
-        <article class="ys-card">
-          <div class="ys-meta">Perk 06 &middot; Member pricing</div>
-          <h3>Discounts on partner gear &amp; nutrition</h3>
-          <p>Where Yousuli has partner deals (Zoot trisuits, Neversecond, etc.), the roster gets the member rate. Updated list lives in the Hub once you&rsquo;re attached.</p>
-        </article>
-
-        <article class="ys-card">
-          <div class="ys-meta">Perk 07 &middot; Access when it matters</div>
-          <h3>Direct line to Coach Fred</h3>
-          <p>Day-to-day, you communicate with the club president and the team channel. But I&rsquo;m here when goals get big, issues come up, or you have questions that need a coach. Slack first, email or phone for anything urgent.</p>
+          <div class="ys-meta">03 &middot; Race weekends</div>
+          <h3>Coach on the ground at six key races</h3>
+          <p>I&rsquo;ll be at six races across the year, helping with logistics, race-day strategy, transition setup, mental cues, and post-race debriefs:</p>
+          <ul class="ys-card-bullets" style="margin-top: 8px;">
+            <li>UCLA IronBruin (home opener)</li>
+            <li>UCSB Kendra&rsquo;s Race</li>
+            <li>UCSD Tritonman (DL race)</li>
+            <li>Stanford Treeathlon <em>or</em> UC Berkeley Bearathlon (whichever the team prioritises)</li>
+            <li>March Triathlon Series (WCCTC Conference Championship)</li>
+            <li>USAT Collegiate Club Nationals</li>
+          </ul>
         </article>
       </div>
 
-      <div class="ucla-callout gold" style="margin-top: 22px;">
+      <div class="ucla-callout blue" style="margin-top: 22px;">
+        <div class="ucla-callout-tag">Outside the season</div>
+        <p style="margin: 0;">In the summer, I&rsquo;m around. <strong>I unofficially welcome any roster athlete to join me on impromptu long rides or other training sessions</strong>, just message me. If you have a quick question, a niggle, a fueling thing you&rsquo;re puzzling over, or want a sanity check on a race you&rsquo;re thinking about, that&rsquo;s also fair game. I&rsquo;m not running a structured summer programme for the team, but the door is open.</p>
+      </div>
+
+      <div class="ucla-callout gold" style="margin-top: 14px;">
         <div class="ucla-callout-tag">Roster &amp; graduation rules</div>
-        <p style="margin: 0;">Perks above run as long as you&rsquo;re on the UCLA Tri roster. Graduating doesn&rsquo;t mean you have to leave: post-grad athletes can stay on the roster and keep the same benefits from me, you just won&rsquo;t be eligible to compete at the collegiate level. If at some point you want to move into standalone 1:1 Yousuli coaching, that option is open too.</p>
+        <p style="margin: 0;">The above runs as long as you&rsquo;re on the UCLA Tri roster. Graduating doesn&rsquo;t force you off: post-grad athletes can stay on the roster and keep the same coaching contact from me, you just won&rsquo;t be eligible to compete at the collegiate level.</p>
       </div>
     </div>
   </section>
@@ -326,9 +333,14 @@
 
         <article class="ys-card featured">
           <div class="ys-meta">Path B &middot; for point-snatchers</div>
-          <h3>Draft-Legal Sprint via WCCTC</h3>
-          <p>DL spots at Nationals are <strong>allocated to the conference</strong>, WCCTC distributes them based on end-of-season individual ranking. Roughly ~2 spots per gender for our conference (exact number varies year to year).</p>
-          <p style="font-size: 0.88rem; color: var(--ys-muted); margin-top: 8px;">Summer focus: be fall-race-ready by Oct 4. The point-bank window opens early; athletes who train through summer have a real edge over those who restart in September.</p>
+          <h3>Draft-Legal Sprint + Mixed Team Relay</h3>
+          <p>UCLA&rsquo;s allocation at Nationals (confirmed with the club leadership):</p>
+          <ul class="ys-card-bullets" style="margin-top: 6px;">
+            <li><strong>2 Draft-Legal Sprint spots</strong> for the team</li>
+            <li><strong>4 to 8 Mixed Team Relay spots</strong> for the team</li>
+          </ul>
+          <p style="margin-top: 8px;">How those spots are filled is decided by the <strong>club president and VP</strong>, who will announce the selection process early in the season so everyone knows the criteria in advance.</p>
+          <p style="font-size: 0.88rem; color: var(--ys-muted); margin-top: 8px;">Summer focus: be fall-race-ready by the home opener. The point-bank window opens early; athletes who train through summer have a real edge over those who restart in September.</p>
         </article>
 
         <article class="ys-card">
@@ -368,19 +380,24 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Sat, Oct 4</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);"><strong>West Coast Collegiate Triathlon</strong>, San Dimas, CA</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line); color: var(--ucla-blue); font-weight: 600;">Home</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line); color: var(--ys-muted);">Season opener (UCLA-hosted)</td></tr>
+            <tr><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Sat, Oct 4</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);"><strong>West Coast Collegiate Triathlon</strong>, San Dimas, CA &nbsp;<span class="coach-on-site">Coach on site</span></td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line); color: var(--ucla-blue); font-weight: 600;">Home</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line); color: var(--ys-muted);">Season opener (UCLA-hosted)</td></tr>
             <tr style="background: var(--ys-bg-soft);"><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Sun, Oct 12</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Cal Poly SLO, San Luis Obispo, CA</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Away</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line); color: var(--ys-muted);">Counts toward omnium</td></tr>
-            <tr><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Sun, Oct 19</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">UC Berkeley, Berkeley, CA</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Away</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line); color: var(--ys-muted);">Counts toward omnium</td></tr>
+            <tr><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Sun, Oct 19</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">UC Berkeley (Bearathlon), Berkeley, CA &nbsp;<span class="coach-on-site soft">Coach: one of these two</span></td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Away</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line); color: var(--ys-muted);">Counts toward omnium</td></tr>
             <tr style="background: var(--ys-bg-soft);"><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Sun, Oct 26</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">UC Davis, Davis, CA</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Away</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line); color: var(--ys-muted);">Counts toward omnium</td></tr>
-            <tr><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Sun, Nov 16</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">UC Santa Barbara, Santa Barbara, CA</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Away</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line); color: var(--ys-muted);">Counts toward omnium</td></tr>
+            <tr><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Sun, Nov 16</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">UC Santa Barbara (Kendra&rsquo;s Race), Santa Barbara, CA &nbsp;<span class="coach-on-site">Coach on site</span></td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Away</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line); color: var(--ys-muted);">Counts toward omnium</td></tr>
             <tr style="background: var(--ys-bg-soft);"><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Sun, Feb 1</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">UC Irvine, Irvine, CA</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Away</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line); color: var(--ys-muted);">Counts toward omnium</td></tr>
-            <tr><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Sat, Feb 14</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Stanford University, Stanford, CA</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Away</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line); color: var(--ys-muted);">Counts toward omnium</td></tr>
-            <tr style="background: var(--ys-bg-soft);"><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Sat, Feb 28</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">UC San Diego (Tritonman), La Jolla, CA</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Away</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line); color: var(--wf-coral);"><strong>DL race</strong> feeds DL ranking</td></tr>
-            <tr style="background: rgba(250, 119, 60, 0.08); font-weight: 600;"><td style="padding: 12px 14px; border-bottom: 1px solid var(--ys-line);">Sat, Mar 7</td><td style="padding: 12px 14px; border-bottom: 1px solid var(--ys-line);"><strong>Cal Poly Triathlon Club, Conference Championship</strong>, San Luis Obispo, CA</td><td style="padding: 12px 14px; border-bottom: 1px solid var(--ys-line);">Neutral</td><td style="padding: 12px 14px; border-bottom: 1px solid var(--ys-line); color: var(--wf-coral);"><strong>POINTS DOUBLED</strong></td></tr>
-            <tr><td style="padding: 9px 14px;">Late Mar / early Apr</td><td style="padding: 9px 14px;">CCNC Nationals 2027 (host city TBA)</td><td style="padding: 9px 14px;">National</td><td style="padding: 9px 14px; color: var(--ys-navy); font-weight: 600;">Target event</td></tr>
+            <tr><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Sat, Feb 14</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Stanford (Treeathlon), Stanford, CA &nbsp;<span class="coach-on-site soft">Coach: one of these two</span></td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Away</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line); color: var(--ys-muted);">Counts toward omnium</td></tr>
+            <tr style="background: var(--ys-bg-soft);"><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Sat, Feb 28</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">UC San Diego (Tritonman), La Jolla, CA &nbsp;<span class="coach-on-site">Coach on site</span></td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line);">Away</td><td style="padding: 9px 14px; border-bottom: 1px solid var(--ys-line); color: var(--wf-coral);"><strong>DL race</strong> feeds DL ranking</td></tr>
+            <tr style="background: rgba(250, 119, 60, 0.08); font-weight: 600;"><td style="padding: 12px 14px; border-bottom: 1px solid var(--ys-line);">Sat, Mar 7</td><td style="padding: 12px 14px; border-bottom: 1px solid var(--ys-line);"><strong>March Triathlon Series, WCCTC Conference Championship</strong>, San Luis Obispo, CA &nbsp;<span class="coach-on-site">Coach on site</span></td><td style="padding: 12px 14px; border-bottom: 1px solid var(--ys-line);">Neutral</td><td style="padding: 12px 14px; border-bottom: 1px solid var(--ys-line); color: var(--wf-coral);"><strong>POINTS DOUBLED</strong></td></tr>
+            <tr><td style="padding: 9px 14px;">Late Mar / early Apr</td><td style="padding: 9px 14px;">CCNC Nationals 2027 (host city TBA) &nbsp;<span class="coach-on-site">Coach on site</span></td><td style="padding: 9px 14px;">National</td><td style="padding: 9px 14px; color: var(--ys-navy); font-weight: 600;">Target event</td></tr>
           </tbody>
         </table>
       </div>
+
+      <p style="color: var(--ys-muted); font-size: 0.86rem; margin: 10px 0 0;">
+        <span class="coach-on-site">Coach on site</span> = six races I&rsquo;ll attend with the team for logistics, race-day strategy, transitions, and post-race debrief.
+        <span class="coach-on-site soft" style="margin-left: 6px;">Coach: one of these two</span> = Stanford Treeathlon <em>or</em> UC Berkeley Bearathlon, whichever the team prioritises that season.
+      </p>
 
       <!-- 5. WHICH CATEGORY ARE YOU -->
       <h3 style="font-family: var(--ys-font-display); color: var(--ys-navy); margin-top: 32px; margin-bottom: 4px;">Which category are you this season?</h3>
@@ -400,10 +417,10 @@
         <article class="ys-fit-card yes">
           <h3>Category 2 &middot; DL contender</h3>
           <ul>
-            <li>Targeting one of WCCTC&rsquo;s ~2 DL spots per gender</li>
-            <li>Need real fall fitness by Oct 4, points open early</li>
-            <li>Must race at least one DL event (Tritonman, Feb 28)</li>
-            <li>Peak for Cal Poly MTS (doubled points)</li>
+            <li>Targeting one of UCLA&rsquo;s <strong>2 DL spots</strong> (allocation decided by president + VP)</li>
+            <li>Need real fall fitness by the home opener, points open early</li>
+            <li>Must race at least one DL event (Tritonman)</li>
+            <li>Peak for the conference championship (doubled points)</li>
           </ul>
           <p style="margin-top: 8px; font-size: 0.86rem;"><strong>Summer:</strong> sport-specific volume, not minimums. Build aerobic base + handling skills + DL drafting practice.</p>
         </article>
@@ -422,6 +439,7 @@
           <h3>Category 4 &middot; Mixed Relay specialist</h3>
           <ul>
             <li>Short-form effort at Nationals as part of a team relay</li>
+            <li>UCLA has <strong>4 to 8 MTR spots</strong> (allocation decided by president + VP)</li>
             <li>One discipline likely your strongest; train accordingly</li>
             <li>Olympic classic still an option in parallel</li>
           </ul>
@@ -1071,12 +1089,6 @@
           <p>Team Slack: logistics, sessions, accountability, memes. The team captain or president will pull you in once you&rsquo;re attached on TP.</p>
         </article>
 
-        <article class="ys-card">
-          <div class="ys-meta">Lab testing (optional, recommended)</div>
-          <h3>Get baseline data before fall</h3>
-          <p>VO<sub>2</sub>max + RMR + body comp before September. Sets training zones, exposes any under-fueling, gives you a real number to track. Special UCLA roster rate, ask me.</p>
-          <p style="margin-top: 10px;"><a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/performancelab" target="_top">See the Performance Lab</a></p>
-        </article>
       </div>
     </div>
   </section>
@@ -1113,7 +1125,7 @@
 
         <article class="ys-faq">
           <h3>Anything I&rsquo;ll actually need to spend on?</h3>
-          <p>The vast majority of what&rsquo;s on this page is covered on the roster, coaching, calculators, the 20-levers course, your training plan, summer guidance, the hub. Race-day fuel products and any non-team races you sign up for are on you, like anywhere. Lab testing has a roster rate if you choose to do it. Don&rsquo;t feel pressure to buy gear or supplements you don&rsquo;t need, talk to me if anything feels gated.</p>
+          <p>Coaching, scheduling, the hub, summer guidance, the calculators, the 20-levers course, race-day support: all part of the roster. Race-day fuel products and any non-team races you sign up for are on you, like anywhere. Don&rsquo;t feel pressure to buy gear or supplements you don&rsquo;t need. If you ever want to dig deeper with lab testing or anything beyond the team setup, that&rsquo;s a separate conversation, just ask me.</p>
         </article>
 
         <article class="ys-faq">
