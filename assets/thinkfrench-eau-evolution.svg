@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" fill="none">
+  <rect width="800" height="450" rx="12" fill="#1a1a2e"/>
+  <text x="400" y="32" text-anchor="middle" fill="#94a3b8" font-size="16" font-family="system-ui" font-weight="600">How "eau" (water) Evolved Over 2,000 Years</text>
+
+  <!-- Timeline arrow -->
+  <line x1="60" y1="230" x2="740" y2="230" stroke="#334155" stroke-width="2"/>
+  <polygon points="736,225 746,230 736,235" fill="#334155"/>
+
+  <!-- Connecting arrows -->
+  <defs>
+    <marker id="arr" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+      <polygon points="0 0, 6 2, 0 4" fill="#475569"/>
+    </marker>
+  </defs>
+  <path d="M215,230 L255,230" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+  <path d="M415,230 L455,230" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+  <path d="M615,230 L655,230" stroke="#475569" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- ==================== STAGE 1: LATIN ==================== -->
+  <rect x="60" y="120" width="160" height="160" rx="12" fill="#292524" stroke="#78716c" stroke-width="1.5"/>
+  <text x="140" y="145" text-anchor="middle" fill="#a8a29e" font-size="11" font-family="system-ui">Classical Latin</text>
+
+  <!-- AQUA in Roman square capitals -->
+  <text x="140" y="220" text-anchor="middle" fill="#d6d3d1"
+        font-size="44" font-family="Trajan, Cinzel, 'Times New Roman', serif"
+        font-weight="700" letter-spacing="4">AQVA</text>
+
+  <!-- Roman wave underline -->
+  <path d="M85,240 Q105,232 125,240 T165,240 T195,240"
+        fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"/>
+
+  <text x="140" y="265" text-anchor="middle" fill="#78716c" font-size="10" font-family="system-ui" font-style="italic">"a-qua" · c. 1st c. BCE</text>
+
+  <!-- ==================== STAGE 2: OLD FRENCH ==================== -->
+  <rect x="260" y="120" width="160" height="160" rx="12" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+  <text x="340" y="145" text-anchor="middle" fill="#a8a29e" font-size="11" font-family="system-ui">Old French</text>
+
+  <!-- eaue in manuscript script -->
+  <text x="340" y="220" text-anchor="middle" fill="#cbd5e1"
+        font-size="40" font-family="'Cormorant Garamond', 'EB Garamond', 'Times New Roman', serif"
+        font-style="italic" letter-spacing="1">eaue</text>
+
+  <!-- Manuscript wave: more flowing -->
+  <path d="M285,240 Q302,230 320,240 Q338,250 356,240 Q374,230 395,240"
+        fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"/>
+
+  <text x="340" y="265" text-anchor="middle" fill="#64748b" font-size="10" font-family="system-ui" font-style="italic">"é-a-we" · c. 12th c.</text>
+
+  <!-- ==================== STAGE 3: MIDDLE FRENCH ==================== -->
+  <rect x="460" y="120" width="160" height="160" rx="12" fill="#172554" stroke="#3b82f6" stroke-width="1.5" opacity="0.92"/>
+  <text x="540" y="145" text-anchor="middle" fill="#bfdbfe" font-size="11" font-family="system-ui">Middle French</text>
+
+  <!-- eaue → eau (transitioning) -->
+  <text x="540" y="220" text-anchor="middle" fill="#dbeafe"
+        font-size="40" font-family="'EB Garamond', 'Times New Roman', serif" letter-spacing="1">eau<tspan font-size="22" fill="#7dd3fc" baseline-shift="6">e</tspan></text>
+
+  <!-- The dropped silent e shown small + lighter -->
+  <path d="M485,240 Q505,232 525,240 Q545,248 565,240 Q585,232 595,240"
+        fill="none" stroke="#7dd3fc" stroke-width="1.5" stroke-linecap="round"/>
+
+  <text x="540" y="265" text-anchor="middle" fill="#60a5fa" font-size="10" font-family="system-ui" font-style="italic">final "e" goes silent · c. 16th c.</text>
+
+  <!-- ==================== STAGE 4: MODERN FRENCH ==================== -->
+  <rect x="660" y="120" width="80" height="160" rx="12" fill="#0c4a6e" stroke="#38bdf8" stroke-width="1.8"/>
+  <text x="700" y="145" text-anchor="middle" fill="#bae6fd" font-size="11" font-family="system-ui">Modern French</text>
+
+  <!-- eau in clean Modern type -->
+  <text x="700" y="218" text-anchor="middle" fill="#FA773C"
+        font-size="38" font-family="Futura, 'Trebuchet MS', system-ui, sans-serif"
+        font-weight="600" letter-spacing="1">eau</text>
+
+  <!-- Bold confident wave -->
+  <path d="M672,240 Q686,232 700,240 Q714,248 728,240"
+        fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>
+
+  <text x="700" y="265" text-anchor="middle" fill="#7dd3fc" font-size="10" font-family="system-ui" font-style="italic">just "o" sound · today</text>
+
+  <!-- ==================== BOTTOM EXPLANATION ==================== -->
+  <text x="400" y="318" text-anchor="middle" fill="#e2e8f0" font-size="14" font-family="system-ui" font-weight="600">Three letters, one sound. None of them pronounced like English readers expect.</text>
+
+  <text x="400" y="345" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="system-ui">"e", "a", "u": each silent on its own, but together they make a single open vowel ("oh").</text>
+
+  <text x="400" y="370" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="system-ui">French isn't arbitrary, it's just 2,000 years of compression. ThinkFrench teaches the pattern, not the trick.</text>
+
+  <!-- Decorative blue/white/red touch (subtle French tricolour reference) -->
+  <rect x="60" y="402" width="226" height="2" fill="#3b82f6" opacity="0.75"/>
+  <rect x="287" y="402" width="226" height="2" fill="#e5e7eb" opacity="0.75"/>
+  <rect x="514" y="402" width="226" height="2" fill="#ef4444" opacity="0.75"/>
+
+  <text x="400" y="425" text-anchor="middle" fill="#64748b" font-size="10" font-family="system-ui" letter-spacing="2">THINKFRENCH</text>
+</svg>
