@@ -32,6 +32,7 @@ For the full project handoff doc, see the parent folder's `README.md`.
 | `404.html`                 | Wix custom 404                    | always |
 | `wildflower.html`          | `/wildflower`                     | event |
 | `plan-customization.html`  | `/plan-customization`             | gated |
+| `race-week-packing.html`   | `/packing`                        | yes (free for all, linked from `/calculators`) |
 
 ## Sandwich wrappers
 

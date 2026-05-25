@@ -1,0 +1,1055 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Race-week packing &amp; prep · Yousuli triathlon checklist</title>
+  <meta name="description" content="The full Yousuli race-week packing checklist for triathletes: documents, swim, bike, run, nutrition, tools, body care, tech, recovery. With pre-race timing rules, common mistakes, and a printable PDF version. Free for all." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Race-week packing &amp; prep · Yousuli" />
+  <meta property="og:description" content="Tickable race-week packing checklist + pre-race timing rules + common mistakes. Printable as PDF. Free." />
+  <meta property="og:url" content="https://www.yousuli.co/packing" />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <style>
+    /* ============== Local styles, scoped to this page ============== */
+
+    /* Callout boxes, same family as ucla.html */
+    .pk-callout {
+      padding: 18px 22px;
+      border-left: 4px solid var(--wf-coral);
+      background: var(--ys-bg-soft);
+      border-radius: 0 10px 10px 0;
+      margin: 14px 0;
+    }
+    .pk-callout.teal   { border-left-color: var(--ys-teal, #00B3A4); }
+    .pk-callout.navy   { border-left-color: var(--ys-navy, #2F2D56); }
+    .pk-callout.warn   { border-left-color: #c69b1a; background: #fdf6e0; }
+    .pk-callout-tag {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      color: var(--wf-coral);
+      margin-bottom: 6px;
+    }
+    .pk-callout.teal .pk-callout-tag { color: var(--ys-teal, #00B3A4); }
+    .pk-callout.navy .pk-callout-tag { color: var(--ys-navy, #2F2D56); }
+    .pk-callout.warn .pk-callout-tag { color: #a07712; }
+
+    /* The tickable checklist itself. Real <input type="checkbox">
+       so the list is tickable on screen and prints with empty
+       boxes that can be marked on paper. */
+    .pk-list {
+      list-style: none;
+      padding: 0;
+      margin: 8px 0 0;
+    }
+    .pk-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 7px 4px;
+      border-bottom: 1px dashed rgba(47,45,86,0.12);
+      line-height: 1.45;
+    }
+    .pk-list li:last-child { border-bottom: 0; }
+    .pk-list input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 3px;
+      flex-shrink: 0;
+      accent-color: var(--wf-coral);
+      cursor: pointer;
+    }
+    .pk-list .pk-item { flex: 1; }
+    .pk-list .pk-item .pk-note {
+      display: block;
+      font-size: 0.86rem;
+      color: var(--ys-muted);
+      margin-top: 2px;
+    }
+    .pk-list label { cursor: pointer; }
+
+    /* Two-column grid for checklist cards, stacking on small screens. */
+    .pk-checklist-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      margin-top: 8px;
+    }
+    @media (max-width: 760px) {
+      .pk-checklist-grid { grid-template-columns: 1fr; }
+    }
+
+    .pk-card {
+      background: white;
+      border: 1px solid rgba(47,45,86,0.12);
+      border-radius: 12px;
+      padding: 22px 24px;
+      box-shadow: 0 1px 3px rgba(47,45,86,0.06);
+    }
+    .pk-card h3 {
+      font-family: var(--ys-font-display);
+      color: var(--ys-navy);
+      margin: 0 0 4px;
+      font-size: 1.18rem;
+    }
+    .pk-card .pk-card-tag {
+      font-size: 0.76rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--wf-coral);
+      margin-bottom: 10px;
+    }
+
+    /* Print / Save-as-PDF button */
+    .pk-print-row {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin: 18px 0 8px;
+    }
+    .pk-print-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border-radius: 999px;
+      background: var(--ys-navy, #2F2D56);
+      color: white;
+      text-decoration: none;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.04em;
+      font-size: 0.95rem;
+      border: 0;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+    .pk-print-btn:hover { background: var(--wf-coral); transform: translateY(-1px); }
+    .pk-print-btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+    /* Reset / tick-all helpers */
+    .pk-tools {
+      display: flex;
+      gap: 8px;
+      margin: 6px 0 14px;
+      font-size: 0.85rem;
+    }
+    .pk-tools button {
+      background: transparent;
+      border: 1px solid rgba(47,45,86,0.2);
+      border-radius: 999px;
+      padding: 5px 12px;
+      cursor: pointer;
+      color: var(--ys-navy, #2F2D56);
+      font-family: inherit;
+    }
+    .pk-tools button:hover { background: var(--ys-bg-soft); }
+
+    /* Timing-rules table */
+    .pk-timing {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(47,45,86,0.08);
+    }
+    .pk-timing th, .pk-timing td {
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(47,45,86,0.08);
+      text-align: left;
+      vertical-align: top;
+    }
+    .pk-timing th {
+      background: var(--ys-bg-soft);
+      color: var(--ys-navy);
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.04em;
+    }
+    .pk-timing tr:last-child td { border-bottom: 0; }
+    .pk-timing td.pk-when {
+      font-weight: 600;
+      color: var(--wf-coral);
+      white-space: nowrap;
+      font-family: var(--ys-font-display);
+    }
+
+    /* "Common mistakes" cards */
+    .pk-mistakes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-top: 8px;
+    }
+    .pk-mistake {
+      background: white;
+      border-left: 4px solid #c69b1a;
+      border-radius: 0 10px 10px 0;
+      padding: 14px 18px;
+      box-shadow: 0 1px 2px rgba(47,45,86,0.06);
+    }
+    .pk-mistake h4 {
+      margin: 0 0 4px;
+      font-family: var(--ys-font-display);
+      color: var(--ys-navy);
+      font-size: 1.02rem;
+    }
+    .pk-mistake p { margin: 0; font-size: 0.9rem; color: var(--ys-muted); }
+
+    /* Element that only appears in print output, used to brand the PDF. */
+    .pk-print-only { display: none; }
+
+    /* ============== Print-friendly PDF output ============== */
+    @media print {
+      /* Force backgrounds and accent colours to print across browsers. */
+      *, *::before, *::after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      @page {
+        size: A4 portrait;
+        margin: 12mm 10mm 14mm 10mm;
+      }
+
+      html, body {
+        background: white !important;
+        color: #111 !important;
+        font-size: 10.5pt;
+        line-height: 1.4;
+      }
+
+      /* Hide everything that is screen-only chrome. */
+      .ys-site-header,
+      .ys-site-footer,
+      .wf-hero,
+      .pk-print-row,
+      .pk-tools,
+      .ys-btn-row { display: none !important; }
+
+      /* Top-of-PDF brand block (only shows in print). */
+      .pk-print-only {
+        display: block !important;
+        text-align: center;
+        padding: 0 0 12px;
+        margin-bottom: 14px;
+        border-bottom: 1.5px solid #2F2D56;
+      }
+      .pk-print-only .pk-print-title {
+        font-family: var(--ys-font-display, Futura, system-ui, sans-serif);
+        font-size: 18pt;
+        color: #2F2D56;
+        margin: 0 0 4px;
+        letter-spacing: 0.02em;
+      }
+      .pk-print-only .pk-print-sub {
+        font-size: 9.5pt;
+        color: #555;
+        margin: 0;
+      }
+
+      /* Tight, single-column layout for the main checklist; keep mistakes 2-col. */
+      .wf-section { padding: 8px 0 !important; }
+      .wf-section.alt { background: white !important; }
+      .ys-container { max-width: 100% !important; padding: 0 !important; }
+      .ys-section-head { margin-bottom: 18px; }
+      .ys-section-head h2 { font-size: 14pt; margin: 12px 0 4px; }
+      .ys-section-head p { font-size: 10pt; color: #444; }
+      .ys-rule { display: none; }
+
+      .pk-checklist-grid {
+        display: block !important;
+        gap: 0 !important;
+      }
+      .pk-checklist-grid > .pk-card {
+        width: 100%;
+        margin-bottom: 12px;
+      }
+
+      .pk-mistakes-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+      }
+
+      /* Card / callout styling. */
+      .pk-card,
+      .pk-callout,
+      .pk-mistake,
+      .pk-timing {
+        box-shadow: none !important;
+        border: 1px solid #c8c8d2 !important;
+        background: white !important;
+        page-break-inside: avoid;
+      }
+      .pk-callout { border-left-width: 4px !important; }
+      .pk-callout.teal { border-left-color: #00B3A4 !important; }
+      .pk-callout.navy { border-left-color: #2F2D56 !important; }
+      .pk-callout.warn { border-left-color: #c69b1a !important; background: #fdf6e0 !important; }
+      .pk-mistake { border-left: 4px solid #c69b1a !important; }
+
+      .pk-card h3,
+      .pk-callout-tag,
+      .pk-card-tag,
+      .pk-mistake h4,
+      .pk-timing th { color: #2F2D56 !important; }
+
+      .pk-card { padding: 12px 14px !important; }
+      .pk-card h3 { font-size: 11.5pt; }
+      .pk-card-tag { font-size: 8.5pt; }
+
+      .pk-list { margin: 4px 0 0; }
+      .pk-list li {
+        padding: 4px 2px;
+        page-break-inside: avoid;
+        font-size: 10pt;
+      }
+      .pk-list .pk-item .pk-note {
+        font-size: 8.5pt;
+        color: #555;
+      }
+
+      .pk-timing th, .pk-timing td { padding: 7px 10px; font-size: 10pt; }
+      .pk-timing thead { display: table-header-group; }
+      .pk-timing tr { page-break-inside: avoid; }
+      .pk-timing td.pk-when { color: #d65800 !important; }
+
+      .pk-mistake { padding: 10px 12px !important; }
+      .pk-mistake h4 { font-size: 10.5pt; }
+      .pk-mistake p { font-size: 9.5pt; }
+
+      h2, h3, h4 { page-break-after: avoid; }
+      section { page-break-inside: auto; }
+
+      /* Links: keep readable, don't dump URLs after text. */
+      a, a:link, a:visited {
+        color: #2F2D56 !important;
+        text-decoration: underline;
+      }
+
+      /* Checkbox rendering: empty square for print, ✓ if pre-ticked. */
+      input[type="checkbox"] {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 11px;
+        height: 11px;
+        border: 1.3px solid #333;
+        border-radius: 2px;
+        background: white;
+        margin: 4px 4px 0 0;
+        flex-shrink: 0;
+      }
+      input[type="checkbox"]:checked::after {
+        content: "✓";
+        display: block;
+        text-align: center;
+        line-height: 9px;
+        color: #111;
+        font-weight: bold;
+        font-size: 8.5pt;
+      }
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Smooth-scroll for in-page anchors
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+
+      // Persist tick state in localStorage so athletes can come back to it
+      var STORAGE_KEY = 'yousuli.race-week-packing.v1';
+      var saved = {};
+      try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch (e) {}
+
+      var boxes = document.querySelectorAll('.pk-list input[type="checkbox"]');
+      boxes.forEach(function (b) {
+        if (saved[b.id]) b.checked = true;
+        b.addEventListener('change', function () {
+          saved[b.id] = b.checked;
+          try { localStorage.setItem(STORAGE_KEY, JSON.stringify(saved)); } catch (e) {}
+        });
+      });
+
+      // Print button
+      var printBtns = document.querySelectorAll('[data-pk-action="print"]');
+      printBtns.forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          window.print();
+        });
+      });
+
+      // Reset-all + check-all (per-list)
+      document.querySelectorAll('[data-pk-action="reset-all"]').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          if (!confirm('Clear every tick on this page?')) return;
+          boxes.forEach(function (b) { b.checked = false; });
+          try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+          saved = {};
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+
+  <!-- ============ PRINT-ONLY BRAND BLOCK (PDF header) ============ -->
+  <div class="pk-print-only" aria-hidden="true">
+    <h1 class="pk-print-title">Race-week packing &amp; prep</h1>
+    <p class="pk-print-sub">Yousuli · Coach Fred · yousuli.co/packing</p>
+  </div>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Programs</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Race-week prep</span>
+      <h1>The race-week packing checklist.</h1>
+      <div class="wf-subhead">Pack two days out. Sleep on the spares. Show up calm.</div>
+      <p class="lede">Most race-day disasters are packed at home, not raced in. This is the checklist I use with the athletes I coach: everything you need to bring, every body-care item you&rsquo;ll forget if it&rsquo;s not on a list, the pre-race timing rules that decide how your legs feel at the gun, and the common mistakes I&rsquo;ve seen ruin more races than any swim, bike, or run mishap. Tick items as you pack. Your progress is saved on this device. When you&rsquo;re done, print or save as PDF so you can use it in the hotel.</p>
+      <div class="ys-btn-row">
+        <a class="ys-btn ys-btn-coral" href="#checklist">Jump to the checklist</a>
+        <a class="ys-btn ys-btn-ghost" href="#timing">Race-morning timing</a>
+        <button class="pk-print-btn" data-pk-action="print" type="button" aria-label="Print or save as PDF">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+          Print / Save as PDF
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE PACKING PHILOSOPHY ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Pack two days out, then leave it alone</h2>
+        <div class="ys-rule"></div>
+        <p>The single biggest packing mistake I see is leaving everything for the night before. You forget things when you&rsquo;re tired, and stress-packing eats into sleep that you can&rsquo;t make back. Aim for this:</p>
+      </div>
+
+      <div class="pk-callout teal">
+        <div class="pk-callout-tag">The two-pass rule</div>
+        <p style="margin: 0 0 6px;"><strong>Two days out:</strong> first pass. Lay everything on the floor or bed by category (this page&rsquo;s sections work). Tick the checklist as you go.</p>
+        <p style="margin: 0 0 6px;"><strong>One day out:</strong> second pass. Walk through every list a second time, with fresh eyes. This is when you catch the things you assumed were already in the bag (chip strap, race-belt, that one specific charging cable).</p>
+        <p style="margin: 0;"><strong>Race morning:</strong> almost nothing. Bottles in, fresh food in, AirTag check, lock the door. If you&rsquo;re still searching for stuff in the morning, something went wrong upstream.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRE-RACE TIMING RULES ============ -->
+  <section class="wf-section alt" id="timing">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Race-morning timing rules</h2>
+        <div class="ys-rule"></div>
+        <p>These are the timings that decide how your legs feel at the gun. They&rsquo;re also the easiest things to get wrong because everyone&rsquo;s already nervous.</p>
+      </div>
+
+      <table class="pk-timing">
+        <thead>
+          <tr>
+            <th style="width: 130px;">When</th>
+            <th>What</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="pk-when">3 h before</td>
+            <td><strong>Last real meal.</strong> Familiar food, mostly carbs, some protein, low fat, low fibre. 80&ndash;100 g of carbohydrate is a good target for a 70.3 or full; 50&ndash;80 g for an Olympic; 40&ndash;60 g for a sprint. Stop eating at the 2:30 mark at the latest, so your blood sugar isn&rsquo;t crashing through a reactive-insulin trough right at race start.</td>
+          </tr>
+          <tr>
+            <td class="pk-when">2 h before</td>
+            <td><strong>Hydration check.</strong> 500 ml of water with electrolytes. Should produce one clear bathroom visit between now and the start. If you&rsquo;re heading into a hot race, this is also when sodium loading should already be done (it&rsquo;s a yesterday job, not a today job).</td>
+          </tr>
+          <tr>
+            <td class="pk-when">90 min before</td>
+            <td><strong>Caffeine (if you use it).</strong> Use the dose you&rsquo;ve trained with, not a race-day experiment. The standard endurance protocol is <strong>1 to 3 mg per kg of body weight as a pre-race bolus, 30 to 60 min before the start</strong>, sometimes split with a smaller second dose late-bike or early-run for a run-leg lift. That is a <em>per-bolus</em> dose, not a daily ceiling: most adults can comfortably take pre-race + in-race + their normal coffee and stay under ~6 mg / kg / day (the broadly-accepted upper safe range) without GI or HR side effects. First-time mega-doses on race day are how athletes end up jittery, gut-crampy, and in a bathroom queue at minute 40.</td>
+          </tr>
+          <tr>
+            <td class="pk-when">60 min before</td>
+            <td><strong>Confirm transition + walk the paths.</strong> At <strong>70.3 and Ironman races your bike is already racked from yesterday&rsquo;s mandatory check-in</strong> (see the race-week countdown below for what check-in involves), you can&rsquo;t set the bike up on race morning. What you do now: drop your morning bag(s) by the rack, set out shoes / helmet / race-belt / nutrition within the rules, top up tyre pressure, <strong>wake the bike computer and watch</strong> (both should already be fully charged from yesterday, race morning is no time to hunt for a wall socket), verify the chip is on, and <strong>double-check the goggles you plan to race with</strong> (strap not perished, lens not scratched, no overnight kinks). Then walk the in / out paths twice: swim exit to bike rack to bike-mount line, and bike-dismount line to run-out. Sprint and Olympic races usually allow same-morning rack, so arrive earlier and don&rsquo;t rush.</td>
+          </tr>
+          <tr>
+            <td class="pk-when">30 min before</td>
+            <td><strong>Top-up gel + bathroom routine.</strong> 25 to 40 g of carbohydrate, a few sips of water. <em>Bathroom-wise:</em> ideally the big morning visit (number two) happened at the <strong>hotel</strong>, following the routine your gut already knows. Watch fatty / high-fibre food the night before, it&rsquo;s the most common cause of an unwanted mid-race stop. A short, slow stroll after breakfast often nudges things along if your routine is being shy. <em>Number one</em> is less of a problem: a quick pee during the swim warm-up is normal triathlon practice and briefly warms the wetsuit (everyone does it). A bit of <strong>warm or lukewarm water poured down the inside of the wetsuit neck</strong> just before you swim is a low-tech way to blunt the cold-shock gasp when you first immerse. If a support person can bring a thermos, great. Otherwise a small bottle filled with lukewarm tap water from the hotel works fine.</td>
+          </tr>
+          <tr>
+            <td class="pk-when">15 min before</td>
+            <td><strong>Get in the water. Acclimate.</strong> If the race allows pre-swim warm-up, use it. Sudden full-body immersion in cold water spikes heart rate, triggers the cold-shock gasp reflex, and is one of the recognised contributors to <a href="https://en.wikipedia.org/wiki/Swimming-induced_pulmonary_edema" target="_blank" rel="noopener noreferrer">SIPE (swimming-induced pulmonary edema)</a>, a rare but serious problem in open-water triathlon. Walk in slowly, get the face wet, splash water in through the wetsuit neck and sleeves, then <strong>swim easy for ~5 min if the window allows</strong>, 2 min if it doesn&rsquo;t. Any in-water time helps. <em>Heads up:</em> at IM and 70.3 events the warm-up window often only opens 15 min before the <em>pro</em> start, and age-group access closes 15 to 30 min after that, so it can be tight. <strong>Use whatever window is open to you</strong>, even if it means standing around in a wet wetsuit for 5 to 10 min waiting for your wave to be called: the warm-up matters more than the brief chill. If the race doesn&rsquo;t allow in-water warm-up at all, splash water on your face and neck repeatedly on land to fire the same nerve reflex (the mammalian dive response).</td>
+          </tr>
+          <tr>
+            <td class="pk-when">10 min before</td>
+            <td><strong>Last-minute wetsuit zip if you haven&rsquo;t already.</strong> Many athletes wait until this 10-to-15-min window to fully zip up. A wetsuit zipped 30+ min before the start in cool morning air can chill you faster than standing in a hoodie, so there&rsquo;s no prize for being suited up early. Goggles on the forehead. Box breathing (5 in, 5 hold, 5 out, 5 hold) for 2 to 3 minutes pulls the heart rate down and shifts you out of pre-race panic into a parasympathetic state. Visualise the swim start. Find a friendly face.</td>
+          </tr>
+          <tr>
+            <td class="pk-when">2 min before</td>
+            <td><strong>Goggles down, into position.</strong> Goggles snug, <strong>strap tucked under the swim cap</strong> (so a hand can&rsquo;t knock them off in the start scrum). Mouth wet. Calm. Trust the work.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pk-callout navy" style="margin-top: 22px;">
+        <div class="pk-callout-tag">Open-water start tactics: caps, goggles, cold ground</div>
+        <ul style="margin: 4px 0 0; padding-left: 20px;">
+          <li><strong>Two caps is fine.</strong> Race-provided cap on the outside (often mandatory and brightly coloured for visibility / safety boats); your own silicone cap underneath. The doubled layer is warmer and adds grip if the outer cap is slippy.</li>
+          <li><strong>Goggle strap under the cap, not over.</strong> A flailing arm in the start scrum is the most common goggle-loss event. Strap tucked under the cap protects the goggles from a stray hand and gives them a second anchor.</li>
+          <li><strong>Squeaky-clean hair can make caps slip.</strong> Folk wisdom among open-water swimmers (and plausible, since fresh-shampooed hair has very low friction against silicone): if you&rsquo;ve had cap slippage in the past, consider not shampooing race morning, or pinning long hair in a low bun under the cap. Anecdotal, not strongly studied, but a free thing to try.</li>
+          <li><strong>Pre-swim warm-up in the water</strong> blunts the cold-shock gasp and lowers your <a href="https://en.wikipedia.org/wiki/Swimming-induced_pulmonary_edema" target="_blank" rel="noopener noreferrer">SIPE</a> risk. Walk in slowly, splash water in through the neck and sleeves, swim easy for <strong>~5 min if the window allows, 2 min if it doesn&rsquo;t</strong>, any in-water time helps. Repeat the face / neck splashing on land if in-water warm-up isn&rsquo;t allowed at all.</li>
+          <li><strong>Bring slippers or cheap flip-flops to the start.</strong> Standing on cold sand or wet concrete for 45 to 60 min before the gun drops your foot and core temperature for no good reason. Throw them aside (or leave them in your morning bag) just before you walk to the corral.</li>
+          <li><strong>Warm or lukewarm water in the wetsuit neck</strong> right before you swim briefly warms the suit and softens the initial cold-shock when you first immerse. A thermos is ideal if a support person is with you, otherwise a small bottle filled with lukewarm tap water from the hotel works fine.</li>
+        </ul>
+      </div>
+
+      <div class="pk-callout warn" style="margin-top: 14px;">
+        <div class="pk-callout-tag">⚠ Don&rsquo;t do your first ever &lsquo;X&rsquo; on race day</div>
+        <p style="margin: 0;">First time with a new gel, new salt tab, new caffeine dose, new wetsuit, new goggles, new pre-race breakfast, new shoes, new chamois cream: <strong>not on race day</strong>. Race day is when you use the kit and the protocol you have already tested in training and / or in a B race. If something on the checklist below is new for you, use it in a long brick this weekend.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE MAIN CHECKLIST ============ -->
+  <section class="wf-section" id="checklist">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>The packing checklist</h2>
+        <div class="ys-rule"></div>
+        <p>Tap to tick. Your ticks are saved on this device. When you&rsquo;re done, hit Print / Save as PDF to take a paper or PDF copy with you.</p>
+      </div>
+
+      <div class="pk-print-row">
+        <button class="pk-print-btn" data-pk-action="print" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+          Print / Save as PDF
+        </button>
+      </div>
+      <div class="pk-tools" style="justify-content:center;">
+        <button data-pk-action="reset-all" type="button">Reset all ticks</button>
+      </div>
+
+      <div class="pk-checklist-grid">
+
+        <!-- ===== DOCUMENTS & ESSENTIALS ===== -->
+        <div class="pk-card">
+          <div class="pk-card-tag">01 · Documents &amp; essentials</div>
+          <h3>The things that get you to the start line</h3>
+          <ul class="pk-list">
+            <li><input type="checkbox" id="d-id"><label for="d-id" class="pk-item">Photo ID (driver&rsquo;s license / passport for travel races)<span class="pk-note">Many race expos require ID at packet pick-up.</span></label></li>
+            <li><input type="checkbox" id="d-tri-card"><label for="d-tri-card" class="pk-item">Triathlon-association membership card (USAT / your federation)<span class="pk-note">Required for sanctioned races. Carries your liability insurance.</span></label></li>
+            <li><input type="checkbox" id="d-reg"><label for="d-reg" class="pk-item">Registration confirmation (printed or screenshotted)</label></li>
+            <li><input type="checkbox" id="d-med"><label for="d-med" class="pk-item">Medical-info card on phone lockscreen + emergency contact</label></li>
+            <li><input type="checkbox" id="d-insurance"><label for="d-insurance" class="pk-item">Travel / health insurance card (if travelling)</label></li>
+            <li><input type="checkbox" id="d-cash"><label for="d-cash" class="pk-item">Cash + cards<span class="pk-note">Cash for parking, expo vendors, race-morning coffee.</span></label></li>
+            <li><input type="checkbox" id="d-keys"><label for="d-keys" class="pk-item">Car keys / hotel key (and a hidden spare car key)</label></li>
+            <li><input type="checkbox" id="d-maps"><label for="d-maps" class="pk-item">Maps saved offline (hotel, parking, expo, T1, T2, swim start, finish)<span class="pk-note">Race-morning cell service is often unreliable around big events.</span></label></li>
+            <li><input type="checkbox" id="d-course"><label for="d-course" class="pk-item">Course maps + elevation profiles screenshotted</label></li>
+            <li><input type="checkbox" id="d-brief"><label for="d-brief" class="pk-item">Race brief / athlete guide read twice<span class="pk-note">Highlight the rules that are specific to this race (drafting, helmets, run-out direction, bike-mount line).</span></label></li>
+            <li><input type="checkbox" id="d-bib"><label for="d-bib" class="pk-item">Bib number + timing chip (packed safely after expo pick-up)</label></li>
+            <li><input type="checkbox" id="d-stickers"><label for="d-stickers" class="pk-item">All race stickers applied: helmet, bike frame, T1 bag, T2 bag, special-needs (if used)<span class="pk-note">At 70.3 / IM bike check-in, volunteers will check the helmet sticker and the bike frame sticker. Don&rsquo;t leave this for race morning, you may not have access to the bike then.</span></label></li>
+            <li><input type="checkbox" id="d-belt"><label for="d-belt" class="pk-item">Racing belt with bib already attached<span class="pk-note">Goes in the T1 bag for big races, or laid out in transition for sprint / Olympic. Pre-attach the bib at home, not in the start corral.</span></label></li>
+          </ul>
+        </div>
+
+        <!-- ===== SWIM GEAR ===== -->
+        <div class="pk-card">
+          <div class="pk-card-tag">02 · Swim gear</div>
+          <h3>Open water, wetsuit, cold morning starts</h3>
+          <ul class="pk-list">
+            <li><input type="checkbox" id="s-trisuit"><label for="s-trisuit" class="pk-item">Trisuit (the one you raced in last, not the new one)</label></li>
+            <li><input type="checkbox" id="s-wetsuit"><label for="s-wetsuit" class="pk-item">Wetsuit (if water-temp legal)<span class="pk-note">Pre-trial fit two weeks out. Glue lift if there&rsquo;s a tear.</span></label></li>
+            <li><input type="checkbox" id="s-cap-race"><label for="s-cap-race" class="pk-item">Race-provided swim cap (often mandatory)</label></li>
+            <li><input type="checkbox" id="s-cap-spare"><label for="s-cap-spare" class="pk-item">Spare silicone cap to wear under it<span class="pk-note">Warmth in cold water + an anti-slip layer for goggles.</span></label></li>
+            <li><input type="checkbox" id="s-goggles-1"><label for="s-goggles-1" class="pk-item">Goggles, pair 1 (clear or low-light tint)</label></li>
+            <li><input type="checkbox" id="s-goggles-2"><label for="s-goggles-2" class="pk-item">Goggles, pair 2 (mirrored / dark tint)<span class="pk-note">Two pairs is the rule. Sun angle changes, fog happens, straps snap. Decide on the morning which pair matches the conditions.</span></label></li>
+            <li><input type="checkbox" id="s-anti-fog"><label for="s-anti-fog" class="pk-item">Anti-fog drops or baby shampoo</label></li>
+            <li><input type="checkbox" id="s-earplugs"><label for="s-earplugs" class="pk-item">Ear plugs (if you swim with them)</label></li>
+            <li><input type="checkbox" id="s-bodyglide"><label for="s-bodyglide" class="pk-item">Body Glide (neck, shoulders, ankles for wetsuit removal)</label></li>
+            <li><input type="checkbox" id="s-warmup"><label for="s-warmup" class="pk-item">Throw-away warm clothes for swim start corral<span class="pk-note">Long swim queues in cool air drop your core temperature. Old hoodie + cheap flip-flops you don&rsquo;t mind ditching. Cold sand + cold concrete = cold feet for 45+ min before you even start, don&rsquo;t stand on it barefoot.</span></label></li>
+            <li><input type="checkbox" id="s-warm-water"><label for="s-warm-water" class="pk-item">Small bottle of warm or lukewarm water (for the inside of the wetsuit)<span class="pk-note">Pour it down the neck just before you swim. Thermos if a support person can bring it, otherwise a regular bottle of lukewarm tap water from the hotel works fine.</span></label></li>
+            <li><input type="checkbox" id="s-towel"><label for="s-towel" class="pk-item">Small bag for goggles + cap after the swim</label></li>
+          </ul>
+        </div>
+
+        <!-- ===== BIKE GEAR ===== -->
+        <div class="pk-card">
+          <div class="pk-card-tag">03 · Bike gear</div>
+          <h3>The category with the most failure modes</h3>
+          <ul class="pk-list">
+            <li><input type="checkbox" id="b-bike"><label for="b-bike" class="pk-item">Bike (serviced 1 to 2 weeks out, not the day before)<span class="pk-note">See the bike pre-flight section below for everything to double-check.</span></label></li>
+            <li><input type="checkbox" id="b-helmet"><label for="b-helmet" class="pk-item">Helmet (straps intact, expiry date OK, sticker if required)</label></li>
+            <li><input type="checkbox" id="b-shoes"><label for="b-shoes" class="pk-item">Bike shoes</label></li>
+            <li><input type="checkbox" id="b-socks"><label for="b-socks" class="pk-item">Bike socks (or barefoot in shoes, your call)</label></li>
+            <li><input type="checkbox" id="b-glasses"><label for="b-glasses" class="pk-item">Sunglasses (or 2 pairs: clear + dark, for variable light)</label></li>
+            <li><input type="checkbox" id="b-bottles-1"><label for="b-bottles-1" class="pk-item">Frame bottle (with your race-day mix)</label></li>
+            <li><input type="checkbox" id="b-bottles-2"><label for="b-bottles-2" class="pk-item">Aero / between-the-arms bottle</label></li>
+            <li><input type="checkbox" id="b-bottle-spare"><label for="b-bottle-spare" class="pk-item">Spare bottle for aid station hand-up (with empty seat-cage)</label></li>
+            <li><input type="checkbox" id="b-gloves"><label for="b-gloves" class="pk-item">Bike gloves (if you race in them)</label></li>
+            <li><input type="checkbox" id="b-jacket"><label for="b-jacket" class="pk-item">Arm warmers / gilet (cold start, long descent)</label></li>
+            <li><input type="checkbox" id="b-computer"><label for="b-computer" class="pk-item">Bike computer (charged, course loaded)</label></li>
+            <li><input type="checkbox" id="b-mount"><label for="b-mount" class="pk-item">Out-front mount + tight bolts</label></li>
+            <li><input type="checkbox" id="b-pm"><label for="b-pm" class="pk-item">Power meter battery check (or charged pedals / spindle)</label></li>
+            <li><input type="checkbox" id="b-light"><label for="b-light" class="pk-item">Front / rear light if start is in low light (or rules require)</label></li>
+          </ul>
+        </div>
+
+        <!-- ===== RUN GEAR ===== -->
+        <div class="pk-card">
+          <div class="pk-card-tag">04 · Run gear</div>
+          <h3>Lighter than you think, more decisions than you think</h3>
+          <ul class="pk-list">
+            <li><input type="checkbox" id="r-shoes"><label for="r-shoes" class="pk-item">Race shoes (broken in, not brand new)<span class="pk-note">If you race in elastic laces / lace locks, install them now.</span></label></li>
+            <li><input type="checkbox" id="r-shoes-spare"><label for="r-shoes-spare" class="pk-item">Backup pair (in case race shoes get wet or fail in warm-up)</label></li>
+            <li><input type="checkbox" id="r-socks"><label for="r-socks" class="pk-item">Run socks (if separate from bike)</label></li>
+            <li><input type="checkbox" id="r-belt"><label for="r-belt" class="pk-item">Race-number belt</label></li>
+            <li><input type="checkbox" id="r-cap"><label for="r-cap" class="pk-item">Running cap or visor</label></li>
+            <li><input type="checkbox" id="r-glasses"><label for="r-glasses" class="pk-item">Run sunglasses (same or different from bike)</label></li>
+            <li><input type="checkbox" id="r-flask"><label for="r-flask" class="pk-item">Soft flask or handheld (if course is short on aid)</label></li>
+            <li><input type="checkbox" id="r-footpod"><label for="r-footpod" class="pk-item">Footpod / Stryd (charged, paired)</label></li>
+            <li><input type="checkbox" id="r-watch"><label for="r-watch" class="pk-item">Sport watch (charged, race profile set)</label></li>
+            <li><input type="checkbox" id="r-bodyglide"><label for="r-bodyglide" class="pk-item">Anti-chafe (inner thighs, bra line, between toes)</label></li>
+            <li><input type="checkbox" id="r-tape"><label for="r-tape" class="pk-item">Athletic tape / blister tape (small roll)</label></li>
+          </ul>
+        </div>
+
+        <!-- ===== NUTRITION ===== -->
+        <div class="pk-card">
+          <div class="pk-card-tag">05 · Nutrition</div>
+          <h3>Pre, during, post. Tested, not new.</h3>
+          <ul class="pk-list">
+            <li><input type="checkbox" id="n-pre"><label for="n-pre" class="pk-item">Pre-race breakfast (the one you train with)<span class="pk-note">Familiar carbs + a little protein, low fat, low fibre. Travel with it if the hotel won&rsquo;t have it.</span></label></li>
+            <li><input type="checkbox" id="n-gel-30"><label for="n-gel-30" class="pk-item">Pre-start gel (taken ~30 min before)</label></li>
+            <li><input type="checkbox" id="n-bike-fuel"><label for="n-bike-fuel" class="pk-item">Bike-leg fuel (gels, chews, bars, drink mix)<span class="pk-note">Sketch the leg by the half-hour: hour 1, hour 2, hour 3. Cross-check with the <a href="https://www.yousuli.co/triathlonracefuelingstrategy" target="_top">race-fueling calculator</a>.</span></label></li>
+            <li><input type="checkbox" id="n-run-fuel"><label for="n-run-fuel" class="pk-item">Run-leg fuel (typically smaller portions, more frequent)</label></li>
+            <li><input type="checkbox" id="n-mix"><label for="n-mix" class="pk-item">Drink mix powder + a way to measure scoops</label></li>
+            <li><input type="checkbox" id="n-salt"><label for="n-salt" class="pk-item">Salt tabs (only if you&rsquo;ve tested them, not just-in-case)</label></li>
+            <li><input type="checkbox" id="n-caffeine"><label for="n-caffeine" class="pk-item">Caffeine source (gel, gum, tablet) for late-race lift</label></li>
+            <li><input type="checkbox" id="n-water"><label for="n-water" class="pk-item">Pre-race water + electrolyte (500 ml, sipped between 2 h and 30 min before)</label></li>
+            <li><input type="checkbox" id="n-post"><label for="n-post" class="pk-item">Post-race snack you actually want to eat<span class="pk-note">Race-finish nausea is real. Have something familiar (chocolate milk, a bar, salty crisps) in your finish bag rather than relying on the post-race tent.</span></label></li>
+            <li><input type="checkbox" id="n-post-drink"><label for="n-post-drink" class="pk-item">Recovery shake / protein drink + a real meal plan for after</label></li>
+            <li><input type="checkbox" id="n-snacks"><label for="n-snacks" class="pk-item">Travel-day snacks (nuts, fruit, bars) so you&rsquo;re not stuck with airport food)</label></li>
+          </ul>
+        </div>
+
+        <!-- ===== TOOLS & SPARES ===== -->
+        <div class="pk-card">
+          <div class="pk-card-tag">06 · Tools &amp; spares</div>
+          <h3>Mechanic-in-a-bag</h3>
+          <ul class="pk-list">
+            <li><input type="checkbox" id="t-pump"><label for="t-pump" class="pk-item">Floor pump with accurate gauge (race-morning tyre prep)</label></li>
+            <li><input type="checkbox" id="t-onbike-inflate"><label for="t-onbike-inflate" class="pk-item">On-bike inflation backup (whatever you train with)<span class="pk-note">Whatever you choose, you need <em>something</em> on the bike that can re-inflate a tyre mid-race. Three options: <strong>mini hand pump</strong> (slow but bulletproof, no consumables, flight-legal); <strong>electronic mini pump</strong> (Cycplus, Fumpa, Silca: fast, no cartridges, has been replacing CO<sub>2</sub> over the last few years as the units got smaller and cheaper); <strong>CO<sub>2</sub> inflator + cartridges</strong> (slim and fast but disposable, used less and less, and you can&rsquo;t fly with the cartridges).</span></label></li>
+            <li><input type="checkbox" id="t-co2-inflator"><label for="t-co2-inflator" class="pk-item">CO<sub>2</sub> inflator + 2 to 3 cartridges (only if you race CO<sub>2</sub>)<span class="pk-note">Check the threading fits your cartridges. Source cartridges at the race expo if you flew in.</span></label></li>
+            <li><input type="checkbox" id="t-tubes"><label for="t-tubes" class="pk-item">Spare tubes (or tubeless plug kit), 2x<span class="pk-note">Knot them so they&rsquo;re race-ready. Tape the valve stem so it doesn&rsquo;t chew the rim tape.</span></label></li>
+            <li><input type="checkbox" id="t-tyre-lever"><label for="t-tyre-lever" class="pk-item">Tyre levers</label></li>
+            <li><input type="checkbox" id="t-patch"><label for="t-patch" class="pk-item">Patch kit (pre-glued, not the slow rubber-cement kind)</label></li>
+            <li><input type="checkbox" id="t-multi"><label for="t-multi" class="pk-item">Multi-tool (2 / 2.5 / 3 / 4 / 5 / 6 mm allen + T25 torx)</label></li>
+            <li><input type="checkbox" id="t-chain"><label for="t-chain" class="pk-item">Chain tool + quick-link in your size<span class="pk-note">Often forgotten. A snapped chain on race day with no quick-link is a DNF you didn&rsquo;t need to take.</span></label></li>
+            <li><input type="checkbox" id="t-chain-lube"><label for="t-chain-lube" class="pk-item">Chain lube (applied 2 days before, wiped, not race morning)</label></li>
+            <li><input type="checkbox" id="t-rag"><label for="t-rag" class="pk-item">Clean rag + degreaser wipe</label></li>
+            <li><input type="checkbox" id="t-cleats"><label for="t-cleats" class="pk-item">Spare cleats + cleat bolts (if loose travel is a risk)</label></li>
+            <li><input type="checkbox" id="t-zip"><label for="t-zip" class="pk-item">Zip ties + electrical tape + a couple of safety pins</label></li>
+            <li><input type="checkbox" id="t-batt-cr"><label for="t-batt-cr" class="pk-item">Spare batteries (CR2032 for shifters / sensors, CR1632 if needed)</label></li>
+            <li><input type="checkbox" id="t-bag"><label for="t-bag" class="pk-item">Small tool roll / saddle bag dedicated to race-day repairs</label></li>
+          </ul>
+        </div>
+
+        <!-- ===== BODY CARE ===== -->
+        <div class="pk-card">
+          <div class="pk-card-tag">07 · Body care &amp; comfort</div>
+          <h3>The little things that make 5+ hours bearable</h3>
+          <ul class="pk-list">
+            <li><input type="checkbox" id="bc-sunscreen"><label for="bc-sunscreen" class="pk-item">Sunscreen (SPF 50+, sweat-resistant, applied 30 min before)<span class="pk-note">Apply <em>before</em> wetsuit goes on, not after. Don&rsquo;t put it on your forehead (it ends up in your eyes when you sweat).</span></label></li>
+            <li><input type="checkbox" id="bc-stick"><label for="bc-stick" class="pk-item">Stick sunscreen for face / ears in T2 reapply</label></li>
+            <li><input type="checkbox" id="bc-lube-chamois"><label for="bc-lube-chamois" class="pk-item">Chamois cream</label></li>
+            <li><input type="checkbox" id="bc-lube-body"><label for="bc-lube-body" class="pk-item">Body Glide (neck, inner thighs, under arms, bra line, between toes)</label></li>
+            <li><input type="checkbox" id="bc-vaseline"><label for="bc-vaseline" class="pk-item">Vaseline travel pot (for stubborn chafe spots)</label></li>
+            <li><input type="checkbox" id="bc-lipbalm"><label for="bc-lipbalm" class="pk-item">Lip balm with SPF</label></li>
+            <li><input type="checkbox" id="bc-deodorant"><label for="bc-deodorant" class="pk-item">Deodorant</label></li>
+            <li><input type="checkbox" id="bc-tape"><label for="bc-tape" class="pk-item">Pre-cut kinesiology tape (if you race with it)</label></li>
+            <li><input type="checkbox" id="bc-painkiller"><label for="bc-painkiller" class="pk-item">Painkiller (paracetamol / acetaminophen if needed, <strong>not ibuprofen / naproxen</strong>)<span class="pk-note">NSAIDs (ibuprofen, naproxen, aspirin at anti-inflammatory dose) constrict blood flow to the kidneys, which is exactly what an already-dehydrated, exercising body doesn&rsquo;t need. Race-day NSAID use is linked to <strong>acute kidney injury</strong> and rhabdomyolysis cases in long-course athletes. Paracetamol / acetaminophen doesn&rsquo;t share that mechanism. Better still: don&rsquo;t race on a painkiller at all if you can avoid it.</span></label></li>
+            <li><input type="checkbox" id="bc-imodium"><label for="bc-imodium" class="pk-item">Anti-diarrhoea / digestive backup (Imodium, antacid)</label></li>
+            <li><input type="checkbox" id="bc-tissues"><label for="bc-tissues" class="pk-item">Tissues / TP (porta-potty backup, never trust the supply)</label></li>
+            <li><input type="checkbox" id="bc-wipes"><label for="bc-wipes" class="pk-item">Baby wipes (post-race clean-up, T1 dirt off the feet)</label></li>
+            <li><input type="checkbox" id="bc-towel"><label for="bc-towel" class="pk-item">Small bright towel / transition mat<span class="pk-note">Bright colour = find your spot under stress with wet eyes. Bright pink, neon, anything obvious.</span></label></li>
+            <li><input type="checkbox" id="bc-flipflops"><label for="bc-flipflops" class="pk-item">Flip-flops / slides for transition area pre-start</label></li>
+          </ul>
+        </div>
+
+        <!-- ===== TECH & TRACKING ===== -->
+        <div class="pk-card">
+          <div class="pk-card-tag">08 · Tech &amp; tracking</div>
+          <h3>Charge everything. Twice.</h3>
+          <ul class="pk-list">
+            <li><input type="checkbox" id="tk-watch"><label for="tk-watch" class="pk-item">Sport watch (charged, race profile set, course loaded if supported)</label></li>
+            <li><input type="checkbox" id="tk-computer"><label for="tk-computer" class="pk-item">Bike computer (charged, course loaded, sensors paired)</label></li>
+            <li><input type="checkbox" id="tk-hrm"><label for="tk-hrm" class="pk-item">HR strap / chest belt (fresh battery, electrode gel)</label></li>
+            <li><input type="checkbox" id="tk-pm"><label for="tk-pm" class="pk-item">Power meter (charged, zeroed, fresh battery if coin-cell type)</label></li>
+            <li><input type="checkbox" id="tk-footpod"><label for="tk-footpod" class="pk-item">Footpod / running power meter (charged, paired)</label></li>
+            <li><input type="checkbox" id="tk-charge"><label for="tk-charge" class="pk-item">All chargers + the cables you actually need<span class="pk-note">Watch, bike computer, headphones, phone, head-unit, power-meter pedals if they have a dock. Bring a small power strip if you have multiple devices.</span></label></li>
+            <li><input type="checkbox" id="tk-bank"><label for="tk-bank" class="pk-item">Portable battery / power bank</label></li>
+            <li><input type="checkbox" id="tk-airtag-bike"><label for="tk-airtag-bike" class="pk-item">AirTag (or Tile / SmartTag) inside the bike bag for travel<span class="pk-note">Bike bags get lost. An AirTag inside the bag plus one on the bike (taped under saddle or in a bidon cage) is cheap insurance.</span></label></li>
+            <li><input type="checkbox" id="tk-airtag-bag"><label for="tk-airtag-bag" class="pk-item">AirTag in transition / gear bag</label></li>
+            <li><input type="checkbox" id="tk-phone"><label for="tk-phone" class="pk-item">Phone charged + your own race-tracking access set up</label></li>
+            <li><input type="checkbox" id="tk-photo-bib"><label for="tk-photo-bib" class="pk-item">Photo of bib number + bike serial on your phone<span class="pk-note">Insurance / claims / lost-and-found if it ever comes to that.</span></label></li>
+            <li><input type="checkbox" id="tk-fam-app"><label for="tk-fam-app" class="pk-item">Family / partner has the race-tracking app installed and tested<span class="pk-note">IRONMAN Tracker, Athlinks, race-specific app, or Garmin LiveTrack. Don&rsquo;t leave the install for race morning, get them through one log-in test the day before.</span></label></li>
+            <li><input type="checkbox" id="tk-fam-bib"><label for="tk-fam-bib" class="pk-item">Family knows your bib number + expected splits<span class="pk-note">Without the bib number the tracker app is useless. Text them a screenshot.</span></label></li>
+            <li><input type="checkbox" id="tk-fam-spots"><label for="tk-fam-spots" class="pk-item">Family knows 2 to 3 spectator-friendly spots on the course<span class="pk-note">Bike turnaround, the run loop, the finish chute. Send map screenshots with parking suggestions so they don&rsquo;t spend the day trying to find a parking space.</span></label></li>
+          </ul>
+        </div>
+
+        <!-- ===== POST-RACE ===== -->
+        <div class="pk-card">
+          <div class="pk-card-tag">09 · Post-race recovery bag</div>
+          <h3>Future you will thank you</h3>
+          <ul class="pk-list">
+            <li><input type="checkbox" id="p-clothes"><label for="p-clothes" class="pk-item">Dry clothes (warm layer, even on hot days, your core temp crashes)</label></li>
+            <li><input type="checkbox" id="p-shoes"><label for="p-shoes" class="pk-item">Comfortable shoes (slides, recovery sandals, soft trainers)</label></li>
+            <li><input type="checkbox" id="p-compression"><label for="p-compression" class="pk-item">Compression socks for the drive home / flight home</label></li>
+            <li><input type="checkbox" id="p-snack"><label for="p-snack" class="pk-item">Familiar snack + a salty something<span class="pk-note">Most athletes can&rsquo;t face the post-race buffet for the first 30 to 60 min. Have something you know you&rsquo;ll actually eat.</span></label></li>
+            <li><input type="checkbox" id="p-drink"><label for="p-drink" class="pk-item">Recovery drink (chocolate milk works, formal recovery shake works)</label></li>
+            <li><input type="checkbox" id="p-electrolyte"><label for="p-electrolyte" class="pk-item">A bottle of electrolyte mix for after the finish line</label></li>
+            <li><input type="checkbox" id="p-tape"><label for="p-tape" class="pk-item">Band-aids / blister patches (Compeed)</label></li>
+            <li><input type="checkbox" id="p-painkiller"><label for="p-painkiller" class="pk-item">Painkiller for the bus / drive back if needed</label></li>
+            <li><input type="checkbox" id="p-keys"><label for="p-keys" class="pk-item">Spare car key (taped inside the bag, separate from race kit)</label></li>
+            <li><input type="checkbox" id="p-camera"><label for="p-camera" class="pk-item">Phone for finish-line photo with family / friends</label></li>
+          </ul>
+        </div>
+
+        <!-- ===== OTHER PERSONAL ITEMS ===== -->
+        <div class="pk-card">
+          <div class="pk-card-tag">10 · Other personal items</div>
+          <h3>Your own additions</h3>
+          <p style="color: var(--ys-muted); font-size: 0.92rem; margin: 4px 0 8px;">Lucky charm, glasses case, contacts &amp; solution, music, race-day playlist, mascot, anything you race with that isn&rsquo;t on a generic list.</p>
+          <ul class="pk-list">
+            <li><input type="checkbox" id="o-1"><label for="o-1" class="pk-item">&nbsp;</label></li>
+            <li><input type="checkbox" id="o-2"><label for="o-2" class="pk-item">&nbsp;</label></li>
+            <li><input type="checkbox" id="o-3"><label for="o-3" class="pk-item">&nbsp;</label></li>
+            <li><input type="checkbox" id="o-4"><label for="o-4" class="pk-item">&nbsp;</label></li>
+            <li><input type="checkbox" id="o-5"><label for="o-5" class="pk-item">&nbsp;</label></li>
+            <li><input type="checkbox" id="o-6"><label for="o-6" class="pk-item">&nbsp;</label></li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BIKE PRE-FLIGHT ============ -->
+  <section class="wf-section alt" id="bike-preflight">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Bike pre-flight (the 10-minute walk-around)</h2>
+        <div class="ys-rule"></div>
+        <p>Do this the day before the race, in daylight, with the bike on a stand or upside down. Then again on race morning before you rack. Mechanical DNFs are nearly all caught by this list.</p>
+      </div>
+
+      <div class="pk-checklist-grid">
+        <div class="pk-card">
+          <div class="pk-card-tag">Cockpit &amp; bars</div>
+          <h3>Where most rules infractions happen</h3>
+          <ul class="pk-list">
+            <li><input type="checkbox" id="pf-bar-end"><label for="pf-bar-end" class="pk-item"><strong>Bar-end plugs in place</strong> on drop bars and TT extensions<span class="pk-note">USAT, UCI, and most race rules flag missing plugs at bike check-in. Open bar ends are also a real impalement risk. Carry spares.</span></label></li>
+            <li><input type="checkbox" id="pf-tt-pads"><label for="pf-tt-pads" class="pk-item">TT pads / armrests bolts torqued</label></li>
+            <li><input type="checkbox" id="pf-tt-extensions"><label for="pf-tt-extensions" class="pk-item">TT extensions tight in clamps, no rotation</label></li>
+            <li><input type="checkbox" id="pf-stem"><label for="pf-stem" class="pk-item">Stem bolts (4 face bolts + top cap) at correct torque</label></li>
+            <li><input type="checkbox" id="pf-shift"><label for="pf-shift" class="pk-item">Shifters / brake levers tight on bars</label></li>
+            <li><input type="checkbox" id="pf-mount"><label for="pf-mount" class="pk-item">Computer mount bolts tight</label></li>
+          </ul>
+        </div>
+
+        <div class="pk-card">
+          <div class="pk-card-tag">Wheels &amp; tyres</div>
+          <h3>Race-morning tyre pressure, not night before</h3>
+          <ul class="pk-list">
+            <li><input type="checkbox" id="pf-tyre-wear"><label for="pf-tyre-wear" class="pk-item">Tyres free of cuts, glass shards, sidewall damage</label></li>
+            <li><input type="checkbox" id="pf-tyre-pressure"><label for="pf-tyre-pressure" class="pk-item">Pump tyres <strong>race morning</strong>, not the night before<span class="pk-note">Tyres heat up overnight and on the rack. A tyre at correct pressure at 7 am can blow at 9 am sitting in the sun. Use the <a href="https://www.yousuli.co/tyre-pressure-guide" target="_top">tyre pressure guide</a> for your weight / tyre width.</span></label></li>
+            <li><input type="checkbox" id="pf-valve"><label for="pf-valve" class="pk-item">Valve cores tight, valve extender screwed all the way in</label></li>
+            <li><input type="checkbox" id="pf-skewers"><label for="pf-skewers" class="pk-item">Skewers / thru-axles torqued, lever orientation correct</label></li>
+            <li><input type="checkbox" id="pf-true"><label for="pf-true" class="pk-item">Wheels spin true, no rim brake rub</label></li>
+            <li><input type="checkbox" id="pf-tubeless"><label for="pf-tubeless" class="pk-item">Tubeless sealant topped up (if applicable)</label></li>
+          </ul>
+        </div>
+
+        <div class="pk-card">
+          <div class="pk-card-tag">Drivetrain</div>
+          <h3>Shifts cleanly, runs quietly</h3>
+          <ul class="pk-list">
+            <li><input type="checkbox" id="pf-shift-clean"><label for="pf-shift-clean" class="pk-item">Shifts cleanly across the full cassette (in both directions)</label></li>
+            <li><input type="checkbox" id="pf-chain-lube"><label for="pf-chain-lube" class="pk-item">Chain lubed 2 days out, wiped clean</label></li>
+            <li><input type="checkbox" id="pf-chain-wear"><label for="pf-chain-wear" class="pk-item">Chain not stretched (chain-checker tool, or replaced &lt; 3,000 km ago)</label></li>
+            <li><input type="checkbox" id="pf-electronic"><label for="pf-electronic" class="pk-item">Di2 / AXS / electronic groupset charged + firmware up to date</label></li>
+            <li><input type="checkbox" id="pf-cassette"><label for="pf-cassette" class="pk-item">Cassette correct ratio for the course (climbing course = more low gears)</label></li>
+          </ul>
+        </div>
+
+        <div class="pk-card">
+          <div class="pk-card-tag">Brakes &amp; safety</div>
+          <h3>This is the section that prevents crashes</h3>
+          <ul class="pk-list">
+            <li><input type="checkbox" id="pf-brakes"><label for="pf-brakes" class="pk-item">Both brakes work, lever firm, no sponginess</label></li>
+            <li><input type="checkbox" id="pf-rotor"><label for="pf-rotor" class="pk-item">Disc rotors true, not warped, no rub</label></li>
+            <li><input type="checkbox" id="pf-pads"><label for="pf-pads" class="pk-item">Brake pads have life left (visible material, not down to backing)</label></li>
+            <li><input type="checkbox" id="pf-helmet-strap"><label for="pf-helmet-strap" class="pk-item">Helmet straps not frayed, buckle clicks, retention dial works</label></li>
+            <li><input type="checkbox" id="pf-helmet-age"><label for="pf-helmet-age" class="pk-item">Helmet not crashed, not over 5 years old</label></li>
+            <li><input type="checkbox" id="pf-cleats"><label for="pf-cleats" class="pk-item">Cleat bolts tight, cleats not worn through (test a clip-in / clip-out)</label></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="pk-callout warn" style="margin-top: 22px;">
+        <div class="pk-callout-tag">⚠ Don&rsquo;t fix things race week</div>
+        <p style="margin: 0;">If something is wrong with the bike at the race-week pre-flight, <strong>don&rsquo;t race-week-engineer it</strong>: take it to a bike shop, or call me. Race week is for confirming the bike is ready, not for new bar tape, new cleats, new shifters, or a fresh chain. Anything &ldquo;new&rdquo; needs at least one ride before race day so you can catch the gremlin in your driveway, not at mile 25.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COMMON MISTAKES ============ -->
+  <section class="wf-section" id="mistakes">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Common mistakes I see every race</h2>
+        <div class="ys-rule"></div>
+        <p>The race-week version of &ldquo;you don&rsquo;t know what you don&rsquo;t know.&rdquo; Most of these have cost athletes I&rsquo;ve coached real time, or real DNFs, before they wised up.</p>
+      </div>
+
+      <div class="pk-mistakes-grid">
+        <div class="pk-mistake">
+          <h4>New shoes on race day</h4>
+          <p>The most preventable injury cause on the start list. Race in the pair you&rsquo;ve already run at least one long workout in. Same goes for tri-suit, wetsuit, goggles.</p>
+        </div>
+
+        <div class="pk-mistake">
+          <h4>Eating too close to the gun</h4>
+          <p>Solid food inside the 2:30 window before the start is a classic blood-sugar trap. Carbs spike insulin, insulin pulls blood sugar down, and you can hit the start line in a <strong>reactive-hypoglycaemia trough</strong> with a heavy gut on top. Eat the real breakfast at 3 h out. Nothing solid after 2:30. A 30-min top-up gel is fine because it&rsquo;s small, fast, and timed so the rise carries into the swim.</p>
+        </div>
+
+        <div class="pk-mistake">
+          <h4>Starting dehydrated</h4>
+          <p>Most athletes wake up already mildly dehydrated, and pre-race nerves + the bathroom queue make it worse if you don&rsquo;t plan. 500 ml of water with electrolytes around the 2 h mark, sipped, not chugged. One clear bathroom visit between then and the start is your green light. If your morning pee is dark yellow at 6 a.m., you started behind.</p>
+        </div>
+
+        <div class="pk-mistake">
+          <h4>Random mix of carb sources mid-race</h4>
+          <p>Maltodextrin, glucose, sucrose, fructose: each uses different gut transporters. Modern endurance fuel is dosed at a 1:0.8 glucose-to-fructose ratio for a reason (it lets you absorb 90+ g of carb per hour without sloshing). Grabbing a random aid-station product on top of your own gels often means you exceed the gut&rsquo;s capacity for one transporter, the rest just sits there, and you cramp or feel awful at hour 3. Stick to one brand / one ratio you&rsquo;ve trained with, or do the math.</p>
+        </div>
+
+        <div class="pk-mistake">
+          <h4>No sodium plan</h4>
+          <p>&ldquo;I&rsquo;ll just drink water&rdquo; works for a sprint. Past 2 to 3 hours of racing, especially in heat, no sodium = falling plasma osmolality, GI distress, muscle cramps, and the kind of hyponatraemia that ends races (and occasionally lands athletes in medical). Aim for roughly <strong>500 to 1,000 mg of sodium per hour</strong> at long-course, scaled to your sweat rate. Test it in training. The <a href="https://www.yousuli.co/triathlonracefuelingstrategy" target="_top">race-fueling calculator</a> gives you a number.</p>
+        </div>
+
+        <div class="pk-mistake">
+          <h4>Skimping on water on the bike</h4>
+          <p>The bike is the easiest place to drink. Athletes who finish well on the run are almost always the ones who hit T2 already topped up. Riding under-hydrated thickens what&rsquo;s in your gut (gels and concentrated drink mix need water to clear the stomach), which is a leading cause of mid-run GI distress. Default: <strong>500 to 750 ml per hour on the bike</strong>, more in heat. Take the aid-station hand-ups.</p>
+        </div>
+
+        <div class="pk-mistake">
+          <h4>Tyres pumped the night before</h4>
+          <p>Latex tubes especially can blow overnight if pumped too high. Pump on race morning, in your hotel room or transition, after a quick visual check of the tyre.</p>
+        </div>
+
+        <div class="pk-mistake">
+          <h4>Trusting the night-before sleep</h4>
+          <p>The sleep that actually matters is <strong>two nights before</strong>. If you can&rsquo;t sleep race night, don&rsquo;t panic: research is clear that one poor night doesn&rsquo;t move race performance noticeably, but stressing about it can.</p>
+        </div>
+
+        <div class="pk-mistake">
+          <h4>One pair of goggles</h4>
+          <p>The strap that snaps in T-minus-3-minutes is a real and brutal race-killer. Always two pairs in your kit: clear / low-light, and tinted.</p>
+        </div>
+
+        <div class="pk-mistake">
+          <h4>Forgetting bar-end plugs</h4>
+          <p>Open bar ends fail bike check-in at almost every sanctioned race. Carry a spare set in your tool roll, especially after travel: they fall out in transit.</p>
+        </div>
+
+        <div class="pk-mistake">
+          <h4>No chain tool</h4>
+          <p>A snapped chain is rare but not impossible. With a chain tool and a quick-link in your size, it&rsquo;s a 5-minute roadside fix. Without one, it&rsquo;s a DNF.</p>
+        </div>
+
+        <div class="pk-mistake">
+          <h4>Sunscreen on the forehead</h4>
+          <p>Travels straight into your eyes via sweat. SPF stick on cheekbones, ears, back of neck, shoulders. Skip the forehead, use a cap or visor instead.</p>
+        </div>
+
+        <div class="pk-mistake">
+          <h4>Caffeine experiment</h4>
+          <p>Race day is not the day to triple your usual dose. Use your normal training amount. New on race day = stomach roulette + early-race spike-then-crash.</p>
+        </div>
+
+        <div class="pk-mistake">
+          <h4>Skimming the race guide</h4>
+          <p>Every race is slightly different: drafting zones, helmet rules, run-out direction, <strong>cut-off times</strong>, <strong>limited race-morning access to T1 / special-needs bags</strong>, lap protocols, drop-bag pick-up locations. Read the <strong>updated</strong> guide <strong>twice</strong>, the second time the day before, and recheck for late edits. Then attend the <strong>race briefing</strong> (in-person or on-demand): it&rsquo;s nominally mandatory at most events and the only place the late-breaking changes get announced.</p>
+        </div>
+
+        <div class="pk-mistake">
+          <h4>No AirTag in the bike bag</h4>
+          <p>Airlines lose bike bags every weekend. An AirTag (or Tile, SmartTag) inside the bag tells you whether to wait at baggage claim or start the lost-bag protocol immediately. Bonus: one inside the bike frame in case it gets stolen in transit.</p>
+        </div>
+
+        <div class="pk-mistake">
+          <h4>Race-day-only nutrition</h4>
+          <p>If you only ever eat your race-day fuel <em>on</em> race day, your gut hasn&rsquo;t practised. Train the gut: do a long ride a month before, with the exact gels, drink mix, bars, salt tabs you plan to race. <a href="https://www.yousuli.co/triathlonracefuelingstrategy" target="_top">Calculator here</a> if you need to lock in the plan.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RACE-WEEK COUNTDOWN ============ -->
+  <section class="wf-section alt" id="countdown">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>The race-week countdown</h2>
+        <div class="ys-rule"></div>
+        <p>Rough template. Adjust if you&rsquo;re travelling, racing local, or working around obligations.</p>
+      </div>
+
+      <table class="pk-timing">
+        <thead>
+          <tr>
+            <th style="width: 140px;">When</th>
+            <th>What</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="pk-when">7 days out</td>
+            <td>Last meaningful workout: short, sharp, opens the legs. Drop volume. Bike serviced at the shop. Wetsuit pulled out, checked for tears.</td>
+          </tr>
+          <tr>
+            <td class="pk-when">4 days out</td>
+            <td>Confirm registration, expo hours, parking, hotel. Book the seat at the athlete briefing. Start nudging carbs up slightly (modest carb-front-load, not stuff-yourself mode).</td>
+          </tr>
+          <tr>
+            <td class="pk-when">3 days out</td>
+            <td>Lube the chain. Test the wetsuit in open water if conditions allow. Short easy bike + short easy run. Sleep early.</td>
+          </tr>
+          <tr>
+            <td class="pk-when">2 days out</td>
+            <td>First packing pass (use this checklist). Travel to race location if needed. Drive / ride the bike course start, T1, T2 if you can. Lay out trisuit and race-day nutrition. The night you actually want to sleep well. <strong>Athlete check-in</strong> at the expo often opens around this time for IM and 70.3 (sometimes earlier for IM): you pick up your race packet, get your bib + bike frame stickers + helmet sticker + bag stickers, sometimes a timing chip. Check-in <em>can</em> be left to 1 day out at most races, but going earlier removes one stressor.</td>
+          </tr>
+          <tr>
+            <td class="pk-when">1 day out</td>
+            <td>Second packing pass. Easy 10 to 20 min spin + 3 to 5 min run with strides. Athlete briefing (in-person or on demand). <strong>Bike check-in is typically today at 70.3 / IM:</strong> you bring the bike already serviced and tyred-up, plus <strong>helmet, racing belt, and your bib numbers already stuck on (helmet sticker, bike frame sticker, T1 bag, T2 bag, special-needs bags if used)</strong>. Volunteers will spot-check the helmet and the frame number. Once it&rsquo;s racked, it stays there overnight, so make sure the bike computer is off, tyre pressure is reasonable (you&rsquo;ll top up race morning), and a plastic bag is over the saddle / cockpit in case of overnight rain. <strong>Today is also the day to charge every electronic device to 100% and then turn them off</strong>: watch, bike computer, power meter / pedals, HR strap, footpod, lights if needed, phone, headphones, AirTags. Race morning is no time to be hunting for a wall socket. Carb-front-loaded dinner, familiar food, normal portion, low-fibre. In bed early, accept that you may not sleep well, that&rsquo;s normal: the sleep that actually counts is two nights before.</td>
+          </tr>
+          <tr>
+            <td class="pk-when">Race day</td>
+            <td>Wake up 3 h before swim start. Breakfast at 3 h out. Final transition set-up. Follow the timing rules above. Trust the work.</td>
+          </tr>
+          <tr>
+            <td class="pk-when">+1 day</td>
+            <td>Easy walk, food you actually want to eat, recovery work. Send your coach (me) the data so we can debrief. Book a celebratory anything.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ PDF / CTA ============ -->
+  <section class="wf-section">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Save it. Print it. Bring it.</h2>
+        <div class="ys-rule"></div>
+        <p>Your ticks are saved on this device. To take the list with you, print or save it as PDF (most browsers offer &ldquo;Save as PDF&rdquo; in the print dialog). It&rsquo;ll come out clean, with empty boxes you can tick on paper or on a tablet.</p>
+      </div>
+
+      <div class="pk-print-row" style="margin-bottom: 14px;">
+        <button class="pk-print-btn" data-pk-action="print" type="button" style="padding: 16px 32px; font-size: 1.05rem;">
+          <svg viewBox="0 0 24 24" aria-hidden="true" style="width: 22px; height: 22px;"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+          Print / Save as PDF
+        </button>
+      </div>
+      <div class="pk-print-row" style="gap: 10px;">
+        <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/triathlonracefuelingstrategy" target="_top">Plan the race nutrition</a>
+        <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/tyre-pressure-guide" target="_top">Tyre pressure calculator</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Online programs</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
