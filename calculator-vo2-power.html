@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>VO₂ → Cycling Power — Yousuli calculators</title>
+  <title>VO₂ → Cycling Power · Yousuli calculators</title>
   <meta name="description" content="Estimate cycling target power from VO₂max, efficiency, RER, and duration. Includes VO₂ on-kinetics correction, calibration from known FTP, uncertainty band, and Coggan power-profile lookup." />
 
   <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
@@ -357,7 +357,7 @@
           </div>
 
           <details class="accordion" id="calibAcc">
-            <summary>Calibration — back-solve efficiency from your known 20-min power</summary>
+            <summary>Calibration, back-solve efficiency from your known 20-min power</summary>
             <div class="acc-body">
               <p style="font-size: 0.92rem; color: var(--ys-muted); margin-bottom: 12px;">If you know your FTP or 20-min mean max power from a real test, we&rsquo;ll work backward to find the gross efficiency that matches. That value gets pushed into the main calculator.</p>
               <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px; align-items: end;">
@@ -466,9 +466,9 @@
         <ul class="ys-card-bullets" style="margin-top: 12px;">
           <li><strong>Translate lab data into ride targets.</strong> You walked out with a VO<sub>2</sub>max number; this turns it into watts at FTP, race pace, Ironman pace.</li>
           <li><strong>Set targets for athletes who haven&rsquo;t done a long race yet.</strong> A 90-min race-pace estimate from VO<sub>2</sub>max is the cleanest starting point before you have race data to fit to.</li>
-          <li><strong>Sanity-check FTP outliers.</strong> If your <a href="https://www.yousuli.co/critical-power-calculator" style="color: var(--wf-coral);" target="_top">CP test</a> says one number and this says something 30 W different, dig &mdash; either VO<sub>2</sub>max measurement was off, or your CP test was paced badly.</li>
+          <li><strong>Sanity-check FTP outliers.</strong> If your <a href="https://www.yousuli.co/critical-power-calculator" style="color: var(--wf-coral);" target="_top">CP test</a> says one number and this says something 30 W different, dig, either VO<sub>2</sub>max measurement was off, or your CP test was paced badly.</li>
         </ul>
-        <p style="margin-top: 12px;"><strong>Calibration matters most.</strong> The default 20% efficiency is a population average. <em>Your</em> efficiency might be 18 or 23 — that&rsquo;s a 25% spread on output. If you have a verified FTP, run the calibrator first; the rest of the predictions come out much tighter.</p>
+        <p style="margin-top: 12px;"><strong>Calibration matters most.</strong> The default 20% efficiency is a population average. <em>Your</em> efficiency might be 18 or 23, that&rsquo;s a 25% spread on output. If you have a verified FTP, run the calibrator first; the rest of the predictions come out much tighter.</p>
         <div class="ys-btn-row" style="margin-top: 16px;">
           <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">VO<sub>2</sub>max test</a>
           <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
@@ -498,7 +498,7 @@
         </a>
         <a class="ys-calc-card" href="https://www.yousuli.co/calculators" target="_top">
           <span class="ys-calc-card-title">All calculators</span>
-          <p>Back to the full catalog — 30+ endurance calculators across performance, fueling, swim, bike, run.</p>
+          <p>Back to the full catalog, 30+ endurance calculators across performance, fueling, swim, bike, run.</p>
           <span class="ys-calc-card-arrow">Browse &rarr;</span>
         </a>
       </div>
@@ -511,7 +511,7 @@
       <div class="ys-cta-card">
         <div>
           <h2>Want measured VO<sub>2</sub>max + efficiency?</h2>
-          <p>The lab measures both directly &mdash; the two inputs that matter most for this calculator. One morning, gas analysis with cycling ramp protocol, you walk out with VO<sub>2</sub>max, ventilatory thresholds, and gross efficiency. Plug all three in here and the predictions tighten dramatically.</p>
+          <p>The lab measures both directly, the two inputs that matter most for this calculator. One morning, gas analysis with cycling ramp protocol, you walk out with VO<sub>2</sub>max, ventilatory thresholds, and gross efficiency. Plug all three in here and the predictions tighten dramatically.</p>
         </div>
         <div>
           <div class="ys-btn-row">
@@ -705,7 +705,7 @@
         }
         $('cogganMatch').innerHTML = matchLevel
           ? 'Your FTP W/kg corresponds to: <strong>' + matchLevel + '</strong>'
-          : 'Below the Coggan untrained threshold — focus on aerobic base.';
+          : 'Below the Coggan untrained threshold, focus on aerobic base.';
       }
 
       function calibrate() {

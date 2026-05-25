@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>VO₂ → Swim time — Yousuli calculators</title>
+  <title>VO₂ → Swim time · Yousuli calculators</title>
   <meta name="description" content="Predict swim times from VO₂max and cost-of-transport. Includes pool/open-water/wetsuit modifiers, drafting, chop and sighting factors, VO₂ kinetics for short swims, and Cr calibration from a known time." />
 
   <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
@@ -204,7 +204,7 @@
           </div>
 
           <details class="accordion">
-            <summary>Calibration — back-solve Cr from a known swim time</summary>
+            <summary>Calibration, back-solve Cr from a known swim time</summary>
             <div class="acc-body">
               <p style="font-size: 0.92rem; color: var(--ys-muted); margin-bottom: 12px;">If you have a recent honest swim time, we&rsquo;ll work backward to find your Cr. That gets pushed into the main calculator.</p>
               <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 12px; align-items: end;">
@@ -252,7 +252,7 @@
     <div class="ys-container">
       <div class="ys-section-head"><h2>How it&rsquo;s built</h2><div class="ys-rule"></div><p>Same shape as the cycling and run versions; swim-specific modifiers.</p></div>
       <div class="ys-grid">
-        <div class="ys-step"><div class="ys-step-num">01</div><h3>Speed from VO<sub>2</sub></h3><p><code style="background: var(--ys-bg-soft); padding: 2px 8px; border-radius: 4px;">v (m/s) = (VO<sub>2</sub>/60) × fraction / Cr_eff</code></p><p style="margin-top: 8px;">Cr is liters O<sub>2</sub> per kg per meter — swim is 4–8× more expensive than running for the same metabolic rate.</p></div>
+        <div class="ys-step"><div class="ys-step-num">01</div><h3>Speed from VO<sub>2</sub></h3><p><code style="background: var(--ys-bg-soft); padding: 2px 8px; border-radius: 4px;">v (m/s) = (VO<sub>2</sub>/60) × fraction / Cr_eff</code></p><p style="margin-top: 8px;">Cr is liters O<sub>2</sub> per kg per meter, swim is 4–8× more expensive than running for the same metabolic rate.</p></div>
         <div class="ys-step"><div class="ys-step-num">02</div><h3>Effective Cr</h3><p><code style="background: var(--ys-bg-soft); padding: 2px 8px; border-radius: 4px;">Cr_eff = Cr × env × draft × chop × sight</code></p><p style="margin-top: 8px;">Wetsuit reduces Cr ≈ 8% (more buoyancy, less drag). Drafting in OW saves ~3–8%. Chop &amp; sighting cost time.</p></div>
         <div class="ys-step"><div class="ys-step-num">03</div><h3>VO<sub>2</sub> kinetics for short swims</h3><p>For ≤ 400 m, the iterative on-kinetics adjustment uses <code>τ = 25 s</code> (default). Mean VO<sub>2</sub> over the effort is reduced by the slow ramp; matters most at 50–200 m.</p></div>
       </div>
@@ -263,8 +263,8 @@
     <div class="ys-container">
       <div class="ys-cta-card" style="display: block;">
         <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
-        <h2 style="margin-top: 4px;">Cr is the swim-economy lever — measure yours.</h2>
-        <p>Cr varies enormously between swimmers — 0.55 for an Olympic-level swimmer, 1.10+ for adult-onset triathletes. Same VO<sub>2</sub>max, the elite swimmer goes <strong>2× as fast</strong> at the same metabolic rate. That&rsquo;s why technique matters more than fitness for swim improvement.</p>
+        <h2 style="margin-top: 4px;">Cr is the swim-economy lever, measure yours.</h2>
+        <p>Cr varies enormously between swimmers, 0.55 for an Olympic-level swimmer, 1.10+ for adult-onset triathletes. Same VO<sub>2</sub>max, the elite swimmer goes <strong>2× as fast</strong> at the same metabolic rate. That&rsquo;s why technique matters more than fitness for swim improvement.</p>
         <p style="margin-top: 10px;">Run the calibrator with your honest 400 m TT time to get your true Cr. Then use the main calculator to project race times under different conditions (wetsuit vs not, drafting vs not, calm vs choppy).</p>
         <div class="ys-btn-row" style="margin-top: 16px;">
           <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/on-site-swim-coaching" target="_top">On-site swim coaching</a>
@@ -279,7 +279,7 @@
       <div class="ys-section-head"><h2>Related calculators</h2><div class="ys-rule"></div></div>
       <div class="ys-calc-grid">
         <a class="ys-calc-card redesigned" href="https://www.yousuli.co/css-critical-swim-speed-calculator" target="_top"><span class="ys-calc-card-title">Critical swim speed (CSS)</span><p>Two-effort threshold pace + training zones for swim training.</p><span class="ys-calc-card-arrow">Open &rarr;</span></a>
-        <a class="ys-calc-card redesigned" href="https://www.yousuli.co/swimming-efficiency-battery-test-one" target="_top"><span class="ys-calc-card-title">EBT-1 — Stroke efficiency</span><p>Distance per stroke + rate analysis. Pair with VO<sub>2</sub> data for full picture.</p><span class="ys-calc-card-arrow">Open &rarr;</span></a>
+        <a class="ys-calc-card redesigned" href="https://www.yousuli.co/swimming-efficiency-battery-test-one" target="_top"><span class="ys-calc-card-title">EBT-1, Stroke efficiency</span><p>Distance per stroke + rate analysis. Pair with VO<sub>2</sub> data for full picture.</p><span class="ys-calc-card-arrow">Open &rarr;</span></a>
         <a class="ys-calc-card" href="https://www.yousuli.co/calculators" target="_top"><span class="ys-calc-card-title">All calculators</span><p>Back to the full catalog.</p><span class="ys-calc-card-arrow">Browse &rarr;</span></a>
       </div>
     </div>
@@ -288,7 +288,7 @@
   <section class="wf-section">
     <div class="ys-container">
       <div class="ys-cta-card">
-        <div><h2>Want measured VO<sub>2</sub>max + Cr in the pool?</h2><p>Yousuli&rsquo;s swim protocol uses Slipstream stationary-swim setup with EO SwimBETTER force pads — measures VO<sub>2</sub>max and stroke economy together. The calibrated Cr you walk out with makes this calculator&rsquo;s predictions race-grade.</p></div>
+        <div><h2>Want measured VO<sub>2</sub>max + Cr in the pool?</h2><p>Yousuli&rsquo;s swim protocol uses Slipstream stationary-swim setup with EO SwimBETTER force pads, measures VO<sub>2</sub>max and stroke economy together. The calibrated Cr you walk out with makes this calculator&rsquo;s predictions race-grade.</p></div>
         <div>
           <div class="ys-btn-row">
             <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Swim lab testing</a>

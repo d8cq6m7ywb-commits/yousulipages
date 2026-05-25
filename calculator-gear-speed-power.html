@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Gear × Speed × Power — Yousuli calculators</title>
+  <title>Gear × Speed × Power · Yousuli calculators</title>
   <meta name="description" content="Predict cycling speed and the watts you need to hold it. Gear ratio + cadence drive speed; CdA, Crr, weight, climb, and drivetrain efficiency drive power. Useful for race-pace planning." />
 
   <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
@@ -240,7 +240,7 @@
       <span class="wf-eyebrow">Calculator &middot; Bike</span>
       <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">Gear &times; Speed &times; Power.</h1>
       <div class="wf-subhead">Gear ratio &middot; speed &middot; watts to hold it</div>
-      <p class="lede" style="max-width: 660px;">Pick your gear and cadence &mdash; out comes your speed. Switch on advanced mode for the full power equation: aerodynamic drag, rolling resistance, climbing, and drivetrain efficiency. The watts number is the one that matters &mdash; it&rsquo;s what you actually have to push for the finish time you want.</p>
+      <p class="lede" style="max-width: 660px;">Pick your gear and cadence, out comes your speed. Switch on advanced mode for the full power equation: aerodynamic drag, rolling resistance, climbing, and drivetrain efficiency. The watts number is the one that matters, it&rsquo;s what you actually have to push for the finish time you want.</p>
       <div class="ys-btn-row" style="margin-top: 6px;">
         <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
         <a class="ys-btn ys-btn-ghost" href="#how">How the watts are calculated</a>
@@ -267,7 +267,7 @@
 
             <!-- INPUT PANEL -->
             <div class="panel">
-              <h3>Simple mode &mdash; speed from gearing</h3>
+              <h3>Simple mode, speed from gearing</h3>
 
               <div class="grid-2">
                 <div class="field">
@@ -289,15 +289,15 @@
               <div class="field">
                 <label>Wheel size preset</label>
                 <select id="wheelPreset">
-                  <option value="2.13" selected>700C — standard road bike</option>
+                  <option value="2.13" selected>700C, standard road bike</option>
                   <option value="2.10">650b / 27.5"</option>
-                  <option value="2.07">26" — traditional MTB</option>
+                  <option value="2.07">26", traditional MTB</option>
                   <option value="2.30">29" / 700C MTB / 29er</option>
-                  <option value="2.18">27" — older road</option>
-                  <option value="1.90">24" — youth</option>
-                  <option value="1.60">20" — BMX / folding</option>
-                  <option value="1.30">16" — small kids</option>
-                  <option value="1.10">14" — very small kids</option>
+                  <option value="2.18">27", older road</option>
+                  <option value="1.90">24", youth</option>
+                  <option value="1.60">20", BMX / folding</option>
+                  <option value="1.30">16", small kids</option>
+                  <option value="1.10">14", very small kids</option>
                 </select>
               </div>
 
@@ -319,7 +319,7 @@
               </div>
 
               <div class="adv-toggle">
-                <span>Advanced mode &mdash; power, climb, distance</span>
+                <span>Advanced mode, power, climb, distance</span>
                 <button type="button" id="advBtn" class="">OFF</button>
               </div>
 
@@ -445,21 +445,21 @@
         <div class="ys-step">
           <div class="ys-step-num">01</div>
           <h3>Aerodynamic drag</h3>
-          <p><code style="background: var(--ys-bg-soft); padding: 2px 8px; border-radius: 4px;">P<sub>aero</sub> = ½ &middot; ρ &middot; CdA &middot; v³</code> &mdash; the cubic term means small speed gains cost a lot of watts. <strong>Dominant force above ~25 km/h</strong>. CdA 0.275 is reasonable for an in-tuck road position; 0.21 is good TT.</p>
+          <p><code style="background: var(--ys-bg-soft); padding: 2px 8px; border-radius: 4px;">P<sub>aero</sub> = ½ &middot; ρ &middot; CdA &middot; v³</code>, the cubic term means small speed gains cost a lot of watts. <strong>Dominant force above ~25 km/h</strong>. CdA 0.275 is reasonable for an in-tuck road position; 0.21 is good TT.</p>
         </div>
         <div class="ys-step">
           <div class="ys-step-num">02</div>
           <h3>Rolling resistance</h3>
-          <p><code style="background: var(--ys-bg-soft); padding: 2px 8px; border-radius: 4px;">P<sub>roll</sub> = m &middot; g &middot; Crr &middot; v</code> &mdash; linear in speed and weight. Crr 0.0037 is decent road tire on smooth tarmac; 0.005&ndash;0.008 is gravel.</p>
+          <p><code style="background: var(--ys-bg-soft); padding: 2px 8px; border-radius: 4px;">P<sub>roll</sub> = m &middot; g &middot; Crr &middot; v</code>, linear in speed and weight. Crr 0.0037 is decent road tire on smooth tarmac; 0.005&ndash;0.008 is gravel.</p>
         </div>
         <div class="ys-step">
           <div class="ys-step-num">03</div>
           <h3>Climbing power</h3>
-          <p><code style="background: var(--ys-bg-soft); padding: 2px 8px; border-radius: 4px;">P<sub>climb</sub> = m &middot; g &middot; v &middot; gradient</code> &mdash; weight&times;gradient is gravity working against you. Drivetrain efficiency (~98% for clean modern systems) divides the total at the end.</p>
+          <p><code style="background: var(--ys-bg-soft); padding: 2px 8px; border-radius: 4px;">P<sub>climb</sub> = m &middot; g &middot; v &middot; gradient</code>, weight&times;gradient is gravity working against you. Drivetrain efficiency (~98% for clean modern systems) divides the total at the end.</p>
         </div>
       </div>
 
-      <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.92rem; max-width: 720px; margin-left: auto; margin-right: auto;">Note: gradient is computed as <strong>average</strong> over the whole distance &mdash; useful for estimating average power on a course. For specific climbs, use the segment&rsquo;s gradient and distance instead of the full ride. Air density is fixed at 1.225 kg/m³ (sea level, 15 °C); thinner air at altitude reduces aero power.</p>
+      <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.92rem; max-width: 720px; margin-left: auto; margin-right: auto;">Note: gradient is computed as <strong>average</strong> over the whole distance, useful for estimating average power on a course. For specific climbs, use the segment&rsquo;s gradient and distance instead of the full ride. Air density is fixed at 1.225 kg/m³ (sea level, 15 °C); thinner air at altitude reduces aero power.</p>
     </div>
   </section>
 
@@ -471,11 +471,11 @@
         <h2 style="margin-top: 4px;">The biggest watts you can save aren&rsquo;t in the engine.</h2>
         <p>Most athletes obsess over FTP. Three things move the needle more for the same fitness:</p>
         <ul class="ys-card-bullets" style="margin-top: 12px;">
-          <li><strong>CdA &mdash; position &amp; equipment</strong>. Going from 0.30 to 0.25 m² is <em>~20 watts</em> at 40 km/h, completely free if you can hold it. Aero testing pays for itself in one race.</li>
-          <li><strong>Crr &mdash; tires &amp; pressure</strong>. A 0.001 Crr improvement is ~3&ndash;5 watts at speed. Latex tubes, fast tires, correct pressure for surface and weight.</li>
-          <li><strong>Weight &mdash; only matters on climbs</strong>. On flat, an extra 1 kg costs you fractions of a watt. On a 5% climb at 25 km/h, the same 1 kg costs ~3 watts. Don&rsquo;t obsess on flat courses.</li>
+          <li><strong>CdA, position &amp; equipment</strong>. Going from 0.30 to 0.25 m² is <em>~20 watts</em> at 40 km/h, completely free if you can hold it. Aero testing pays for itself in one race.</li>
+          <li><strong>Crr, tires &amp; pressure</strong>. A 0.001 Crr improvement is ~3&ndash;5 watts at speed. Latex tubes, fast tires, correct pressure for surface and weight.</li>
+          <li><strong>Weight, only matters on climbs</strong>. On flat, an extra 1 kg costs you fractions of a watt. On a 5% climb at 25 km/h, the same 1 kg costs ~3 watts. Don&rsquo;t obsess on flat courses.</li>
         </ul>
-        <p style="margin-top: 12px;">Plug your numbers in &mdash; then play with the inputs. See where 10 watts comes from cheapest. That&rsquo;s where to spend your training and money.</p>
+        <p style="margin-top: 12px;">Plug your numbers in, then play with the inputs. See where 10 watts comes from cheapest. That&rsquo;s where to spend your training and money.</p>
         <div class="ys-btn-row" style="margin-top: 16px;">
           <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Aero / CdA testing</a>
           <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
@@ -544,7 +544,7 @@
         </a>
         <a class="ys-calc-card" href="https://www.yousuli.co/calculators" target="_top">
           <span class="ys-calc-card-title">All calculators</span>
-          <p>Back to the full catalog &mdash; 30+ endurance calculators across performance, fueling, swim, bike, run.</p>
+          <p>Back to the full catalog, 30+ endurance calculators across performance, fueling, swim, bike, run.</p>
           <span class="ys-calc-card-arrow">Browse &rarr;</span>
         </a>
       </div>
@@ -750,7 +750,7 @@
 
         if (!advOn) return;
 
-        // advanced — convert inputs to metric for the physics
+        // advanced, convert inputs to metric for the physics
         let weight  = parseFloat(fields.weight.value);
         let distKm  = parseFloat(fields.distance.value);
         let climbM  = parseFloat(fields.climb.value);

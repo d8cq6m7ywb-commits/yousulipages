@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FIT file sensor comparison — Yousuli calculators</title>
+  <title>FIT file sensor comparison · Yousuli calculators</title>
   <meta name="description" content="Compare up to three FIT files from the same activity to diagnose sensor disagreement: power-meter offset, HR strap drift, GPS quality, cadence dropouts, and side-by-side power-duration curves with synced-zoom charts and a printable summary." />
 
   <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
@@ -206,7 +206,7 @@
       <span class="wf-eyebrow">Calculator &middot; Data tools</span>
       <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">FIT file sensor comparison.</h1>
       <div class="wf-subhead">Compare up to 3 FIT files &middot; offset, drift, dropouts &middot; synced-zoom charts &middot; PDC + diagnosis</div>
-      <p class="lede" style="max-width: 680px;">Wear two power meters on the same ride? Run a Garmin and a Wahoo simultaneously? Drop both FIT files in. The tool auto-aligns them, shows where each sensor disagrees, runs a power-duration curve for each, and gives you a plain-English diagnosis (offset, drift, dropouts, smoothing differences). All processing is in your browser &mdash; files never leave your device.</p>
+      <p class="lede" style="max-width: 680px;">Wear two power meters on the same ride? Run a Garmin and a Wahoo simultaneously? Drop both FIT files in. The tool auto-aligns them, shows where each sensor disagrees, runs a power-duration curve for each, and gives you a plain-English diagnosis (offset, drift, dropouts, smoothing differences). All processing is in your browser, files never leave your device.</p>
       <div class="ys-btn-row" style="margin-top: 6px;">
         <a class="ys-btn ys-btn-coral" href="#tool">Drop your FIT files &darr;</a>
         <a class="ys-btn ys-btn-ghost" href="#how">How it works</a>
@@ -224,7 +224,7 @@
           <header class="page-header">
             <div>
               <h1>Sensor comparison tool</h1>
-              <p class="subtitle">Compare up to three FIT files from the same activity to diagnose sensor disagreement &mdash; offsets, drift, dropouts, smoothing.</p>
+              <p class="subtitle">Compare up to three FIT files from the same activity to diagnose sensor disagreement, offsets, drift, dropouts, smoothing.</p>
             </div>
             <div class="brand">
               <span class="brand-dot"></span>
@@ -269,7 +269,7 @@
               <div id="error" class="error"></div>
             </div>
 
-            <p class="global-hint">Drag horizontally on any chart to zoom &mdash; all charts zoom together. Double-click to reset.</p>
+            <p class="global-hint">Drag horizontally on any chart to zoom, all charts zoom together. Double-click to reset.</p>
           </section>
 
           <!-- ─── RESULTS (hidden until analysis) ─── -->
@@ -425,7 +425,7 @@
         <div>
           <div class="ys-meta" style="color: var(--wf-coral);">1. Upload</div>
           <h3 style="margin-top: 4px;">Drop two or three FIT files</h3>
-          <p>From the same ride or run. Different head units recording the same activity. Device A is the reference. Files are parsed entirely in your browser &mdash; nothing is uploaded. Works with FIT from Garmin, Wahoo, Hammerhead, Stages, Quarq, Zwift, Rouvy, anything that exports FIT.</p>
+          <p>From the same ride or run. Different head units recording the same activity. Device A is the reference. Files are parsed entirely in your browser, nothing is uploaded. Works with FIT from Garmin, Wahoo, Hammerhead, Stages, Quarq, Zwift, Rouvy, anything that exports FIT.</p>
         </div>
         <div>
           <div class="ys-meta" style="color: var(--wf-coral);">2. Auto-align</div>
@@ -435,7 +435,7 @@
         <div>
           <div class="ys-meta" style="color: var(--wf-coral);">3. Detect what each file actually contains</div>
           <h3 style="margin-top: 4px;">Power / HR / cadence / speed / GPS / elevation</h3>
-          <p>Some files have power but no GPS (smart trainer). Some have HR + power but no cadence. The Detected Sources panel shows what each file holds &mdash; useful when you&rsquo;re comparing a head unit log against a Zwift export.</p>
+          <p>Some files have power but no GPS (smart trainer). Some have HR + power but no cadence. The Detected Sources panel shows what each file holds, useful when you&rsquo;re comparing a head unit log against a Zwift export.</p>
         </div>
         <div>
           <div class="ys-meta" style="color: var(--wf-coral);">4. Diagnose</div>
@@ -445,12 +445,12 @@
         <div>
           <div class="ys-meta" style="color: var(--wf-coral);">5. Charts with synced zoom</div>
           <h3 style="margin-top: 4px;">Time series + difference chart for every metric</h3>
-          <p>Drag horizontally on any chart to zoom into a specific interval &mdash; all charts (power, HR, cadence, speed, elevation) zoom to the same window. Double-click resets. Smoothing options: raw, 5s, 10s, 30s averages.</p>
+          <p>Drag horizontally on any chart to zoom into a specific interval, all charts (power, HR, cadence, speed, elevation) zoom to the same window. Double-click resets. Smoothing options: raw, 5s, 10s, 30s averages.</p>
         </div>
         <div>
           <div class="ys-meta" style="color: var(--wf-coral);">6. Power-duration curve</div>
           <h3 style="margin-top: 4px;">Side-by-side mean-max for each device</h3>
-          <p>If your Garmin says you hit 1100 W peak and your Stages says 870 W, the PDC chart shows the gap across every duration from 1s to the full ride. This is what your CP estimate is built on &mdash; device choice can shift it by 5&ndash;15 watts.</p>
+          <p>If your Garmin says you hit 1100 W peak and your Stages says 870 W, the PDC chart shows the gap across every duration from 1s to the full ride. This is what your CP estimate is built on, device choice can shift it by 5&ndash;15 watts.</p>
         </div>
       </div>
     </div>
@@ -462,7 +462,7 @@
       <div class="ys-cta-card" style="display: block;">
         <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
         <h2 style="margin-top: 4px;">When to actually run this comparison.</h2>
-        <p>Most athletes never look at sensor disagreement until a number doesn&rsquo;t make sense &mdash; an FTP test that doesn&rsquo;t match feel, a race-day power that&rsquo;s 30 W lower than training, a HR that pegs at 200 bpm for two minutes mid-climb. The fix is rarely &ldquo;the meter is wrong&rdquo; &mdash; it&rsquo;s usually offset, drift, or a recording gap. Three real uses:</p>
+        <p>Most athletes never look at sensor disagreement until a number doesn&rsquo;t make sense, an FTP test that doesn&rsquo;t match feel, a race-day power that&rsquo;s 30 W lower than training, a HR that pegs at 200 bpm for two minutes mid-climb. The fix is rarely &ldquo;the meter is wrong&rdquo;, it&rsquo;s usually offset, drift, or a recording gap. Three real uses:</p>
         <ul class="ys-card-bullets" style="margin-top: 12px;">
           <li><strong>New power meter.</strong> Ride a familiar course with both meters for a week, drop two of the FIT files in here. If you see a consistent &plusmn;3% offset, recalibrate. If you see drift, your <a href="https://www.yousuli.co/critical-power-calculator" style="color: var(--wf-coral);" target="_top">CP test</a> on the new meter will be biased.</li>
           <li><strong>Pre-race calibration check.</strong> Race wheel + training wheel + spindown your trainer + record all three on the same indoor session. Confirm they agree before you commit to race-day power numbers.</li>
@@ -488,7 +488,7 @@
       <div class="ys-calc-grid">
         <a class="ys-calc-card redesigned" href="https://www.yousuli.co/cda-estimate" target="_top">
           <span class="ys-calc-card-title">CdA estimate (FIT-based)</span>
-          <p>Drop a single FIT file from a steady-power flat lap, get your aerodynamic drag &mdash; same FIT-parser, different calculation.</p>
+          <p>Drop a single FIT file from a steady-power flat lap, get your aerodynamic drag, same FIT-parser, different calculation.</p>
           <span class="ys-calc-card-arrow">Open &rarr;</span>
         </a>
         <a class="ys-calc-card redesigned" href="https://www.yousuli.co/critical-power-calculator" target="_top">
@@ -511,7 +511,7 @@
       <div class="ys-cta-card">
         <div>
           <h2>Want a coach to interpret the comparison?</h2>
-          <p>Sensor disagreement is rarely random. The pattern tells you what&rsquo;s actually happening &mdash; bad calibration, dying battery, position change, temperature drift, software firmware mismatch. Send your two FIT files plus the comparison output and we&rsquo;ll tell you what to fix and what to trust.</p>
+          <p>Sensor disagreement is rarely random. The pattern tells you what&rsquo;s actually happening, bad calibration, dying battery, position change, temperature drift, software firmware mismatch. Send your two FIT files plus the comparison output and we&rsquo;ll tell you what to fix and what to trust.</p>
         </div>
         <div>
           <div class="ys-btn-row">

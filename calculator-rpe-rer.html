@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>RPE ↔ RER — Yousuli calculators</title>
-  <meta name="description" content="Approximate the carb/fat fuel split at a given RPE or RER. Useful for fueling planning — but real substrate utilization is non-linear and athlete-specific. Lab metabolic profiling gives the truth." />
+  <title>RPE ↔ RER · Yousuli calculators</title>
+  <meta name="description" content="Approximate the carb/fat fuel split at a given RPE or RER. Useful for fueling planning · but real substrate utilization is non-linear and athlete-specific. Lab metabolic profiling gives the truth." />
 
   <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
   <link rel="stylesheet" href="assets/yousuli.css" />
@@ -234,7 +234,7 @@
       <span class="wf-eyebrow">Calculator &middot; Fueling</span>
       <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">RPE &harr; RER.</h1>
       <div class="wf-subhead">Effort &middot; substrate split &middot; fat oxidation rate</div>
-      <p class="lede" style="max-width: 660px;">A loose link between rate of perceived exertion and respiratory exchange ratio &mdash; rough way to gauge fat vs. carb burn at a given intensity. Useful for fueling sanity checks; not a substitute for measured VO<sub>2</sub> testing. Type RPE <em>or</em> RER, the other one fills in.</p>
+      <p class="lede" style="max-width: 660px;">A loose link between rate of perceived exertion and respiratory exchange ratio, rough way to gauge fat vs. carb burn at a given intensity. Useful for fueling sanity checks; not a substitute for measured VO<sub>2</sub> testing. Type RPE <em>or</em> RER, the other one fills in.</p>
       <div class="ys-btn-row" style="margin-top: 6px;">
         <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
         <a class="ys-btn ys-btn-ghost" href="#how">What RER actually tells you</a>
@@ -247,7 +247,7 @@
     <div class="ys-container">
       <div class="ys-tool" style="max-width: 880px;">
         <h3>Plug in your effort</h3>
-        <p class="ys-tool-pre">Set <strong>total kcal</strong> for the session, then either <strong>RPE 1–10</strong> or <strong>RER 0.70–1.00</strong>. The other field auto-fills via a linear mapping (with the standard caveats — see below).</p>
+        <p class="ys-tool-pre">Set <strong>total kcal</strong> for the session, then either <strong>RPE 1–10</strong> or <strong>RER 0.70–1.00</strong>. The other field auto-fills via a linear mapping (with the standard caveats, see below).</p>
 
         <div class="rr-calc-host">
 
@@ -286,8 +286,8 @@
               <div class="seg-fat" id="segFat" style="width: 50%;"></div>
             </div>
             <div class="split-legend">
-              <span class="legend-carb">Carb &mdash; <span id="legendCarb">—</span>%</span>
-              <span class="legend-fat">Fat &mdash; <span id="legendFat">—</span>%</span>
+              <span class="legend-carb">Carb, <span id="legendCarb">—</span>%</span>
+              <span class="legend-fat">Fat, <span id="legendFat">—</span>%</span>
             </div>
 
             <div style="text-align: center; margin-top: 14px;">
@@ -340,17 +340,17 @@
         <div class="ys-step">
           <div class="ys-step-num">01</div>
           <h3>Substrate ratio at steady state</h3>
-          <p><strong>RER ≈ 0.70</strong> = predominantly fat. <strong>RER ≈ 1.00</strong> = predominantly carb. <strong>0.85</strong> sits roughly 50/50. The math is the volume of CO<sub>2</sub> you exhale divided by O<sub>2</sub> you consume — fat oxidation produces less CO<sub>2</sub> per O<sub>2</sub>, carb produces equal.</p>
+          <p><strong>RER ≈ 0.70</strong> = predominantly fat. <strong>RER ≈ 1.00</strong> = predominantly carb. <strong>0.85</strong> sits roughly 50/50. The math is the volume of CO<sub>2</sub> you exhale divided by O<sub>2</sub> you consume, fat oxidation produces less CO<sub>2</sub> per O<sub>2</sub>, carb produces equal.</p>
         </div>
         <div class="ys-step">
           <div class="ys-step-num">02</div>
           <h3>Doesn&rsquo;t see protein, ketones, or PCr</h3>
-          <p><strong>Protein</strong> contributes a small, variable amount RER can&rsquo;t isolate. <strong>Ketone</strong> oxidation has an effective RQ near fat &mdash; can&rsquo;t separate them. <strong>Phosphocreatine</strong> powers the first ~3–10 s of all-out efforts and uses no oxygen, so it&rsquo;s invisible to RER.</p>
+          <p><strong>Protein</strong> contributes a small, variable amount RER can&rsquo;t isolate. <strong>Ketone</strong> oxidation has an effective RQ near fat, can&rsquo;t separate them. <strong>Phosphocreatine</strong> powers the first ~3–10 s of all-out efforts and uses no oxygen, so it&rsquo;s invisible to RER.</p>
         </div>
         <div class="ys-step">
           <div class="ys-step-num">03</div>
           <h3>Above ~1.0, it lies</h3>
-          <p>At very high intensity, lactate is buffered and exhales as extra CO<sub>2</sub>. RER can climb past 1.0 even with no actual carb-only oxidation &mdash; substrate inference becomes unreliable. <strong>Reading is most useful at RPE 4–8 / RER 0.85–0.95</strong> when you&rsquo;re in steady-state aerobic work.</p>
+          <p>At very high intensity, lactate is buffered and exhales as extra CO<sub>2</sub>. RER can climb past 1.0 even with no actual carb-only oxidation, substrate inference becomes unreliable. <strong>Reading is most useful at RPE 4–8 / RER 0.85–0.95</strong> when you&rsquo;re in steady-state aerobic work.</p>
         </div>
       </div>
     </div>
@@ -362,7 +362,7 @@
       <div class="ys-section-head">
         <h2>Fuel systems by intensity domain</h2>
         <div class="ys-rule"></div>
-        <p>The map is rough — but the order is right.</p>
+        <p>The map is rough, but the order is right.</p>
       </div>
 
       <div class="ys-grid">
@@ -384,7 +384,7 @@
         <div class="ys-card">
           <div class="ys-meta">RER &gt; 1.00</div>
           <h3>VO<sub>2</sub>max + sprints · Z5</h3>
-          <p>PCr → glycolytic dominant. <strong>RER becomes meaningless</strong> due to lactate buffering. Don&rsquo;t infer substrate split here — fueling at this intensity is a different conversation.</p>
+          <p>PCr → glycolytic dominant. <strong>RER becomes meaningless</strong> due to lactate buffering. Don&rsquo;t infer substrate split here, fueling at this intensity is a different conversation.</p>
         </div>
       </div>
     </div>
@@ -395,15 +395,15 @@
     <div class="ys-container">
       <div class="ys-cta-card" style="display: block;">
         <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
-        <h2 style="margin-top: 4px;">Real RER vs intensity is not linear &mdash; and not the same for any two athletes.</h2>
+        <h2 style="margin-top: 4px;">Real RER vs intensity is not linear, and not the same for any two athletes.</h2>
         <p>This calculator&rsquo;s linear RPE→RER mapping is a teaching tool. In reality, two athletes at the same RPE can have <em>very different</em> RER values:</p>
         <ul class="ys-card-bullets" style="margin-top: 12px;">
-          <li><strong>Trained</strong> endurance athletes burn more fat at a given intensity — their crossover (the RER point where carb takes over from fat) shifts <em>right</em>, sometimes by 20+ % VO<sub>2</sub>max.</li>
+          <li><strong>Trained</strong> endurance athletes burn more fat at a given intensity, their crossover (the RER point where carb takes over from fat) shifts <em>right</em>, sometimes by 20+ % VO<sub>2</sub>max.</li>
           <li><strong>Glycogen status</strong> matters: same effort fasted vs. carb-loaded → different RER.</li>
           <li><strong>Heat, altitude, modality</strong> all shift it. Cycling RER ≠ running RER at the same effort.</li>
-          <li><strong>Diet</strong>: a fat-adapted (low-carb) athlete oxidizes fat at higher intensities — peak fat ox can hit 1.5×&nbsp; that of a high-carb-fed athlete.</li>
+          <li><strong>Diet</strong>: a fat-adapted (low-carb) athlete oxidizes fat at higher intensities, peak fat ox can hit 1.5×&nbsp; that of a high-carb-fed athlete.</li>
         </ul>
-        <p style="margin-top: 12px;">If you actually need <strong>your</strong> crossover and peak-fat-oxidation rate &mdash; for race-day fueling planning, weight goals, or zone setup &mdash; metabolic profiling at the lab measures it directly. The number you walk out with is the difference between guessing your fuel needs and knowing them.</p>
+        <p style="margin-top: 12px;">If you actually need <strong>your</strong> crossover and peak-fat-oxidation rate, for race-day fueling planning, weight goals, or zone setup, metabolic profiling at the lab measures it directly. The number you walk out with is the difference between guessing your fuel needs and knowing them.</p>
         <div class="ys-btn-row" style="margin-top: 16px;">
           <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Metabolic profiling</a>
           <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/intraworkout-fueling" target="_top">Fueling calculator</a>
@@ -425,7 +425,7 @@
         <div class="ys-card">
           <div class="ys-meta">Catabolism</div>
           <h3>Protein gets eaten too</h3>
-          <p>Long, under-fueled efforts pull amino acids from muscle. The liver (and kidneys) convert them — plus lactate (Cori cycle) and glycerol — into glucose via gluconeogenesis. Muscle itself doesn&rsquo;t export glucose; it supplies substrates (e.g. alanine via the glucose-alanine cycle).</p>
+          <p>Long, under-fueled efforts pull amino acids from muscle. The liver (and kidneys) convert them, plus lactate (Cori cycle) and glycerol, into glucose via gluconeogenesis. Muscle itself doesn&rsquo;t export glucose; it supplies substrates (e.g. alanine via the glucose-alanine cycle).</p>
         </div>
         <div class="ys-card">
           <div class="ys-meta">Cost</div>
@@ -435,7 +435,7 @@
         <div class="ys-card featured">
           <div class="ys-meta" style="color: var(--wf-coral);">Practical</div>
           <h3>Fuel the work</h3>
-          <p>Appropriate <strong>intra-workout carbohydrate</strong> + adequate <strong>daily protein</strong> protect performance and muscle. RER says &ldquo;mostly fat&rdquo; at low intensity — but that doesn&rsquo;t mean fasted long sessions are free.</p>
+          <p>Appropriate <strong>intra-workout carbohydrate</strong> + adequate <strong>daily protein</strong> protect performance and muscle. RER says &ldquo;mostly fat&rdquo; at low intensity, but that doesn&rsquo;t mean fasted long sessions are free.</p>
         </div>
       </div>
     </div>
@@ -457,12 +457,12 @@
         </a>
         <a class="ys-calc-card redesigned" href="https://www.yousuli.co/calorieburn" target="_top">
           <span class="ys-calc-card-title">Triathlon calorie burn</span>
-          <p>The total-kcal input above &mdash; estimate it for your session.</p>
+          <p>The total-kcal input above, estimate it for your session.</p>
           <span class="ys-calc-card-arrow">Open &rarr;</span>
         </a>
         <a class="ys-calc-card redesigned" href="https://www.yousuli.co/resting-metabolic-rate-calculator" target="_top">
           <span class="ys-calc-card-title">RMR &amp; energy availability</span>
-          <p>The bigger-picture view of fueling — daily, not per-session.</p>
+          <p>The bigger-picture view of fueling, daily, not per-session.</p>
           <span class="ys-calc-card-arrow">Open &rarr;</span>
         </a>
       </div>
@@ -475,7 +475,7 @@
       <div class="ys-cta-card">
         <div>
           <h2>Want your real fat-vs-carb crossover?</h2>
-          <p>Indirect calorimetry at the lab measures your oxygen and CO<sub>2</sub> across a graded intensity protocol — gives you measured RER, fat oxidation rate (g/min), and the exact wattage / pace where carb takes over. The fueling plan you build on top of that is in a different league.</p>
+          <p>Indirect calorimetry at the lab measures your oxygen and CO<sub>2</sub> across a graded intensity protocol, gives you measured RER, fat oxidation rate (g/min), and the exact wattage / pace where carb takes over. The fueling plan you build on top of that is in a different league.</p>
         </div>
         <div>
           <div class="ys-btn-row">
@@ -570,7 +570,7 @@
       function showError(msg) { errEl.textContent = msg; errEl.classList.add('active'); resBlock.style.display = 'none'; }
       function clearError() { errEl.classList.remove('active'); errEl.textContent = ''; }
 
-      // Sync handlers — typing RPE updates RER, typing RER updates RPE
+      // Sync handlers, typing RPE updates RER, typing RER updates RPE
       let syncing = false;
       rpeEl.addEventListener('input', () => {
         if (syncing) return;
@@ -631,7 +631,7 @@
         let rpeInt = Math.round(Number.isFinite(rpe) ? rpe : rerToRpe(rer));
         rpeInt = Math.max(1, Math.min(10, rpeInt));
         const desc = RPE_DESC[rpeInt] || '';
-        $('rpeDesc').innerHTML = `<span class="rpe-level">RPE ${rpeInt}</span> &mdash; ${desc}`;
+        $('rpeDesc').innerHTML = `<span class="rpe-level">RPE ${rpeInt}</span>, ${desc}`;
 
         resBlock.style.display = 'block';
       }

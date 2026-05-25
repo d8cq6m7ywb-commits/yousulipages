@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Intra-workout fueling calculator — Yousuli calculators</title>
+  <title>Intra-workout fueling calculator · Yousuli calculators</title>
   <meta name="description" content="How many grams of carbs per hour do you need on a 90-min ride? A 4-hour Ironman? See your hourly target plus food-equivalent breakdowns (gels, bananas, dates, sports drink) and DIY malto:fructose ratios." />
 
   <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
@@ -230,7 +230,7 @@
     <div class="ys-container">
       <div class="ys-tool" style="max-width: 760px;">
         <h3>Plug in your session</h3>
-        <p class="ys-tool-pre">The hourly target scales with duration &mdash; longer sessions need more carbs/hour as your liver glycogen empties. Pick <strong>Recommended</strong> if you don&rsquo;t have a fueling history; <strong>Maximum</strong> only if you&rsquo;ve practiced high-rate fueling and have a trained gut.</p>
+        <p class="ys-tool-pre">The hourly target scales with duration, longer sessions need more carbs/hour as your liver glycogen empties. Pick <strong>Recommended</strong> if you don&rsquo;t have a fueling history; <strong>Maximum</strong> only if you&rsquo;ve practiced high-rate fueling and have a trained gut.</p>
 
         <div class="fuel-calc-host">
           <label for="workoutDuration">Workout duration (minutes)</label>
@@ -238,9 +238,9 @@
 
           <label for="carbMode">Carbohydrate intake mode</label>
           <select id="carbMode" onchange="calculateIntake()">
-            <option value="0">Minimum &mdash; conservative, easy stomach</option>
-            <option value="1" selected>Recommended &mdash; most athletes, most sessions</option>
-            <option value="2">Maximum &mdash; trained gut, race-rate fueling</option>
+            <option value="0">Minimum, conservative, easy stomach</option>
+            <option value="1" selected>Recommended, most athletes, most sessions</option>
+            <option value="2">Maximum, trained gut, race-rate fueling</option>
           </select>
 
           <div class="fuel-results">
@@ -269,11 +269,11 @@
 
             <div class="fuel-diy">
               <div class="fuel-diy-row">
-                <span class="fuel-diy-label">DIY mix &mdash; Ideal ratio (Malto : Fructose 1.8 : 1):</span>
+                <span class="fuel-diy-label">DIY mix, Ideal ratio (Malto : Fructose 1.8 : 1):</span>
                 <span class="fuel-diy-value" id="idealRatio">—</span>
               </div>
               <div class="fuel-diy-row">
-                <span class="fuel-diy-label">DIY mix &mdash; Simple ratio (1 : 1):</span>
+                <span class="fuel-diy-label">DIY mix, Simple ratio (1 : 1):</span>
                 <span class="fuel-diy-value" id="simpleRatio">—</span>
               </div>
             </div>
@@ -284,7 +284,7 @@
             <ul>
               <li>Concentrations &gt; 8% may cause GI distress and slow gastric emptying.</li>
               <li>14&ndash;18% solutions aren&rsquo;t optimal for hydration but can deliver carbs fast when chased with water.</li>
-              <li>Past ~60 g/h from a single source can trigger GI distress &mdash; combine glucose + fructose to push higher rates.</li>
+              <li>Past ~60 g/h from a single source can trigger GI distress, combine glucose + fructose to push higher rates.</li>
               <li>Hydration and electrolytes materially improve carb absorption. Don&rsquo;t fuel dry.</li>
             </ul>
           </div>
@@ -299,28 +299,28 @@
       <div class="ys-section-head">
         <h2>How the targets are built</h2>
         <div class="ys-rule"></div>
-        <p>Three modes, three philosophies &mdash; pick the one that matches your training history and goal.</p>
+        <p>Three modes, three philosophies, pick the one that matches your training history and goal.</p>
       </div>
 
       <div class="ys-grid">
         <div class="ys-step">
           <div class="ys-step-num">01</div>
-          <h3>Minimum &mdash; the floor</h3>
+          <h3>Minimum, the floor</h3>
           <p>Conservative rates: 0&ndash;75 g/h depending on duration. Best for athletes new to fueling, sessions in heat, or anyone with a sensitive gut. Won&rsquo;t maximize performance, but protects the day.</p>
         </div>
         <div class="ys-step">
           <div class="ys-step-num">02</div>
-          <h3>Recommended &mdash; default</h3>
+          <h3>Recommended, default</h3>
           <p>Most athletes, most sessions. 10 g/h on short stuff, ramps to ~90 g/h on Ironman-length efforts. Aligns with current sports-nutrition consensus (ACSM, Burke et al.).</p>
         </div>
         <div class="ys-step">
           <div class="ys-step-num">03</div>
-          <h3>Maximum &mdash; race rate</h3>
-          <p>120&ndash;150 g/h on the longest events. Only if you&rsquo;ve <em>trained your gut</em> &mdash; weeks of progressive fueling sessions, mixed glucose+fructose source, practiced at race intensity. Don&rsquo;t debut on race day.</p>
+          <h3>Maximum, race rate</h3>
+          <p>120&ndash;150 g/h on the longest events. Only if you&rsquo;ve <em>trained your gut</em>, weeks of progressive fueling sessions, mixed glucose+fructose source, practiced at race intensity. Don&rsquo;t debut on race day.</p>
         </div>
       </div>
 
-      <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.92rem; max-width: 720px; margin-left: auto; margin-right: auto;">The food-equivalent breakdowns assume average sizes &mdash; check your actual gel and drink labels (they vary 20&ndash;35 g/serving). The <strong>1.8 : 1 maltodextrin to fructose</strong> ratio is the multi-transporter sweet spot for absorption rates above 60 g/h.</p>
+      <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.92rem; max-width: 720px; margin-left: auto; margin-right: auto;">The food-equivalent breakdowns assume average sizes, check your actual gel and drink labels (they vary 20&ndash;35 g/serving). The <strong>1.8 : 1 maltodextrin to fructose</strong> ratio is the multi-transporter sweet spot for absorption rates above 60 g/h.</p>
     </div>
   </section>
 
@@ -330,14 +330,14 @@
       <div class="ys-cta-card" style="display: block;">
         <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
         <h2 style="margin-top: 4px;">Your gut is a trainable organ.</h2>
-        <p>The single biggest reason athletes blow up at hour 3 of a 70.3 isn&rsquo;t legs &mdash; it&rsquo;s a stomach that hasn&rsquo;t been trained to process 80&ndash;100 g/h. SGLT1 (glucose) and GLUT5 (fructose) transporters upregulate with repeated exposure. Translation: practice your race fueling in training, not race week.</p>
+        <p>The single biggest reason athletes blow up at hour 3 of a 70.3 isn&rsquo;t legs, it&rsquo;s a stomach that hasn&rsquo;t been trained to process 80&ndash;100 g/h. SGLT1 (glucose) and GLUT5 (fructose) transporters upregulate with repeated exposure. Translation: practice your race fueling in training, not race week.</p>
         <p style="margin-top: 10px;">A simple build:</p>
         <ul class="ys-card-bullets" style="margin-top: 8px;">
-          <li><strong>Weeks 1&ndash;2:</strong> 40&ndash;50 g/h on long rides &mdash; comfortable, build the habit</li>
+          <li><strong>Weeks 1&ndash;2:</strong> 40&ndash;50 g/h on long rides, comfortable, build the habit</li>
           <li><strong>Weeks 3&ndash;5:</strong> 60&ndash;70 g/h, introduce mixed glucose+fructose source</li>
           <li><strong>Weeks 6+:</strong> 80&ndash;100+ g/h, dial in your specific products at race intensity</li>
         </ul>
-        <p style="margin-top: 12px;">For the next layer &mdash; what your fat-burn rate is, where the carb crossover happens, how much fat oxidation you can rely on at race intensity &mdash; that&rsquo;s the metabolic profiling test at the lab.</p>
+        <p style="margin-top: 12px;">For the next layer, what your fat-burn rate is, where the carb crossover happens, how much fat oxidation you can rely on at race intensity, that&rsquo;s the metabolic profiling test at the lab.</p>
         <div class="ys-btn-row" style="margin-top: 16px;">
           <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Metabolic profiling</a>
           <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
@@ -367,7 +367,7 @@
         </a>
         <a class="ys-calc-card" href="https://www.yousuli.co/calculators" target="_top">
           <span class="ys-calc-card-title">All calculators</span>
-          <p>Back to the full catalog &mdash; 30+ endurance calculators across performance, fueling, swim, bike, run.</p>
+          <p>Back to the full catalog, 30+ endurance calculators across performance, fueling, swim, bike, run.</p>
           <span class="ys-calc-card-arrow">Browse &rarr;</span>
         </a>
       </div>
@@ -380,7 +380,7 @@
       <div class="ys-cta-card">
         <div>
           <h2>Want to know your actual fat / carb crossover?</h2>
-          <p>The fueling target above is a population guide. Metabolic profiling at Yousuli measures <em>your</em> fat-oxidation curve and identifies the intensity where carbs become the dominant fuel &mdash; so you fuel for the watts you&rsquo;re actually riding.</p>
+          <p>The fueling target above is a population guide. Metabolic profiling at Yousuli measures <em>your</em> fat-oxidation curve and identifies the intensity where carbs become the dominant fuel, so you fuel for the watts you&rsquo;re actually riding.</p>
         </div>
         <div>
           <div class="ys-btn-row">

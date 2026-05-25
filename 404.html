@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>404 — Off course | Yousuli</title>
+  <title>404 · Off course | Yousuli</title>
   <meta name="description" content="Lost your line? Play the Yousuli bike-leg 404: stay out of the draft zone, pass the rider ahead within 20 seconds, dodge traffic and banana peels, grab bottles and bananas for effort. Or just find your way back home." />
 
   <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
@@ -349,16 +349,16 @@
     'use strict';
 
     /* =====================================================================
-       Yousuli 404 — Bike leg game (v4, sprite-art version).
+       Yousuli 404, Bike leg game (v4, sprite-art version).
 
        Now uses real pixel-art sprite assets supplied by the user:
          /assets/404/bg-long.png        (scrolling background w/ road)
-         /assets/404/bike.png           (cyclist — player + rivals)
+         /assets/404/bike.png           (cyclist, player + rivals)
          /assets/404/car.png            (navy 404 car)
          /assets/404/bus-back.png       (city bus, same direction)
          /assets/404/bottle.png         (triathlon water bottle)
-         /assets/404/banana.png         (whole banana — +effort pickup)
-         /assets/404/banana-peel.png    (peel — slip hazard, not a crash)
+         /assets/404/banana.png         (whole banana, +effort pickup)
+         /assets/404/banana-peel.png    (peel, slip hazard, not a crash)
 
        Mechanics carried over from v3:
          - Player fixed left at x=130, world scrolls right-to-left
@@ -677,7 +677,7 @@
       // sprite PNG, NOT the full PNG bounds. The sprites have transparent
       // padding (the bike artwork is only 38% of the bike.png width, the
       // car is 62%, etc.) so naive PNG-bound collision triggered false
-      // positives — "you hit a car" when the visible art clearly hadn't
+      // positives, "you hit a car" when the visible art clearly hadn't
       // touched. HITBOX_FRAC tightens each kind's collision box to roughly
       // match what's actually drawn.
       var HITBOX_FRAC = {
@@ -797,7 +797,7 @@
 
     /* ---------- Render ---------- */
     function render(){
-      // Background — scrolling pixel-art image, scaled to canvas height.
+      // Background, scrolling pixel-art image, scaled to canvas height.
       // The image is wider than tall; we tile horizontally.
       if (IMG.bg && IMG.bg.naturalWidth) {
         var bg = IMG.bg;
@@ -843,7 +843,7 @@
         }
       }
 
-      // Player — uses the same bike sprite. Flicker briefly when slipping
+      // Player, uses the same bike sprite. Flicker briefly when slipping
       // for legibility (faster blink in last 0.4s).
       var py = LANE_Y[Math.floor(player.laneFloat)] +
                (LANE_Y[Math.min(2, Math.floor(player.laneFloat) + 1)] - LANE_Y[Math.floor(player.laneFloat)])
@@ -855,7 +855,7 @@
       }
       if (drawPlayer) drawSprite(IMG.bike, 'bike', PLAYER_X, py + 6);
 
-      // Subtle marker under the player — coral dot so you can always
+      // Subtle marker under the player, coral dot so you can always
       // tell which bike is you when a rival is nearby.
       ctx.fillStyle = 'rgba(250,119,60,0.85)';
       ctx.beginPath();

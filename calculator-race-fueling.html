@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Triathlon race-day fueling planner — Yousuli calculators</title>
+  <title>Triathlon race-day fueling planner · Yousuli calculators</title>
   <meta name="description" content="Build a complete triathlon race-day fueling and hydration plan: hourly carb / fluid / sodium targets, bottle / gel / tablet inventory, transition intakes, aid-station strategy, glycogen trajectory, and a printable race-day cheat sheet for Sprint, Olympic, 70.3, and Ironman." />
 
   <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
@@ -309,7 +309,7 @@
     .fuel-plan-host .warning-yellow { background: #fff3e0; border-left: 4px solid #b45309; color: #92400e; }
     .fuel-plan-host .warning-green { background: #e8f5e9; border-left: 4px solid #2e7d32; color: #1b5e20; }
 
-    /* Mobile responsive table — SCREEN ONLY */
+    /* Mobile responsive table, SCREEN ONLY */
     @media screen and (max-width: 768px) {
       .fuel-plan-host #schedule thead { display: none; }
       .fuel-plan-host #schedule tbody tr { display: block; margin-bottom: 8px; border: 1px solid var(--ys-line); border-radius: 8px; padding: 8px; }
@@ -321,7 +321,7 @@
       .fuel-plan-host .row-4col { grid-template-columns: 1fr 1fr; }
     }
 
-    /* Print — Cheat Sheet + key visuals mode */
+    /* Print, Cheat Sheet + key visuals mode */
     @media print {
       body { padding: 0; background: #fff; }
       @page { margin: 12mm; size: A4; }
@@ -603,7 +603,7 @@
               <div class="grid">
                 <div class="col-6">
                   <fieldset>
-                    <legend>Bike &mdash; bottles, gels, tablets</legend>
+                    <legend>Bike, bottles, gels, tablets</legend>
                     <div class="pairs">
                       <div class="pair"><label>Drink 1</label><select id="bikeCarryDrink1"></select></div>
                       <div class="pair"><label>Count</label><input id="bikeCarryDrink1Cnt" type="number" value="2" min="0" step="1"></div>
@@ -634,7 +634,7 @@
                 </div>
                 <div class="col-6">
                   <fieldset>
-                    <legend>Run &mdash; flasks, gels, tablets</legend>
+                    <legend>Run, flasks, gels, tablets</legend>
                     <div class="pairs">
                       <div class="pair"><label>Flask 1</label><select id="runCarryDrink1"></select></div>
                       <div class="pair"><label>Count</label><input id="runCarryDrink1Cnt" type="number" value="0" min="0" step="1"></div>
@@ -871,7 +871,7 @@
         <div>
           <div class="ys-meta" style="color: var(--wf-coral);">1. Targets</div>
           <h3 style="margin-top: 4px;">Hourly carb / fluid / sodium targets</h3>
-          <p>Your weight, sweat rate, and total race duration set the per-hour targets. The carb matrix scales with race time (Sprint sips, Ironman approaches 90&ndash;120 g/h). Run carbs default to 75% of bike to reflect reduced GI tolerance &mdash; override if you&rsquo;ve trained your gut higher.</p>
+          <p>Your weight, sweat rate, and total race duration set the per-hour targets. The carb matrix scales with race time (Sprint sips, Ironman approaches 90&ndash;120 g/h). Run carbs default to 75% of bike to reflect reduced GI tolerance, override if you&rsquo;ve trained your gut higher.</p>
         </div>
         <div>
           <div class="ys-meta" style="color: var(--wf-coral);">2. Inventory</div>
@@ -881,12 +881,12 @@
         <div>
           <div class="ys-meta" style="color: var(--wf-coral);">3. Transitions</div>
           <h3 style="margin-top: 4px;">T0, T1, T2 are real fueling windows</h3>
-          <p>T0 (&minus;15 min) is your pre-swim deposit. T1 is post-swim refuel. T2 is the run handover. Each gets its own products and counts toward the appropriate leg total &mdash; the planner knows pre-swim glucose lands in your bloodstream during the swim, not before it.</p>
+          <p>T0 (&minus;15 min) is your pre-swim deposit. T1 is post-swim refuel. T2 is the run handover. Each gets its own products and counts toward the appropriate leg total, the planner knows pre-swim glucose lands in your bloodstream during the swim, not before it.</p>
         </div>
         <div>
           <div class="ys-meta" style="color: var(--wf-coral);">4. Aid stations</div>
           <h3 style="margin-top: 4px;">Course aid plays into the math</h3>
-          <p>Set bike aid frequency (km) and what you grab per pass &mdash; bottles refill your on-bike bank and drain over time. Run aid stations dispense 150 ml cups; pick the drink and how many cups you grab. The schedule slots them at the actual time you arrive based on your pace.</p>
+          <p>Set bike aid frequency (km) and what you grab per pass, bottles refill your on-bike bank and drain over time. Run aid stations dispense 150 ml cups; pick the drink and how many cups you grab. The schedule slots them at the actual time you arrive based on your pace.</p>
         </div>
         <div>
           <div class="ys-meta" style="color: var(--wf-coral);">5. Schedule + scorecard</div>
@@ -895,7 +895,7 @@
         </div>
         <div>
           <div class="ys-meta" style="color: var(--wf-coral);">6. Cheat sheet</div>
-          <h3 style="margin-top: 4px;">Print or export &mdash; tape it to your top-tube</h3>
+          <h3 style="margin-top: 4px;">Print or export, tape it to your top-tube</h3>
           <p>Race-day PDF strips the inputs and shows: a one-page briefing (hourly targets + race totals + carry list + aid plan + transitions), then the cheat sheet (what / when), then glycogen trajectory and timeline. Export CSV for further editing or to import into a coach&rsquo;s spreadsheet.</p>
         </div>
       </div>
@@ -907,11 +907,11 @@
     <div class="ys-container">
       <div class="ys-cta-card" style="display: block;">
         <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
-        <h2 style="margin-top: 4px;">A plan is the floor &mdash; not the contract.</h2>
+        <h2 style="margin-top: 4px;">A plan is the floor, not the contract.</h2>
         <p>Most race-day fueling plans fail because they&rsquo;re built top-down (textbook number) instead of bottom-up (what your gut actually tolerates). Three rules I make every athlete follow:</p>
         <ul class="ys-card-bullets" style="margin-top: 12px;">
           <li><strong>Train every product on race day.</strong> Don&rsquo;t take Maurten 320 in the bottle for the first time at IM Lanzarote. Every bottle, gel, and tablet on the cheat sheet should have been tested at race intensity for at least three long sessions.</li>
-          <li><strong>Practice the transitions.</strong> T1 / T2 are not a bonus &mdash; they&rsquo;re ~50&ndash;100 g of CHO and 250&ndash;500 ml of fluid each. Drill them in brick workouts so they happen automatically when you&rsquo;re cooked.</li>
+          <li><strong>Practice the transitions.</strong> T1 / T2 are not a bonus, they&rsquo;re ~50&ndash;100 g of CHO and 250&ndash;500 ml of fluid each. Drill them in brick workouts so they happen automatically when you&rsquo;re cooked.</li>
           <li><strong>Have a downside plan.</strong> If you can&rsquo;t hit 100 g/h on the bike, what&rsquo;s your 70 g/h fallback? The planner&rsquo;s &ldquo;Recommended&rdquo; mode is the goal; &ldquo;Minimum&rdquo; is the bailout. Know both before the gun.</li>
         </ul>
         <p style="margin-top: 12px;"><strong>What this calculator can&rsquo;t do:</strong> tell you what your gut will tolerate at 88% CP in 32&deg;C heat. That&rsquo;s a training adaptation, not a number. The plan is the input; how you build the gut to execute it is the work.</p>
@@ -939,7 +939,7 @@
         </a>
         <a class="ys-calc-card redesigned" href="https://www.yousuli.co/sweat-rate-calculator" target="_top">
           <span class="ys-calc-card-title">Sweat rate</span>
-          <p>Measure your bike + run sweat rate from a weigh-in protocol &mdash; the most important input for fluid &amp; sodium targets above.</p>
+          <p>Measure your bike + run sweat rate from a weigh-in protocol, the most important input for fluid &amp; sodium targets above.</p>
           <span class="ys-calc-card-arrow">Open &rarr;</span>
         </a>
         <a class="ys-calc-card redesigned" href="https://www.yousuli.co/power-to-finish" target="_top">
@@ -1030,8 +1030,8 @@
     gatorade500:{name:"Gatorade 500 ml",cho:30,kcal:120,na:300,k:90,caf:0,fluid:500,kind:"drink"},
     gatorade650:{name:"Gatorade 650 ml",cho:39,kcal:156,na:390,k:117,caf:0,fluid:650,kind:"drink"},
     gatorade750:{name:"Gatorade 750 ml",cho:45,kcal:180,na:450,k:135,caf:0,fluid:750,kind:"drink"},
-    // Mortal Hydration — high-sodium, ZERO carbs. Flagship mix ≈ 2900 mg Na/L.
-    // Bug fix (A.1): was modelled as 5% CHO drink — corrected to 0 CHO,
+    // Mortal Hydration, high-sodium, ZERO carbs. Flagship mix ≈ 2900 mg Na/L.
+    // Bug fix (A.1): was modelled as 5% CHO drink, corrected to 0 CHO,
     // sodium = bottle_ml × 2.9. Verify against current packaging.
     mortal150:{name:"Mortal 150 ml",cho:0,kcal:0,na:435,k:0,caf:0,fluid:150,kind:"drink"},
     mortal250:{name:"Mortal 250 ml",cho:0,kcal:0,na:725,k:0,caf:0,fluid:250,kind:"drink"},
@@ -1079,35 +1079,35 @@
     sis_gel:{name:"SiS GO Isotonic",cho:22,kcal:87,na:40,k:0,caf:0,fluid:0,kind:"gel"},
     sis_caf:{name:"SiS GO Caffeine",cho:22,kcal:87,na:40,k:0,caf:75,fluid:0,kind:"gel"},
     sis_beta:{name:"SiS Beta Fuel",cho:40,kcal:160,na:30,k:0,caf:0,fluid:0,kind:"gel"},
-    // Precision Fuel — gels are CHO + Na dual-purpose. Bug fix (A.2):
-    // PF 30 sodium was 0, corrected to 50 mg. PF 60 / 90 added — common
+    // Precision Fuel, gels are CHO + Na dual-purpose. Bug fix (A.2):
+    // PF 30 sodium was 0, corrected to 50 mg. PF 60 / 90 added, common
     // for IM athletes targeting 60–90 g/h.
     pf30:{name:"PF 30 Gel",cho:30,kcal:120,na:50,k:0,caf:0,fluid:0,kind:"gel"},
     pf30_caf:{name:"PF 30 Caffeine",cho:30,kcal:120,na:50,k:0,caf:100,fluid:0,kind:"gel"},
     pf60:{name:"PF 60 Gel",cho:60,kcal:240,na:100,k:0,caf:0,fluid:0,kind:"gel"},
     pf60_caf:{name:"PF 60 Caffeine",cho:60,kcal:240,na:100,k:0,caf:100,fluid:0,kind:"gel"},
     pf90:{name:"PF 90 Gel",cho:90,kcal:360,na:110,k:0,caf:0,fluid:0,kind:"gel"},
-    // Neversecond — values verified against neversecond.com label panels
+    // Neversecond, values verified against neversecond.com label panels
     // (May 2026). Their C-series formula is uniform: ~200 mg Na per 30 g
     // of carbohydrate, applied to gels, sports drink mix, and C90 mix.
     ns_c30:{name:"Neversecond C30 gel",cho:30,kcal:120,na:200,k:0,caf:0,fluid:0,kind:"gel"},
     ns_c30_caf:{name:"Neversecond C30 Caffeine gel",cho:30,kcal:120,na:200,k:0,caf:75,fluid:0,kind:"gel"},
-    // (No Neversecond C90 gel — C90 only exists as a drink mix.)
-    // Neversecond Sports Drink Mix — single sachet dissolved in bottle.
+    // (No Neversecond C90 gel, C90 only exists as a drink mix.)
+    // Neversecond Sports Drink Mix, single sachet dissolved in bottle.
     // Label: 200 mg Na per 30 g CHO sachet.
     ns_mix_c30_500:{name:"Neversecond Mix C30 (500 ml)",cho:30,kcal:120,na:200,k:0,caf:0,fluid:500,kind:"drink"},
     ns_mix_c30_650:{name:"Neversecond Mix C30 (650 ml)",cho:30,kcal:120,na:200,k:0,caf:0,fluid:650,kind:"drink"},
     ns_mix_c30_750:{name:"Neversecond Mix C30 (750 ml)",cho:30,kcal:120,na:200,k:0,caf:0,fluid:750,kind:"drink"},
-    // Neversecond Mix C90 — 94 g sachet, label panel: 90 g CHO, 360 kcal,
-    // 200 mg Na (same Na as the C30 sachet — uniform 200 mg per 30 g CHO
+    // Neversecond Mix C90, 94 g sachet, label panel: 90 g CHO, 360 kcal,
+    // 200 mg Na (same Na as the C30 sachet, uniform 200 mg per 30 g CHO
     // does NOT scale up). Hub-checklist 660 mg figure was misinformation.
     ns_mix_c90_500:{name:"Neversecond Mix C90 (500 ml)",cho:90,kcal:360,na:200,k:0,caf:0,fluid:500,kind:"drink"},
     ns_mix_c90_650:{name:"Neversecond Mix C90 (650 ml)",cho:90,kcal:360,na:200,k:0,caf:0,fluid:650,kind:"drink"},
     ns_mix_c90_750:{name:"Neversecond Mix C90 (750 ml)",cho:90,kcal:360,na:200,k:0,caf:0,fluid:750,kind:"drink"},
-    // Neversecond C30 Fuel Bar — actual product (no "C40" SKU exists).
+    // Neversecond C30 Fuel Bar, actual product (no "C40" SKU exists).
     // Label: 30 g CHO, 180 kcal, 30 mg Na, 5 g fat, 3 g protein.
     ns_bar_c30:{name:"Neversecond C30 Fuel Bar",cho:30,kcal:180,na:30,k:0,caf:0,fluid:0,kind:"solid"},
-    // Neversecond S200 Sodium Booster — LIQUID sodium additive (not a
+    // Neversecond S200 Sodium Booster, LIQUID sodium additive (not a
     // tablet). 200 mg Na per capful. Functionally fills the "salt tab"
     // role for athletes building plans on Neversecond's C-series mix.
     ns_s200:{name:"Neversecond S200 Sodium Booster (capful)",cho:0,kcal:0,na:200,k:0,caf:0,fluid:0,kind:"tablet"},
@@ -1315,7 +1315,7 @@
   function renderWarnings(t,ath){
     const w=[];
     const maxCHO=Math.max(t.choBikeHr,t.choRunHr);
-    if(maxCHO>120)w.push({cls:'warning-red',msg:`CHO target ${maxCHO} g/h exceeds standard guidelines (max ~120 g/h). Some elite athletes tolerate higher rates &mdash; ensure well-trained gut and dual-transport carbs (glucose + fructose).`});
+    if(maxCHO>120)w.push({cls:'warning-red',msg:`CHO target ${maxCHO} g/h exceeds standard guidelines (max ~120 g/h). Some elite athletes tolerate higher rates, ensure well-trained gut and dual-transport carbs (glucose + fructose).`});
     else if(maxCHO>90)w.push({cls:'warning-yellow',msg:`CHO target ${maxCHO} g/h is high. Ensure you use dual-transport carbs (glucose + fructose) and have trained at this rate.`});
     else if(maxCHO>60)w.push({cls:'warning-green',msg:`CHO target ${maxCHO} g/h is moderate. Dual-transport carbs recommended for rates above 60 g/h.`});
     const maxFluid=Math.max(t.bikeMLhr,t.runMLhr);
@@ -1325,7 +1325,7 @@
     // (negative bwLossKg = over-drinking). Gain > 1 kg flags
     // potential hyponatremia risk (B.2).
     if(t.bwLossKg < -1){
-      w.push({cls:'warning-yellow',msg:`Projected fluid gain of ${fmt(Math.abs(t.bwLossKg),1)} kg (${fmt(Math.abs(t.bwLossPct),1)}% BW) &mdash; intake exceeds sweat loss. Hyponatremia risk, especially with low-sodium fluids. Reduce fluid intake or shift toward higher-sodium products (PH 1000 / 1500, Mortal Mix, salt tabs).`});
+      w.push({cls:'warning-yellow',msg:`Projected fluid gain of ${fmt(Math.abs(t.bwLossKg),1)} kg (${fmt(Math.abs(t.bwLossPct),1)}% BW), intake exceeds sweat loss. Hyponatremia risk, especially with low-sodium fluids. Reduce fluid intake or shift toward higher-sodium products (PH 1000 / 1500, Mortal Mix, salt tabs).`});
     } else if(t.bwLossPct>3.5){
       w.push({cls:'warning-red',msg:`Projected BW loss ${fmt(t.bwLossPct,1)}% exceeds safe threshold (&gt;3.5%). Increase fluid intake or reduce sweat rate expectations.`});
     } else if(t.bwLossPct>2.5){
@@ -1334,7 +1334,7 @@
     $('warnings').innerHTML=w.map(x=>`<div class="warning ${x.cls}">${x.msg}</div>`).join('');
   }
 
-  /* Bike/run CHO deficit warnings — fired after the schedule actually
+  /* Bike/run CHO deficit warnings, fired after the schedule actually
      computes leg totals so we can compare planned vs target. The math is
      real: e.g. for an Ironman bike at 100 g/h × 5 h = 500 g target. If
      the user packs too few gels (or low-CHO bottles), the gel pool
@@ -1352,7 +1352,7 @@
       const gelsNeeded = Math.ceil(bikeShort / 25); // assume ~25 g per gel
       out.push({
         cls: 'warning-yellow',
-        msg: `&#9888; Bike is <strong>${fmt(bikeShort,0)} g short of CHO target</strong> (${fmt(bikeAct,0)} / ${fmt(bikeTgt,0)} g). Add ~${gelsNeeded} more bike gels &mdash; or switch a bottle to a higher-CHO mix (Maurten 320, 40% super-syrup, or PF 60 Drink Mix doubled) to close the gap. At rates above 90 g/h you usually can&rsquo;t reach target on standard sports drink alone.`
+        msg: `&#9888; Bike is <strong>${fmt(bikeShort,0)} g short of CHO target</strong> (${fmt(bikeAct,0)} / ${fmt(bikeTgt,0)} g). Add ~${gelsNeeded} more bike gels, or switch a bottle to a higher-CHO mix (Maurten 320, 40% super-syrup, or PF 60 Drink Mix doubled) to close the gap. At rates above 90 g/h you usually can&rsquo;t reach target on standard sports drink alone.`
       });
     }
     // Run: tighter 10 g threshold (run target is already lower & GI is fragile)
@@ -1360,7 +1360,7 @@
       const gelsNeeded = Math.ceil(runShort / 25);
       out.push({
         cls: 'warning-yellow',
-        msg: `&#9888; Run is <strong>${fmt(runShort,0)} g short of CHO target</strong> (${fmt(runAct,0)} / ${fmt(runTgt,0)} g). Add ~${gelsNeeded} more run gels (or switch a flask / aid-station cup to a higher-CHO drink). Run gut tolerance is fragile &mdash; if the gap is large, also consider pre-loading more on the bike to reduce run intake demand.`
+        msg: `&#9888; Run is <strong>${fmt(runShort,0)} g short of CHO target</strong> (${fmt(runAct,0)} / ${fmt(runTgt,0)} g). Add ~${gelsNeeded} more run gels (or switch a flask / aid-station cup to a higher-CHO drink). Run gut tolerance is fragile, if the gap is large, also consider pre-loading more on the bike to reduce run intake demand.`
       });
     }
 
@@ -1370,7 +1370,7 @@
     }
   }
 
-  /* Per-hour CHO gap warning (B.3) — catches the case where the leg
+  /* Per-hour CHO gap warning (B.3), catches the case where the leg
      total *looks* on-target but one or two hours quietly drop below
      intake demand (e.g. an all-Mortal bike hour with no gels). Surface
      hours where actual CHO < 85% of target AND the absolute gap is
@@ -1389,7 +1389,7 @@
     });
     if (!bad.length) return;
     const rows = bad.map(b =>
-      `<div style="margin-left:1em;">&bull; <strong>${b.label}</strong>: ${fmt(b.act,0)} / ${fmt(b.tgt,0)} g (${fmt(b.pct*100,0)}%) &mdash; ${fmt(b.gap,0)} g short</div>`
+      `<div style="margin-left:1em;">&bull; <strong>${b.label}</strong>: ${fmt(b.act,0)} / ${fmt(b.tgt,0)} g (${fmt(b.pct*100,0)}%), ${fmt(b.gap,0)} g short</div>`
     ).join('');
     wDiv.insertAdjacentHTML('beforeend',
       `<div class="warning warning-yellow">&#9888; <strong>Per-hour CHO gap</strong> (target &lt; 85%):${rows}<div style="margin-top:6px;font-style:italic;">Add a gel (or swap a bottle for a higher-CHO mix) in each flagged hour.</div></div>`
@@ -1614,7 +1614,7 @@
     const raceAct=add(swimTot, add(bikeLegTot, runLegTot));
     addRow(tb,runStart+runMin+1,'seg-green','Race Total',{cho:`${fmt(raceAct.cho,0)} / ${fmt(bPC+rPC,0)}`,kcal:raceAct.kcal,fluid:`${fmt(raceAct.fluid,0)} / ${fmt(bPM+rPM,0)}`,na:`${fmt(raceAct.na,0)} / ${fmt(bPN+rPN,0)}`,k:raceAct.k,caf:raceAct.caf},'','race-total');
 
-    // Deficit warnings — append after leg totals are computed so the user
+    // Deficit warnings, append after leg totals are computed so the user
     // sees in plain text exactly how short bike / run are vs. target
     // and what to add to close the gap.
     appendDeficitWarnings(bikeLegTot.cho, bPC, runLegTot.cho, rPC);
@@ -1684,7 +1684,7 @@
     const swimBurn=t.burns.swim*0.70/4;
     const bikeBurn=t.burns.bike*0.65/4;
     const runBurn=t.burns.run*0.75/4;
-    // Z2 alternate substrate split (B.4) — typical IM target intensity.
+    // Z2 alternate substrate split (B.4), typical IM target intensity.
     // CHO:fat ≈ 1:1 ⇒ ~half the CHO burn. Surfacing this lets coaches
     // see the lower bound rather than treating the Z3 bar as a hard
     // prediction.
@@ -1713,7 +1713,7 @@
       const color=pct>50?'#22c55e':pct>25?'#eab308':'#ef4444';
       h+=`<div class="glycogen-row"><span class="glycogen-label">${p.label}</span><div class="glycogen-bar"><div class="glycogen-fill" style="width:${pct}%;background:${color}">${Math.round(p.val)}g</div></div></div>`;
     });
-    // Z2 alternate finish bar (B.4) — only show if it's materially
+    // Z2 alternate finish bar (B.4), only show if it's materially
     // different from the race-pace finish (> 5 g) so we don't add a
     // redundant row when the durations are tiny.
     if (Math.abs(z2Delta) > 5) {
@@ -1729,7 +1729,7 @@
     // Substrate-assumption note (B.4)
     h += `<div style="margin-top:14px;padding:10px 14px;background:#f0f9ff;border-left:4px solid #0284c7;font-size:0.86rem;color:#0c4a6e;border-radius:0 6px 6px 0;-webkit-print-color-adjust:exact;print-color-adjust:exact;">
             <strong style="color:#0284c7;">Substrate assumption.</strong>
-            The main trajectory uses race-pace CHO fractions (swim 70% / bike 65% / run 75%) &mdash; close to ~Z3 effort. At Z2 (typical IM target), the CHO:fat split is closer to 1:1, roughly halving CHO burn.
+            The main trajectory uses race-pace CHO fractions (swim 70% / bike 65% / run 75%), close to ~Z3 effort. At Z2 (typical IM target), the CHO:fat split is closer to 1:1, roughly halving CHO burn.
             <br/>
             <strong>Race-pace finish:</strong> ${Math.round(finishRace)} g &middot;
             <strong>Z2 finish:</strong> ${Math.round(finishZ2)} g &middot;
@@ -1842,7 +1842,7 @@
     const card = $('cheatSheetCard');
     const cheat = $('cheatSheet');
     if(!cheat || !cheat.children.length){
-      alert('Click "Build schedule" first — there’s nothing to print yet.');
+      alert('Click "Build schedule" first, there’s nothing to print yet.');
       return;
     }
     card.style.display='';

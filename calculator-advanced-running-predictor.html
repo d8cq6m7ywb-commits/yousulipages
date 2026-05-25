@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Advanced running predictor — Yousuli calculators</title>
+  <title>Advanced running predictor · Yousuli calculators</title>
   <meta name="description" content="Three-point race predictor with 5K-anchored threshold and full Yousuli running zones. Plug in your 400 m / 1600 m / 5000 m, get a robust 10K / half / marathon projection plus 9-band pace zones." />
 
   <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
@@ -295,7 +295,7 @@
       <span class="wf-eyebrow">Calculator &middot; Run</span>
       <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">Advanced running predictor.</h1>
       <div class="wf-subhead">3-point fit &middot; 5K-anchored threshold &middot; 9 zones</div>
-      <p class="lede" style="max-width: 660px;">Three race performances in &mdash; 400 m, 1600 m, 5000 m. Out comes a robust target-distance projection (median of three power-law fits), your 60-min threshold pace anchored to your 5K speed, and a full set of <strong>9 Yousuli running zones</strong> from Easy through ATP-PC.</p>
+      <p class="lede" style="max-width: 660px;">Three race performances in, 400 m, 1600 m, 5000 m. Out comes a robust target-distance projection (median of three power-law fits), your 60-min threshold pace anchored to your 5K speed, and a full set of <strong>9 Yousuli running zones</strong> from Easy through ATP-PC.</p>
       <div class="ys-btn-row" style="margin-top: 6px;">
         <a class="ys-btn ys-btn-coral" href="#tool">Use the calculator &darr;</a>
         <a class="ys-btn ys-btn-ghost" href="#how">How it&rsquo;s built</a>
@@ -308,7 +308,7 @@
     <div class="ys-container">
       <div class="ys-tool" style="max-width: 940px;">
         <h3>Plug in three performances</h3>
-        <p class="ys-tool-pre">All-out efforts, recent (within 4–6 weeks), enter as <strong>mm:ss</strong>. Spread across short / mid / long is the point — using three time-trials at very similar distances breaks the model.</p>
+        <p class="ys-tool-pre">All-out efforts, recent (within 4–6 weeks), enter as <strong>mm:ss</strong>. Spread across short / mid / long is the point, using three time-trials at very similar distances breaks the model.</p>
 
         <div class="arp-calc-host">
 
@@ -420,12 +420,12 @@
         <div class="ys-step">
           <div class="ys-step-num">02</div>
           <h3>Median projection</h3>
-          <p>For your target race distance we project all three predictions and take the <strong>middle one</strong>. Median is robust to outliers — a sandbagged 5K won&rsquo;t wreck the projection the way it would with just a single Riegel formula.</p>
+          <p>For your target race distance we project all three predictions and take the <strong>middle one</strong>. Median is robust to outliers, a sandbagged 5K won&rsquo;t wreck the projection the way it would with just a single Riegel formula.</p>
         </div>
         <div class="ys-step">
           <div class="ys-step-num">03</div>
           <h3>5K-anchored threshold</h3>
-          <p>From each model we compute the speed sustainable for 60 min. Then we constrain it to the band <strong>5K speed × [1/1.08 .. 1/1.03]</strong> &mdash; physiology says 5K pace is 103–108% of threshold. If the raw fit pulls threshold faster than that, we cap (and flag) it.</p>
+          <p>From each model we compute the speed sustainable for 60 min. Then we constrain it to the band <strong>5K speed × [1/1.08 .. 1/1.03]</strong>, physiology says 5K pace is 103–108% of threshold. If the raw fit pulls threshold faster than that, we cap (and flag) it.</p>
         </div>
       </div>
     </div>
@@ -436,14 +436,14 @@
     <div class="ys-container">
       <div class="ys-cta-card" style="display: block;">
         <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
-        <h2 style="margin-top: 4px;">3 points beat 1 &mdash; if the 3 are honest.</h2>
+        <h2 style="margin-top: 4px;">3 points beat 1, if the 3 are honest.</h2>
         <p>Riegel&rsquo;s single-effort predictor is fine. Three points let you see <strong>your power-duration shape</strong>, not just one point on it. Some athletes have flat curves (long-distance specialists), some have steep curves (sprinters trying to race long). The model picks up that signal.</p>
         <p style="margin-top: 10px;">Two patterns to watch in the output:</p>
         <ul class="ys-card-bullets" style="margin-top: 8px;">
-          <li><strong>"Adjusted" flag on threshold</strong> &mdash; means your 5K is faster than your other points predict. Either your 5K is exceptional or you sandbagged the longer effort. Anchoring keeps zones realistic; re-test the longer distance.</li>
-          <li><strong>10K projection seems slow</strong> &mdash; check the spread between your 1600 m and 5000 m k-values. A k &gt; 1.10 between them suggests you fade hard on long efforts. That&rsquo;s a base-volume problem, not a projection bug.</li>
+          <li><strong>"Adjusted" flag on threshold</strong>, means your 5K is faster than your other points predict. Either your 5K is exceptional or you sandbagged the longer effort. Anchoring keeps zones realistic; re-test the longer distance.</li>
+          <li><strong>10K projection seems slow</strong>, check the spread between your 1600 m and 5000 m k-values. A k &gt; 1.10 between them suggests you fade hard on long efforts. That&rsquo;s a base-volume problem, not a projection bug.</li>
         </ul>
-        <p style="margin-top: 12px;">For honest test data: pick a flat course or treadmill, well-paced, well-rested. Same shoes, same surface, similar temperature. Spread the three across 7–10 days &mdash; not the same day.</p>
+        <p style="margin-top: 12px;">For honest test data: pick a flat course or treadmill, well-paced, well-rested. Same shoes, same surface, similar temperature. Spread the three across 7–10 days, not the same day.</p>
         <div class="ys-btn-row" style="margin-top: 16px;">
           <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Lab testing</a>
           <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
@@ -465,7 +465,7 @@
         <div class="ys-card">
           <div class="ys-meta">Easy · 70–79%</div>
           <h3>Recovery</h3>
-          <p>Below the aerobic floor. Recovery runs, warm-ups, cool-downs. Should feel lazy &mdash; that&rsquo;s the point.</p>
+          <p>Below the aerobic floor. Recovery runs, warm-ups, cool-downs. Should feel lazy, that&rsquo;s the point.</p>
         </div>
         <div class="ys-card featured">
           <div class="ys-meta" style="color: var(--wf-coral);">Zone 2 · 80–87%</div>
@@ -495,7 +495,7 @@
         <div class="ys-card">
           <div class="ys-meta">VO₂max · 106–111%</div>
           <h3>Top-end aerobic</h3>
-          <p>3–5 min reps. Pushes the oxygen ceiling. Feels brutal &mdash; should. 1 session/week max.</p>
+          <p>3–5 min reps. Pushes the oxygen ceiling. Feels brutal, should. 1 session/week max.</p>
         </div>
         <div class="ys-card">
           <div class="ys-meta">Power · 112–120%</div>
@@ -532,7 +532,7 @@
         </a>
         <a class="ys-calc-card" href="https://www.yousuli.co/calculators" target="_top">
           <span class="ys-calc-card-title">All calculators</span>
-          <p>Back to the full catalog &mdash; 30+ endurance calculators across performance, fueling, swim, bike, run.</p>
+          <p>Back to the full catalog, 30+ endurance calculators across performance, fueling, swim, bike, run.</p>
           <span class="ys-calc-card-arrow">Browse &rarr;</span>
         </a>
       </div>
@@ -545,7 +545,7 @@
       <div class="ys-cta-card">
         <div>
           <h2>Want measured threshold &amp; VO<sub>2</sub>max?</h2>
-          <p>Lab testing measures lactate threshold and VO<sub>2</sub>max directly &mdash; same morning, single visit. The pace zones you walk out with are anchored to your physiology, not an extrapolation. Worth its weight for marathon prep.</p>
+          <p>Lab testing measures lactate threshold and VO<sub>2</sub>max directly, same morning, single visit. The pace zones you walk out with are anchored to your physiology, not an extrapolation. Worth its weight for marathon prep.</p>
         </div>
         <div>
           <div class="ys-btn-row">
@@ -642,7 +642,7 @@
         return d60 / T; // m/s
       }
 
-      // Yousuli zones — % of threshold speed
+      // Yousuli zones, % of threshold speed
       const ZONES = [
         { id: 'easy',  name: 'Easy',           sub: 'Recovery / warm-up',       lo: 0.70, hi: 0.79 },
         { id: 'z2',    name: 'Zone 2',         sub: 'Aerobic engine',           lo: 0.80, hi: 0.87, featured: true },

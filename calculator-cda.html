@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CdA estimate — Yousuli calculators</title>
+  <title>CdA estimate · Yousuli calculators</title>
   <meta name="description" content="Estimate your aerodynamic drag (CdA) from a steady-power ride or upload a FIT file for lap-by-lap analysis. Includes Ghibli aero-sensor support and the field-test protocol." />
 
   <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
@@ -23,7 +23,7 @@
 
   <!-- ============ SCOPED CALCULATOR STYLES ============ -->
   <style>
-    /* Compatibility shim — the platform's cda-fit.js was written against --yc-* CSS vars from yousuli-calculators.css.
+    /* Compatibility shim, the platform's cda-fit.js was written against --yc-* CSS vars from yousuli-calculators.css.
        Map them to our brand vars so the chart-driven tables/widgets still render cleanly. */
     .cda-calc-host {
       --yc-brand: var(--ys-navy);
@@ -276,7 +276,7 @@
       <span class="wf-eyebrow">Calculator &middot; Bike</span>
       <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">CdA estimate.</h1>
       <div class="wf-subhead">Power equation &middot; FIT file analyzer &middot; Ghibli aero sensor</div>
-      <p class="lede" style="max-width: 660px;">Two ways to find your CdA. <strong>Single-point</strong> &mdash; one steady-power ride, one number. <strong>FIT analyzer</strong> &mdash; upload your FIT file for lap-by-lap CdA with histograms, scatter, and time-series; pulls Ghibli aero-sensor data automatically when present. Field-test protocol included &mdash; the answer is only as good as the test.</p>
+      <p class="lede" style="max-width: 660px;">Two ways to find your CdA. <strong>Single-point</strong>, one steady-power ride, one number. <strong>FIT analyzer</strong>, upload your FIT file for lap-by-lap CdA with histograms, scatter, and time-series; pulls Ghibli aero-sensor data automatically when present. Field-test protocol included, the answer is only as good as the test.</p>
       <div class="ys-btn-row" style="margin-top: 6px;">
         <a class="ys-btn ys-btn-coral" href="#protocol">Read the protocol &darr;</a>
         <a class="ys-btn ys-btn-ghost" href="#tool">Skip to calculator</a>
@@ -298,31 +298,31 @@
           <div class="ys-step-num">01</div>
           <h3>Conditions</h3>
           <ul style="margin: 8px 0 0 18px; font-size: 0.92rem; color: var(--ys-navy);">
-            <li><strong>Calm wind</strong> &mdash; under 5 km/h ideal; out-and-back loops mandatory above that</li>
-            <li><strong>Flat road</strong> &mdash; gradient under 1%, smooth surface, no traffic</li>
-            <li><strong>Stable air</strong> &mdash; mid-day, no thermal currents</li>
-            <li><strong>Dry conditions</strong> &mdash; rain corrupts FIT speed/elevation data</li>
+            <li><strong>Calm wind</strong>, under 5 km/h ideal; out-and-back loops mandatory above that</li>
+            <li><strong>Flat road</strong>, gradient under 1%, smooth surface, no traffic</li>
+            <li><strong>Stable air</strong>, mid-day, no thermal currents</li>
+            <li><strong>Dry conditions</strong>, rain corrupts FIT speed/elevation data</li>
           </ul>
         </div>
         <div class="ys-step">
           <div class="ys-step-num">02</div>
           <h3>Equipment</h3>
           <ul style="margin: 8px 0 0 18px; font-size: 0.92rem; color: var(--ys-navy);">
-            <li><strong>Calibrated power meter</strong> &mdash; zero-offset before ride</li>
-            <li><strong>Known Crr</strong> &mdash; from a prior <a href="https://www.yousuli.co/crr-estimator" style="color: var(--wf-coral);" target="_top">Crr test</a> or default 0.0036 for road tires</li>
-            <li><strong>Race kit + race position</strong> &mdash; or your CdA is for someone else</li>
-            <li><strong>Ghibli aero sensor optional</strong> &mdash; FIT analyzer reads it automatically</li>
+            <li><strong>Calibrated power meter</strong>, zero-offset before ride</li>
+            <li><strong>Known Crr</strong>, from a prior <a href="https://www.yousuli.co/crr-estimator" style="color: var(--wf-coral);" target="_top">Crr test</a> or default 0.0036 for road tires</li>
+            <li><strong>Race kit + race position</strong>, or your CdA is for someone else</li>
+            <li><strong>Ghibli aero sensor optional</strong>, FIT analyzer reads it automatically</li>
           </ul>
         </div>
         <div class="ys-step">
           <div class="ys-step-num">03</div>
           <h3>Execution</h3>
           <ul style="margin: 8px 0 0 18px; font-size: 0.92rem; color: var(--ys-navy);">
-            <li><strong>Steady power</strong> &mdash; ±5%, no surges, no coasting</li>
-            <li><strong>Identical position</strong> &mdash; never sit up, never change grip; this is the #1 protocol failure</li>
-            <li><strong>20+ min duration</strong> &mdash; longer = better signal-to-noise</li>
-            <li><strong>Out-and-back if any wind</strong> &mdash; cancels asymmetric wind effects</li>
-            <li><strong>Pre-weigh full kit</strong> &mdash; rider + clothes + bike + bottles, calibrated scale</li>
+            <li><strong>Steady power</strong>, ±5%, no surges, no coasting</li>
+            <li><strong>Identical position</strong>, never sit up, never change grip; this is the #1 protocol failure</li>
+            <li><strong>20+ min duration</strong>, longer = better signal-to-noise</li>
+            <li><strong>Out-and-back if any wind</strong>, cancels asymmetric wind effects</li>
+            <li><strong>Pre-weigh full kit</strong>, rider + clothes + bike + bottles, calibrated scale</li>
           </ul>
         </div>
       </div>
@@ -593,15 +593,15 @@
     <div class="ys-container">
       <div class="ys-cta-card" style="display: block;">
         <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
-        <h2 style="margin-top: 4px;">CdA is the cheapest watts you&rsquo;ll ever buy &mdash; if you can hold the position.</h2>
+        <h2 style="margin-top: 4px;">CdA is the cheapest watts you&rsquo;ll ever buy, if you can hold the position.</h2>
         <p>A 0.05 m² CdA reduction is ~20 watts at 40 km/h. That beats most training blocks. Three things that move the needle:</p>
         <ul class="ys-card-bullets" style="margin-top: 12px;">
-          <li><strong>Position</strong> &mdash; arm pad height, shoulder width, head position, helmet choice. Test combinations on the same day to compare.</li>
-          <li><strong>Kit</strong> &mdash; tight tri-suit, race shoes, calf compression. ~10–15 W depending on baseline.</li>
-          <li><strong>Bike</strong> &mdash; aero frame, deep wheels, integrated cockpit. Diminishing returns past mid-tier.</li>
+          <li><strong>Position</strong>, arm pad height, shoulder width, head position, helmet choice. Test combinations on the same day to compare.</li>
+          <li><strong>Kit</strong>, tight tri-suit, race shoes, calf compression. ~10–15 W depending on baseline.</li>
+          <li><strong>Bike</strong>, aero frame, deep wheels, integrated cockpit. Diminishing returns past mid-tier.</li>
         </ul>
         <p style="margin-top: 12px;"><strong>The catch:</strong> a low-CdA position you can&rsquo;t hold for race duration is theatre. Real CdA = the average across all the times you sat up to drink, glanced down, looked over your shoulder. The protocol above forces an honest read.</p>
-        <p style="margin-top: 10px;">For the gold standard &mdash; field aero testing on a closed loop with sensor data &mdash; the lab handles it as a half-day session with multiple position changes tested side-by-side. Most athletes find 15–30 watts on their first visit.</p>
+        <p style="margin-top: 10px;">For the gold standard, field aero testing on a closed loop with sensor data, the lab handles it as a half-day session with multiple position changes tested side-by-side. Most athletes find 15–30 watts on their first visit.</p>
         <div class="ys-btn-row" style="margin-top: 16px;">
           <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Field aero testing</a>
           <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
@@ -631,7 +631,7 @@
         </a>
         <a class="ys-calc-card" href="https://www.yousuli.co/calculators" target="_top">
           <span class="ys-calc-card-title">All calculators</span>
-          <p>Back to the full catalog &mdash; 30+ endurance calculators across performance, fueling, swim, bike, run.</p>
+          <p>Back to the full catalog, 30+ endurance calculators across performance, fueling, swim, bike, run.</p>
           <span class="ys-calc-card-arrow">Browse &rarr;</span>
         </a>
       </div>
@@ -644,7 +644,7 @@
       <div class="ys-cta-card">
         <div>
           <h2>Want CdA measured side-by-side with position changes?</h2>
-          <p>Field aero testing at the lab tests multiple positions, kits, and equipment in a single half-day session &mdash; same protocol used by World Tour teams. Most athletes leave with 15–30 watts found and a documented baseline to test against next year.</p>
+          <p>Field aero testing at the lab tests multiple positions, kits, and equipment in a single half-day session, same protocol used by World Tour teams. Most athletes leave with 15–30 watts found and a documented baseline to test against next year.</p>
         </div>
         <div>
           <div class="ys-btn-row">

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Multisport FIT splitter — Yousuli calculators</title>
+  <title>Multisport FIT splitter · Yousuli calculators</title>
   <meta name="description" content="Upload a multisport .FIT file (triathlon, duathlon, swim/run, brick), review the auto-detected legs with confidence scores, drag boundary handles to refine, then export per-leg TCX or FIT files for WKO5 / TrainingPeaks. Includes timeline, route map, sanity-check chart, and sport-type override." />
 
   <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
@@ -216,7 +216,7 @@
       <span class="wf-eyebrow">Calculator &middot; Data tools</span>
       <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">Multisport FIT splitter.</h1>
       <div class="wf-subhead">Detect legs &middot; refine boundaries &middot; export per-leg TCX or FIT for WKO5 / TrainingPeaks</div>
-      <p class="lede" style="max-width: 680px;">Triathlons, duathlons, swim/run, brick workouts &mdash; all recorded as a single multisport .FIT file by your watch. Most analytics platforms struggle with these. Drop the file in: the splitter detects each leg (swim / T1 / bike / T2 / run), shows you a draggable timeline with confidence scores, lets you override sport types, and exports each leg as a clean per-sport TCX or FIT file ready to drag into WKO5, TrainingPeaks, intervals.icu, or Zwift Companion.</p>
+      <p class="lede" style="max-width: 680px;">Triathlons, duathlons, swim/run, brick workouts, all recorded as a single multisport .FIT file by your watch. Most analytics platforms struggle with these. Drop the file in: the splitter detects each leg (swim / T1 / bike / T2 / run), shows you a draggable timeline with confidence scores, lets you override sport types, and exports each leg as a clean per-sport TCX or FIT file ready to drag into WKO5, TrainingPeaks, intervals.icu, or Zwift Companion.</p>
       <div class="ys-btn-row" style="margin-top: 6px;">
         <a class="ys-btn ys-btn-coral" href="#tool">Upload your FIT &darr;</a>
         <a class="ys-btn ys-btn-ghost" href="#how">How it works</a>
@@ -324,7 +324,7 @@
                 <h3 class="block-title">Sanity-check chart</h3>
                 <p class="block-help">
                   Power (blue), heart rate (red), and speed (orange) over time.
-                  Dashed vertical lines mark leg boundaries &mdash; drag them to refine transitions.
+                  Dashed vertical lines mark leg boundaries, drag them to refine transitions.
                   <span id="downsampleIndicator" class="ds-indicator" style="display:none;"></span>
                 </p>
                 <canvas id="mainChart" class="chart-canvas"></canvas>
@@ -408,17 +408,17 @@
         <div>
           <div class="ys-meta" style="color: var(--wf-coral);">1. Parse</div>
           <h3 style="margin-top: 4px;">Reads the FIT file in your browser</h3>
-          <p>No upload &mdash; the multisport file (Garmin, Wahoo, Polar, Suunto, COROS) is parsed locally. Pulls every record (timestamp, position, power, HR, cadence, speed, altitude, temp), every session message, every event, plus device metadata.</p>
+          <p>No upload, the multisport file (Garmin, Wahoo, Polar, Suunto, COROS) is parsed locally. Pulls every record (timestamp, position, power, HR, cadence, speed, altitude, temp), every session message, every event, plus device metadata.</p>
         </div>
         <div>
           <div class="ys-meta" style="color: var(--wf-coral);">2. Detect legs</div>
           <h3 style="margin-top: 4px;">Multiple strategies, ranked by confidence</h3>
-          <p>Strategy 1: session messages (the FIT spec way) &mdash; most reliable when present. Strategy 2: sport-change events. Strategy 3: timer events. Strategy 4 (fallback): infer from records (sport flips + GPS gaps + speed/HR transitions). Each leg is tagged with the detection source and a confidence score.</p>
+          <p>Strategy 1: session messages (the FIT spec way), most reliable when present. Strategy 2: sport-change events. Strategy 3: timer events. Strategy 4 (fallback): infer from records (sport flips + GPS gaps + speed/HR transitions). Each leg is tagged with the detection source and a confidence score.</p>
         </div>
         <div>
           <div class="ys-meta" style="color: var(--wf-coral);">3. Refine</div>
           <h3 style="margin-top: 4px;">Drag the timeline boundaries</h3>
-          <p>Auto-detection is rarely perfect at transitions &mdash; T1 might land 8s into the bike or 5s before the swim ends. Drag the boundary handles on the timeline bar to nudge each transition by the second. The chart updates live so you can see exactly where power picks up or HR settles.</p>
+          <p>Auto-detection is rarely perfect at transitions, T1 might land 8s into the bike or 5s before the swim ends. Drag the boundary handles on the timeline bar to nudge each transition by the second. The chart updates live so you can see exactly where power picks up or HR settles.</p>
         </div>
         <div>
           <div class="ys-meta" style="color: var(--wf-coral);">4. Override sport</div>
@@ -445,14 +445,14 @@
       <div class="ys-cta-card" style="display: block;">
         <div class="ys-meta" style="color: var(--wf-coral);">Coach note</div>
         <h2 style="margin-top: 4px;">Why splitting matters for analysis.</h2>
-        <p>A single multisport FIT file is one normalised power, one TSS, one TRIMP, one IF &mdash; averaged across swim + T1 + bike + T2 + run. That number is meaningless. Split into per-leg files and suddenly:</p>
+        <p>A single multisport FIT file is one normalised power, one TSS, one TRIMP, one IF, averaged across swim + T1 + bike + T2 + run. That number is meaningless. Split into per-leg files and suddenly:</p>
         <ul class="ys-card-bullets" style="margin-top: 12px;">
-          <li><strong>Bike NP and IF</strong> are accurate &mdash; not diluted by 2 minutes of T1 sitting at zero watts.</li>
+          <li><strong>Bike NP and IF</strong> are accurate, not diluted by 2 minutes of T1 sitting at zero watts.</li>
           <li><strong>Run pace zones</strong> reflect actual run effort, not the swim/bike average dragging the GAP up or down.</li>
           <li><strong>HR drift</strong> per leg shows you whether the bike pace was too hot (drift &gt; 5%) or whether you went out too hard on the run. Single-file averages hide it.</li>
-          <li><strong>WKO5 power-duration curve</strong> per leg is the right input for race-specific FTP &mdash; bike-only PD curve from race files is gold for setting next season&rsquo;s targets.</li>
+          <li><strong>WKO5 power-duration curve</strong> per leg is the right input for race-specific FTP, bike-only PD curve from race files is gold for setting next season&rsquo;s targets.</li>
         </ul>
-        <p style="margin-top: 12px;"><strong>Pro tip:</strong> after splitting, re-upload the per-leg files into <a href="https://www.yousuli.co/fit-file-compare" style="color: var(--wf-coral);" target="_top">FIT file sensor compare</a> to compare your race-day power against your training power on the same course / same effort &mdash; race vs. training pacing discipline shows up immediately.</p>
+        <p style="margin-top: 12px;"><strong>Pro tip:</strong> after splitting, re-upload the per-leg files into <a href="https://www.yousuli.co/fit-file-compare" style="color: var(--wf-coral);" target="_top">FIT file sensor compare</a> to compare your race-day power against your training power on the same course / same effort, race vs. training pacing discipline shows up immediately.</p>
         <div class="ys-btn-row" style="margin-top: 16px;">
           <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
           <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
@@ -472,7 +472,7 @@
       <div class="ys-calc-grid">
         <a class="ys-calc-card redesigned" href="https://www.yousuli.co/fit-file-compare" target="_top">
           <span class="ys-calc-card-title">FIT file sensor comparison</span>
-          <p>After splitting, compare per-leg files against another device or another race &mdash; offset, drift, dropouts diagnosed automatically.</p>
+          <p>After splitting, compare per-leg files against another device or another race, offset, drift, dropouts diagnosed automatically.</p>
           <span class="ys-calc-card-arrow">Open &rarr;</span>
         </a>
         <a class="ys-calc-card redesigned" href="https://www.yousuli.co/cda-estimate" target="_top">
@@ -482,7 +482,7 @@
         </a>
         <a class="ys-calc-card redesigned" href="https://www.yousuli.co/triathlon-finish-time-calculator" target="_top">
           <span class="ys-calc-card-title">Triathlon finish time</span>
-          <p>Predict your next race finish from your current swim / bike / run capacities &mdash; companion to splitting your last race for analysis.</p>
+          <p>Predict your next race finish from your current swim / bike / run capacities, companion to splitting your last race for analysis.</p>
           <span class="ys-calc-card-arrow">Open &rarr;</span>
         </a>
       </div>
