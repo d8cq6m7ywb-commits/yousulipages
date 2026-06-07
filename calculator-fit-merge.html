@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FIT file merger · Yousuli calculators</title>
+  <meta name="description" content="Merge multiple .fit files from one intended activity, ride / break / ride that got recorded as 2+ separate files, into a single continuous FIT file. Choose stitch mode (treat as one continuous effort) or preserve real-time gaps. Free, runs entirely in your browser." />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED TOOL STYLES ============ -->
+  <style>
+    .fitmerge-host { width: 100%; }
+    .fitmerge-host .merge-card {
+      background: #fff;
+      border: 1px solid var(--ys-line);
+      border-radius: 14px;
+      padding: 26px 28px;
+      box-shadow: 0 4px 18px rgba(47, 45, 86, 0.07);
+    }
+    .fitmerge-host .merge-section {
+      margin-top: 24px;
+    }
+    .fitmerge-host .merge-section:first-child {
+      margin-top: 0;
+    }
+    .fitmerge-host .merge-section-title {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      color: var(--ys-navy);
+      margin: 0 0 10px;
+    }
+    .fitmerge-host .merge-section-help {
+      font-size: 0.88rem;
+      color: var(--ys-muted);
+      margin: 0 0 12px;
+    }
+
+    /* Drop zone */
+    .fitmerge-host .merge-drop-zone {
+      border: 2px dashed var(--ys-line);
+      border-radius: 12px;
+      padding: 28px 22px;
+      text-align: center;
+      background: var(--ys-bg-soft);
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .fitmerge-host .merge-drop-zone:hover,
+    .fitmerge-host .merge-drop-zone.merge-drop-active {
+      border-color: var(--wf-coral);
+      background: rgba(250, 119, 60, 0.06);
+    }
+    .fitmerge-host .merge-drop-zone p {
+      margin: 4px 0;
+      color: var(--ys-muted);
+      font-size: 0.92rem;
+    }
+    .fitmerge-host .merge-drop-zone strong {
+      color: var(--ys-navy);
+      font-size: 1.02rem;
+    }
+    .fitmerge-host .merge-drop-zone input[type="file"] {
+      display: none;
+    }
+    .fitmerge-host .merge-drop-label {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 8px 16px;
+      background: var(--ys-navy);
+      color: #fff;
+      border-radius: 999px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em;
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+    .fitmerge-host .merge-drop-label:hover {
+      background: var(--wf-coral);
+    }
+    .fitmerge-host .merge-status {
+      margin-top: 10px;
+      font-size: 0.88rem;
+      color: var(--ys-muted);
+      font-style: italic;
+      text-align: center;
+    }
+
+    /* File list */
+    .fitmerge-host .merge-empty {
+      color: var(--ys-muted);
+      font-size: 0.92rem;
+      font-style: italic;
+      margin: 0;
+      padding: 14px 0;
+      text-align: center;
+    }
+    .fitmerge-host .merge-file-row {
+      display: grid;
+      grid-template-columns: 32px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 14px;
+      background: #fff;
+      border: 1px solid var(--ys-line);
+      border-radius: 10px;
+      margin: 6px 0;
+      transition: border-color 0.15s ease;
+    }
+    .fitmerge-host .merge-file-row.has-error {
+      border-color: #c69b1a;
+      background: #fdf6e0;
+    }
+    .fitmerge-host .merge-file-idx {
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      color: var(--wf-coral);
+      font-size: 1.1rem;
+      text-align: center;
+    }
+    .fitmerge-host .merge-file-info {
+      min-width: 0;
+    }
+    .fitmerge-host .merge-file-name {
+      font-weight: 600;
+      color: var(--ys-navy);
+      margin-bottom: 4px;
+      word-break: break-all;
+    }
+    .fitmerge-host .merge-sport {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 1px 8px;
+      border-radius: 999px;
+      background: var(--ys-bg-soft);
+      color: var(--ys-muted);
+      font-size: 0.74rem;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      vertical-align: middle;
+    }
+    .fitmerge-host .merge-file-meta {
+      font-size: 0.82rem;
+      color: var(--ys-muted);
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .fitmerge-host .merge-file-meta strong {
+      color: var(--ys-navy);
+      font-weight: 600;
+      margin-right: 4px;
+    }
+    .fitmerge-host .merge-file-error {
+      margin-top: 6px;
+      color: #a07712;
+      font-size: 0.84rem;
+    }
+    .fitmerge-host .merge-file-actions {
+      display: flex;
+      gap: 4px;
+    }
+    .fitmerge-host .merge-btn-icon {
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--ys-line);
+      background: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--ys-navy);
+      font-size: 0.78rem;
+    }
+    .fitmerge-host .merge-btn-icon:hover {
+      border-color: var(--wf-coral);
+      color: var(--wf-coral);
+    }
+    .fitmerge-host .merge-btn-remove {
+      color: #c93939;
+    }
+    .fitmerge-host .merge-btn-remove:hover {
+      border-color: #c93939;
+      color: #c93939;
+    }
+    .fitmerge-host .merge-gap {
+      font-size: 0.82rem;
+      text-align: center;
+      padding: 4px 0;
+      color: var(--ys-muted);
+    }
+    .fitmerge-host .merge-gap.merge-gap-warn {
+      color: #c93939;
+    }
+    .fitmerge-host .merge-gap strong {
+      font-family: var(--ys-font-display);
+    }
+
+    /* Gap mode */
+    .fitmerge-host .merge-radio-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 600px) {
+      .fitmerge-host .merge-radio-group { grid-template-columns: 1fr; }
+    }
+    .fitmerge-host .merge-radio-tile {
+      border: 2px solid var(--ys-line);
+      border-radius: 10px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .fitmerge-host .merge-radio-tile:hover {
+      border-color: var(--wf-coral);
+    }
+    .fitmerge-host .merge-radio-tile input[type="radio"] {
+      margin-right: 8px;
+    }
+    .fitmerge-host .merge-radio-tile input[type="radio"]:checked + .merge-radio-label {
+      color: var(--wf-coral);
+    }
+    .fitmerge-host .merge-radio-tile:has(input:checked) {
+      border-color: var(--wf-coral);
+      background: rgba(250, 119, 60, 0.05);
+    }
+    .fitmerge-host .merge-radio-label {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.04em;
+      color: var(--ys-navy);
+      font-weight: 600;
+      font-size: 0.94rem;
+    }
+    .fitmerge-host .merge-radio-help {
+      font-size: 0.84rem;
+      color: var(--ys-muted);
+      margin: 6px 0 0 24px;
+    }
+
+    /* Summary */
+    .fitmerge-host .merge-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+    }
+    .fitmerge-host .merge-summary-tile {
+      background: var(--ys-bg-soft);
+      border-radius: 10px;
+      padding: 12px 14px;
+      text-align: center;
+    }
+    .fitmerge-host .merge-summary-label {
+      display: block;
+      font-size: 0.74rem;
+      color: var(--ys-muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-family: var(--ys-font-display);
+      margin-bottom: 4px;
+    }
+    .fitmerge-host .merge-summary-value {
+      display: block;
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      color: var(--ys-navy);
+      font-size: 1.18rem;
+    }
+    .fitmerge-host .merge-summary-sub {
+      display: block;
+      font-size: 0.74rem;
+      color: var(--ys-muted);
+      margin-top: 2px;
+      font-style: italic;
+    }
+
+    /* Action row */
+    .fitmerge-host .merge-action-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 14px;
+    }
+    .fitmerge-host .merge-action-row button {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em;
+      font-size: 0.92rem;
+      padding: 12px 22px;
+      border-radius: 999px;
+      cursor: pointer;
+      border: 0;
+      transition: transform 0.1s ease, background 0.15s ease, opacity 0.15s ease;
+    }
+    .fitmerge-host .merge-download-btn {
+      background: var(--wf-coral);
+      color: #fff;
+    }
+    .fitmerge-host .merge-download-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+    .fitmerge-host .merge-download-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .fitmerge-host .merge-clear-btn {
+      background: transparent;
+      color: var(--ys-navy);
+      border: 1px solid var(--ys-line);
+    }
+    .fitmerge-host .merge-clear-btn:hover {
+      border-color: #c93939;
+      color: #c93939;
+    }
+
+    /* Case 2 callout */
+    .fitmerge-host .merge-hub-callout {
+      margin-top: 22px;
+      padding: 18px 22px;
+      border-left: 4px solid var(--ys-teal, #00B3A4);
+      background: rgba(0, 179, 164, 0.06);
+      border-radius: 0 10px 10px 0;
+    }
+    .fitmerge-host .merge-hub-callout-tag {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      color: var(--ys-teal, #00B3A4);
+      margin-bottom: 8px;
+    }
+    .fitmerge-host .merge-hub-callout p {
+      margin: 0 0 6px;
+    }
+    .fitmerge-host .merge-hub-callout p:last-child {
+      margin-bottom: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Programs</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://hub.yousuli.co/" target="_top" rel="noopener">Hub &#x2197;</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 72px 0 40px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Calculator &middot; Data tools</span>
+      <h1 style="font-size: clamp(2rem, 4.6vw, 3.4rem);">FIT file merger.</h1>
+      <div class="wf-subhead">Stitch a split-up activity back into one continuous .fit</div>
+      <p class="lede" style="max-width: 680px;">When one intended ride or run ends up recorded as two or three separate <code>.fit</code> files, battery died and the device restarted, you accidentally hit stop / start at a coffee stop, the head unit recorded the coffee break as its own activity, this tool stitches them back into a single continuous FIT file. Two modes: <strong>stitch</strong> (treat as one continuous effort with no gap) or <strong>preserve</strong> (keep the real timestamps, gaps and all). Runs entirely in your browser, no upload.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#tool">Drop your files &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/calculators" target="_top">All calculators</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TOOL ============ -->
+  <section class="wf-section" id="tool" style="padding: 24px 0 48px;">
+    <div class="ys-container" style="max-width: 880px;">
+
+      <div class="fitmerge-host">
+        <div class="merge-card">
+
+          <!-- 1. Upload -->
+          <div class="merge-section">
+            <h2 class="merge-section-title">1. Drop your .fit files</h2>
+            <p class="merge-section-help">Two or more files from the same intended activity. They&rsquo;ll auto-sort by start time. You can reorder or remove any after upload.</p>
+
+            <div class="merge-drop-zone" id="mergeDropZone">
+              <strong>Drag and drop your .fit files here</strong>
+              <p>or</p>
+              <label for="mergeFileInput" class="merge-drop-label">Choose files</label>
+              <input type="file" id="mergeFileInput" accept=".fit" multiple />
+            </div>
+            <div class="merge-status" id="mergeStatus">No files loaded.</div>
+          </div>
+
+          <!-- 2. File list -->
+          <div class="merge-section">
+            <h2 class="merge-section-title">2. Files in order</h2>
+            <p class="merge-section-help">Sorted oldest first. Use ▲ / ▼ to reorder, ✕ to remove. Gaps between files are shown below each row.</p>
+            <div id="mergeFileList"></div>
+          </div>
+
+          <!-- 3. Gap mode -->
+          <div class="merge-section">
+            <h2 class="merge-section-title">3. Gap mode</h2>
+            <p class="merge-section-help">What to do with the time between the end of one file and the start of the next.</p>
+            <div class="merge-radio-group">
+              <label class="merge-radio-tile">
+                <input type="radio" name="gapMode" id="gapModeStitch" value="stitch" checked />
+                <span class="merge-radio-label">Stitch</span>
+                <div class="merge-radio-help">Treat as one continuous effort. Each next file is shifted to start 1 second after the previous one ends. Output duration = sum of moving times. Best when the gaps are random device hiccups you don&rsquo;t care about.</div>
+              </label>
+              <label class="merge-radio-tile">
+                <input type="radio" name="gapMode" id="gapModePreserve" value="preserve" />
+                <span class="merge-radio-label">Preserve</span>
+                <div class="merge-radio-help">Keep the real timestamps. Output spans the full elapsed time (rides plus gaps). Best when the gaps were real pauses (coffee stops, mechanical fix) that the post-race analytics platform should auto-pause on.</div>
+              </label>
+            </div>
+          </div>
+
+          <!-- 4. Summary -->
+          <div class="merge-section">
+            <h2 class="merge-section-title">4. Merge preview</h2>
+            <div id="mergeSummary"></div>
+          </div>
+
+          <!-- 5. Action -->
+          <div class="merge-section">
+            <div class="merge-action-row">
+              <button type="button" class="merge-download-btn" id="mergeDownloadBtn" disabled>Merge &amp; download .fit</button>
+              <button type="button" class="merge-clear-btn" id="mergeClearBtn">Clear all</button>
+            </div>
+          </div>
+
+          <!-- Case 2 hub upgrade callout -->
+          <div class="merge-hub-callout">
+            <div class="merge-hub-callout-tag">For multi-device merges: full functionality on the hub</div>
+            <p>This tool covers the <strong>sequential case</strong>: one activity split across two or more files in time. If you&rsquo;re trying to combine data <strong>recorded simultaneously on two or more devices</strong> (e.g. one head unit has power + HR, another has power + Stryd running power + Moxy SmO<sub>2</sub>), that&rsquo;s the parallel-merge case and it needs clock alignment, sampling-rate matching, per-field conflict resolution, and developer-field preservation.</p>
+            <p>That belongs on the <a href="https://hub.yousuli.co/" target="_top" rel="noopener"><strong>Yousuli hub</strong></a> where merges can be saved to your athlete profile and replayed on future activities. It&rsquo;s coming as part of the hub data-tools build.</p>
+          </div>
+
+        </div>
+
+        <!-- Scope / what this does + doesn't -->
+        <div style="margin-top: 22px; padding: 18px 22px; background: var(--ys-bg-soft); border-radius: 10px; font-size: 0.9rem; color: var(--ys-muted);">
+          <p style="margin: 0 0 8px; color: var(--ys-navy); font-family: var(--ys-font-display); letter-spacing: 0.06em; text-transform: uppercase; font-size: 0.74rem;">Scope &amp; honesty notes</p>
+          <ul style="margin: 0; padding-left: 18px;">
+            <li>v1 preserves the standard record fields: timestamp, GPS lat/long, altitude, heart rate, cadence, distance, speed, power, temperature. Distance is re-accumulated across files for a continuous total.</li>
+            <li>Lap, session, and event messages from the input files are <strong>not</strong> carried across; the merged file emits a fresh activity record. TrainingPeaks / Strava / intervals.icu will recompute their own laps + summaries on re-upload.</li>
+            <li>Developer fields (Stryd form power, Moxy SmO<sub>2</sub>, EO SwimBETTER force vectors, etc.) are <strong>not</strong> preserved in v1. They live in the parallel-merge case on the hub.</li>
+            <li>Multi-sport stitching (a swim file followed by a bike file) is out of scope: the output is a single-sport activity. For multi-sport, use the <a href="https://www.yousuli.co/multisport-fit-breaker" target="_top">multisport splitter</a> in reverse, then merge legs of the same sport.</li>
+            <li>Everything runs in your browser. Your files don&rsquo;t leave your device.</li>
+          </ul>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ FIT-FILE-PARSER (ESM, offline-capable, same module msbreaker uses) ============ -->
+  <script type="module">
+    import FitParser from "./assets/msbreaker-lib/fit-file-parser.esm.js";
+    window.FitParser = FitParser;
+    // Tell our app the parser is ready
+    window.dispatchEvent(new Event("fitParserReady"));
+  </script>
+
+  <!-- ============ MERGER ENGINE ============ -->
+  <script src="assets/fit-merge.js"></script>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Online programs</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:info@yousuli.co">info@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

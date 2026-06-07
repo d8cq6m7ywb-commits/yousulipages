@@ -82,6 +82,7 @@ Each pair brackets a Wix native widget on a specific page:
 | calculator-all-in-one.html                 | `/all-in-one` |
 | calculator-fit-compare.html                | `/fit-file-compare` |
 | calculator-multisport-breaker.html         | `/multisportbreaker` |
+| calculator-fit-merge.html                  | `/fit-file-merger` |
 
 ## Special URLs
 
