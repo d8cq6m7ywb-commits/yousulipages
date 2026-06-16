@@ -1,0 +1,764 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Swim foundations · Yousuli &times; Slipstream · free mini-course</title>
+  <meta name="description" content="A free, foundational freestyle course for adult athletes who can already get in a pool but aren't comfortable past short stretches. Goal: a relaxed 30 min / 1,500 m freestyle. Co-built with Slipstream. Drills, tools, technique, practice plans." />
+  <meta name="robots" content="noindex,nofollow" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Swim foundations · Yousuli × Slipstream" />
+  <meta property="og:description" content="Free foundational freestyle mini-course. Drill-first, tool-aware, built around the Slipstream swim station." />
+  <meta property="og:url" content="https://www.yousuli.co/swim-course" />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED PAGE STYLES ============ -->
+  <style>
+    /* Brand-leaning swim palette (teal accent for Slipstream / water) */
+    :root {
+      --sf-teal: var(--ys-teal, #00B3A4);
+      --sf-deep: #0e5f5a;
+      --sf-pool: #d9f0ee;
+    }
+
+    /* Co-brand pill in the hero */
+    .sf-cobrand {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(0,179,164,0.10);
+      color: var(--sf-deep);
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      font-size: 0.72rem; font-weight: 600;
+      margin-bottom: 14px;
+    }
+    .sf-cobrand .sf-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--sf-teal); display: inline-block;
+    }
+
+    /* Reusable callout style (similar family to ucla-callout) */
+    .sf-callout {
+      padding: 18px 22px;
+      border-left: 4px solid var(--wf-coral);
+      background: var(--ys-bg-soft);
+      border-radius: 0 10px 10px 0;
+      margin: 14px 0;
+    }
+    .sf-callout.teal { border-left-color: var(--sf-teal); background: rgba(0,179,164,0.06); }
+    .sf-callout.warn { border-left-color: #c69b1a; background: #fdf6e0; }
+    .sf-callout-tag {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      color: var(--wf-coral);
+      margin-bottom: 6px;
+    }
+    .sf-callout.teal .sf-callout-tag { color: var(--sf-deep); }
+    .sf-callout.warn .sf-callout-tag { color: #a07712; }
+
+    /* Curriculum stage rows */
+    .sf-stage {
+      background: white;
+      border: 1px solid var(--ys-line);
+      border-radius: 14px;
+      padding: 24px 26px;
+      margin-bottom: 18px;
+      box-shadow: 0 1px 3px rgba(47,45,86,0.06);
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+    @media (max-width: 600px) {
+      .sf-stage { grid-template-columns: 1fr; gap: 12px; padding: 20px 18px; }
+    }
+    .sf-stage-num {
+      font-family: var(--ys-font-display);
+      font-weight: 800;
+      font-size: 3rem;
+      color: var(--sf-teal);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .sf-stage h3 {
+      margin: 0 0 6px;
+      font-family: var(--ys-font-display);
+      color: var(--ys-navy);
+      font-size: 1.28rem;
+    }
+    .sf-stage .sf-stage-goal {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      color: var(--sf-deep);
+      margin-bottom: 8px;
+    }
+    .sf-stage p { margin: 0 0 8px; }
+    .sf-stage-meta {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin-top: 10px;
+    }
+    .sf-stage-tag {
+      font-size: 0.78rem;
+      background: rgba(47,45,86,0.06);
+      padding: 4px 10px;
+      border-radius: 999px;
+      color: var(--ys-navy);
+    }
+    .sf-stage-tag.drill { background: rgba(250,119,60,0.10); color: #b04a17; }
+    .sf-stage-tag.tool  { background: rgba(0,179,164,0.10); color: var(--sf-deep); }
+
+    /* Tools mini-grid */
+    .sf-tool {
+      background: white;
+      border: 1px solid var(--ys-line);
+      border-radius: 12px;
+      padding: 16px 18px;
+    }
+    .sf-tool h4 {
+      margin: 0 0 4px;
+      font-family: var(--ys-font-display);
+      color: var(--ys-navy);
+      font-size: 1.04rem;
+    }
+    .sf-tool .sf-tool-meta {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--wf-coral);
+      margin-bottom: 6px;
+      font-family: var(--ys-font-display);
+    }
+    .sf-tool p { margin: 0; font-size: 0.92rem; color: var(--ys-muted); }
+
+    /* Common-mistake cards */
+    .sf-mistakes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
+    .sf-mistake {
+      background: white;
+      border-left: 4px solid #c69b1a;
+      border-radius: 0 10px 10px 0;
+      padding: 14px 18px;
+      box-shadow: 0 1px 2px rgba(47,45,86,0.05);
+    }
+    .sf-mistake h4 {
+      margin: 0 0 4px;
+      font-family: var(--ys-font-display);
+      color: var(--ys-navy);
+      font-size: 1.02rem;
+    }
+    .sf-mistake p { margin: 0; font-size: 0.9rem; color: var(--ys-muted); }
+
+    /* Weekly template box */
+    .sf-week {
+      background: white;
+      border: 1px solid var(--ys-line);
+      border-radius: 14px;
+      padding: 22px 24px;
+      box-shadow: 0 1px 3px rgba(47,45,86,0.06);
+    }
+    .sf-week h4 {
+      margin: 0 0 8px;
+      font-family: var(--ys-font-display);
+      color: var(--ys-navy);
+    }
+    .sf-week-row {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 16px;
+      padding: 10px 0;
+      border-bottom: 1px dashed rgba(47,45,86,0.10);
+      align-items: start;
+    }
+    .sf-week-row:last-child { border-bottom: 0; }
+    .sf-week-row .sf-week-when {
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      color: var(--sf-deep);
+      font-size: 0.94rem;
+    }
+    @media (max-width: 500px) {
+      .sf-week-row { grid-template-columns: 1fr; gap: 4px; }
+    }
+
+    /* CTA tiles at the bottom */
+    .sf-cta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 8px;
+    }
+    @media (max-width: 700px) {
+      .sf-cta-grid { grid-template-columns: 1fr; }
+    }
+    .sf-cta-card {
+      background: white;
+      border-radius: 14px;
+      padding: 26px 28px;
+      box-shadow: 0 4px 14px rgba(47,45,86,0.08);
+      border: 1px solid var(--ys-line);
+    }
+    .sf-cta-card.featured {
+      background: linear-gradient(135deg, var(--sf-deep) 0%, var(--sf-teal) 100%);
+      color: white;
+      border: 0;
+    }
+    .sf-cta-card.featured h3,
+    .sf-cta-card.featured p { color: white; }
+    .sf-cta-card .sf-cta-meta {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      color: var(--wf-coral);
+      margin-bottom: 8px;
+    }
+    .sf-cta-card.featured .sf-cta-meta { color: rgba(255,255,255,0.85); }
+    .sf-cta-card h3 {
+      font-family: var(--ys-font-display);
+      color: var(--ys-navy);
+      margin: 0 0 6px;
+      font-size: 1.24rem;
+    }
+    .sf-cta-card p { margin: 0 0 14px; }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Programs</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://hub.yousuli.co/" target="_top" rel="noopener">Hub &#x2197;</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero">
+    <div class="ys-container">
+      <span class="sf-cobrand"><span class="sf-dot"></span> Yousuli &times; Slipstream &middot; free mini-course</span>
+      <h1>Swim foundations.</h1>
+      <div class="wf-subhead">From in-the-water to a comfortable 1,500&nbsp;m freestyle</div>
+      <p class="lede">A free, structured freestyle course for adult athletes who can already get in a pool but aren&rsquo;t comfortable past short stretches. The goal is simple: a relaxed <strong>30 min, or 1,500 m</strong>, of continuous freestyle. Drill-first, tool-aware, built around the <strong>Slipstream</strong> stationary swim station so a small pool becomes a real training space. Read it cover-to-cover, or jump to whichever stage fits where you are.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#curriculum">See the curriculum &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#slipstream">What&rsquo;s the Slipstream piece?</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHO THIS IS FOR ============ -->
+  <section class="wf-section" id="who">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Who this course is for</h2>
+        <div class="ys-rule"></div>
+        <p>Honest, before you sink time into it.</p>
+      </div>
+
+      <div class="ys-grid" style="grid-template-columns: 1fr 1fr; gap: 20px; justify-content: center;">
+        <article class="ys-card">
+          <div class="ys-meta" style="color: var(--sf-teal);">Who this is for</div>
+          <h3>You, if&hellip;</h3>
+          <ul class="ys-card-bullets">
+            <li>You can already get in the water without fear, but you stall out somewhere around 50 to 200 m of freestyle</li>
+            <li>You learned to swim as a kid but never had real technique coaching, or you started swimming as an adult</li>
+            <li>You&rsquo;re training for a triathlon and the swim leg is the discipline you avoid</li>
+            <li>You can &ldquo;survive&rdquo; a 400 m but it&rsquo;s ugly and exhausting, and you have no idea how to fix that</li>
+            <li>You want a structured way to get to 30 min / 1,500 m of relaxed continuous freestyle</li>
+          </ul>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta" style="color: var(--ys-muted);">Who this is not for</div>
+          <h3>Probably not you, if&hellip;</h3>
+          <ul class="ys-card-bullets">
+            <li><strong>You&rsquo;re afraid of the water.</strong> That&rsquo;s a different course and a different conversation. Start with a qualified swim instructor or sports therapist first. Come back when you can put your face in.</li>
+            <li><strong>You already race comfortably</strong> over 1,500 m and want to drop time. This is too foundational. The race-prep work lives in the <a href="https://www.yousuli.co/coaching" target="_top">coaching</a> path.</li>
+            <li><strong>You expect to learn from text alone.</strong> Swim technique transfers through reps and feedback. This page gives you the structure, the drills, the tools, and a Slipstream-based way to get the reps. You still have to swim.</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE DESTINATION ============ -->
+  <section class="wf-section alt" id="goal">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Where this course gets you</h2>
+        <div class="ys-rule"></div>
+        <p>One clear milestone, written down so we both know what success looks like.</p>
+      </div>
+
+      <div class="sf-callout teal">
+        <div class="sf-callout-tag">The milestone</div>
+        <p style="margin: 0 0 6px;"><strong>A relaxed 30 minutes, or 1,500 m, of continuous freestyle.</strong> Not fast. Not pretty by Olympic standards. Just continuous, controlled, breathing properly, with a stroke that doesn&rsquo;t fall apart at the back end.</p>
+        <p style="margin: 0;">If that sounds modest, it&rsquo;s because it is, in a good way. 30 min / 1,500 m unlocks: most sprint and Olympic-distance triathlons, open-water swims at most parks and lakes, joining an adult swim club without anxiety, fitness swimming for the rest of your life. It&rsquo;s the milestone after which the sport opens up.</p>
+      </div>
+
+      <div class="sf-callout">
+        <div class="sf-callout-tag">Why distance, not speed</div>
+        <p style="margin: 0;">Speed comes from efficiency, not effort. Push hard on a broken stroke and you&rsquo;ll be slower <em>and</em> more exhausted than someone half-fit with a clean stroke. We&rsquo;re building the efficiency first. The pace will follow on its own, and it&rsquo;ll keep improving for years after the course is over.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE CURRICULUM ============ -->
+  <section class="wf-section" id="curriculum">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>The 6-stage curriculum</h2>
+        <div class="ys-rule"></div>
+        <p>Each stage has a clear objective. Don&rsquo;t skip ahead. Each one assumes the previous is in place.</p>
+      </div>
+
+      <article class="sf-stage">
+        <div class="sf-stage-num">1</div>
+        <div>
+          <div class="sf-stage-goal">Objective &middot; feel comfortable in horizontal hold</div>
+          <h3>Body position and feel for the water</h3>
+          <p>Before stroke, before kick, before anything: can your body lie flat in the water without your legs sinking? Most adult-onset swimmers are fighting gravity the whole time, which is why even short distances feel hard. We fix the float, the head alignment, and the basic awareness of where the water is pushing on your body.</p>
+          <p>The other big piece here is <strong>CO<sub>2</sub> tolerance</strong>. Most beginners aren&rsquo;t actually running out of oxygen, they&rsquo;re running out of patience with rising CO<sub>2</sub>. Box breathing on land trains the same nervous-system response.</p>
+          <div class="sf-stage-meta">
+            <span class="sf-stage-tag drill">Drill: Sculling</span>
+            <span class="sf-stage-tag drill">Drill: Side kicking</span>
+            <span class="sf-stage-tag tool">Tool: Front-mount snorkel</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="sf-stage">
+        <div class="sf-stage-num">2</div>
+        <div>
+          <div class="sf-stage-goal">Objective &middot; breathing on a predictable rhythm</div>
+          <h3>Breathing rhythm and the panic-free exhale</h3>
+          <p>Breathing is the thing that separates a comfortable 1,500 m from a panicked 200 m. The single most common mistake: holding your breath underwater and then trying to exhale-and-inhale in the same brief moment your mouth clears the water. Doesn&rsquo;t work. You end up gasping.</p>
+          <p>The fix: <strong>exhale continuously while your face is in the water</strong>, so when you turn to breathe, your lungs are empty and the inhale is automatic. We build to bilateral breathing (every 3 strokes) once the exhale is solid.</p>
+          <div class="sf-stage-meta">
+            <span class="sf-stage-tag drill">Drill: Pushing the wall</span>
+            <span class="sf-stage-tag drill">Drill: Mixed breathing</span>
+            <span class="sf-stage-tag tool">Tool: Front-mount snorkel</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="sf-stage">
+        <div class="sf-stage-num">3</div>
+        <div>
+          <div class="sf-stage-goal">Objective &middot; pull water, don&rsquo;t push air</div>
+          <h3>The catch and the pull</h3>
+          <p>Where propulsion actually comes from. Most beginners pull with a dropped elbow, which means they&rsquo;re pushing water sideways and down instead of backwards. We work on the <strong>high-elbow catch</strong> using a snorkel (so you&rsquo;re not distracted by breathing) and paddles like the FINIS Freestyler (which punishes a dropped elbow by pulling sideways).</p>
+          <p>By the end of this stage you should feel the difference between a pull that <em>sends you forward</em> and a pull that <em>tires your shoulders</em>.</p>
+          <div class="sf-stage-meta">
+            <span class="sf-stage-tag drill">Drill: Snorkel double long dog</span>
+            <span class="sf-stage-tag drill">Drill: Fist of fury</span>
+            <span class="sf-stage-tag drill">Drill: Sculling (forward variant)</span>
+            <span class="sf-stage-tag tool">Tool: Paddles (FINIS Freestyler)</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="sf-stage">
+        <div class="sf-stage-num">4</div>
+        <div>
+          <div class="sf-stage-goal">Objective &middot; kick for stability, not for propulsion</div>
+          <h3>A kick that helps, not exhausts</h3>
+          <p>For a 1,500 m at relaxed pace, your kick is a stabiliser, not a propeller. Adult-onset swimmers often <strong>overkick</strong>, which burns the legs and gets nothing in return. We work on a quiet, steady 2-beat or 4-beat kick from the hip, with relaxed ankles.</p>
+          <p>Ankle mobility is the silent limiter here. Most cyclists and runners have stiff ankles. We&rsquo;ll work that in dry-land mobility too.</p>
+          <div class="sf-stage-meta">
+            <span class="sf-stage-tag drill">Drill: Unco</span>
+            <span class="sf-stage-tag drill">Drill: Side kicking</span>
+            <span class="sf-stage-tag tool">Tool: Short fins / Zoomers</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="sf-stage">
+        <div class="sf-stage-num">5</div>
+        <div>
+          <div class="sf-stage-goal">Objective &middot; swim continuously with a consistent stroke</div>
+          <h3>Putting it together</h3>
+          <p>Now we glue body position, breathing, catch and kick into a single repeatable stroke and start adding distance. The tempo trainer becomes your friend here: it sets a metronome for your stroke rate so you can find what feels right and stay consistent.</p>
+          <p>This is where the goal gets reachable: 5 x 200 m at conversational pace becomes 4 x 300, becomes 3 x 500, becomes one straight 1,500 m without a stop. The stroke stays the same. Only the distance changes.</p>
+          <div class="sf-stage-meta">
+            <span class="sf-stage-tag drill">Drill: Popov</span>
+            <span class="sf-stage-tag drill">Drill: Swim band (advanced)</span>
+            <span class="sf-stage-tag tool">Tool: Tempo trainer (FINIS Tempo Trainer Pro)</span>
+            <span class="sf-stage-tag tool">Tool: Pull buoy (sparingly)</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="sf-stage">
+        <div class="sf-stage-num">6</div>
+        <div>
+          <div class="sf-stage-goal">Objective &middot; transfer from controlled to less-controlled</div>
+          <h3>Beyond the pool (optional, but worth it)</h3>
+          <p>If you want to swim in open water, race a triathlon, or join a masters squad, the last stage is about bridging from the pool to the rest of the swimming world. <strong>Open-water sighting</strong>, mass-start nerves, cold-shock acclimation, wetsuit basics. We don&rsquo;t go deep here, that&rsquo;s the next course, but we set up the bridge.</p>
+          <p>This stage is also where I&rsquo;d nudge you toward a coached session or two if you haven&rsquo;t already. Self-coaching takes you a long way; a second pair of eyes takes you further.</p>
+          <div class="sf-stage-meta">
+            <span class="sf-stage-tag tool">Tool: Wetsuit (if applicable)</span>
+            <span class="sf-stage-tag tool">Tool: Pool buoy + tinted goggles</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ DRILL LIBRARY ============ -->
+  <section class="wf-section alt" id="drills">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Drill library</h2>
+        <div class="ys-rule"></div>
+        <p>Nine drills, each with a video and a clear purpose. Don&rsquo;t do all nine in one session. Pick two or three per swim that target the stage you&rsquo;re working on.</p>
+      </div>
+
+      <div class="ys-grid" style="justify-content: center;">
+        <div class="video-ph">
+          <div class="ph-eyebrow">Drill 01</div>
+          <h4>Sculling</h4>
+          <p class="ph-note">Video coming</p>
+        </div>
+        <div class="video-ph">
+          <div class="ph-eyebrow">Drill 02</div>
+          <h4>Pushing the wall</h4>
+          <p class="ph-note">Video coming</p>
+        </div>
+        <div class="video-ph">
+          <div class="ph-eyebrow">Drill 03</div>
+          <h4>Snorkel double long dog</h4>
+          <p class="ph-note">Video coming</p>
+        </div>
+        <div class="video-ph">
+          <div class="ph-eyebrow">Drill 04</div>
+          <h4>Unco</h4>
+          <p class="ph-note">Video coming</p>
+        </div>
+        <div class="video-ph">
+          <div class="ph-eyebrow">Drill 05</div>
+          <h4>Fist of fury</h4>
+          <p class="ph-note">Video coming</p>
+        </div>
+        <div class="video-ph">
+          <div class="ph-eyebrow">Drill 06</div>
+          <h4>Side kicking</h4>
+          <p class="ph-note">Video coming</p>
+        </div>
+        <div class="video-ph">
+          <div class="ph-eyebrow">Drill 07</div>
+          <h4>Popov</h4>
+          <p class="ph-note">Video coming</p>
+        </div>
+        <div class="video-ph">
+          <div class="ph-eyebrow">Drill 08</div>
+          <h4>Mixed breathing</h4>
+          <p class="ph-note">Video coming</p>
+        </div>
+        <div class="video-ph">
+          <div class="ph-eyebrow">Drill 09</div>
+          <h4>Swim band</h4>
+          <p class="ph-note">Video coming</p>
+        </div>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); font-size: 0.9rem; margin-top: 18px; max-width: 640px; margin-left: auto; margin-right: auto;">
+        Each drill takes 5 to 10 minutes of dedicated work in a session. The goal is not to be perfect at all nine, it&rsquo;s to use the right drill at the right stage and feel what it&rsquo;s teaching.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ TOOLS SHOWCASE ============ -->
+  <section class="wf-section" id="tools">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Tools that earn their place</h2>
+        <div class="ys-rule"></div>
+        <p>You don&rsquo;t need all of these. You need the right ones for the stage you&rsquo;re on. None of these is required for the course; they accelerate it.</p>
+      </div>
+
+      <div class="ys-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); justify-content: center;">
+        <article class="sf-tool">
+          <div class="sf-tool-meta">Tool 01 &middot; stages 1&ndash;3</div>
+          <h4>Front-mount snorkel</h4>
+          <p>Removes the breathing variable so you can focus on body position, head alignment, and the catch. The single best piece of gear you can own at this stage. <strong>FINIS</strong> makes the standard one, with a smaller swimmer&rsquo;s version for narrower faces.</p>
+        </article>
+
+        <article class="sf-tool">
+          <div class="sf-tool-meta">Tool 02 &middot; stage 3</div>
+          <h4>Paddles (FINIS Freestyler)</h4>
+          <p>The pivot shape forces a high-elbow catch and punishes a dropped elbow. You feel the error before any coach calls it. Better for technique than flat power paddles, which mostly build shoulder load.</p>
+        </article>
+
+        <article class="sf-tool">
+          <div class="sf-tool-meta">Tool 03 &middot; stage 4</div>
+          <h4>Short fins / Zoomers</h4>
+          <p>Speeds up the body in the water <em>while improving</em> kick mechanics. They promote good ankle mobility and kicking from the hips. Skip the long stiff fins, they distort the kick and aren&rsquo;t a triathlon tool.</p>
+        </article>
+
+        <article class="sf-tool">
+          <div class="sf-tool-meta">Tool 04 &middot; stages 3&ndash;5</div>
+          <h4>Pull buoy</h4>
+          <p>Isolates the upper body and lets you feel rotation more clearly. Pairs especially well with the snorkel for technique work. Don&rsquo;t make every set a buoy set, you do still need to remember how to swim with your legs.</p>
+        </article>
+
+        <article class="sf-tool">
+          <div class="sf-tool-meta">Tool 05 &middot; stage 5</div>
+          <h4>Tempo trainer (FINIS Tempo Trainer Pro)</h4>
+          <p>Cheap and surprisingly useful. Sets a beep at your target stroke rate so you can find your sustainable rhythm and hold it. Also works as a pacer (one beep per 25 m at goal pace) for the longer continuous sets later.</p>
+        </article>
+
+        <article class="sf-tool">
+          <div class="sf-tool-meta">Tool 06 &middot; ongoing</div>
+          <h4>Goggles that actually fit</h4>
+          <p>Two pairs you trust, one clear or low-light tint, one tinted. Replace them when the seal goes. A pair of leaky goggles fights you the entire session, no drill fixes that.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SLIPSTREAM SECTION ============ -->
+  <section class="wf-section alt" id="slipstream">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <span class="sf-cobrand"><span class="sf-dot"></span> Yousuli partner</span>
+        <h2>Why Slipstream is the engine of this course</h2>
+        <div class="ys-rule"></div>
+        <p>This course is built around the assumption that you have access to a <strong>Slipstream stationary swim station</strong>. Here&rsquo;s why that matters.</p>
+      </div>
+
+      <div class="ys-grid" style="grid-template-columns: 1fr 1fr; gap: 20px; justify-content: center;">
+        <article class="ys-card">
+          <div class="ys-meta" style="color: var(--sf-teal);">What it is</div>
+          <h3>A portable swim machine</h3>
+          <p>Slipstream is the first battery-powered, portable swimming machine: a turning-vane plus horizontal conditioning-grill setup that creates a wide, deep, even current in any pool. Drop it in a small backyard or hotel pool and you&rsquo;ve got a stationary swim station. <strong>1:20 / 100 yd top pace</strong>, 2.5+ miles per battery charge.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta" style="color: var(--sf-teal);">Why it changes the course</div>
+          <h3>Drill reps without interruption</h3>
+          <p>Stationary swimming means: no flip turns interrupting your rhythm, no lane traffic, no &ldquo;wait, I forgot the cue&rdquo; mid-length. A coach (or a camera) can move around you and watch the stroke from every angle. For a structured drill course like this one, that&rsquo;s a force multiplier.</p>
+        </article>
+      </div>
+
+      <div class="sf-callout teal" style="margin-top: 18px;">
+        <div class="sf-callout-tag">How to get access</div>
+        <p style="margin: 0 0 6px;"><strong>You don&rsquo;t need to own one.</strong> Yousuli runs <strong>on-site Slipstream sessions</strong> for adults working through this kind of curriculum. Get the controlled current, the coach&rsquo;s eyes, and unlimited drill reps in one block.</p>
+        <p style="margin: 0;"><strong>Yousuli Social Club members get a discount on Slipstream sessions.</strong> The Free YSC tier gets the discount on the first session; the <a href="https://www.yousuli.co/social-club" target="_top" style="color: var(--sf-deep);">Performance Tier ($99/yr)</a> gets an ongoing member rate on every session, plus partner discounts on Slipstream gear and access to the Yousuli race-day fueling planner and the calculators with saved results.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COMMON MISTAKES ============ -->
+  <section class="wf-section" id="mistakes">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>The eight things almost everyone gets wrong early</h2>
+        <div class="ys-rule"></div>
+        <p>Reading the list is one thing. Catching yourself doing them is the work.</p>
+      </div>
+
+      <div class="sf-mistakes-grid">
+        <div class="sf-mistake">
+          <h4>Holding your breath underwater</h4>
+          <p>The biggest single cause of breathlessness in a beginner pool. The fix: exhale continuously through the nose while your face is in the water. Empty lungs at the rotation means automatic inhale.</p>
+        </div>
+        <div class="sf-mistake">
+          <h4>Pulling with a dropped elbow</h4>
+          <p>Forearm vertical, elbow high, that&rsquo;s the catch. A dropped elbow pushes water sideways and tires the shoulder. The Freestyler paddle teaches this fast.</p>
+        </div>
+        <div class="sf-mistake">
+          <h4>Looking forward, head too high</h4>
+          <p>Your head is the rudder. Look at the bottom of the pool, not at the wall. A high head sinks the legs and triples the drag.</p>
+        </div>
+        <div class="sf-mistake">
+          <h4>Crossing the centreline</h4>
+          <p>Your hand enters in line with the same shoulder, not across the head. Crossing the centreline causes a wobble that you&rsquo;ll feel as &ldquo;snaky&rdquo; swimming.</p>
+        </div>
+        <div class="sf-mistake">
+          <h4>Overkicking</h4>
+          <p>At foundational pace, your kick is a stabiliser. A loud, vigorous kick burns the legs for almost no propulsion gain. Quiet and steady, from the hip.</p>
+        </div>
+        <div class="sf-mistake">
+          <h4>Trying to learn speed before efficiency</h4>
+          <p>Going hard on a broken stroke locks the broken stroke in. Build the clean stroke first, even if it feels slow. The pace shows up later for free.</p>
+        </div>
+        <div class="sf-mistake">
+          <h4>Tense neck and shoulders</h4>
+          <p>You can&rsquo;t rotate freely if your neck is locked. Drop the shoulders. Soften the jaw. Box breathing on land trains the relaxation response.</p>
+        </div>
+        <div class="sf-mistake">
+          <h4>Treating drills as separate from swimming</h4>
+          <p>A drill is not a warm-up filler. After each drill block, swim 50 to 100 m of full freestyle and try to keep the feeling the drill just gave you. That&rsquo;s where the transfer happens.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRACTICE PLAN ============ -->
+  <section class="wf-section alt" id="practice">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>A practice plan that actually works</h2>
+        <div class="ys-rule"></div>
+        <p>2 to 3 sessions per week for 8 to 12 weeks. Each session 45 to 60 minutes. Below is the structure I&rsquo;d use.</p>
+      </div>
+
+      <div class="sf-week">
+        <h4>A typical session (45 to 60 min)</h4>
+        <div class="sf-week-row">
+          <div class="sf-week-when">0&ndash;5 min</div>
+          <div><strong>Dry-land prep</strong>: shoulder mobility, box breathing (5-5-5-5) for 2 to 3 minutes to engage the parasympathetic system, ankle circles.</div>
+        </div>
+        <div class="sf-week-row">
+          <div class="sf-week-when">5&ndash;15 min</div>
+          <div><strong>Easy aerobic warm-up</strong>: 400 to 600 m of relaxed swimming. Mix freestyle and any stroke that feels good. Goal: get the heart rate up, not tired.</div>
+        </div>
+        <div class="sf-week-row">
+          <div class="sf-week-when">15&ndash;35 min</div>
+          <div><strong>Drill block</strong>: pick 2 or 3 drills from the library that match the stage you&rsquo;re on. 4 to 6 reps of each, with a 50 m of full freestyle after each block to transfer the feeling. Use the snorkel for most of it.</div>
+        </div>
+        <div class="sf-week-row">
+          <div class="sf-week-when">35&ndash;55 min</div>
+          <div><strong>Main set</strong>: this is where the distance builds. Early in the course it might be 6 x 100 m with 20 s rest. Middle of the course: 4 x 200, then 3 x 300. Late in the course: 2 x 500 m, then 1 x 1,000 m, then 1 x 1,500 m. Tempo trainer set to a sustainable rate.</div>
+        </div>
+        <div class="sf-week-row">
+          <div class="sf-week-when">55&ndash;60 min</div>
+          <div><strong>Cool down</strong>: 200 m easy. Roll the shoulders. Get out before you start thinking too hard.</div>
+        </div>
+      </div>
+
+      <div class="sf-callout" style="margin-top: 22px;">
+        <div class="sf-callout-tag">8-week progression toward 1,500 m</div>
+        <ul style="margin: 4px 0 0; padding-left: 20px;">
+          <li><strong>Weeks 1&ndash;2:</strong> stage 1 + 2 drills. Main set: 6 x 100 m, 20 s rest.</li>
+          <li><strong>Weeks 3&ndash;4:</strong> stage 3 drills introduced. Main set: 5 x 200 m, 30 s rest. Add bilateral breathing.</li>
+          <li><strong>Weeks 5&ndash;6:</strong> stage 4 + 5 drills. Main set: 4 x 300 m, 30 s rest. Add tempo trainer at your sustainable rate.</li>
+          <li><strong>Weeks 7&ndash;8:</strong> 2 x 500 m, then a continuous 1,000 m, then the one straight 1,500 m. Celebrate, then go again.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FINAL CTA ============ -->
+  <section class="wf-section" id="cta">
+    <div class="ys-container" style="max-width: 920px;">
+      <div class="ys-section-head">
+        <h2>What to do next</h2>
+        <div class="ys-rule"></div>
+        <p>Two paths. Pick one, both, or neither, this page stays free either way.</p>
+      </div>
+
+      <div class="sf-cta-grid">
+        <article class="sf-cta-card featured">
+          <div class="sf-cta-meta">Recommended first step</div>
+          <h3>Book a Slipstream session</h3>
+          <p>Get the controlled current, the coach&rsquo;s eyes, and unlimited drill reps in one focused block. This is the fastest way to accelerate the curriculum.</p>
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab#slipstream" target="_top">Book Slipstream</a>
+          <p style="margin-top: 10px; font-size: 0.84rem; opacity: 0.85;">YSC Performance Tier members get the ongoing member rate. <a href="https://www.yousuli.co/social-club" target="_top" style="color: white; text-decoration: underline;">Join YSC</a>.</p>
+        </article>
+
+        <article class="sf-cta-card">
+          <div class="sf-cta-meta">If you want a coach in the loop</div>
+          <h3>Yousuli swim coaching</h3>
+          <p>One-to-one or small-group swim coaching with me, on site, at a pool near you. Built around the same curriculum but adapted to your specific stroke and goals.</p>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/on-site-swim-coaching" target="_top">See swim coaching</a>
+          <p style="margin-top: 10px; font-size: 0.84rem; color: var(--ys-muted);">Or <a href="https://www.yousuli.co/contact" target="_top" style="color: var(--wf-coral);">email me</a> with a video of your stroke and I&rsquo;ll send back a short technique read.</p>
+        </article>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); font-size: 0.9rem; margin-top: 24px;">
+        The deeper paid course (stroke video review, structured 12-week plan, race-prep extension) is in the works. This free version is genuinely useful on its own, that&rsquo;s the deal.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Online programs</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:fred@yousuli.co">fred@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
