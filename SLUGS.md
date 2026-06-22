@@ -34,6 +34,7 @@ For the full project handoff doc, see the parent folder's `README.md`.
 | `plan-customization.html`  | `/plan-customization`             | gated |
 | `race-week-packing.html`   | `/packing`                        | yes (free for all, linked from `/calculators`) |
 | `swim-course.html`         | `/swim-course`                    | unlisted (`noindex,nofollow`), co-branded Slipstream mini-course, linked from `/sponsors` + `/on-site-swim-coaching` |
+| `membership.html`          | `/pricing-plans/membership`       | yes (full standalone tier-comparison + testimonials page) |
 
 ## Sandwich wrappers
 
