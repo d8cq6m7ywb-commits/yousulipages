@@ -265,20 +265,21 @@
       };
 
       try {
-        await fetch(
+        var response = await fetch(
           'https://manage.wix.com/_api/webhook-trigger/report/a5effb93-7505-4a5d-808d-1ae378df0436/2ed00b5e-ff52-467a-b8df-8f71740985fc',
           {
             method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
           }
         );
+        if (!response.ok) throw new Error('Wix webhook returned HTTP ' + response.status);
         document.getElementById('ref-add-form').style.display = 'none';
         var successEl = document.getElementById('ref-form-success');
         successEl.style.display = 'block';
         successEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
       } catch (err) {
+        console.error('Webhook POST failed, falling back to mailto:', err);
         submitBtn.disabled = false;
         submitBtn.textContent = 'Add referrer';
         var subject = encodeURIComponent('Referral attribution: add referrer to my signup');
