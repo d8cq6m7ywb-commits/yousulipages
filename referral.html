@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Yousuli Referral Program · for current Bespoke and Structured clients</title>
+  <meta name="description" content="The Yousuli referral program for current Bespoke and Structured clients. When you introduce another athlete and they sign up + stick with their minimum, both of you get a service credit ($300 each for Bespoke, $150 each for Structured)." />
+  <meta name="robots" content="noindex,nofollow" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Yousuli Referral Program" />
+  <meta property="og:description" content="Both of you get a service credit when someone you refer signs up + completes their minimum. $300 each for Bespoke, $150 each for Structured." />
+  <meta property="og:url" content="https://www.yousuli.co/referral" />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED PAGE STYLES ============ -->
+  <style>
+    /* 3-step explainer */
+    .ref-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 22px;
+    }
+    @media (max-width: 760px) {
+      .ref-steps { grid-template-columns: 1fr; }
+    }
+    .ref-step {
+      background: white;
+      border: 1px solid var(--ys-line);
+      border-radius: 14px;
+      padding: 22px 24px;
+      box-shadow: 0 1px 3px rgba(47,45,86,0.06);
+      position: relative;
+    }
+    .ref-step-num {
+      font-family: var(--ys-font-display);
+      font-weight: 800;
+      font-size: 2.6rem;
+      color: var(--wf-coral);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .ref-step h3 {
+      font-family: var(--ys-font-display);
+      color: var(--ys-navy);
+      margin: 0 0 6px;
+      font-size: 1.1rem;
+    }
+    .ref-step p { margin: 0; font-size: 0.94rem; color: var(--ys-muted); line-height: 1.5; }
+
+    /* Reward table */
+    .ref-reward-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(47,45,86,0.08);
+    }
+    .ref-reward-table th, .ref-reward-table td {
+      padding: 14px 18px;
+      text-align: left;
+      border-bottom: 1px solid var(--ys-line);
+    }
+    .ref-reward-table th {
+      background: var(--ys-navy);
+      color: white;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em;
+      font-size: 0.84rem;
+      text-transform: uppercase;
+    }
+    .ref-reward-table tr:last-child td { border-bottom: 0; }
+    .ref-reward-table .ref-amount {
+      font-family: var(--ys-font-display);
+      font-weight: 700;
+      color: var(--wf-coral);
+      font-size: 1.1rem;
+    }
+
+    /* Copy-to-clipboard template */
+    .ref-template-box {
+      position: relative;
+      background: var(--ys-bg-soft);
+      border-radius: 12px;
+      padding: 22px 24px;
+      margin-top: 14px;
+      border-left: 4px solid var(--wf-coral);
+    }
+    .ref-template-text {
+      font-family: var(--ys-font-body);
+      color: var(--ys-navy);
+      line-height: 1.55;
+      margin: 0 0 12px;
+      font-size: 0.96rem;
+      font-style: italic;
+    }
+    .ref-template-copy {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--ys-navy);
+      color: white;
+      border: 0;
+      border-radius: 999px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .ref-template-copy:hover { background: var(--wf-coral); }
+    .ref-template-copy.copied { background: var(--ys-teal, #00B3A4); }
+
+    /* T&Cs footer */
+    .ref-tcs {
+      background: var(--ys-bg-soft);
+      border-radius: 12px;
+      padding: 22px 26px;
+      margin-top: 14px;
+      font-size: 0.92rem;
+      color: var(--ys-muted);
+    }
+    .ref-tcs h4 {
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em;
+      color: var(--ys-navy);
+      margin: 0 0 8px;
+      font-size: 0.86rem;
+      text-transform: uppercase;
+    }
+    .ref-tcs ul { margin: 0; padding-left: 18px; line-height: 1.6; }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Programs</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://hub.yousuli.co/" target="_top" rel="noopener">Hub &#x2197;</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero">
+    <div class="ys-container">
+      <span class="wf-eyebrow">For current Bespoke and Structured clients</span>
+      <h1>Yousuli Referral Program.</h1>
+      <div class="wf-subhead">When you bring another athlete in, both of you get a service credit</div>
+      <p class="lede">If you&rsquo;ve enjoyed your coaching work and know another athlete who&rsquo;d be a fit for Yousuli, here&rsquo;s how to make the introduction worth it for both of you. Symmetric, no catch, no upsell pressure. You bring someone in, they sign up and stick with their minimum, and a service credit lands on both of your accounts.</p>
+      <div class="ys-btn-row">
+        <a class="ys-btn ys-btn-coral" href="#how">How it works &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#template">Copy a tell-a-friend message</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="wf-section" id="how">
+    <div class="ys-container" style="max-width: 1020px;">
+      <div class="ys-section-head">
+        <h2>How it works</h2>
+        <div class="ys-rule"></div>
+        <p>Three steps. The first is on you, the next two happen on their own.</p>
+      </div>
+
+      <div class="ref-steps">
+        <article class="ref-step">
+          <div class="ref-step-num">1</div>
+          <h3>Tell a friend</h3>
+          <p>Use the copy-paste message below, or just send them a link to <a href="https://www.yousuli.co/coaching" target="_top" style="color: var(--wf-coral);">yousuli.co/coaching</a>.</p>
+        </article>
+        <article class="ref-step">
+          <div class="ref-step-num">2</div>
+          <h3>They sign up and name you</h3>
+          <p>On the intake form. Or within 14 days at the <a href="https://www.yousuli.co/referral/add" target="_top" style="color: var(--wf-coral);">self-service link</a> if they forgot at signup.</p>
+        </article>
+        <article class="ref-step">
+          <div class="ref-step-num">3</div>
+          <h3>Both of you get a credit</h3>
+          <p>Once they complete their minimum (6 months for Bespoke, 3 months for Structured), the service credit lands on both accounts.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ REWARD ============ -->
+  <section class="wf-section alt" id="reward">
+    <div class="ys-container" style="max-width: 880px;">
+      <div class="ys-section-head">
+        <h2>The reward</h2>
+        <div class="ys-rule"></div>
+        <p>Same amount for both of you. Spendable on more or less anything Yousuli touches.</p>
+      </div>
+
+      <table class="ref-reward-table">
+        <thead>
+          <tr>
+            <th>New client signs into&hellip;</th>
+            <th>Both of you get</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Bespoke</strong> &middot; $350/mo &middot; 6-month minimum</td>
+            <td><span class="ref-amount">$300</span> service credit each</td>
+          </tr>
+          <tr>
+            <td><strong>Structured</strong> &middot; $200/mo &middot; 3-month minimum</td>
+            <td><span class="ref-amount">$150</span> service credit each</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top: 22px;">
+        <h3 style="font-family: var(--ys-font-display); color: var(--ys-navy); margin: 0 0 8px;">Credit is spendable on</h3>
+        <ul style="margin: 0; padding-left: 20px; line-height: 1.7; color: var(--ys-navy);">
+          <li>Next month of coaching</li>
+          <li>A Performance Lab test (RMR, VO<sub>2</sub>max, CdA, PRP, full-stack)</li>
+          <li>A race entry</li>
+          <li>Partner gear or kit</li>
+          <li>Anything in the Yousuli or partner ecosystem</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TELL-A-FRIEND TEMPLATE ============ -->
+  <section class="wf-section" id="template">
+    <div class="ys-container" style="max-width: 760px;">
+      <div class="ys-section-head">
+        <h2>A simple template you can copy</h2>
+        <div class="ys-rule"></div>
+        <p>Edit the bracketed bits ({{N}} months, your tier), copy, paste into a text / email / DM.</p>
+      </div>
+
+      <div class="ref-template-box">
+        <p class="ref-template-text" id="ref-template-text">Hey, I&rsquo;ve been working with Coach Fred at Yousuli for the last {N} months on {Bespoke / Structured} coaching. If you&rsquo;ve been thinking about a coach, he&rsquo;s worth a look. Link is yousuli.co/coaching. If you sign up and mention my name on the intake form, both of us get a service credit toward coaching, lab work, or race entries.</p>
+        <button type="button" class="ref-template-copy" id="ref-template-copy" aria-label="Copy template to clipboard">
+          Copy template
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CTAs ============ -->
+  <section class="wf-section alt" id="cta">
+    <div class="ys-container" style="max-width: 880px;">
+      <div class="ys-section-head">
+        <h2>Send them the right page</h2>
+        <div class="ys-rule"></div>
+        <p>If they already know what they want, point them straight at it.</p>
+      </div>
+
+      <div class="ys-btn-row" style="justify-content: center;">
+        <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/coaching#bespoke" target="_top">Bespoke signup</a>
+        <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/coaching#structured" target="_top">Structured signup</a>
+        <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/referral/add" target="_top">Forgot to name me when signing up?</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ T&Cs ============ -->
+  <section class="wf-section" id="terms">
+    <div class="ys-container" style="max-width: 880px;">
+      <div class="ys-section-head">
+        <h2>Fine print</h2>
+        <div class="ys-rule"></div>
+        <p>Short, plain, and honest.</p>
+      </div>
+
+      <div class="ref-tcs">
+        <h4>Yousuli Referral Program &middot; Terms</h4>
+        <ul>
+          <li>One reward per unique referee.</li>
+          <li>Referrer must be a current Bespoke or Structured client at the time of the referee&rsquo;s signup.</li>
+          <li>Reward fires at completion of the new client&rsquo;s contract minimum (6 months Bespoke, 3 months Structured).</li>
+          <li>If the new client cancels with a refund before the trigger date, the reward is revoked.</li>
+          <li>14-day window for the referee to name a referrer post-signup via the self-service form. No retroactive claims beyond that.</li>
+          <li>Credits have no cash value and are non-transferable.</li>
+          <li>Yousuli reserves the right to investigate or decline rewards in suspected-gaming cases.</li>
+          <li>Questions: <a href="mailto:fred@yousuli.co" style="color: var(--wf-coral); font-weight: 600;">fred@yousuli.co</a>.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COPY-TO-CLIPBOARD SCRIPT ============ -->
+  <script>
+    (function () {
+      var btn = document.getElementById('ref-template-copy');
+      var src = document.getElementById('ref-template-text');
+      if (!btn || !src) return;
+      btn.addEventListener('click', function () {
+        var text = src.innerText.trim();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () { flash(); }).catch(fallback);
+        } else { fallback(); }
+        function fallback() {
+          var ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed'; ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand('copy'); flash(); }
+          catch (e) { /* clipboard not available */ }
+          document.body.removeChild(ta);
+        }
+        function flash() {
+          btn.classList.add('copied');
+          var orig = btn.textContent;
+          btn.textContent = 'Copied!';
+          setTimeout(function () {
+            btn.classList.remove('copied');
+            btn.textContent = orig;
+          }, 1800);
+        }
+      });
+    })();
+  </script>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Online programs</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:fred@yousuli.co">fred@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

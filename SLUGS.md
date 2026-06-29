@@ -34,6 +34,8 @@ For the full project handoff doc, see the parent folder's `README.md`.
 | `plan-customization.html`  | `/plan-customization`             | gated |
 | `race-week-packing.html`   | `/packing`                        | yes (free for all, linked from `/calculators`) |
 | `swim-course.html`         | `/swim-course`                    | unlisted (`noindex,nofollow`), co-branded Slipstream mini-course, linked from `/sponsors` + `/on-site-swim-coaching` |
+| `referral.html`            | `/referral`                       | unlisted (`noindex,nofollow`), referral program landing page for current Bespoke + Structured clients; companion MJML email templates live in project-root `referral-program-content.md` |
+| `referral-add.html`        | `/referral/add`                   | unlisted (`noindex,nofollow`), 14-day self-service form for athletes who forgot to name their referrer at signup; submits via mailto to fred@yousuli.co |
 | `membership.html`          | (not actively served on Wix)      | standalone tier-comparison + testimonials page. og:url in the file says `/pricing-plans/membership` but the live Wix slug there uses the sandwich pair below |
 
 ## Sandwich wrappers

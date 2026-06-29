@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Add your referrer · Yousuli</title>
+  <meta name="description" content="14-day self-service form for Yousuli Bespoke / Structured clients who forgot to name their referrer at signup. Submit within 14 days of your signup date to keep the referral eligible." />
+  <meta name="robots" content="noindex,nofollow" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Add your referrer · Yousuli" />
+  <meta property="og:description" content="Forgot to name your referrer at signup? You have 14 days to add them here." />
+  <meta property="og:url" content="https://www.yousuli.co/referral/add" />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED PAGE STYLES ============ -->
+  <style>
+    .ref-form-card {
+      background: white;
+      border: 1px solid var(--ys-line);
+      border-radius: 14px;
+      padding: 28px 30px;
+      box-shadow: 0 4px 14px rgba(47,45,86,0.08);
+      max-width: 560px;
+      margin: 0 auto;
+    }
+    .ref-form-field {
+      display: block;
+      margin-bottom: 18px;
+    }
+    .ref-form-field label {
+      display: block;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.04em;
+      color: var(--ys-navy);
+      font-size: 0.86rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .ref-form-field input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--ys-line);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 1rem;
+      color: var(--ys-navy);
+      box-sizing: border-box;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .ref-form-field input:focus {
+      outline: none;
+      border-color: var(--wf-coral);
+      box-shadow: 0 0 0 3px rgba(250,119,60,0.12);
+    }
+    .ref-form-field .ref-form-help {
+      display: block;
+      margin-top: 6px;
+      font-size: 0.82rem;
+      color: var(--ys-muted);
+    }
+    .ref-form-submit {
+      display: inline-block;
+      padding: 12px 28px;
+      background: var(--wf-coral);
+      color: white;
+      border: 0;
+      border-radius: 999px;
+      font-family: var(--ys-font-display);
+      letter-spacing: 0.06em;
+      font-size: 0.94rem;
+      cursor: pointer;
+      transition: transform 0.1s ease, background 0.15s ease;
+    }
+    .ref-form-submit:hover {
+      background: var(--ys-navy);
+      transform: translateY(-1px);
+    }
+    .ref-form-fallback {
+      margin-top: 18px;
+      padding: 14px 16px;
+      background: var(--ys-bg-soft);
+      border-radius: 8px;
+      font-size: 0.86rem;
+      color: var(--ys-muted);
+      line-height: 1.5;
+    }
+    .ref-footer-note {
+      max-width: 560px;
+      margin: 22px auto 0;
+      padding: 16px 20px;
+      background: rgba(0, 179, 164, 0.06);
+      border-left: 4px solid var(--ys-teal, #00B3A4);
+      border-radius: 0 8px 8px 0;
+      font-size: 0.88rem;
+      color: var(--ys-muted);
+      line-height: 1.55;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Programs</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://hub.yousuli.co/" target="_top" rel="noopener">Hub &#x2197;</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero" style="padding: 64px 0 32px;">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Referral program &middot; late attribution</span>
+      <h1>Add your referrer.</h1>
+      <div class="wf-subhead">14 days from your signup date to name them</div>
+      <p class="lede">Forgot to name your referrer when you signed up for Bespoke or Structured coaching? Submit their name below within 14 days of your signup date and the referral stays eligible. After that the window closes and the credit doesn&rsquo;t fire, sorry.</p>
+    </div>
+  </section>
+
+  <!-- ============ FORM ============ -->
+  <section class="wf-section" style="padding: 24px 0 48px;">
+    <div class="ys-container">
+
+      <form class="ref-form-card" id="ref-add-form" onsubmit="return submitReferral(event)">
+        <div class="ref-form-field">
+          <label for="ref-email">Your email</label>
+          <input type="email" id="ref-email" name="email" placeholder="the.email@you.used" required />
+          <span class="ref-form-help">The email you used when you signed up for Bespoke or Structured coaching.</span>
+        </div>
+
+        <div class="ref-form-field">
+          <label for="ref-referrer">Your referrer&rsquo;s name or email</label>
+          <input type="text" id="ref-referrer" name="referrer" placeholder="Their full name (or email if you have it)" required />
+          <span class="ref-form-help">The current Bespoke or Structured client who told you about Yousuli.</span>
+        </div>
+
+        <button type="submit" class="ref-form-submit">Add referrer</button>
+
+        <div class="ref-form-fallback">
+          <strong>What happens when you click Add:</strong> your email client opens with the details pre-filled to <a href="mailto:fred@yousuli.co" style="color: var(--wf-coral);">fred@yousuli.co</a>. Just hit Send. If the form doesn&rsquo;t play nicely on your device, email me directly with your email + your referrer&rsquo;s name and I&rsquo;ll log it manually.
+        </div>
+      </form>
+
+      <div class="ref-footer-note">
+        This form locks <strong>14 days after your signup date</strong>. After that, retroactive referral claims aren&rsquo;t accepted. Read the full program at <a href="https://www.yousuli.co/referral" target="_top" style="color: var(--ys-teal, #00B3A4); font-weight: 600;">yousuli.co/referral</a>. Questions: <a href="mailto:fred@yousuli.co" style="color: var(--ys-teal, #00B3A4); font-weight: 600;">fred@yousuli.co</a>.
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ MAILTO SUBMIT ============ -->
+  <script>
+    function submitReferral(e) {
+      e.preventDefault();
+      var email = document.getElementById('ref-email').value.trim();
+      var referrer = document.getElementById('ref-referrer').value.trim();
+      if (!email || !referrer) return false;
+      var subject = encodeURIComponent('Referral attribution: add referrer to my signup');
+      var body = encodeURIComponent(
+        'Hi Coach Fred,\n\n' +
+        'Adding my referrer for the Yousuli referral program.\n\n' +
+        'My email (used at signup): ' + email + '\n' +
+        'My referrer: ' + referrer + '\n\n' +
+        'Thanks.'
+      );
+      window.location.href = 'mailto:fred@yousuli.co?subject=' + subject + '&body=' + body;
+      return false;
+    }
+  </script>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Online programs</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:fred@yousuli.co">fred@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
