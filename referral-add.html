@@ -266,14 +266,14 @@
 
       try {
         var response = await fetch(
-          'https://manage.wix.com/_api/webhook-trigger/report/a5effb93-7505-4a5d-808d-1ae378df0436/2ed00b5e-ff52-467a-b8df-8f71740985fc',
+          'https://yousuli-referral-proxy.soft-band-e1e3.workers.dev/',
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
           }
         );
-        if (!response.ok) throw new Error('Wix webhook returned HTTP ' + response.status);
+        if (!response.ok) throw new Error('Webhook proxy returned HTTP ' + response.status);
         document.getElementById('ref-add-form').style.display = 'none';
         var successEl = document.getElementById('ref-form-success');
         successEl.style.display = 'block';
