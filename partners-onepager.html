@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Yousuli Partner Program · one-page summary (print)</title>
+  <meta name="description" content="Printable one-page leave-behind for the Yousuli Performance Lab partner program. Print on US Letter." />
+  <meta name="robots" content="noindex,nofollow" />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <style>
+    :root {
+      --op-navy: var(--ys-navy, #2F2D56);
+      --op-coral: var(--wf-coral, #FA773C);
+      --op-teal: var(--ys-teal, #00B3A4);
+      --op-muted: #5a5876;
+      --op-line: #e3e2ec;
+    }
+    html, body { margin: 0; padding: 0; background: #e9e9f0; }
+
+    /* Screen-only toolbar */
+    .op-toolbar {
+      position: sticky; top: 0; z-index: 10;
+      background: var(--op-navy); color: white;
+      padding: 10px 18px;
+      display: flex; align-items: center; justify-content: center; gap: 14px;
+      font-family: var(--ys-font-display, 'Futura', 'Trebuchet MS', sans-serif);
+      font-size: 0.86rem; letter-spacing: 0.04em;
+    }
+    .op-toolbar button {
+      background: var(--op-coral); color: white; border: 0;
+      padding: 7px 20px; border-radius: 999px; cursor: pointer;
+      font-family: inherit; font-size: 0.86rem; letter-spacing: 0.05em;
+    }
+
+    /* The sheet */
+    .op-sheet {
+      width: 8.5in;
+      margin: 22px auto;
+      background: white;
+      box-shadow: 0 8px 30px rgba(47,45,86,0.22);
+      padding: 0.42in 0.48in;
+      box-sizing: border-box;
+      font-family: 'Trebuchet MS', 'Lucida Sans', Tahoma, sans-serif;
+      color: var(--op-navy);
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* Header row */
+    .op-head {
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 3px solid var(--op-navy);
+      padding-bottom: 10px; margin-bottom: 14px;
+    }
+    .op-head img { height: 34px; width: auto; }
+    .op-head-right {
+      text-align: right;
+      font-family: var(--ys-font-display, 'Futura', 'Trebuchet MS', sans-serif);
+    }
+    .op-head-right .op-kicker {
+      letter-spacing: 0.16em; text-transform: uppercase;
+      font-size: 8.5pt; color: var(--op-coral); font-weight: 700;
+    }
+    .op-head-right .op-contact { font-size: 8pt; color: var(--op-muted); margin-top: 2px; }
+
+    /* Title block */
+    h1 {
+      font-family: var(--ys-font-display, 'Futura', 'Trebuchet MS', sans-serif);
+      font-size: 21pt; line-height: 1.08; margin: 0 0 7px; color: var(--op-navy);
+      letter-spacing: -0.01em;
+    }
+    .op-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 9px; }
+    .op-chip {
+      font-family: var(--ys-font-display, 'Futura', 'Trebuchet MS', sans-serif);
+      font-size: 7.6pt; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700;
+      background: rgba(47,45,86,0.07); color: var(--op-navy);
+      padding: 3px 10px; border-radius: 999px;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .op-chip.coral { background: rgba(250,119,60,0.13); color: #b04a17; }
+    .op-lede { font-size: 9.6pt; line-height: 1.45; margin: 0 0 13px; color: var(--op-navy); }
+
+    /* Two-column body */
+    .op-cols { display: grid; grid-template-columns: 1.02fr 0.98fr; gap: 0.28in; }
+
+    h2 {
+      font-family: var(--ys-font-display, 'Futura', 'Trebuchet MS', sans-serif);
+      font-size: 10.5pt; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--op-navy); margin: 0 0 7px;
+      border-bottom: 2px solid var(--op-coral); padding-bottom: 3px;
+    }
+    .op-block { margin-bottom: 13px; }
+
+    /* Steps */
+    .op-step { display: grid; grid-template-columns: 20px 1fr; gap: 7px; margin-bottom: 6px; font-size: 8.8pt; line-height: 1.38; }
+    .op-step-num {
+      font-family: var(--ys-font-display, 'Futura', 'Trebuchet MS', sans-serif);
+      font-weight: 800; color: var(--op-coral); font-size: 11pt; line-height: 1.1;
+    }
+    .op-step strong { color: var(--op-navy); }
+
+    /* Wins */
+    .op-win { margin-bottom: 7px; font-size: 8.8pt; line-height: 1.38; }
+    .op-win strong { color: var(--op-navy); }
+    .op-win .op-win-tag {
+      font-family: var(--ys-font-display, 'Futura', 'Trebuchet MS', sans-serif);
+      color: var(--op-teal); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; font-size: 8pt;
+    }
+
+    /* Pricing table */
+    table { width: 100%; border-collapse: collapse; font-size: 8.6pt; }
+    thead th {
+      font-family: var(--ys-font-display, 'Futura', 'Trebuchet MS', sans-serif);
+      background: var(--op-navy); color: white;
+      text-align: left; padding: 5px 8px; font-size: 7.8pt; letter-spacing: 0.06em; text-transform: uppercase;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    thead th.num, tbody td.num { text-align: right; }
+    tbody td { padding: 5px 8px; border-bottom: 1px solid var(--op-line); }
+    tbody td.share { text-align: right; color: var(--op-teal); font-weight: 700; }
+    .op-table-note { font-size: 7.8pt; color: var(--op-muted); margin: 5px 0 0; }
+
+    /* Pilot box */
+    .op-pilot {
+      border-left: 4px solid var(--op-coral);
+      background: #fdf1ea;
+      padding: 10px 13px; margin-top: 12px; border-radius: 0 8px 8px 0;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .op-pilot h3 {
+      font-family: var(--ys-font-display, 'Futura', 'Trebuchet MS', sans-serif);
+      margin: 0 0 4px; font-size: 10pt; color: var(--op-navy);
+    }
+    .op-pilot p { margin: 0; font-size: 8.8pt; line-height: 1.4; }
+
+    /* QR block */
+    .op-qr {
+      display: flex; align-items: center; gap: 12px; margin-top: 12px;
+      border: 1px solid var(--op-line); border-radius: 8px; padding: 9px 12px;
+    }
+    .op-qr img { width: 78px; height: 78px; }
+    .op-qr p { margin: 0; font-size: 8.6pt; line-height: 1.4; }
+    .op-qr .op-url {
+      font-family: var(--ys-font-display, 'Futura', 'Trebuchet MS', sans-serif);
+      font-weight: 700; color: var(--op-coral); font-size: 10pt;
+    }
+
+    /* Trust footer */
+    .op-foot {
+      margin-top: 14px; padding-top: 9px; border-top: 2px solid var(--op-navy);
+      font-size: 7.8pt; color: var(--op-muted); line-height: 1.5; text-align: center;
+    }
+    .op-foot strong { color: var(--op-navy); }
+
+    /* Print rules */
+    @page { size: letter; margin: 0; }
+    @media print {
+      html, body { background: white; }
+      .op-toolbar { display: none; }
+      .op-sheet { width: 100%; margin: 0; box-shadow: none; }
+      .op-block, .op-pilot, .op-qr, table { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="op-toolbar">
+    <span>Print leave-behind for facility visits. US Letter, one page.</span>
+    <button type="button" onclick="window.print()">Print</button>
+  </div>
+
+  <div class="op-sheet">
+
+    <!-- Header -->
+    <div class="op-head">
+      <img src="assets/yousuli-logo.png" alt="Yousuli" />
+      <div class="op-head-right">
+        <div class="op-kicker">Performance Lab &middot; Partner Program</div>
+        <div class="op-contact">Frederic Simon &middot; info@yousuli.co &middot; (909) 979-4118</div>
+      </div>
+    </div>
+
+    <!-- Title -->
+    <h1>Turn testing days into facility revenue.</h1>
+    <div class="op-chips">
+      <span class="op-chip coral">Zero CAPEX</span>
+      <span class="op-chip coral">You keep 30%</span>
+      <span class="op-chip">Up to 8 tests / day</span>
+      <span class="op-chip">Next-day ACH payout</span>
+      <span class="op-chip">~40 ft&sup2; is all it takes</span>
+    </div>
+    <p class="op-lede">Yousuli rolls a mobile performance lab into your facility: VO&#8322;max, RMR, lactate, NIRS, and core temperature, run by a USAT Level II coach. You provide about 40 ft&sup2; of floor space and a member base. Testing, reports, billing, and payouts are all handled.</p>
+
+    <!-- Two columns -->
+    <div class="op-cols">
+      <div>
+        <div class="op-block">
+          <h2>How a testing day works</h2>
+          <div class="op-step"><div class="op-step-num">1</div><div><strong>Pick a date.</strong> Monthly or quarterly cadence; most partners run one day per month.</div></div>
+          <div class="op-step"><div class="op-step-num">2</div><div><strong>We set up and calibrate</strong> about 30 minutes before the first athlete. No cabling, no special venting, no infrastructure changes.</div></div>
+          <div class="op-step"><div class="op-step-num">3</div><div><strong>We promote.</strong> Full marketing kit provided (posters, QR flyers, email and social copy), and we route outside athletes to your day.</div></div>
+          <div class="op-step"><div class="op-step-num">4</div><div><strong>We test, you get paid.</strong> 30% of every booking, next business day via ACH.</div></div>
+        </div>
+
+        <div class="op-block">
+          <h2>Three ways your facility wins</h2>
+          <div class="op-win"><span class="op-win-tag">Revenue</span><br /><strong>30% share on every test.</strong> A typical first day pays $300 to $500; a full day about $900. The floor, not the whole story.</div>
+          <div class="op-win"><span class="op-win-tag">Retention</span><br /><strong>Members who test, stay.</strong> They set goals against their own numbers, and goal-driven members renew. A service the facility down the street doesn&rsquo;t have.</div>
+          <div class="op-win"><span class="op-win-tag">Your floor</span><br /><strong>Sharper trainers, more foot traffic.</strong> Objective baselines for your coaches to program against; follow-up PT sales are 100% yours; every outside athlete we bring walks through your front door.</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="op-block">
+          <h2>Services &amp; your share</h2>
+          <table>
+            <thead>
+              <tr><th>Service</th><th class="num">Client price</th><th class="num">You keep</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>VO&#8322;max &amp; Zones</strong> (~45 min)</td><td class="num">$260</td><td class="share">$78</td></tr>
+              <tr><td><strong>Resting Metabolic Rate</strong> (~25 min)</td><td class="num">$120</td><td class="share">$36</td></tr>
+              <tr><td><strong>Performance Recovery Profile</strong> (~45 min)</td><td class="num">$329</td><td class="share">$99</td></tr>
+              <tr><td><strong>3-min DARK Test (CP / W&prime;)</strong> (~30 min)</td><td class="num">$150</td><td class="share">$45</td></tr>
+              <tr><td><strong>PRO Full-Stack Profiling</strong> (~75 min)</td><td class="num">$500</td><td class="share">$150</td></tr>
+            </tbody>
+          </table>
+          <p class="op-table-note">Prices include single-use consumables, session calibration, and full PDF reporting to the athlete. Throughput cap: 8 tests per day.</p>
+        </div>
+
+        <div class="op-pilot">
+          <h3>Start with a pilot day</h3>
+          <p>One day on the calendar, no cadence commitment. Includes a <strong>complimentary VO&#8322;max for you and one staff member</strong>, so you can talk to your clients about it from direct experience. If the day works, we pick a rhythm.</p>
+        </div>
+
+        <div class="op-qr">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&amp;data=https%3A%2F%2Fwww.yousuli.co%2Fpartners" alt="QR code to yousuli.co/partners" />
+          <p>Full program details, FAQ, and an earnings calculator:<br /><span class="op-url">yousuli.co/partners</span></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trust footer -->
+    <div class="op-foot">
+      <strong>Frederic Simon</strong> &middot; USAT Level II &middot; Ironman certified &middot; liability insured (COI naming your facility as additional insured, provided before the first day) &middot; ISO-calibrated devices &middot; one partner per area &middot; <strong>info@yousuli.co</strong> &middot; (909) 979-4118
+    </div>
+
+  </div>
+
+</body>
+</html>

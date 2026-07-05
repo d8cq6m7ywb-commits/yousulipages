@@ -37,6 +37,7 @@ For the full project handoff doc, see the parent folder's `README.md`.
 | `referral.html`            | `/referral`                       | unlisted (`noindex,nofollow`), referral program landing page for current Bespoke + Structured clients; companion MJML email templates live in project-root `referral-program-content.md` |
 | `referral-add.html`        | `/referral-add`                   | unlisted (`noindex,nofollow`), 14-day self-service form for athletes who forgot to name their referrer at signup; submits via mailto to fred@yousuli.co |
 | `membership.html`          | (not actively served on Wix)      | standalone tier-comparison + testimonials page. og:url in the file says `/pricing-plans/membership` but the live Wix slug there uses the sandwich pair below |
+| `partners-onepager.html`   | (not embedded in Wix)             | printable one-page leave-behind for gym / facility partner visits (`noindex,nofollow`). Print directly from the GitHub Pages URL (US Letter, one page); QR on it points to `/partners` |
 
 ## Sandwich wrappers
 
