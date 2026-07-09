@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Your VO2max, explained &middot; Yousuli Performance Lab</title>
+  <meta name="description" content="You took a VO2max test. Here is what your numbers actually mean, in plain English: your aerobic ceiling, your thresholds, your zones, and what to do with them." />
+  <meta name="robots" content="noindex,nofollow" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Your VO2max, explained" />
+  <meta property="og:description" content="What your VO2max test actually tells you, in plain English. A short read from Coach Fred." />
+  <meta property="og:url" content="https://www.yousuli.co/vo2max-explained" />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED PAGE STYLES ============ -->
+  <style>
+    :root {
+      --rx-accent: #FA773C;
+      --rx-accent-deep: #b04a17;
+      --rx-deep: #8a3a12;
+      --rx-teal: #00B3A4;
+      --rx-teal-deep: #0e5f5a;
+    }
+    .rx-callout { padding: 18px 22px; border-left: 4px solid var(--rx-accent); background: var(--ys-bg-soft); border-radius: 0 10px 10px 0; margin: 16px 0; }
+    .rx-callout.teal { border-left-color: var(--rx-teal); background: rgba(0,179,164,0.06); }
+    .rx-callout.warn { border-left-color: #c69b1a; background: #fdf6e0; }
+    .rx-callout.coach { border-left-color: var(--wf-coral); background: rgba(250,119,60,0.06); }
+    .rx-callout-tag { font-family: var(--ys-font-display); letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.72rem; color: var(--rx-accent-deep); margin-bottom: 6px; }
+    .rx-callout.teal .rx-callout-tag { color: var(--rx-teal-deep); }
+    .rx-callout.warn .rx-callout-tag { color: #a07712; }
+    .rx-callout.coach .rx-callout-tag { color: var(--wf-coral); }
+    .rx-callout p { margin: 0 0 8px; }
+    .rx-callout p:last-child { margin-bottom: 0; }
+
+    .rx-idea { background: linear-gradient(135deg, var(--ys-navy) 0%, var(--rx-deep) 100%); color: #fff; border-radius: 16px; padding: 34px 36px; }
+    .rx-idea h3 { color: #fff; font-family: var(--ys-font-display); font-size: 1.5rem; margin: 0 0 14px; letter-spacing: 0.01em; }
+    .rx-idea p { color: rgba(255,255,255,0.92); margin: 0 0 12px; font-size: 1.04rem; line-height: 1.62; }
+    .rx-idea p:last-child { margin-bottom: 0; }
+    .rx-idea strong { color: #fff; }
+
+    .rx-bands { background: #fff; border: 1px solid var(--ys-line); border-radius: 14px; overflow: hidden; box-shadow: 0 1px 3px rgba(47,45,86,0.06); max-width: 820px; margin: 0 auto; }
+    .rx-band { display: grid; grid-template-columns: 190px 1fr; gap: 18px; padding: 14px 22px; border-bottom: 1px solid var(--ys-line); align-items: baseline; }
+    .rx-band:last-child { border-bottom: 0; }
+    .rx-band-val { font-family: var(--ys-font-display); font-weight: 700; color: var(--rx-accent-deep); font-size: 0.98rem; }
+    .rx-band-desc { color: var(--ys-navy); font-size: 0.94rem; line-height: 1.5; }
+    @media (max-width: 540px) { .rx-band { grid-template-columns: 1fr; gap: 3px; } }
+
+    .rx-metric-tag { font-family: var(--ys-font-display); letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.72rem; color: var(--rx-accent-deep); margin-bottom: 6px; }
+
+    .rx-quote { max-width: 760px; margin: 0 auto; background: #fff; border-left: 4px solid var(--rx-accent); border-radius: 0 12px 12px 0; padding: 22px 26px; box-shadow: 0 1px 3px rgba(47,45,86,0.06); }
+    .rx-quote blockquote { margin: 0 0 10px; font-size: 1.08rem; line-height: 1.55; color: var(--ys-navy); font-style: italic; }
+    .rx-quote cite { font-style: normal; font-size: 0.86rem; color: var(--ys-muted); }
+
+    .rx-cta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 700px) { .rx-cta-grid { grid-template-columns: 1fr; } }
+    .rx-cta-card { background: #fff; border: 1px solid var(--ys-line); border-radius: 14px; padding: 26px 28px; box-shadow: 0 4px 14px rgba(47,45,86,0.08); }
+    .rx-cta-card.featured { background: linear-gradient(135deg, var(--rx-deep) 0%, var(--rx-accent) 100%); color: #fff; border: 0; }
+    .rx-cta-card.featured h3, .rx-cta-card.featured p { color: #fff; }
+    .rx-cta-meta { font-family: var(--ys-font-display); letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.7rem; color: var(--rx-accent-deep); margin-bottom: 8px; }
+    .rx-cta-card.featured .rx-cta-meta { color: rgba(255,255,255,0.85); }
+    .rx-cta-card h3 { font-family: var(--ys-font-display); color: var(--ys-navy); margin: 0 0 6px; font-size: 1.24rem; }
+    .rx-cta-card p { margin: 0 0 14px; }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Programs</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://hub.yousuli.co/" target="_top" rel="noopener">Hub &#x2197;</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Your results, explained</span>
+      <h1>Your VO<sub>2</sub>max test.</h1>
+      <div class="wf-subhead">How big your aerobic engine is, and what to do with that</div>
+      <p class="lede">You just did the hardest 35 minutes on a treadmill or bike I&rsquo;ll ask of you all year, breathing through a mask that measured every molecule of oxygen you used. The report has your numbers. This page explains what they actually mean, in plain English, so the debrief we do together lands on top of something you already understand. Read it once, keep it, come back to it after your retest.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#big-idea">Start with the big idea &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#ranges">Where do I land?</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ QUICK-NAV ============ -->
+  <nav class="ys-quicknav" aria-label="Section navigation">
+    <div class="ys-container ys-quicknav-row">
+      <span class="ys-quicknav-label">Jump to</span>
+      <a href="#big-idea">The big idea</a>
+      <a href="#measured">What we measured</a>
+      <a href="#ranges">Where you land</a>
+      <a href="#training">What to do</a>
+      <a href="#science">The science</a>
+      <a href="#misreads">Common misreads</a>
+    </div>
+  </nav>
+
+  <!-- ============ THE BIG IDEA ============ -->
+  <section class="wf-section" id="big-idea">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>The big idea</h2>
+        <div class="ys-rule"></div>
+        <p>One picture to hang everything else on.</p>
+      </div>
+
+      <div class="rx-idea">
+        <h3>VO<sub>2</sub>max is the size of your engine</h3>
+        <p>Think of your aerobic system as the engine in a car. VO<sub>2</sub>max is its displacement: the most oxygen your body can pull in, ship to the muscles, and burn per minute when you are absolutely flat out. A bigger engine can do more work before it runs out of air. That is the whole idea.</p>
+        <p>Here is the part that matters. You almost never race at VO<sub>2</sub>max, you would last a few minutes at most. What a big engine really buys you is <strong>headroom</strong>: your cruising effort, the pace you hold for hours, sits at some percentage of that ceiling. Raise the ceiling and your comfortable pace rises with it, even though you are working at the same relative effort.</p>
+        <p>So the number is not bragging rights. It is the roof over every other pace you own. We measure the roof directly, we do not guess it from a watch.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHAT WE MEASURED ============ -->
+  <section class="wf-section alt" id="measured">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What we actually measured</h2>
+        <div class="ys-rule"></div>
+        <p>Your report has four things on it. Here is what each one is.</p>
+      </div>
+
+      <div class="ys-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+        <article class="ys-card">
+          <div class="rx-metric-tag">Metric 01</div>
+          <h3>VO<sub>2</sub>max</h3>
+          <p>Reported in millilitres of oxygen per kilogram of body weight per minute (ml/kg/min). The size of the engine, adjusted for how much body it has to move. This is the headline number, and the one we retest to see if the engine is growing.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="rx-metric-tag">Metric 02</div>
+          <h3>VT1 and VT2, your two gears</h3>
+          <p>Two turning points in your breathing tell us where your body changes fuel strategy. <strong>VT1</strong> is the top of all-day easy: below it you could talk in sentences and go for hours. <strong>VT2</strong> is the redline: the hardest effort you can hold before things unravel fast. The space between them is where most training lives.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="rx-metric-tag">Metric 03</div>
+          <h3>Your personal zones</h3>
+          <p>Because we found VT1 and VT2 on <em>your</em> data, the heart-rate, pace, and power zones on your report are yours, not a generic chart pulled from your age. This is the practical payoff: you leave knowing exactly what number an easy day and a hard day should feel like.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="rx-metric-tag">Metric 04</div>
+          <h3>Fat and carb burn (fuel notes)</h3>
+          <p>The mask also showed which fuel you were burning at each intensity, including your fat-max: the effort where you burn fat fastest. That feeds directly into how you fuel long days and where easy training pays off most.</p>
+        </article>
+      </div>
+
+      <div class="rx-callout coach">
+        <div class="rx-callout-tag">Coach note</div>
+        <p>A watch or a field test <em>estimates</em> VO<sub>2</sub>max from heart rate and pace. That is a guess built on assumptions about you that are often wrong. The mask <em>measures</em> the actual gas you exchanged, breath by breath. Same word, completely different confidence.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHERE YOU LAND ============ -->
+  <section class="wf-section" id="ranges">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Where you land</h2>
+        <div class="ys-rule"></div>
+        <p>Your exact number is on your report. This is the neighbourhood it sits in.</p>
+      </div>
+
+      <!-- FRED: verify these VO2max bands (ml/kg/min) against how you like to present them. Drafted as broad, honest ranges by training level. -->
+      <p style="text-align: center; color: var(--ys-muted); font-size: 0.9rem; margin: 0 auto 16px; max-width: 680px;">Rough VO<sub>2</sub>max bands for adult endurance athletes, in ml/kg/min. Ranges overlap and shift with age, these are orientation, not a verdict.</p>
+
+      <div class="rx-bands">
+        <div class="rx-band">
+          <div class="rx-band-val">Active, untrained</div>
+          <div class="rx-band-desc">Roughly 35&ndash;45 (men), 30&ndash;40 (women). A healthy, active adult who does not train endurance specifically. Plenty of room to grow.</div>
+        </div>
+        <div class="rx-band">
+          <div class="rx-band-val">Trained age-grouper</div>
+          <div class="rx-band-desc">Roughly 50&ndash;60 (men), 45&ndash;55 (women). Consistent endurance training for a year or more. Most of the athletes I test live here.</div>
+        </div>
+        <div class="rx-band">
+          <div class="rx-band-val">Highly trained</div>
+          <div class="rx-band-desc">Roughly 60&ndash;70 (men), 55&ndash;62 (women). Serious volume, years of structure, competitive at your age group.</div>
+        </div>
+        <div class="rx-band">
+          <div class="rx-band-val">Elite endurance</div>
+          <div class="rx-band-desc">70+ (men), 62+ (women). National and world class. Rare, and only part of what makes them fast (see the misreads below).</div>
+        </div>
+      </div>
+
+      <div class="rx-callout teal">
+        <div class="rx-callout-tag">The number that moves</div>
+        <p>Where you start matters far less than which direction you are heading. A trained athlete can add several points over a season with the right stimulus, and we retest every 8 to 12 weeks precisely so we can see the trend instead of guessing at it.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHAT IT MEANS FOR TRAINING ============ -->
+  <section class="wf-section alt" id="training">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What to do with it</h2>
+        <div class="ys-rule"></div>
+        <p>A test you do not act on is just a fact. Here is how this one changes your week.</p>
+      </div>
+
+      <div class="ys-grid">
+        <article class="ys-card">
+          <div class="ys-meta">Train the zones</div>
+          <h3>Easy days easy, hard days hard</h3>
+          <p>The most common mistake I fix is the grey middle: too hard to recover, too easy to build. Your VT1 number is the ceiling for genuinely easy work. Stay under it on easy days and you can afford to hit the hard days properly.</p>
+        </article>
+        <article class="ys-card">
+          <div class="ys-meta">Raise the ceiling</div>
+          <h3>A little time near the top</h3>
+          <p>The engine grows from a small, well-placed dose of work up near VO<sub>2</sub>max, on top of a big base of easy volume. Not much, but it has to be there. Your report tells us the effort that counts as &ldquo;up near the top&rdquo; for you.</p>
+        </article>
+        <article class="ys-card">
+          <div class="ys-meta">Convert it</div>
+          <h3>Turn the number into pace and power</h3>
+          <p>Use your VO<sub>2</sub>max with the <a href="https://www.yousuli.co/vo2-to-running" target="_top">VO<sub>2</sub> to running</a> and <a href="https://www.yousuli.co/vo2-to-cycling-power" target="_top">VO<sub>2</sub> to cycling power</a> calculators to sanity-check race paces, and set training heart-rate zones with the <a href="https://www.yousuli.co/runninghrzones" target="_top">HR zones</a> tool.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE SCIENCE ============ -->
+  <section class="wf-section" id="science">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>The science, briefly</h2>
+        <div class="ys-rule"></div>
+        <p>Why I care about this number beyond race day.</p>
+      </div>
+
+      <div class="ys-bigstat-grid">
+        <div class="ys-bigstat">
+          <span class="ys-bigstat-label">Per +1 MET in VO<sub>2</sub>max</span>
+          <div class="ys-bigstat-num"><em>&minus;13%</em></div>
+          <p>All-cause mortality risk. VO<sub>2</sub>max is one of the strongest independent predictors of longevity we have, ahead of most things your doctor measures.</p>
+        </div>
+        <div class="ys-bigstat">
+          <span class="ys-bigstat-label">Distance-run finish times</span>
+          <div class="ys-bigstat-num"><em>70&ndash;80%</em></div>
+          <p>Of the variance in finish times between well-trained distance runners is explained by VO<sub>2</sub>max alone. It is not everything, but it is a lot.</p>
+        </div>
+        <div class="ys-bigstat">
+          <span class="ys-bigstat-label">Per +1 ml/kg/min</span>
+          <div class="ys-bigstat-num"><em>~30 s</em></div>
+          <p>Off a 40 km cycling time trial, roughly. Small gains in the lab compound into real minutes across a season.</p>
+        </div>
+      </div>
+
+      <div class="rx-quote" style="margin-top: 26px;">
+        <blockquote>&ldquo;Cardiorespiratory fitness should be considered a clinical vital sign, a stronger predictor of mortality than smoking, hypertension, or type-2 diabetes.&rdquo;</blockquote>
+        <cite>American Heart Association, Scientific Statement (Ross et al., Circulation 2016)</cite>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.95rem;">Full breakdown with peer-reviewed references on the <a href="https://www.yousuli.co/science" target="_top" style="color: var(--wf-coral);">Science page</a>.</p>
+    </div>
+  </section>
+
+  <!-- ============ COMMON MISREADS ============ -->
+  <section class="wf-section alt" id="misreads">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Common misreads</h2>
+        <div class="ys-rule"></div>
+        <p>Where people go wrong reading this number. Do not be one of them.</p>
+      </div>
+
+      <div class="rx-callout warn">
+        <div class="rx-callout-tag">Misread 01</div>
+        <p><strong>&ldquo;Highest VO<sub>2</sub>max wins.&rdquo;</strong> It does not. Two athletes with the same engine can finish minutes apart, because the winner uses less oxygen at the same pace (better economy) and holds a higher fraction of the ceiling before cracking (better threshold). VO<sub>2</sub>max sets the roof. Economy and threshold decide how much of the room you actually use.</p>
+      </div>
+
+      <div class="rx-callout warn">
+        <div class="rx-callout-tag">Misread 02</div>
+        <p><strong>&ldquo;My watch says a different number.&rdquo;</strong> Your watch is guessing from heart rate and pace. We measured the gas. When they disagree, the mask is right. Use the watch for trends day to day, use the lab number as the anchor those trends hang from.</p>
+      </div>
+
+      <div class="rx-callout warn">
+        <div class="rx-callout-tag">Misread 03</div>
+        <p><strong>&ldquo;It dropped, I&rsquo;m falling apart.&rdquo;</strong> A single number bounces with sleep, heat, how fresh you were, even a slightly different mask fit. That is exactly why we retest and read the trend line, not one dot. One test is a snapshot, three tests are a story.</p>
+      </div>
+
+      <div class="rx-quote" style="margin-top: 24px;">
+        <blockquote>&ldquo;The best athletes in the world don&rsquo;t necessarily have the highest VO<sub>2</sub>max. They have the highest economy and metabolic flexibility, that&rsquo;s what separates them at the limit.&rdquo;</blockquote>
+        <cite>Dr I&ntilde;igo San Mill&aacute;n, Performance Lead, UAE Team Emirates</cite>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CTA ============ -->
+  <section class="wf-section" id="cta">
+    <div class="ys-container" style="max-width: 920px;">
+      <div class="ys-section-head">
+        <h2>Where to go from here</h2>
+        <div class="ys-rule"></div>
+        <p>Two ways to turn this test into faster racing.</p>
+      </div>
+
+      <div class="rx-cta-grid">
+        <article class="rx-cta-card featured">
+          <div class="rx-cta-meta">See the engine grow</div>
+          <h3>Book your retest</h3>
+          <p>Retest every 8 to 12 weeks and we can tell training that is working from training that only feels like work. Same protocol, same mask, a clean before and after.</p>
+          <a class="ys-btn ys-btn-coral" href="https://wix.to/orvLkzC" target="_top">Book a VO<sub>2</sub>max retest</a>
+          <p style="margin-top: 12px; font-size: 0.84rem; opacity: 0.85;">Coached athletes and YSC Performance Tier members get 20% off, applied at booking.</p>
+        </article>
+
+        <article class="rx-cta-card">
+          <div class="rx-cta-meta">Put it to work</div>
+          <h3>Build the plan around it</h3>
+          <p>Your zones are only worth having if the week is built on them. If you want me structuring that week, coaching is where the number becomes a plan.</p>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/coaching" target="_top">See coaching</a>
+          <p style="margin-top: 12px; font-size: 0.84rem; color: var(--ys-muted);">Questions about your report? <a href="https://www.yousuli.co/contact" target="_top" style="color: var(--wf-coral);">Send me a note</a> and I&rsquo;ll walk you through it.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Online programs</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:fred@yousuli.co">fred@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

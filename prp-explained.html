@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Your Performance Recovery Profile, explained &middot; Yousuli Performance Lab</title>
+  <meta name="description" content="You did a Performance Recovery Profile. Here is what it tells you in plain English: how hard you can surge, how fast you bounce back, and which limiter to train." />
+  <meta name="robots" content="noindex,nofollow" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Your Performance Recovery Profile, explained" />
+  <meta property="og:description" content="What your PRP actually tells you, in plain English. A short read from Coach Fred." />
+  <meta property="og:url" content="https://www.yousuli.co/prp-explained" />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED PAGE STYLES ============ -->
+  <style>
+    :root {
+      --rx-accent: #F9B233;
+      --rx-accent-deep: #a07712;
+      --rx-deep: #7a5a10;
+      --rx-teal: #00B3A4;
+      --rx-teal-deep: #0e5f5a;
+    }
+    .rx-callout { padding: 18px 22px; border-left: 4px solid var(--rx-accent); background: var(--ys-bg-soft); border-radius: 0 10px 10px 0; margin: 16px 0; }
+    .rx-callout.teal { border-left-color: var(--rx-teal); background: rgba(0,179,164,0.06); }
+    .rx-callout.warn { border-left-color: #c69b1a; background: #fdf6e0; }
+    .rx-callout.coach { border-left-color: var(--wf-coral); background: rgba(250,119,60,0.06); }
+    .rx-callout-tag { font-family: var(--ys-font-display); letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.72rem; color: var(--rx-accent-deep); margin-bottom: 6px; }
+    .rx-callout.teal .rx-callout-tag { color: var(--rx-teal-deep); }
+    .rx-callout.coach .rx-callout-tag { color: var(--wf-coral); }
+    .rx-callout p { margin: 0 0 8px; }
+    .rx-callout p:last-child { margin-bottom: 0; }
+
+    .rx-idea { background: linear-gradient(135deg, var(--ys-navy) 0%, var(--rx-deep) 100%); color: #fff; border-radius: 16px; padding: 34px 36px; }
+    .rx-idea h3 { color: #fff; font-family: var(--ys-font-display); font-size: 1.5rem; margin: 0 0 14px; letter-spacing: 0.01em; }
+    .rx-idea p { color: rgba(255,255,255,0.92); margin: 0 0 12px; font-size: 1.04rem; line-height: 1.62; }
+    .rx-idea p:last-child { margin-bottom: 0; }
+    .rx-idea strong { color: #fff; }
+
+    .rx-bands { background: #fff; border: 1px solid var(--ys-line); border-radius: 14px; overflow: hidden; box-shadow: 0 1px 3px rgba(47,45,86,0.06); max-width: 820px; margin: 0 auto; }
+    .rx-band { display: grid; grid-template-columns: 210px 1fr; gap: 18px; padding: 16px 22px; border-bottom: 1px solid var(--ys-line); align-items: baseline; }
+    .rx-band:last-child { border-bottom: 0; }
+    .rx-band-val { font-family: var(--ys-font-display); font-weight: 700; color: var(--rx-accent-deep); font-size: 0.98rem; }
+    .rx-band-desc { color: var(--ys-navy); font-size: 0.94rem; line-height: 1.5; }
+    @media (max-width: 540px) { .rx-band { grid-template-columns: 1fr; gap: 3px; } }
+
+    .rx-metric-tag { font-family: var(--ys-font-display); letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.72rem; color: var(--rx-accent-deep); margin-bottom: 6px; }
+
+    .rx-quote { max-width: 760px; margin: 0 auto; background: #fff; border-left: 4px solid var(--rx-accent); border-radius: 0 12px 12px 0; padding: 22px 26px; box-shadow: 0 1px 3px rgba(47,45,86,0.06); }
+    .rx-quote blockquote { margin: 0 0 10px; font-size: 1.08rem; line-height: 1.55; color: var(--ys-navy); font-style: italic; }
+    .rx-quote cite { font-style: normal; font-size: 0.86rem; color: var(--ys-muted); }
+
+    .rx-cta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 700px) { .rx-cta-grid { grid-template-columns: 1fr; } }
+    .rx-cta-card { background: #fff; border: 1px solid var(--ys-line); border-radius: 14px; padding: 26px 28px; box-shadow: 0 4px 14px rgba(47,45,86,0.08); }
+    .rx-cta-card.featured { background: linear-gradient(135deg, var(--rx-deep) 0%, var(--rx-accent) 100%); color: #fff; border: 0; }
+    .rx-cta-card.featured h3, .rx-cta-card.featured p { color: #fff; }
+    .rx-cta-meta { font-family: var(--ys-font-display); letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.7rem; color: var(--rx-accent-deep); margin-bottom: 8px; }
+    .rx-cta-card.featured .rx-cta-meta { color: rgba(255,255,255,0.9); }
+    .rx-cta-card h3 { font-family: var(--ys-font-display); color: var(--ys-navy); margin: 0 0 6px; font-size: 1.24rem; }
+    .rx-cta-card p { margin: 0 0 14px; }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Programs</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://hub.yousuli.co/" target="_top" rel="noopener">Hub &#x2197;</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Your results, explained</span>
+      <h1>Your recovery profile.</h1>
+      <div class="wf-subhead">How hard you can surge, and how fast you bounce back</div>
+      <p class="lede">You went all-out, recovered, and did it again, several times, while I tracked your oxygen, your muscle fuel, and your blood lactate through every surge and every recovery. Sprint, recover, repeat is the coin of the realm in crits, HYROX, CrossFit, and short-course triathlon. This page explains what your recovery numbers mean and, more importantly, which one to train.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#big-idea">Start with the big idea &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#ranges">What&rsquo;s my limiter?</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ QUICK-NAV ============ -->
+  <nav class="ys-quicknav" aria-label="Section navigation">
+    <div class="ys-container ys-quicknav-row">
+      <span class="ys-quicknav-label">Jump to</span>
+      <a href="#big-idea">The big idea</a>
+      <a href="#measured">What we measured</a>
+      <a href="#ranges">Your limiter</a>
+      <a href="#training">What to do</a>
+      <a href="#science">The science</a>
+      <a href="#misreads">Common misreads</a>
+    </div>
+  </nav>
+
+  <!-- ============ THE BIG IDEA ============ -->
+  <section class="wf-section" id="big-idea">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>The big idea</h2>
+        <div class="ys-rule"></div>
+        <p>One picture to hang everything else on.</p>
+      </div>
+
+      <div class="rx-idea">
+        <h3>The race is won by whoever refills fastest</h3>
+        <p>Picture a matchbook. Every hard surge, the break, the last lap, the sprint out of the corner, strikes a match. You only get so many, and the box refills slowly in the easy moments between efforts. Most athletes obsess over how big their single match burns. The winner is usually the one who <strong>restocks the box fastest</strong>.</p>
+        <p>That is what this test measures. Not just how hard you can go once, but how quickly you are ready to go hard again. In a race full of surges, the athlete who recovers 5% faster between them is the one still there when it matters, while everyone else is emptying a box that never refilled.</p>
+        <p>Recovery, it turns out, is not toughness. It is a trainable, mostly aerobic skill. And the first step to training it is knowing which part of the refill is slow for you.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHAT WE MEASURED ============ -->
+  <section class="wf-section alt" id="measured">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What we actually measured</h2>
+        <div class="ys-rule"></div>
+        <p>Three data streams, tracked through every surge and every recovery.</p>
+      </div>
+
+      <div class="ys-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+        <article class="ys-card">
+          <div class="rx-metric-tag">Metric 01</div>
+          <h3>Surge power, and its fade</h3>
+          <p>How hard you can go on each all-out effort, and how much that peak drops across repeats. A flat line across efforts is a deep box. A steep fade means the box empties faster than it refills.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="rx-metric-tag">Metric 02</div>
+          <h3>Time-to-recover</h3>
+          <p>How many seconds it takes you to climb back to 50% and then 90% of your baseline between efforts. This is the refill rate itself, the single most race-relevant number on the report.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="rx-metric-tag">Metric 03</div>
+          <h3>Your limiter, named</h3>
+          <p>By watching oxygen, muscle oxygenation (SmO<sub>2</sub>), and lactate together, we can see <em>why</em> your refill is slow: whether the bottleneck is aerobic refill, buffering capacity, or blood flow into the working muscle. That diagnosis is the whole point.</p>
+        </article>
+      </div>
+
+      <div class="rx-callout coach">
+        <div class="rx-callout-tag">Coach note</div>
+        <p>Feel is a terrible recovery gauge. Under fatigue you feel wrecked long after your body is physiologically ready, or the reverse, you feel fine while your muscle oxygen is still in a hole. The sensors do not flatter you and they do not panic. The curve is the truth.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ YOUR LIMITER ============ -->
+  <section class="wf-section" id="ranges">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Your limiter, and what it means</h2>
+        <div class="ys-rule"></div>
+        <p>Recovery is individual, so instead of one band, your report points at one of three culprits. Here is what each one asks you to train.</p>
+      </div>
+
+      <div class="rx-bands">
+        <div class="rx-band">
+          <div class="rx-band-val">Aerobic refill</div>
+          <div class="rx-band-desc">Your oxygen system is slow to restock the box between efforts. The fix is aerobic base and better VO<sub>2</sub> kinetics: more easy volume and well-placed threshold work, not more sprinting.</div>
+        </div>
+        <div class="rx-band">
+          <div class="rx-band-val">Buffering capacity</div>
+          <div class="rx-band-desc">You make a lot of lactate and struggle to clear and buffer it, so the acid piles up across repeats. The fix leans toward controlled glycolytic work and tempo floats that train clearance.</div>
+        </div>
+        <div class="rx-band">
+          <div class="rx-band-val">Local muscle perfusion</div>
+          <div class="rx-band-desc">The central engine is fine, but blood flow and oxygen into the specific working muscle lag. The fix is more local: targeted intervals, position and cadence work, sometimes strength for the tissue itself.</div>
+        </div>
+      </div>
+
+      <div class="rx-callout teal">
+        <div class="rx-callout-tag">Why this matters more than a single score</div>
+        <p>Two athletes can have identical recovery times for completely different reasons, and the training that fixes one would waste the other&rsquo;s season. Knowing the culprit is what turns &ldquo;do more intervals&rdquo; into the <em>right</em> intervals.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHAT IT MEANS FOR TRAINING ============ -->
+  <section class="wf-section alt" id="training">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What to do with it</h2>
+        <div class="ys-rule"></div>
+        <p>Train the limiter you have, not the workout you like.</p>
+      </div>
+
+      <div class="ys-grid">
+        <article class="ys-card">
+          <div class="ys-meta">Match the work</div>
+          <h3>Pick intervals for your culprit</h3>
+          <p>Your report ties your limiter to a session type: aerobic refill wants base and clearance work, buffering wants controlled glycolytic sets, perfusion wants targeted local intervals. Same hour of training, very different result, depending on which you choose.</p>
+        </article>
+        <article class="ys-card">
+          <div class="ys-meta">Recover on purpose</div>
+          <h3>Use active recovery between efforts</h3>
+          <p>Lactate clears fastest at an easy-but-not-too-easy float, not at a dead stop. In races and in intervals, keeping the legs lightly turning between surges can refill the box faster than fully coasting.</p>
+        </article>
+        <article class="ys-card">
+          <div class="ys-meta">Connect it</div>
+          <h3>Tie it to your power profile</h3>
+          <p>Your recovery lives on top of your critical power and your anaerobic reserve. The <a href="https://www.yousuli.co/critical-power-calculator" target="_top">critical power</a> tool shows the reservoir you are spending and refilling, and pairs naturally with what this test found.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE SCIENCE ============ -->
+  <section class="wf-section" id="science">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>The science, briefly</h2>
+        <div class="ys-rule"></div>
+        <p>Why recovery, not peak power, is often the hidden race-winner.</p>
+      </div>
+
+      <div class="ys-bigstat-grid">
+        <div class="ys-bigstat">
+          <span class="ys-bigstat-label">Gap in recovery speed</span>
+          <div class="ys-bigstat-num"><em>5% = 1st vs 5th</em></div>
+          <p>When the final surge hits, a small edge in how fast you refilled between the earlier ones decides who is still in contention and who is drifting back.</p>
+        </div>
+        <div class="ys-bigstat">
+          <span class="ys-bigstat-label">Repeat-sprint ability tracks</span>
+          <div class="ys-bigstat-num"><em>PCr, not grit</em></div>
+          <p>How well you hold power across repeats follows phosphocreatine resynthesis, an aerobic process, far more closely than it follows willpower.</p>
+        </div>
+        <div class="ys-bigstat">
+          <span class="ys-bigstat-label">First 2 minutes after all-out</span>
+          <div class="ys-bigstat-num"><em>Diagnostic</em></div>
+          <p>The shape of your lactate drop and SmO<sub>2</sub> rebound in the first two minutes tells us, on its own, whether you are ready for dense interval blocks.</p>
+        </div>
+      </div>
+
+      <div class="rx-callout teal" style="margin-top: 24px;">
+        <div class="rx-callout-tag">The readiness signal</div>
+        <p>A quick reoxygenation of the muscle after an effort is one of the most reliable &ldquo;ready to go again&rdquo; signals we have. A sluggish rebound says the fuel tank or the plumbing needs work first, before you pile on more intensity.</p>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.95rem;">Full breakdown with peer-reviewed references on the <a href="https://www.yousuli.co/science" target="_top" style="color: var(--wf-coral);">Science page</a>.</p>
+    </div>
+  </section>
+
+  <!-- ============ COMMON MISREADS ============ -->
+  <section class="wf-section alt" id="misreads">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Common misreads</h2>
+        <div class="ys-rule"></div>
+        <p>Where athletes go wrong with a recovery number.</p>
+      </div>
+
+      <div class="rx-callout warn">
+        <div class="rx-callout-tag">Misread 01</div>
+        <p><strong>&ldquo;Recovery is just being tough.&rdquo;</strong> It is not a character trait, it is physiology, and mostly aerobic physiology at that. You cannot grit your way to a faster refill. You train it, the same way you train anything else, once you know which part is slow.</p>
+      </div>
+
+      <div class="rx-callout warn">
+        <div class="rx-callout-tag">Misread 02</div>
+        <p><strong>&ldquo;Bigger peak power is all that matters.&rdquo;</strong> A huge single effort you cannot repeat loses to a slightly smaller one you can throw down five times. In surge-recovery racing, the size of your matchbook and the speed it refills usually beat the size of one match.</p>
+      </div>
+
+      <div class="rx-callout warn">
+        <div class="rx-callout-tag">Misread 03</div>
+        <p><strong>&ldquo;I&rsquo;ll just do more intervals.&rdquo;</strong> More of the wrong interval trains the wrong system and digs a fatigue hole for nothing. The whole reason we named your limiter is so the next block is aimed, not just hard.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CTA ============ -->
+  <section class="wf-section" id="cta">
+    <div class="ys-container" style="max-width: 920px;">
+      <div class="ys-section-head">
+        <h2>Where to go from here</h2>
+        <div class="ys-rule"></div>
+        <p>Two ways to turn this profile into a faster finish.</p>
+      </div>
+
+      <div class="rx-cta-grid">
+        <article class="rx-cta-card featured">
+          <div class="rx-cta-meta">See the refill get faster</div>
+          <h3>Retest after a block</h3>
+          <p>Train the limiter for 8 to 12 weeks, then retest. A faster recovery curve is one of the most satisfying before-and-afters in the lab, because you can feel it in every race that comes down to the last surge.</p>
+          <a class="ys-btn ys-btn-coral" href="https://wix.to/AjxxiqK" target="_top">Book a PRP</a>
+          <p style="margin-top: 12px; font-size: 0.84rem; opacity: 0.9;">Coached athletes and YSC Performance Tier members get 20% off, applied at booking.</p>
+        </article>
+
+        <article class="rx-cta-card">
+          <div class="rx-cta-meta">Train the right thing</div>
+          <h3>Build the block around your limiter</h3>
+          <p>The value of naming your limiter is only realised if the next block actually targets it. If you want that aimed for you, coaching is where the diagnosis becomes a plan.</p>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/coaching" target="_top">See coaching</a>
+          <p style="margin-top: 12px; font-size: 0.84rem; color: var(--ys-muted);">Questions about your report? <a href="https://www.yousuli.co/contact" target="_top" style="color: var(--wf-coral);">Send me a note</a> and I&rsquo;ll walk you through it.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Online programs</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:fred@yousuli.co">fred@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

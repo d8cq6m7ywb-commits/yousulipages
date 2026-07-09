@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Your Full-Stack Profile, explained &middot; Yousuli Performance Lab</title>
+  <meta name="description" content="You did a PRO Full-Stack Profile. Here is what the whole picture means in plain English: your oxygen cascade, your ranked limiter, your economy, and your heat and hydration profile." />
+  <meta name="robots" content="noindex,nofollow" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Your Full-Stack Profile, explained" />
+  <meta property="og:description" content="What your Full-Stack profile actually tells you, in plain English. A short read from Coach Fred." />
+  <meta property="og:url" content="https://www.yousuli.co/fullstack-explained" />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED PAGE STYLES ============ -->
+  <style>
+    :root {
+      --rx-accent: #6059D4;
+      --rx-accent-deep: #3d3a8c;
+      --rx-deep: #2f2d56;
+      --rx-teal: #00B3A4;
+      --rx-teal-deep: #0e5f5a;
+    }
+    .rx-callout { padding: 18px 22px; border-left: 4px solid var(--rx-accent); background: var(--ys-bg-soft); border-radius: 0 10px 10px 0; margin: 16px 0; }
+    .rx-callout.teal { border-left-color: var(--rx-teal); background: rgba(0,179,164,0.06); }
+    .rx-callout.warn { border-left-color: #c69b1a; background: #fdf6e0; }
+    .rx-callout.coach { border-left-color: var(--wf-coral); background: rgba(250,119,60,0.06); }
+    .rx-callout-tag { font-family: var(--ys-font-display); letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.72rem; color: var(--rx-accent-deep); margin-bottom: 6px; }
+    .rx-callout.teal .rx-callout-tag { color: var(--rx-teal-deep); }
+    .rx-callout.warn .rx-callout-tag { color: #a07712; }
+    .rx-callout.coach .rx-callout-tag { color: var(--wf-coral); }
+    .rx-callout p { margin: 0 0 8px; }
+    .rx-callout p:last-child { margin-bottom: 0; }
+
+    .rx-idea { background: linear-gradient(135deg, var(--ys-navy) 0%, var(--rx-accent) 100%); color: #fff; border-radius: 16px; padding: 34px 36px; }
+    .rx-idea h3 { color: #fff; font-family: var(--ys-font-display); font-size: 1.5rem; margin: 0 0 14px; letter-spacing: 0.01em; }
+    .rx-idea p { color: rgba(255,255,255,0.92); margin: 0 0 12px; font-size: 1.04rem; line-height: 1.62; }
+    .rx-idea p:last-child { margin-bottom: 0; }
+    .rx-idea strong { color: #fff; }
+
+    .rx-chain { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 22px 0 4px; }
+    @media (max-width: 640px) { .rx-chain { grid-template-columns: 1fr; } }
+    .rx-link { background: #fff; border: 1px solid var(--ys-line); border-top: 4px solid var(--rx-accent); border-radius: 10px; padding: 18px 20px; }
+    .rx-link .rx-link-num { font-family: var(--ys-font-display); font-weight: 800; font-size: 1.6rem; color: var(--rx-accent); line-height: 1; margin-bottom: 6px; }
+    .rx-link h4 { margin: 0 0 6px; font-family: var(--ys-font-display); color: var(--ys-navy); font-size: 1.08rem; }
+    .rx-link p { margin: 0; font-size: 0.92rem; color: var(--ys-muted); line-height: 1.5; }
+
+    .rx-metric-tag { font-family: var(--ys-font-display); letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.72rem; color: var(--rx-accent-deep); margin-bottom: 6px; }
+
+    .rx-quote { max-width: 760px; margin: 0 auto; background: #fff; border-left: 4px solid var(--rx-accent); border-radius: 0 12px 12px 0; padding: 22px 26px; box-shadow: 0 1px 3px rgba(47,45,86,0.06); }
+    .rx-quote blockquote { margin: 0 0 10px; font-size: 1.08rem; line-height: 1.55; color: var(--ys-navy); font-style: italic; }
+    .rx-quote cite { font-style: normal; font-size: 0.86rem; color: var(--ys-muted); }
+
+    .rx-cta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 700px) { .rx-cta-grid { grid-template-columns: 1fr; } }
+    .rx-cta-card { background: #fff; border: 1px solid var(--ys-line); border-radius: 14px; padding: 26px 28px; box-shadow: 0 4px 14px rgba(47,45,86,0.08); }
+    .rx-cta-card.featured { background: linear-gradient(135deg, var(--rx-deep) 0%, var(--rx-accent) 100%); color: #fff; border: 0; }
+    .rx-cta-card.featured h3, .rx-cta-card.featured p { color: #fff; }
+    .rx-cta-meta { font-family: var(--ys-font-display); letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.7rem; color: var(--rx-accent-deep); margin-bottom: 8px; }
+    .rx-cta-card.featured .rx-cta-meta { color: rgba(255,255,255,0.85); }
+    .rx-cta-card h3 { font-family: var(--ys-font-display); color: var(--ys-navy); margin: 0 0 6px; font-size: 1.24rem; }
+    .rx-cta-card p { margin: 0 0 14px; }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Programs</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://hub.yousuli.co/" target="_top" rel="noopener">Hub &#x2197;</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Your results, explained</span>
+      <h1>Your full-stack profile.</h1>
+      <div class="wf-subhead">The deepest scan we run, and the one weak link it found</div>
+      <p class="lede">This is the big one. In a single session we recorded several data streams at once, oxygen, muscle oxygenation, lactate, core temperature, and your sweat and sodium loss, from your easiest aerobic effort all the way to all-out. The result is a full map of how you make and use energy, with your limiters ranked. This page explains how to read that map.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#big-idea">Start with the big idea &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#measured">What&rsquo;s on the report?</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ QUICK-NAV ============ -->
+  <nav class="ys-quicknav" aria-label="Section navigation">
+    <div class="ys-container ys-quicknav-row">
+      <span class="ys-quicknav-label">Jump to</span>
+      <a href="#big-idea">The big idea</a>
+      <a href="#measured">What we measured</a>
+      <a href="#ranges">Reading the map</a>
+      <a href="#training">What to do</a>
+      <a href="#science">The science</a>
+      <a href="#misreads">Common misreads</a>
+    </div>
+  </nav>
+
+  <!-- ============ THE BIG IDEA ============ -->
+  <section class="wf-section" id="big-idea">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>The big idea</h2>
+        <div class="ys-rule"></div>
+        <p>One picture to hang everything else on.</p>
+      </div>
+
+      <div class="rx-idea">
+        <h3>A chain is only as strong as its weakest link</h3>
+        <p>Every endurance effort runs down a supply chain for oxygen with three links in a row. Your lungs load oxygen into the blood. Your heart and blood deliver it to the muscles. Your muscles accept it and burn it to make power. Air in, delivered, burned. That is the whole engine, start to finish.</p>
+        <p>Here is the ruthless part: <strong>one weak link caps the entire chain</strong>, no matter how strong the other two are. World-class lungs and a huge heart do you no good if the muscle cannot use what arrives. Most athletes train all three links equally, or worse, train the strong one because it feels good. That is wasted work.</p>
+        <p>The full-stack test watches all three links at once, plus how you handle heat and fluid, so we can point at the single link that is holding you back. Fix that one, and everything downstream of it gets faster at the same time.</p>
+      </div>
+
+      <div class="rx-chain">
+        <div class="rx-link">
+          <div class="rx-link-num">1</div>
+          <h4>Intake</h4>
+          <p>Lungs draw air and load oxygen into the blood. Rarely the limiter in healthy athletes, but we confirm it.</p>
+        </div>
+        <div class="rx-link">
+          <div class="rx-link-num">2</div>
+          <h4>Transport</h4>
+          <p>Heart and haemoglobin ship oxygen to the working muscles. Central delivery, the classic engine-size question.</p>
+        </div>
+        <div class="rx-link">
+          <div class="rx-link-num">3</div>
+          <h4>Utilisation</h4>
+          <p>Muscle fibres accept and burn the oxygen in their mitochondria. Often the quiet, trainable limiter.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHAT WE MEASURED ============ -->
+  <section class="wf-section alt" id="measured">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What we actually measured</h2>
+        <div class="ys-rule"></div>
+        <p>Several sensors, one synchronised timeline. Here is what each stream adds.</p>
+      </div>
+
+      <div class="ys-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));">
+        <article class="ys-card">
+          <div class="rx-metric-tag">Stream 01</div>
+          <h3>Breath-by-breath oxygen</h3>
+          <p>Your VO<sub>2</sub> across the whole range, including VO<sub>2</sub>max, your thresholds, your fat-max, and your glycolytic gear. The transport link, measured directly.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="rx-metric-tag">Stream 02</div>
+          <h3>Muscle oxygen (SmO<sub>2</sub> and tHb)</h3>
+          <p>Sensors on your working muscles show whether the tissue is actually using the oxygen that arrives. This is how we see the utilisation link, the one a VO<sub>2</sub> test alone cannot show.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="rx-metric-tag">Stream 03</div>
+          <h3>Blood lactate</h3>
+          <p>Progressive finger-sticks pin down your thresholds precisely and show how your fuel mix shifts as the effort climbs. The confirmation layer under the gas data.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="rx-metric-tag">Stream 04</div>
+          <h3>Core temperature</h3>
+          <p>A non-invasive core sensor tracks your body temperature second by second, so we can see how heat builds and whether thermoregulation is a limiter for you on hot race days.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="rx-metric-tag">Stream 05</div>
+          <h3>Sweat and sodium loss</h3>
+          <p>A wearable sweat sensor measures how much fluid and sodium you lose, and how fast. This feeds straight into a race-day hydration plan built on your numbers, not a generic bottle.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="rx-metric-tag">Stream 06</div>
+          <h3>Economy and effectiveness</h3>
+          <p>Overlaid on all of it, how much oxygen you burn at a given pace or power (your miles per gallon), and how much of your effort actually moves you forward versus bouncing or swaying.</p>
+        </article>
+      </div>
+
+      <div class="rx-callout coach">
+        <div class="rx-callout-tag">Coach note</div>
+        <p>The magic is not any single sensor, it is that they run on one clock. Watching oxygen delivery, muscle usage, lactate, and heat rise together, second by second, is what lets us separate a delivery problem from a usage problem. Run separately, these tests each tell a partial story. Run together, they name the limiter.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ READING THE MAP ============ -->
+  <section class="wf-section" id="ranges">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Reading the map</h2>
+        <div class="ys-rule"></div>
+        <p>Your report ranks your limiters. Here is the logic behind the ranking.</p>
+      </div>
+
+      <div class="rx-callout teal">
+        <div class="rx-callout-tag">The limiter heat-map</div>
+        <p>Instead of one score, you get a ranked list: cardiac output, oxygen delivery, glycolytic capacity, movement economy, heat tolerance, hydration. The one at the top is where your next block of training has the most to gain. The ones at the bottom are already strengths, leave them alone for now.</p>
+      </div>
+
+      <div class="rx-callout">
+        <div class="rx-callout-tag">Delivery versus usage, the key split</div>
+        <p>The most useful thing this test resolves: if your muscle oxygen crashes while lactate stays modest and oxygen keeps climbing, the problem is <em>peripheral</em>, the muscle cannot use what arrives (a utilisation limiter). If delivery itself tops out first, it is <em>central</em> (a transport limiter). These two need completely different training, and telling them apart is exactly what the combined sensors do.</p>
+      </div>
+
+      <div class="rx-callout warn">
+        <div class="rx-callout-tag">On economy</div>
+        <p>Two athletes with the same engine can finish far apart because one uses less oxygen at the same pace. Economy is often the quiet separator at the top, and unlike VO<sub>2</sub>max it keeps improving for years. Your report benchmarks yours against norms so you know if it is a strength or a project.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHAT IT MEANS FOR TRAINING ============ -->
+  <section class="wf-section alt" id="training">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What to do with it</h2>
+        <div class="ys-rule"></div>
+        <p>One dataset, a whole season&rsquo;s worth of aimed decisions.</p>
+      </div>
+
+      <div class="ys-grid">
+        <article class="ys-card">
+          <div class="ys-meta">Aim the block</div>
+          <h3>Train the top limiter first</h3>
+          <p>Your report hands you a ranked to-do list. Spend the next block on the top item, retest, then move down the list. This is the opposite of training everything a little, which improves nothing much.</p>
+        </article>
+        <article class="ys-card">
+          <div class="ys-meta">Race the heat</div>
+          <h3>Build your hydration and heat plan</h3>
+          <p>Your sweat, sodium, and core-temperature numbers turn into a specific bottle and a specific heat strategy. Sanity-check the fluid side with the <a href="https://www.yousuli.co/sweat-rate-calculator" target="_top">sweat rate</a> calculator and set fuel with the <a href="https://www.yousuli.co/resting-metabolic-rate-calculator" target="_top">RMR</a> tool.</p>
+        </article>
+        <article class="ys-card">
+          <div class="ys-meta">Convert the zones</div>
+          <h3>Lock your paces and powers</h3>
+          <p>The report gives you clean zones from easy to max. Translate them to pace and power with the <a href="https://www.yousuli.co/vo2-to-running" target="_top">VO<sub>2</sub> to running</a> and <a href="https://www.yousuli.co/vo2-to-cycling-power" target="_top">VO<sub>2</sub> to cycling power</a> calculators.</p>
+        </article>
+      </div>
+
+      <div class="rx-callout" style="margin-top: 6px;">
+        <div class="rx-callout-tag">How this relates to the single tests</div>
+        <p>Full-stack is the whole picture. The individual lab tests are zoom-ins on one part of it: <a href="https://www.yousuli.co/vo2max-explained" target="_top">VO<sub>2</sub>max</a> for the engine size, the <a href="https://www.yousuli.co/dark-explained" target="_top">DARK test</a> for your sustainable ceiling and anaerobic reserve, the <a href="https://www.yousuli.co/prp-explained" target="_top">recovery profile</a> for how fast you refill, and <a href="https://www.yousuli.co/cda-explained" target="_top">aero</a> for the bike. If a limiter here needs a closer look, that is where we go next.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE SCIENCE ============ -->
+  <section class="wf-section" id="science">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>The science, briefly</h2>
+        <div class="ys-rule"></div>
+        <p>Why the whole picture beats a pile of separate tests.</p>
+      </div>
+
+      <div class="ys-bigstat-grid">
+        <div class="ys-bigstat">
+          <span class="ys-bigstat-label">The chain rule</span>
+          <div class="ys-bigstat-num"><em>1 weak link</em></div>
+          <p>Caps the whole system. Strengthening a link that was never your limiter buys you almost nothing, which is why finding the real one is the highest-value thing we do.</p>
+        </div>
+        <div class="ys-bigstat">
+          <span class="ys-bigstat-label">What separates the best</span>
+          <div class="ys-bigstat-num"><em>Economy</em></div>
+          <p>Not raw VO<sub>2</sub>max. At the top, economy and metabolic flexibility decide races, and both keep improving long after the engine plateaus.</p>
+        </div>
+        <div class="ys-bigstat">
+          <span class="ys-bigstat-label">Heat, the hidden limiter</span>
+          <div class="ys-bigstat-num"><em>Core temp</em></div>
+          <p>A well-trained athlete can still fall apart when core temperature climbs. Measuring it means your hot-race plan is built on data, not hope.</p>
+        </div>
+      </div>
+
+      <div class="rx-quote" style="margin-top: 26px;">
+        <blockquote>&ldquo;The best athletes in the world don&rsquo;t necessarily have the highest VO<sub>2</sub>max. They have the highest economy and metabolic flexibility, that&rsquo;s what separates them at the limit.&rdquo;</blockquote>
+        <cite>Dr I&ntilde;igo San Mill&aacute;n, Performance Lead, UAE Team Emirates</cite>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.95rem;">Full breakdown with peer-reviewed references on the <a href="https://www.yousuli.co/science" target="_top" style="color: var(--wf-coral);">Science page</a>.</p>
+    </div>
+  </section>
+
+  <!-- ============ COMMON MISREADS ============ -->
+  <section class="wf-section alt" id="misreads">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Common misreads</h2>
+        <div class="ys-rule"></div>
+        <p>Where athletes go wrong with a big dataset.</p>
+      </div>
+
+      <div class="rx-callout warn">
+        <div class="rx-callout-tag">Misread 01</div>
+        <p><strong>&ldquo;More of my strength is the answer.&rdquo;</strong> It is the opposite. Doubling down on your strongest link, because it feels good and the numbers look nice, leaves your actual limiter exactly where it was. The report exists to point you at the uncomfortable link, not the flattering one.</p>
+      </div>
+
+      <div class="rx-callout warn">
+        <div class="rx-callout-tag">Misread 02</div>
+        <p><strong>&ldquo;A big engine means I&rsquo;m set.&rdquo;</strong> A huge VO<sub>2</sub>max with a weak utilisation link still stalls, because the muscle cannot burn what the heart delivers. Engine size is one link of three. This test checks all three so you do not train the wrong one for a year.</p>
+      </div>
+
+      <div class="rx-callout warn">
+        <div class="rx-callout-tag">Misread 03</div>
+        <p><strong>&ldquo;It&rsquo;s a lot of data, so I&rsquo;ll act on all of it.&rdquo;</strong> Please do not. The whole point of ranking your limiters is to give you one thing to work on at a time. Chase all six at once and you will make progress on none. Top of the list, one block, retest.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CTA ============ -->
+  <section class="wf-section" id="cta">
+    <div class="ys-container" style="max-width: 920px;">
+      <div class="ys-section-head">
+        <h2>Where to go from here</h2>
+        <div class="ys-rule"></div>
+        <p>Two ways to turn the whole picture into a faster season.</p>
+      </div>
+
+      <div class="rx-cta-grid">
+        <article class="rx-cta-card featured">
+          <div class="rx-cta-meta">Check the whole chain again</div>
+          <h3>Retest at the season&rsquo;s hinge</h3>
+          <p>A full-stack scan once or twice a year, at the turns of your season, tells you whether the limiter moved and hands you the next one. It is the most complete before-and-after in the lab.</p>
+          <a class="ys-btn ys-btn-coral" href="https://wix.to/Mm8tktP" target="_top">Book Full-Stack Profiling</a>
+          <p style="margin-top: 12px; font-size: 0.84rem; opacity: 0.85;">Coached athletes and YSC Performance Tier members get 20% off, applied at booking.</p>
+        </article>
+
+        <article class="rx-cta-card">
+          <div class="rx-cta-meta">Make it a plan</div>
+          <h3>Coach the limiters in order</h3>
+          <p>A ranked limiter list is a season&rsquo;s roadmap, if someone builds the weeks around it. Coaching is where this dataset becomes a plan that works down the list block by block.</p>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/coaching" target="_top">See coaching</a>
+          <p style="margin-top: 12px; font-size: 0.84rem; color: var(--ys-muted);">Questions about your report? <a href="https://www.yousuli.co/contact" target="_top" style="color: var(--wf-coral);">Send me a note</a> and I&rsquo;ll walk you through it.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Online programs</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:fred@yousuli.co">fred@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
