@@ -74,6 +74,12 @@
 
     .rx-metric-tag { font-family: var(--ys-font-display); letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.72rem; color: var(--rx-accent-deep); margin-bottom: 6px; }
 
+    .rx-faq { max-width: 820px; margin: 0 auto; }
+    .rx-faq-item { border-top: 1px solid var(--ys-line); padding: 16px 2px; }
+    .rx-faq-item:last-child { border-bottom: 1px solid var(--ys-line); }
+    .rx-faq-item h3 { font-family: var(--ys-font-display); color: var(--ys-navy); font-size: 1.05rem; margin: 0 0 6px; }
+    .rx-faq-item p { margin: 0; color: var(--ys-navy); line-height: 1.6; }
+
     .rx-quote { max-width: 760px; margin: 0 auto; background: #fff; border-left: 4px solid var(--rx-accent); border-radius: 0 12px 12px 0; padding: 22px 26px; box-shadow: 0 1px 3px rgba(47,45,86,0.06); }
     .rx-quote blockquote { margin: 0 0 10px; font-size: 1.08rem; line-height: 1.55; color: var(--ys-navy); font-style: italic; }
     .rx-quote cite { font-style: normal; font-size: 0.86rem; color: var(--ys-muted); }
@@ -149,6 +155,7 @@
       <a href="#ranges">Where you land</a>
       <a href="#training">What to do</a>
       <a href="#misreads">Common misreads</a>
+      <a href="#faq">FAQ</a>
     </div>
   </nav>
 
@@ -158,7 +165,7 @@
       <div class="ys-section-head">
         <h2>The big idea</h2>
         <div class="ys-rule"></div>
-        <p>One picture to hang everything else on. This is the one I use most.</p>
+        <p>One idea, and this is the one I use most.</p>
       </div>
 
       <div class="rx-idea">
@@ -308,6 +315,11 @@
           <p>Your critical power and W&prime; feed the power-duration model directly. The <a href="https://www.yousuli.co/critical-power-calculator" target="_top">critical power</a> calculator shows how the reservoir drains above the line and recharges below it, which is exactly how to plan an attack that does not leave you cracked.</p>
         </article>
       </div>
+
+      <div class="rx-callout">
+        <div class="rx-callout-tag">In practice</div>
+        <p>Two riders both hold 250 watts of critical power. One has a 15 kJ reserve, the other 25. Put them in a hilly road race and the 25 covers every attack and takes the sprint. Put them in a flat time trial and the gap all but vanishes, the reserve barely gets touched. Same engine, two completely different race plans, and this is the test that tells them apart.</p>
+      </div>
     </div>
   </section>
 
@@ -337,8 +349,33 @@
     </div>
   </section>
 
+  <!-- ============ FAQ ============ -->
+  <section class="wf-section" id="faq">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Quick questions</h2>
+        <div class="ys-rule"></div>
+        <p>The three I get asked most after this one.</p>
+      </div>
+      <div class="rx-faq">
+        <div class="rx-faq-item">
+          <h3>Do I really have to do it blindfolded?</h3>
+          <p>Yes, that is the point. If you can see a clock you pace, and pacing quietly ruins the numbers. Blindfolded and with no idea when it ends, you cannot save anything, which is the only way the result comes out honest.</p>
+        </div>
+        <div class="rx-faq-item">
+          <h3>Which matters more, critical power or W&prime;?</h3>
+          <p>It depends on your racing. The longer and steadier the race, the more your critical power decides it. The more it comes down to surges and a sprint, the more your W&prime; does. Most athletes want both climbing, but knowing which one your races reward tells you what to train first.</p>
+        </div>
+        <div class="rx-faq-item">
+          <h3>How is this different from the recovery test?</h3>
+          <p>This one measures the size of your reserve and the ceiling it sits on. The recovery profile measures how fast you refill that reserve between efforts. Together they describe how much you can spend and how quickly you get it back.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ CTA ============ -->
-  <section class="wf-section" id="cta">
+  <section class="wf-section alt" id="cta">
     <div class="ys-container" style="max-width: 920px;">
       <div class="ys-section-head">
         <h2>Where to go from here</h2>

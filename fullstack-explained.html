@@ -62,6 +62,12 @@
 
     .rx-metric-tag { font-family: var(--ys-font-display); letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.72rem; color: var(--rx-accent-deep); margin-bottom: 6px; }
 
+    .rx-faq { max-width: 820px; margin: 0 auto; }
+    .rx-faq-item { border-top: 1px solid var(--ys-line); padding: 16px 2px; }
+    .rx-faq-item:last-child { border-bottom: 1px solid var(--ys-line); }
+    .rx-faq-item h3 { font-family: var(--ys-font-display); color: var(--ys-navy); font-size: 1.05rem; margin: 0 0 6px; }
+    .rx-faq-item p { margin: 0; color: var(--ys-navy); line-height: 1.6; }
+
     .rx-quote { max-width: 760px; margin: 0 auto; background: #fff; border-left: 4px solid var(--rx-accent); border-radius: 0 12px 12px 0; padding: 22px 26px; box-shadow: 0 1px 3px rgba(47,45,86,0.06); }
     .rx-quote blockquote { margin: 0 0 10px; font-size: 1.08rem; line-height: 1.55; color: var(--ys-navy); font-style: italic; }
     .rx-quote cite { font-style: normal; font-size: 0.86rem; color: var(--ys-muted); }
@@ -137,6 +143,7 @@
       <a href="#training">What to do</a>
       <a href="#science">The science</a>
       <a href="#misreads">Common misreads</a>
+      <a href="#faq">FAQ</a>
     </div>
   </nav>
 
@@ -146,7 +153,7 @@
       <div class="ys-section-head">
         <h2>The big idea</h2>
         <div class="ys-rule"></div>
-        <p>One picture to hang everything else on.</p>
+        <p>One idea that turns a wall of data into a plan.</p>
       </div>
 
       <div class="rx-idea">
@@ -279,8 +286,13 @@
         <article class="ys-card">
           <div class="ys-meta">Convert the zones</div>
           <h3>Lock your paces and powers</h3>
-          <p>The report gives you clean zones from easy to max. Translate them to pace and power with the <a href="https://www.yousuli.co/vo2-to-running" target="_top">VO<sub>2</sub> to running</a> and <a href="https://www.yousuli.co/vo2-to-cycling-power" target="_top">VO<sub>2</sub> to cycling power</a> calculators.</p>
+          <p>The report gives you clean zones from easy to max. Translate them to pace and power with the VO<sub>2</sub> to <a href="https://www.yousuli.co/vo2-to-running" target="_top">running</a>, <a href="https://www.yousuli.co/vo2-to-cycling-power" target="_top">cycling power</a>, and <a href="https://www.yousuli.co/vo2-to-swimming" target="_top">swimming</a> calculators.</p>
         </article>
+      </div>
+
+      <div class="rx-callout">
+        <div class="rx-callout-tag">In practice</div>
+        <p>Two runners come in with the same VO<sub>2</sub>max, 60. One burns noticeably less oxygen to hold marathon pace, his running economy is better, and over 42 km that is the difference between a strong negative split and walking the last 5. Economy does not show up on a VO<sub>2</sub>max test by itself. This is the test that lays it over the rest of your physiology, so we can see whether it is your strength or your next project.</p>
       </div>
 
       <div class="rx-callout" style="margin-top: 6px;">
@@ -352,8 +364,33 @@
     </div>
   </section>
 
+  <!-- ============ FAQ ============ -->
+  <section class="wf-section" id="faq">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Quick questions</h2>
+        <div class="ys-rule"></div>
+        <p>The three I get asked most after a full-stack.</p>
+      </div>
+      <div class="rx-faq">
+        <div class="rx-faq-item">
+          <h3>It is a lot of data. Where do I start?</h3>
+          <p>At the top of the ranked limiter list, and nowhere else yet. One limiter, one block, then retest and move to the next. Chasing all of them at once is how you make progress on none.</p>
+        </div>
+        <div class="rx-faq-item">
+          <h3>How often should I run a full-stack?</h3>
+          <p>Once or twice a year, at the hinges of your season. It is the deep scan. The single tests (VO<sub>2</sub>max, DARK, aero, recovery) are the quicker check-ins between them.</p>
+        </div>
+        <div class="rx-faq-item">
+          <h3>Do I need every sensor each time?</h3>
+          <p>For a true full-stack, yes, that is the whole point: watching delivery, muscle use, lactate, heat, and sweat on one clock is what separates a delivery problem from a usage one. If you only want one slice, we run the matching single test instead.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ CTA ============ -->
-  <section class="wf-section" id="cta">
+  <section class="wf-section alt" id="cta">
     <div class="ys-container" style="max-width: 920px;">
       <div class="ys-section-head">
         <h2>Where to go from here</h2>
