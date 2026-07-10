@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Your metabolic test, explained &middot; Yousuli Performance Lab</title>
+  <meta name="description" content="You did a metabolic test (RMR + body composition). Here is what it means in plain English: your real resting burn, your fuelling targets, and whether your body is quietly under-fuelled (RED-S / low energy availability)." />
+  <meta name="robots" content="noindex,nofollow" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Your metabolic test, explained" />
+  <meta property="og:description" content="What your RMR and RED-S screening actually tell you, in plain English. A short read from Coach Fred." />
+  <meta property="og:url" content="https://www.yousuli.co/rmr-explained" />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED PAGE STYLES ============ -->
+  <style>
+    :root {
+      --rx-accent: #8B6755;
+      --rx-accent-deep: #5e4436;
+      --rx-deep: #43301f;
+      --rx-teal: #00B3A4;
+      --rx-teal-deep: #0e5f5a;
+    }
+    .rx-callout { padding: 18px 22px; border-left: 4px solid var(--rx-accent); background: var(--ys-bg-soft); border-radius: 0 10px 10px 0; margin: 16px 0; }
+    .rx-callout.teal { border-left-color: var(--rx-teal); background: rgba(0,179,164,0.06); }
+    .rx-callout.warn { border-left-color: #c69b1a; background: #fdf6e0; }
+    .rx-callout.coach { border-left-color: var(--wf-coral); background: rgba(250,119,60,0.06); }
+    .rx-callout-tag { font-family: var(--ys-font-display); letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.72rem; color: var(--rx-accent-deep); margin-bottom: 6px; }
+    .rx-callout.teal .rx-callout-tag { color: var(--rx-teal-deep); }
+    .rx-callout.warn .rx-callout-tag { color: #a07712; }
+    .rx-callout.coach .rx-callout-tag { color: var(--wf-coral); }
+    .rx-callout p { margin: 0 0 8px; }
+    .rx-callout p:last-child { margin-bottom: 0; }
+
+    .rx-idea { background: linear-gradient(135deg, var(--ys-navy) 0%, var(--rx-deep) 100%); color: #fff; border-radius: 16px; padding: 34px 36px; }
+    .rx-idea h3 { color: #fff; font-family: var(--ys-font-display); font-size: 1.5rem; margin: 0 0 14px; letter-spacing: 0.01em; }
+    .rx-idea p { color: rgba(255,255,255,0.92); margin: 0 0 12px; font-size: 1.04rem; line-height: 1.62; }
+    .rx-idea p:last-child { margin-bottom: 0; }
+    .rx-idea strong { color: #fff; }
+
+    .rx-bands { background: #fff; border: 1px solid var(--ys-line); border-radius: 14px; overflow: hidden; box-shadow: 0 1px 3px rgba(47,45,86,0.06); max-width: 820px; margin: 0 auto; }
+    .rx-band { display: grid; grid-template-columns: 200px 1fr; gap: 18px; padding: 16px 22px; border-bottom: 1px solid var(--ys-line); align-items: baseline; }
+    .rx-band:last-child { border-bottom: 0; }
+    .rx-band-val { font-family: var(--ys-font-display); font-weight: 700; color: var(--rx-accent-deep); font-size: 0.98rem; }
+    .rx-band-desc { color: var(--ys-navy); font-size: 0.94rem; line-height: 1.5; }
+    @media (max-width: 540px) { .rx-band { grid-template-columns: 1fr; gap: 3px; } }
+
+    .rx-metric-tag { font-family: var(--ys-font-display); letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.72rem; color: var(--rx-accent-deep); margin-bottom: 6px; }
+
+    .rx-quote { max-width: 760px; margin: 0 auto; background: #fff; border-left: 4px solid var(--rx-accent); border-radius: 0 12px 12px 0; padding: 22px 26px; box-shadow: 0 1px 3px rgba(47,45,86,0.06); }
+    .rx-quote blockquote { margin: 0 0 10px; font-size: 1.08rem; line-height: 1.55; color: var(--ys-navy); font-style: italic; }
+    .rx-quote cite { font-style: normal; font-size: 0.86rem; color: var(--ys-muted); }
+
+    .rx-cta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 700px) { .rx-cta-grid { grid-template-columns: 1fr; } }
+    .rx-cta-card { background: #fff; border: 1px solid var(--ys-line); border-radius: 14px; padding: 26px 28px; box-shadow: 0 4px 14px rgba(47,45,86,0.08); }
+    .rx-cta-card.featured { background: linear-gradient(135deg, var(--rx-deep) 0%, var(--rx-accent) 100%); color: #fff; border: 0; }
+    .rx-cta-card.featured h3, .rx-cta-card.featured p { color: #fff; }
+    .rx-cta-meta { font-family: var(--ys-font-display); letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.7rem; color: var(--rx-accent-deep); margin-bottom: 8px; }
+    .rx-cta-card.featured .rx-cta-meta { color: rgba(255,255,255,0.85); }
+    .rx-cta-card h3 { font-family: var(--ys-font-display); color: var(--ys-navy); margin: 0 0 6px; font-size: 1.24rem; }
+    .rx-cta-card p { margin: 0 0 14px; }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Programs</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://hub.yousuli.co/" target="_top" rel="noopener">Hub &#x2197;</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Your results, explained</span>
+      <h1>Your metabolic test.</h1>
+      <div class="wf-subhead">What your body burns at rest, and whether you are fuelling it</div>
+      <p class="lede">You lay still and breathed quietly under a hood for a few minutes while we measured the oxygen you used, then we looked at your body composition. From that we get your real resting burn, honest fuelling targets, and something most athletes never check: whether your body is quietly running on too little. This page explains what those numbers mean, and why the last one matters more than the scale ever will.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#big-idea">Start with the big idea &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#ranges">Am I fuelled enough?</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ QUICK-NAV ============ -->
+  <nav class="ys-quicknav" aria-label="Section navigation">
+    <div class="ys-container ys-quicknav-row">
+      <span class="ys-quicknav-label">Jump to</span>
+      <a href="#big-idea">The big idea</a>
+      <a href="#measured">What we measured</a>
+      <a href="#reds">The RED-S flag</a>
+      <a href="#ranges">Where you land</a>
+      <a href="#training">What to do</a>
+      <a href="#misreads">Common misreads</a>
+    </div>
+  </nav>
+
+  <!-- ============ THE BIG IDEA ============ -->
+  <section class="wf-section" id="big-idea">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>The big idea</h2>
+        <div class="ys-rule"></div>
+        <p>One picture to hang everything else on.</p>
+      </div>
+
+      <div class="rx-idea">
+        <h3>Your body has an idle, and it dims the lights when you underfeed it</h3>
+        <p>Even parked, an engine idling burns fuel just to stay running. Your body does the same: keeping your heart beating, your brain thinking, your temperature up, your cells repairing, all before you move a muscle. That baseline burn is your <strong>resting metabolic rate</strong>, and for most people it is 60 to 70% of everything they burn in a day. We measured yours directly instead of guessing it from a formula.</p>
+        <p>Here is the part that matters for your health. When you do not eat enough to cover training plus that idle, your body does not simply &ldquo;lose weight.&rdquo; It protects itself by turning the idle <strong>down</strong>. It dims the non-essential systems: it defers bone repair, quiets your hormones, dials back your immune system, and lowers your metabolic rate to survive on less.</p>
+        <p>A suppressed resting burn is one of the earliest visible signs of that dimming, and it shows up on this test long before a stress fracture or a lost period does. That is really why I run it: to catch under-fuelling while it is still just a number, not an injury.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHAT WE MEASURED ============ -->
+  <section class="wf-section alt" id="measured">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What we actually measured</h2>
+        <div class="ys-rule"></div>
+        <p>Four things come off this test. Here is what each one is for.</p>
+      </div>
+
+      <div class="ys-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+        <article class="ys-card">
+          <div class="rx-metric-tag">Metric 01</div>
+          <h3>Your measured resting burn</h3>
+          <p>Your real RMR in calories per day, from the gas you exchanged, not a formula. Generic equations can miss it by 15 to 25%, which is the difference between a fuelling plan that works and one built on a guess.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="rx-metric-tag">Metric 02</div>
+          <h3>Measured versus predicted</h3>
+          <p>We compare your real burn to what a standard formula predicts for someone your size. If your measured rate sits well below predicted, the body has turned the idle down, and that ratio is the single most useful early flag on the whole report.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="rx-metric-tag">Metric 03</div>
+          <h3>Body composition</h3>
+          <p>Your fat-free mass, the metabolically active tissue. It matters because both your resting burn and your energy availability are read per kilogram of fat-free mass, so we need it to make the rest of the numbers mean anything.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="rx-metric-tag">Metric 04</div>
+          <h3>Your fuelling targets</h3>
+          <p>Calorie and macro ranges for rest days, training days, and heavy days, built on your measured burn. Real numbers to eat to, plus example meal templates, instead of whatever an app guessed from your age and weight.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE RED-S FLAG ============ -->
+  <section class="wf-section" id="reds">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>The RED-S flag</h2>
+        <div class="ys-rule"></div>
+        <p>The quiet problem this test is built to catch.</p>
+      </div>
+
+      <p style="max-width: 760px; margin: 0 auto 14px;">When you consistently take in less energy than your training and your idle need, you drift into <strong>low energy availability (LEA)</strong>, and its clinical form, <strong>Relative Energy Deficiency in Sport (RED-S)</strong>. It is not a fringe problem: in one study of 220 athletes across 19 sports, close to half tested positive, and the risk was equal in men and women. It is common, it is quiet, and it wrecks performance and health long before it announces itself.</p>
+
+      <div class="rx-callout warn">
+        <div class="rx-callout-tag">What under-fuelling looks like</div>
+        <p>RED-S is the silent performance killer, and it shows up everywhere at once: stalled adaptation despite hard training, frequent colds and niggles, stress fractures, a lost or irregular period, low libido, mood crashes, poor sleep, and weight that will not move no matter what you do. If several of these ring true, this test is worth taking seriously, and worth a conversation with me and, where it fits, a sports physician or dietitian.</p>
+      </div>
+
+      <div class="rx-callout coach">
+        <div class="rx-callout-tag">Coach note</div>
+        <p>This is the opposite of a diet page. Under-fuelling is not discipline and over-restriction is not a virtue in endurance sport, it is a slow leak in your health and your results. Fuelling like an athlete is not the same as dieting. The goal here is to catch the leak early and close it, not to eat less.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHERE YOU LAND ============ -->
+  <section class="wf-section alt" id="ranges">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Where you land</h2>
+        <div class="ys-rule"></div>
+        <p>Two numbers on your report tell the fuelling story. Here is how to read them.</p>
+      </div>
+
+      <div class="rx-metric-tag" style="max-width: 820px; margin: 0 auto 8px;">Measured &divide; predicted RMR (the metabolic ratio)</div>
+      <div class="rx-bands" style="margin-bottom: 22px;">
+        <div class="rx-band">
+          <div class="rx-band-val">Around 1.0 or above</div>
+          <div class="rx-band-desc">Your measured burn matches or beats what your size predicts. The idle is running normally, a good sign you are fuelling the work.</div>
+        </div>
+        <div class="rx-band">
+          <div class="rx-band-val">0.90 to 1.0</div>
+          <div class="rx-band-desc">A little below predicted. Worth watching, especially if training is climbing or the symptoms above sound familiar. Often an early nudge to eat more, not less.</div>
+        </div>
+        <div class="rx-band">
+          <div class="rx-band-val">Below 0.90</div>
+          <div class="rx-band-desc">A strong flag. A suppressed resting burn at this level tracks with low thyroid activity and suppressed sex hormones. This is the body dimming the lights, and it is the number I most want to move back up.</div>
+        </div>
+      </div>
+
+      <div class="rx-metric-tag" style="max-width: 820px; margin: 0 auto 8px;">Energy availability, in calories per kg of fat-free mass per day</div>
+      <div class="rx-bands">
+        <div class="rx-band">
+          <div class="rx-band-val">45 and above</div>
+          <div class="rx-band-desc">Optimal. Enough energy left over, after training, to run every system that keeps you healthy and adapting.</div>
+        </div>
+        <div class="rx-band">
+          <div class="rx-band-val">30 to 45</div>
+          <div class="rx-band-desc">Sub-optimal. Function starts to compromise here, quietly. Fine for a short, deliberate window, a problem as a way of life.</div>
+        </div>
+        <div class="rx-band">
+          <div class="rx-band-val">Below 30</div>
+          <div class="rx-band-desc">The RED-S risk zone. Below this line the body reliably starts shutting down non-essential systems. This is where the real damage accumulates.</div>
+        </div>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); font-size: 0.86rem; margin: 16px auto 0; max-width: 720px;">Energy availability is intake minus exercise energy, divided by your fat-free mass. Thresholds after Loucks. Your exact figures are on your report and we will read them together.</p>
+    </div>
+  </section>
+
+  <!-- ============ WHAT IT MEANS FOR TRAINING ============ -->
+  <section class="wf-section" id="training">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What to do with it</h2>
+        <div class="ys-rule"></div>
+        <p>Fuel the work, and use real numbers to do it.</p>
+      </div>
+
+      <div class="ys-grid">
+        <article class="ys-card">
+          <div class="ys-meta">Fuel the work</div>
+          <h3>Eat to your day, not to an app</h3>
+          <p>Your targets change with your training: a rest day and a five-hour day are not the same meal. Match intake to the work in front of you, and treat the occasional croissant as fuel, not a failure. Consistent under-fuelling costs you far more than the odd indulgence ever will.</p>
+        </article>
+        <article class="ys-card">
+          <div class="ys-meta">Run the numbers</div>
+          <h3>Set calories and macros from data</h3>
+          <p>Build your intake from your measured burn with the <a href="https://www.yousuli.co/resting-metabolic-rate-calculator" target="_top">RMR</a> and <a href="https://www.yousuli.co/macro" target="_top">macro</a> tools, and estimate a session&rsquo;s cost with the <a href="https://www.yousuli.co/calorieburn" target="_top">calorie burn</a> calculator so the training side of the equation is honest too.</p>
+        </article>
+        <article class="ys-card">
+          <div class="ys-meta">Close the leak</div>
+          <h3>Recover the idle before you push</h3>
+          <p>If your ratio was low, the first job is not a bigger training block, it is fuelling the idle back up. Adaptation, immunity, and bone all come back online when the energy is there. Then we build. A retest in a few months shows whether the lights came back on.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE SCIENCE ============ -->
+  <section class="wf-section alt" id="science">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>The science, briefly</h2>
+        <div class="ys-rule"></div>
+        <p>Why I would rather catch this in a hood test than an MRI.</p>
+      </div>
+
+      <div class="ys-bigstat-grid">
+        <div class="ys-bigstat">
+          <span class="ys-bigstat-label">Generic RMR formulas</span>
+          <div class="ys-bigstat-num"><em>15&ndash;25%</em></div>
+          <p>How far a standard equation can miss your true resting burn. Build a fuelling plan on that error and everything downstream is off.</p>
+        </div>
+        <div class="ys-bigstat">
+          <span class="ys-bigstat-label">Athletes tested for LEA</span>
+          <div class="ys-bigstat-num"><em>~47%</em></div>
+          <p>Tested positive for low energy availability across 19 sports, men and women alike. This is common, not rare, and mostly invisible without a test.</p>
+        </div>
+        <div class="ys-bigstat">
+          <span class="ys-bigstat-label">In under-fuelled athletes</span>
+          <div class="ys-bigstat-num"><em>+30%</em></div>
+          <p>More illness and injury days than their well-fuelled teammates. Under-fuelling does not just slow adaptation, it puts you on the sidelines.</p>
+        </div>
+      </div>
+
+      <div class="rx-quote" style="margin-top: 26px;">
+        <blockquote>&ldquo;When RMR falls and recovery tanks, you&rsquo;re not in a deficit for fat loss, you&rsquo;re flirting with RED-S.&rdquo;</blockquote>
+        <cite>Dr Stacy T. Sims, PhD</cite>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); margin-top: 22px; font-size: 0.95rem;">Full breakdown with peer-reviewed references on the <a href="https://www.yousuli.co/science" target="_top" style="color: var(--wf-coral);">Science page</a>.</p>
+    </div>
+  </section>
+
+  <!-- ============ COMMON MISREADS ============ -->
+  <section class="wf-section" id="misreads">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Common misreads</h2>
+        <div class="ys-rule"></div>
+        <p>Where people get this exactly backwards.</p>
+      </div>
+
+      <div class="rx-callout warn">
+        <div class="rx-callout-tag">Misread 01</div>
+        <p><strong>&ldquo;Low RMR means a slow metabolism, so I should eat less.&rdquo;</strong> Almost always the opposite. A suppressed resting burn usually means you are already under-fuelled, and eating less digs the hole deeper. The fix that raises the idle back up is more food, not less. This is the misread that does the most damage.</p>
+      </div>
+
+      <div class="rx-callout warn">
+        <div class="rx-callout-tag">Misread 02</div>
+        <p><strong>&ldquo;RED-S is a women&rsquo;s problem.&rdquo;</strong> The risk is equal in men. Men just lose different things first: testosterone drops, bone thins, drive and mood fall off, and training stops sticking. If you are a male athlete who assumed this did not apply to you, it does.</p>
+      </div>
+
+      <div class="rx-callout warn">
+        <div class="rx-callout-tag">Misread 03</div>
+        <p><strong>&ldquo;I feel fine, so I&rsquo;m fuelled.&rdquo;</strong> The whole reason to measure this is that the dimming happens quietly, below the level you can feel. By the time under-fuelling announces itself as a stress fracture, a missed period, or a season of colds, it is well advanced. A number catches it early. A symptom catches it late.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CTA ============ -->
+  <section class="wf-section alt" id="cta">
+    <div class="ys-container" style="max-width: 920px;">
+      <div class="ys-section-head">
+        <h2>Where to go from here</h2>
+        <div class="ys-rule"></div>
+        <p>Two ways to turn this test into a healthier, better-fuelled season.</p>
+      </div>
+
+      <div class="rx-cta-grid">
+        <article class="rx-cta-card featured">
+          <div class="rx-cta-meta">See the idle recover</div>
+          <h3>Retest after a fuelling reset</h3>
+          <p>If your ratio was low, fuel the idle back up for a few months, then retest. Watching a suppressed resting burn climb back toward normal is one of the most important before-and-afters I run, because it is health, not just performance.</p>
+          <a class="ys-btn ys-btn-coral" href="https://wix.to/hFOCSRP" target="_top">Book a metabolic test</a>
+          <p style="margin-top: 12px; font-size: 0.84rem; opacity: 0.85;">Coached athletes and YSC Performance Tier members get 20% off, applied at booking.</p>
+        </article>
+
+        <article class="rx-cta-card">
+          <div class="rx-cta-meta">Build the fuelling in</div>
+          <h3>Make it part of the plan</h3>
+          <p>Fuelling targets only work if they are lived, day to day, alongside the training. If you want that built and watched over a season, coaching is where the numbers become habits.</p>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/coaching" target="_top">See coaching</a>
+          <p style="margin-top: 12px; font-size: 0.84rem; color: var(--ys-muted);">Worried about any of the flags above? <a href="https://www.yousuli.co/contact" target="_top" style="color: var(--wf-coral);">Send me a note</a> and we will look at it together.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Online programs</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:fred@yousuli.co">fred@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
