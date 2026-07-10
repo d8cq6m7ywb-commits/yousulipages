@@ -60,6 +60,15 @@
     .rx-band-desc { color: var(--ys-navy); font-size: 0.94rem; line-height: 1.5; }
     @media (max-width: 540px) { .rx-band { grid-template-columns: 1fr; gap: 3px; } }
 
+    .rx-normtable-title { font-family: var(--ys-font-display); color: var(--ys-navy); font-weight: 700; letter-spacing: 0.04em; margin: 20px 0 6px; }
+    .rx-normwrap { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 900px; margin: 0 auto; border: 1px solid var(--ys-line); border-radius: 12px; }
+    .rx-normtable { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 0.85rem; }
+    .rx-normtable th { background: var(--ys-navy); color: #fff; font-family: var(--ys-font-display); font-weight: 600; font-size: 0.7rem; letter-spacing: 0.04em; text-transform: uppercase; padding: 9px 10px; text-align: center; }
+    .rx-normtable th:first-child { text-align: left; }
+    .rx-normtable td { border-top: 1px solid var(--ys-line); padding: 8px 10px; text-align: center; color: var(--ys-navy); }
+    .rx-normtable td:first-child { text-align: left; font-weight: 700; font-family: var(--ys-font-display); }
+    .rx-normtable tbody tr:nth-child(even) { background: var(--ys-bg-soft); }
+
     .rx-metric-tag { font-family: var(--ys-font-display); letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.72rem; color: var(--rx-accent-deep); margin-bottom: 6px; }
 
     .rx-quote { max-width: 760px; margin: 0 auto; background: #fff; border-left: 4px solid var(--rx-accent); border-radius: 0 12px 12px 0; padding: 22px 26px; box-shadow: 0 1px 3px rgba(47,45,86,0.06); }
@@ -209,27 +218,39 @@
         <p>Your exact number is on your report. This is the neighbourhood it sits in.</p>
       </div>
 
-      <!-- FRED: verify these VO2max bands (ml/kg/min) against how you like to present them. Drafted as broad, honest ranges by training level. -->
-      <p style="text-align: center; color: var(--ys-muted); font-size: 0.9rem; margin: 0 auto 16px; max-width: 680px;">Rough VO<sub>2</sub>max bands for adult endurance athletes, in ml/kg/min. Ranges overlap and shift with age, these are orientation, not a verdict.</p>
+      <p style="text-align: center; color: var(--ys-muted); font-size: 0.9rem; margin: 0 auto 16px; max-width: 700px;">Your exact number is on your report. Find your age row and see which band you land in. Moving up even one band is a real jump in cardiorespiratory fitness, so aim for Good and above. Remember this is relative VO<sub>2</sub>max (per kilogram), so it improves both by training and by carrying less weight.</p>
 
-      <div class="rx-bands">
-        <div class="rx-band">
-          <div class="rx-band-val">Active, untrained</div>
-          <div class="rx-band-desc">Roughly 35&ndash;45 (men), 30&ndash;40 (women). A healthy, active adult who does not train endurance specifically. Plenty of room to grow.</div>
-        </div>
-        <div class="rx-band">
-          <div class="rx-band-val">Trained age-grouper</div>
-          <div class="rx-band-desc">Roughly 50&ndash;60 (men), 45&ndash;55 (women). Consistent endurance training for a year or more. Most of the athletes I test live here.</div>
-        </div>
-        <div class="rx-band">
-          <div class="rx-band-val">Highly trained</div>
-          <div class="rx-band-desc">Roughly 60&ndash;70 (men), 55&ndash;62 (women). Serious volume, years of structure, competitive at your age group.</div>
-        </div>
-        <div class="rx-band">
-          <div class="rx-band-val">Elite endurance</div>
-          <div class="rx-band-desc">70+ (men), 62+ (women). National and world class. Rare, and only part of what makes them fast (see the misreads below).</div>
-        </div>
+      <div class="rx-normtable-title">Female (ml/kg/min)</div>
+      <div class="rx-normwrap">
+        <table class="rx-normtable">
+          <thead><tr><th>Age</th><th>Very poor</th><th>Poor</th><th>Fair</th><th>Good</th><th>Excellent</th><th>Superior</th></tr></thead>
+          <tbody>
+            <tr><td>13&ndash;19</td><td>&lt;25.0</td><td>25.0&ndash;30.9</td><td>31.0&ndash;34.9</td><td>35.0&ndash;38.9</td><td>39.0&ndash;41.9</td><td>&gt;41.9</td></tr>
+            <tr><td>20&ndash;29</td><td>&lt;23.6</td><td>23.6&ndash;28.9</td><td>29.0&ndash;32.9</td><td>33.0&ndash;36.9</td><td>37.0&ndash;41.0</td><td>&gt;41.0</td></tr>
+            <tr><td>30&ndash;39</td><td>&lt;22.8</td><td>22.8&ndash;26.9</td><td>27.0&ndash;31.4</td><td>31.5&ndash;35.6</td><td>35.7&ndash;40.0</td><td>&gt;40.0</td></tr>
+            <tr><td>40&ndash;49</td><td>&lt;21.0</td><td>21.0&ndash;24.4</td><td>24.5&ndash;28.9</td><td>29.0&ndash;32.8</td><td>32.9&ndash;36.9</td><td>&gt;36.9</td></tr>
+            <tr><td>50&ndash;59</td><td>&lt;20.2</td><td>20.2&ndash;22.7</td><td>22.8&ndash;26.9</td><td>27.0&ndash;31.4</td><td>31.5&ndash;35.7</td><td>&gt;35.7</td></tr>
+            <tr><td>60+</td><td>&lt;17.5</td><td>17.5&ndash;20.1</td><td>20.2&ndash;24.4</td><td>24.5&ndash;30.2</td><td>30.3&ndash;31.4</td><td>&gt;31.4</td></tr>
+          </tbody>
+        </table>
       </div>
+
+      <div class="rx-normtable-title">Male (ml/kg/min)</div>
+      <div class="rx-normwrap">
+        <table class="rx-normtable">
+          <thead><tr><th>Age</th><th>Very poor</th><th>Poor</th><th>Fair</th><th>Good</th><th>Excellent</th><th>Superior</th></tr></thead>
+          <tbody>
+            <tr><td>13&ndash;19</td><td>&lt;35.0</td><td>35.0&ndash;38.3</td><td>38.4&ndash;45.1</td><td>45.2&ndash;50.9</td><td>51.0&ndash;55.9</td><td>&gt;55.9</td></tr>
+            <tr><td>20&ndash;29</td><td>&lt;33.0</td><td>33.0&ndash;36.4</td><td>36.5&ndash;42.4</td><td>42.5&ndash;46.4</td><td>46.5&ndash;52.4</td><td>&gt;52.4</td></tr>
+            <tr><td>30&ndash;39</td><td>&lt;31.5</td><td>31.5&ndash;35.4</td><td>35.5&ndash;40.9</td><td>41.0&ndash;44.9</td><td>45.0&ndash;49.4</td><td>&gt;49.4</td></tr>
+            <tr><td>40&ndash;49</td><td>&lt;30.2</td><td>30.2&ndash;33.5</td><td>33.6&ndash;38.9</td><td>39.0&ndash;43.7</td><td>43.8&ndash;48.0</td><td>&gt;48.0</td></tr>
+            <tr><td>50&ndash;59</td><td>&lt;26.1</td><td>26.1&ndash;30.9</td><td>31.0&ndash;35.7</td><td>35.8&ndash;40.9</td><td>41.0&ndash;45.3</td><td>&gt;45.3</td></tr>
+            <tr><td>60+</td><td>&lt;20.5</td><td>20.5&ndash;26.0</td><td>26.1&ndash;32.2</td><td>32.3&ndash;36.4</td><td>36.5&ndash;44.2</td><td>&gt;44.2</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); font-size: 0.82rem; margin: 12px auto 0; max-width: 700px;">Norm bands after the Cooper Institute reference ranges. A quick sense of scale: 1 MET equals 3.5 ml/kg/min, and a full game of most field sports asks for a VO<sub>2</sub>max comfortably above 35.</p>
 
       <div class="rx-callout teal">
         <div class="rx-callout-tag">The number that moves</div>
