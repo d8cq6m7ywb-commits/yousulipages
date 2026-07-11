@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Paratriathlon explained: divisions, classifications, and the open category &middot; Yousuli</title>
+  <meta name="description" content="A plain-language guide to paratriathlon: what it is, the race format, the classification categories (PTWC, PTS, PTVI), the open division (ATD1), guides and handlers, and how to get started. Built from USA Triathlon coaching material." />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Paratriathlon, explained" />
+  <meta property="og:description" content="What paratriathlon is, how the divisions and classifications work, the open category, and how to get started. A plain-language guide." />
+  <meta property="og:url" content="https://www.yousuli.co/paratriathlon" />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED PAGE STYLES ============ -->
+  <style>
+    :root {
+      --rx-accent: #FA773C;
+      --rx-accent-deep: #b04a17;
+      --rx-deep: #8a3a12;
+      --rx-teal: #00B3A4;
+      --rx-teal-deep: #0e5f5a;
+    }
+    .rx-callout { padding: 18px 22px; border-left: 4px solid var(--rx-accent); background: var(--ys-bg-soft); border-radius: 0 10px 10px 0; margin: 16px 0; }
+    .rx-callout.teal { border-left-color: var(--rx-teal); background: rgba(0,179,164,0.06); }
+    .rx-callout.warn { border-left-color: #c69b1a; background: #fdf6e0; }
+    .rx-callout.coach { border-left-color: var(--wf-coral); background: rgba(250,119,60,0.06); }
+    .rx-callout-tag { font-family: var(--ys-font-display); letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.72rem; color: var(--rx-accent-deep); margin-bottom: 6px; }
+    .rx-callout.teal .rx-callout-tag { color: var(--rx-teal-deep); }
+    .rx-callout.warn .rx-callout-tag { color: #a07712; }
+    .rx-callout.coach .rx-callout-tag { color: var(--wf-coral); }
+    .rx-callout p { margin: 0 0 8px; }
+    .rx-callout p:last-child { margin-bottom: 0; }
+
+    .rx-idea { background: linear-gradient(135deg, var(--ys-navy) 0%, var(--rx-deep) 100%); color: #fff; border-radius: 16px; padding: 34px 36px; }
+    .rx-idea h3 { color: #fff; font-family: var(--ys-font-display); font-size: 1.5rem; margin: 0 0 14px; letter-spacing: 0.01em; }
+    .rx-idea p { color: rgba(255,255,255,0.92); margin: 0 0 12px; font-size: 1.04rem; line-height: 1.62; }
+    .rx-idea p:last-child { margin-bottom: 0; }
+    .rx-idea strong { color: #fff; }
+
+    /* class family cards */
+    .rx-class { background: #fff; border: 1px solid var(--ys-line); border-radius: 14px; padding: 24px 26px; box-shadow: 0 1px 3px rgba(47,45,86,0.06); margin-bottom: 18px; }
+    .rx-class > h3 { margin: 0 0 4px; font-family: var(--ys-font-display); color: var(--ys-navy); font-size: 1.28rem; }
+    .rx-class .rx-class-kit { font-size: 0.92rem; color: var(--ys-muted); margin: 0 0 14px; }
+    .rx-level { display: grid; grid-template-columns: 90px 1fr; gap: 16px; padding: 10px 0; border-top: 1px dashed rgba(47,45,86,0.12); align-items: baseline; }
+    .rx-level:first-of-type { border-top: 0; }
+    .rx-level .rx-level-code { font-family: var(--ys-font-display); font-weight: 700; color: var(--rx-accent-deep); font-size: 0.96rem; }
+    .rx-level .rx-level-desc { color: var(--ys-navy); font-size: 0.93rem; line-height: 1.5; }
+    @media (max-width: 520px) { .rx-level { grid-template-columns: 1fr; gap: 3px; } }
+
+    .rx-dist { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; max-width: 720px; margin: 0 auto; }
+    @media (max-width: 560px) { .rx-dist { grid-template-columns: 1fr; } }
+    .rx-dist-cell { background: #fff; border: 1px solid var(--ys-line); border-top: 4px solid var(--rx-accent); border-radius: 12px; padding: 20px; text-align: center; }
+    .rx-dist-cell .rx-dist-num { font-family: var(--ys-font-display); font-weight: 800; color: var(--ys-navy); font-size: 2rem; line-height: 1; }
+    .rx-dist-cell .rx-dist-lab { font-family: var(--ys-font-display); letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.72rem; color: var(--rx-accent-deep); margin-top: 8px; }
+
+    .rx-faq { max-width: 820px; margin: 0 auto; }
+    .rx-faq-item { border-top: 1px solid var(--ys-line); padding: 16px 2px; }
+    .rx-faq-item:last-child { border-bottom: 1px solid var(--ys-line); }
+    .rx-faq-item h3 { font-family: var(--ys-font-display); color: var(--ys-navy); font-size: 1.05rem; margin: 0 0 6px; }
+    .rx-faq-item p { margin: 0; color: var(--ys-navy); line-height: 1.6; }
+
+    .rx-cta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 700px) { .rx-cta-grid { grid-template-columns: 1fr; } }
+    .rx-cta-card { background: #fff; border: 1px solid var(--ys-line); border-radius: 14px; padding: 26px 28px; box-shadow: 0 4px 14px rgba(47,45,86,0.08); }
+    .rx-cta-card.featured { background: linear-gradient(135deg, var(--rx-deep) 0%, var(--rx-accent) 100%); color: #fff; border: 0; }
+    .rx-cta-card.featured h3, .rx-cta-card.featured p { color: #fff; }
+    .rx-cta-meta { font-family: var(--ys-font-display); letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.7rem; color: var(--rx-accent-deep); margin-bottom: 8px; }
+    .rx-cta-card.featured .rx-cta-meta { color: rgba(255,255,255,0.85); }
+    .rx-cta-card h3 { font-family: var(--ys-font-display); color: var(--ys-navy); margin: 0 0 6px; font-size: 1.24rem; }
+    .rx-cta-card p { margin: 0 0 14px; }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Programs</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://hub.yousuli.co/" target="_top" rel="noopener">Hub &#x2197;</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero">
+    <div class="ys-container">
+      <span class="wf-eyebrow">A plain-language guide</span>
+      <h1>Paratriathlon.</h1>
+      <div class="wf-subhead">Same three sports, adapted so more people can race them</div>
+      <p class="lede">Paratriathlon is swim, bike, and run for athletes with a physical or visual impairment. It is on the Paralympic programme, it has a clear set of categories so athletes compete against others with similar impairments, and it also has an open door for anyone who wants to race but does not fit, or does not want, the formal categories. This page walks through how it all works: the format, the classifications, the open division, and how a para race actually runs on the day.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#divisions">The two divisions &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#start">How to get started</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ QUICK-NAV ============ -->
+  <nav class="ys-quicknav" aria-label="Section navigation">
+    <div class="ys-container ys-quicknav-row">
+      <span class="ys-quicknav-label">Jump to</span>
+      <a href="#what">What it is</a>
+      <a href="#format">Race format</a>
+      <a href="#divisions">Two divisions</a>
+      <a href="#classes">Classifications</a>
+      <a href="#open">The open door</a>
+      <a href="#raceday">How a race runs</a>
+      <a href="#start">Get started</a>
+    </div>
+  </nav>
+
+  <!-- ============ WHAT IT IS ============ -->
+  <section class="wf-section" id="what">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What paratriathlon is</h2>
+        <div class="ys-rule"></div>
+        <p>Triathlon, adapted, and fully part of the sport.</p>
+      </div>
+
+      <div class="rx-idea">
+        <h3>The same race, with the adaptations that let more people do it</h3>
+        <p>A paratriathlon is a triathlon: a swim, then a bike, then a run, back to back, with two transitions in between. What changes is the equipment and the support that let athletes with different impairments race safely and fairly. A visually impaired athlete races with a guide. A wheelchair athlete uses a handcycle for the bike and a racing chair for the run. A standing athlete may run on a prosthetic. The clock still runs the whole way through, transitions included.</p>
+        <p>The sport is governed by <strong>World Triathlon</strong> internationally and by <strong>USA Triathlon</strong> here, and it has been on the Paralympic programme since its debut at Rio 2016. Team USA has grown fast: four medals at Rio, five at Tokyo, eight at Paris 2024, with Los Angeles hosting in 2028. Underneath the Paralympic level sits a full pathway of youth, junior, development, and age-group racing, which is where almost everyone actually starts.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RACE FORMAT ============ -->
+  <section class="wf-section alt" id="format">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>The race format</h2>
+        <div class="ys-rule"></div>
+        <p>The standard paratriathlon distance is a sprint.</p>
+      </div>
+
+      <div class="rx-dist">
+        <div class="rx-dist-cell">
+          <div class="rx-dist-num">750 m</div>
+          <div class="rx-dist-lab">Swim</div>
+        </div>
+        <div class="rx-dist-cell">
+          <div class="rx-dist-num">20 km</div>
+          <div class="rx-dist-lab">Bike</div>
+        </div>
+        <div class="rx-dist-cell">
+          <div class="rx-dist-num">5 km</div>
+          <div class="rx-dist-lab">Run</div>
+        </div>
+      </div>
+
+      <div class="rx-callout teal" style="margin-top: 22px;">
+        <div class="rx-callout-tag">Shorter distances for the youngest athletes</div>
+        <p>Youth and junior racing (ages 7 to 18) runs a scaled version, around a 200 m swim, 10 km bike, and 2 km run, under the open-division rules, with no classification required. It is designed to be a first race, not a qualifier. Longer para events exist too, but the sprint is the standard and the Paralympic distance.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE TWO DIVISIONS ============ -->
+  <section class="wf-section" id="divisions">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>The two divisions</h2>
+        <div class="ys-rule"></div>
+        <p>The first fork: do you want to race the formal categories, or the open one?</p>
+      </div>
+
+      <div class="ys-grid" style="grid-template-columns: 1fr 1fr; gap: 20px;">
+        <article class="ys-card">
+          <div class="ys-meta" style="color: var(--rx-accent-deep);">The competitive pathway</div>
+          <h3>Championship Paratriathlon</h3>
+          <p>For athletes who follow the full USA Triathlon and World Triathlon competition rules and who <strong>classify into one of the official categories</strong> (the PTWC, PTS, and PTVI classes below). This is the road to national championships and, at the top, the Paralympics. The rules are stricter here because the racing is head to head against others in the same class.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta" style="color: var(--rx-teal-deep);">The open door</div>
+          <h3>ATD1, the open division</h3>
+          <p>Formerly called PC Open. For athletes with a disability who <strong>do not fit one of the competition categories, or simply do not want to race under the full rule set</strong>. It allows a much broader range of equipment combinations, and classification is not required. Same distances, same course, a lower barrier to the start line.</p>
+        </article>
+      </div>
+
+      <div class="rx-callout">
+        <div class="rx-callout-tag">The simple way to think about it</div>
+        <p>Championship is the classified, competitive track with a Paralympic ceiling. ATD1 is the come-as-you-are track built to get people racing. Plenty of athletes start in the open division and move across to the classified one later, and plenty stay in the open division because it fits their goals perfectly.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CLASSIFICATIONS ============ -->
+  <section class="wf-section alt" id="classes">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>The classification categories</h2>
+        <div class="ys-rule"></div>
+        <p>In Championship racing, athletes are grouped so they compete against similar impairments. There are three families.</p>
+      </div>
+
+      <div class="rx-class">
+        <h3>PTWC, wheelchair</h3>
+        <p class="rx-class-kit">Race with a handcycle for the bike and a racing wheelchair for the run.</p>
+        <div class="rx-level">
+          <div class="rx-level-code">PTWC1</div>
+          <div class="rx-level-desc">Most impaired. Paralysis of the lower body with loss of core strength, often with upper-body impairment as well, or multiple impairments affecting the trunk.</div>
+        </div>
+        <div class="rx-level">
+          <div class="rx-level-code">PTWC2</div>
+          <div class="rx-level-desc">Less impaired. Core muscles and trunk control are present. Includes many double leg amputees and athletes with spina bifida.</div>
+        </div>
+      </div>
+
+      <div class="rx-class">
+        <h3>PTS, standing and ambulatory</h3>
+        <p class="rx-class-kit">Race on an upright bike and run with prosthetics, braces, and/or crutches. Four classes, from most to least impaired.</p>
+        <div class="rx-level">
+          <div class="rx-level-code">PTS2</div>
+          <div class="rx-level-desc">Severely impaired. Double leg amputees, above-the-knee amputees, and athletes with multiple impairments.</div>
+        </div>
+        <div class="rx-level">
+          <div class="rx-level-code">PTS3</div>
+          <div class="rx-level-desc">Significantly impaired. Multiple limb impairments, cerebral palsy, congenital limb deficiencies.</div>
+        </div>
+        <div class="rx-level">
+          <div class="rx-level-code">PTS4</div>
+          <div class="rx-level-desc">Moderately impaired. Below-the-knee amputees, single-arm impairments such as amputation or nerve damage.</div>
+        </div>
+        <div class="rx-level">
+          <div class="rx-level-code">PTS5</div>
+          <div class="rx-level-desc">Mildly impaired. Milder congenital limb deficiencies and comparable impairments.</div>
+        </div>
+      </div>
+
+      <div class="rx-class">
+        <h3>PTVI, visually impaired</h3>
+        <p class="rx-class-kit">Race with one guide the whole way: tethered to the guide for the swim and the run, and on a tandem piloted by the guide for the bike.</p>
+        <div class="rx-level">
+          <div class="rx-level-code">PTVI1</div>
+          <div class="rx-level-desc">Completely blind, little or no sense of light or shapes. Race with blackout goggles and sunglasses to keep the class fair, and get a small head start over the other visually impaired classes.</div>
+        </div>
+        <div class="rx-level">
+          <div class="rx-level-code">PTVI2</div>
+          <div class="rx-level-desc">Severe, partially sighted. A limited sense of shapes and light.</div>
+        </div>
+        <div class="rx-level">
+          <div class="rx-level-code">PTVI3</div>
+          <div class="rx-level-desc">Less severe, partially sighted. For example, an athlete with Stargardt macular degeneration.</div>
+        </div>
+      </div>
+
+      <div class="rx-callout warn">
+        <div class="rx-callout-tag">Rules change, so check the source</div>
+        <p>Classifications, distances, and category rules are set by USA Triathlon and World Triathlon and are updated over time. This page is a plain-language overview to help you understand the shape of the sport, not the official rulebook. Before you enter a race, confirm the current details at <a href="https://www.usatriathlon.org/" target="_blank" rel="noopener" style="color: var(--rx-accent-deep); font-weight: 600;">usatriathlon.org</a> and <a href="https://www.triathlon.org/" target="_blank" rel="noopener" style="color: var(--rx-accent-deep); font-weight: 600;">World Triathlon</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE OPEN DOOR ============ -->
+  <section class="wf-section" id="open">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>The open door: ATD1 and the wider adaptive division</h2>
+        <div class="ys-rule"></div>
+        <p>The part of the sport built so that almost nobody has to be turned away.</p>
+      </div>
+
+      <p style="max-width: 760px; margin: 0 auto 16px;">The open division, ATD1, mirrors the three competition families but with the rules relaxed and the equipment options widened, and no classification required to enter. It is usually split three ways:</p>
+
+      <div class="ys-grid">
+        <article class="ys-card">
+          <div class="ys-meta">ATD1 Wheelchair</div>
+          <h3>Wheelchair</h3>
+          <p>Athletes who typically use a handcycle for the bike and a racing chair for the run, with more freedom in how those are set up than the championship class allows.</p>
+        </article>
+        <article class="ys-card">
+          <div class="ys-meta">ATD1 Ambulatory</div>
+          <h3>Ambulatory</h3>
+          <p>Athletes with an impairment to one or more limbs. They may ride an upright bike, a trike, or a handcycle, whichever gets them safely around the course.</p>
+        </article>
+        <article class="ys-card">
+          <div class="ys-meta">ATD1 Visually impaired</div>
+          <h3>Visually impaired</h3>
+          <p>Athletes who race with a guide, tethered for the swim and run and on a tandem piloted by the guide for the bike, the same support structure as the championship class.</p>
+        </article>
+      </div>
+
+      <div class="rx-callout teal" style="margin-top: 8px;">
+        <div class="rx-callout-tag">And beyond ATD1, the adaptive triathlon categories</div>
+        <p>USA Triathlon built a further set of adaptive categories so that people who need accommodations but do not fall under the paratriathlon classes still have a place to race:</p>
+        <p style="margin-top: 6px;"><strong>ATD2</strong>, neuro-diverse athletes who need adaptations to compete, for example athletes with Down syndrome or autism. <strong>ATD3</strong>, physical impairments that fall outside the typical para categories. <strong>ATD4</strong>, duo racing, completing the event with a co-athlete as a team. <strong>ATTMI</strong>, for a significant but temporary mobility injury that needs accommodations to take part.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW A RACE RUNS ============ -->
+  <section class="wf-section alt" id="raceday">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How a para race actually runs</h2>
+        <div class="ys-rule"></div>
+        <p>The part spectators rarely see: the choreography that makes the day work.</p>
+      </div>
+
+      <div class="ys-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+        <article class="ys-card">
+          <div class="ys-meta">At the swim exit</div>
+          <h3>A colour-coded lift out of the water</h3>
+          <p>A race must staff the swim exit with a team of assistants, and each athlete&rsquo;s swim cap colour tells that team exactly what help to give. Red means the athlete is lifted and carried from the water. Yellow means they are supported to walk or run out. Green, orange, or white means no assistance needed. White caps mark the guides.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Personal handlers</div>
+          <h3>Help in transition, within limits</h3>
+          <p>Wheelchair athletes get one personal handler; standing athletes only if approved; visually impaired athletes use their guide as their handler. A handler can fit a prosthetic, lift the athlete in and out of a handcycle or chair, strip a wetsuit, and repair or rack a bike. What a handler cannot do is push: any action that propels the athlete forward can mean disqualification.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">Pre-transition</div>
+          <h3>Where the day chairs and legs wait</h3>
+          <p>When the swim exit is far from transition, there is a pre-transition area where prosthetic legs, crutches, and day chairs are staged, each in a numbered spot matched to the athlete&rsquo;s race number. Wheelchair athletes transfer into a day chair here, using a specially designed sling to come out of the water, and they get the spot closest to the swim exit.</p>
+        </article>
+
+        <article class="ys-card">
+          <div class="ys-meta">The guide relationship</div>
+          <h3>Two athletes, one race</h3>
+          <p>A visually impaired athlete and their guide are tethered through the swim and the run and share a tandem on the bike, so timing, communication, and trust are as much a part of the result as fitness. The guide can also repair the bike anywhere on the course, not just in transition. It is one of the most genuine partnerships in sport.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GET STARTED ============ -->
+  <section class="wf-section" id="start">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How to get started</h2>
+        <div class="ys-rule"></div>
+        <p>You do not need a classification, a fancy bike, or a Paralympic dream to begin. You need a first race.</p>
+      </div>
+
+      <div class="ys-grid">
+        <article class="ys-card">
+          <div class="ys-meta">The easiest entry</div>
+          <h3>Start in the open division</h3>
+          <p>Enter a local or regional race in ATD1, or as an age-grouper, with no classification needed. Many events are happy to accommodate para and adaptive athletes; the key is to call the race director ahead of time to talk through the course, the swim exit, and transition access.</p>
+        </article>
+        <article class="ys-card">
+          <div class="ys-meta">The development ladder</div>
+          <h3>Grow into the pathway</h3>
+          <p>From there, USA Triathlon runs a development series, para-friendly races, youth and junior national championships, and national championships. Talent ID camps and development teams feed the national and Paralympic pipeline for those who want to chase it.</p>
+        </article>
+        <article class="ys-card">
+          <div class="ys-meta">The support around you</div>
+          <h3>Guides, handlers, and coaches</h3>
+          <p>You will not do it alone. Visually impaired athletes race with a guide; many athletes lean on a handler and a coach who understand the adaptations. Building that small team early makes the first race far less daunting.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="wf-section alt" id="faq">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Common questions</h2>
+        <div class="ys-rule"></div>
+        <p>The ones I hear most from athletes new to the sport.</p>
+      </div>
+
+      <div class="rx-faq">
+        <div class="rx-faq-item">
+          <h3>Do I have to be classified to race?</h3>
+          <p>No. Classification is only required for the Championship division. The open division (ATD1) and the wider adaptive categories let you race without one, which is how most people begin.</p>
+        </div>
+        <div class="rx-faq-item">
+          <h3>What is the difference between a guide and a handler?</h3>
+          <p>A guide races the entire event alongside a visually impaired athlete, tethered for the swim and run and piloting the tandem on the bike. A handler helps in and around transition, fitting prosthetics, lifting the athlete, stripping a wetsuit, but never propelling them forward.</p>
+        </div>
+        <div class="rx-faq-item">
+          <h3>Can visually impaired athletes really not use any sight?</h3>
+          <p>In the completely blind class (PTVI1), athletes race in blackout goggles so that residual vision cannot create an advantage, which is why that class also gets a small head start. The partially sighted classes race as they are.</p>
+        </div>
+        <div class="rx-faq-item">
+          <h3>What if my situation does not fit any of these?</h3>
+          <p>That is exactly what the adaptive categories are for. Neuro-diverse athletes, duo teams, and even a temporary mobility injury each have a category. The whole point of the open and adaptive divisions is that there is a way in for almost everyone.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CTA ============ -->
+  <section class="wf-section" id="cta">
+    <div class="ys-container" style="max-width: 920px;">
+      <div class="ys-section-head">
+        <h2>Where Yousuli fits in</h2>
+        <div class="ys-rule"></div>
+        <p>If you are thinking about your first para race, or your next, this is what I can help with.</p>
+      </div>
+
+      <div class="rx-cta-grid">
+        <article class="rx-cta-card featured">
+          <div class="rx-cta-meta">Supported athletes</div>
+          <h3>Coaching and testing support</h3>
+          <p>Yousuli runs a Supported Athletes programme with reduced-rate testing and coaching for committed para-athletes facing higher participation costs. If that could be you, I would like to hear from you.</p>
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/supported-athletes" target="_top">See Supported Athletes</a>
+        </article>
+
+        <article class="rx-cta-card">
+          <div class="rx-cta-meta">Coaching that adapts</div>
+          <h3>A plan built around you</h3>
+          <p>Every training plan I write is built around the athlete in front of me, and adapting for an impairment is part of that work, not an afterthought. If you want a coach in your corner for the swim, the bike, the run, and the transitions, let us talk.</p>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/coaching" target="_top">See coaching</a>
+          <p style="margin-top: 12px; font-size: 0.84rem; color: var(--ys-muted);">Questions about getting started? <a href="https://www.yousuli.co/contact" target="_top" style="color: var(--wf-coral);">Send me a note</a>.</p>
+        </article>
+      </div>
+
+      <p style="text-align: center; color: var(--ys-muted); font-size: 0.84rem; margin-top: 24px; max-width: 760px; margin-left: auto; margin-right: auto;">This guide draws on USA Triathlon paratriathlon coaching education material. Categories and rules are set by USA Triathlon and World Triathlon and change over time; always confirm current details with them before entering a race.</p>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Online programs</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:fred@yousuli.co">fred@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

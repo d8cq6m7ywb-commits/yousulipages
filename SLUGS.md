@@ -43,6 +43,7 @@ For the full project handoff doc, see the parent folder's `README.md`.
 | `fullstack-explained.html` | `/fullstack-explained`            | unlisted (`noindex,nofollow`), post-test results explainer for PRO Full-Stack Profiling; cross-links the four single-test explainers |
 | `dark-explained.html`      | `/dark-explained`                 | unlisted (`noindex,nofollow`), post-test results explainer for the DARK 3-min blindfolded all-out test (CP / W'); CTA points to `/contact` until a booking URL exists |
 | `rmr-explained.html`       | `/rmr-explained`                  | unlisted (`noindex,nofollow`), post-test results explainer for the Metabolic Assessment (RMR + body composition); covers RED-S / LEA screening and fuelling targets |
+| `paratriathlon.html`       | `/paratriathlon`                  | yes (public, indexable), plain-language guide to paratriathlon: format, divisions (Championship vs ATD1/open), classifications (PTWC/PTS/PTVI), handlers/guides, getting started. Built from USA Triathlon L2 para clinic material; needs a Wix page |
 | `partners-onepager.html`   | (not embedded in Wix)             | printable one-page leave-behind for gym / facility partner visits (`noindex,nofollow`). Print directly from the GitHub Pages URL (US Letter, one page); QR on it points to `/partners` |
 
 ## Sandwich wrappers
