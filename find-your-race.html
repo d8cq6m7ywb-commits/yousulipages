@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Find Your Race: data-backed race selection &middot; Yousuli</title>
+  <meta name="description" content="Pick the triathlon that fits you, not just any triathlon. Using your training profile and performance data from every IRONMAN and 70.3 course, Coach Fred matches you to the race where you go fastest and the race where your profile lines up with a realistic podium or qualifying slot." />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Find Your Race, Yousuli" />
+  <meta property="og:description" content="Data-backed race selection: the race where you go fastest, and the race where your profile lines up with a slot. Matched to your numbers and every IM / 70.3 course." />
+  <meta property="og:url" content="https://www.yousuli.co/find-your-race" />
+
+  <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
+  <link rel="stylesheet" href="assets/yousuli.css" />
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+          var id = a.getAttribute('href').slice(1);
+          var el = id && document.getElementById(id);
+          if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        });
+      });
+    });
+  </script>
+
+  <!-- ============ SCOPED PAGE STYLES ============ -->
+  <style>
+    :root {
+      --rx-accent: #C08A2D;
+      --rx-accent-deep: #8a6015;
+      --rx-deep: #5e400c;
+      --rx-teal: #00B3A4;
+      --rx-teal-deep: #0e5f5a;
+    }
+    .rx-callout { padding: 18px 22px; border-left: 4px solid var(--rx-accent); background: var(--ys-bg-soft); border-radius: 0 10px 10px 0; margin: 16px 0; }
+    .rx-callout.teal { border-left-color: var(--rx-teal); background: rgba(0,179,164,0.06); }
+    .rx-callout.warn { border-left-color: #c69b1a; background: #fdf6e0; }
+    .rx-callout.coach { border-left-color: var(--wf-coral); background: rgba(250,119,60,0.06); }
+    .rx-callout-tag { font-family: var(--ys-font-display); letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.72rem; color: var(--rx-accent-deep); margin-bottom: 6px; }
+    .rx-callout.teal .rx-callout-tag { color: var(--rx-teal-deep); }
+    .rx-callout.warn .rx-callout-tag { color: #a07712; }
+    .rx-callout.coach .rx-callout-tag { color: var(--wf-coral); }
+    .rx-callout p { margin: 0 0 8px; }
+    .rx-callout p:last-child { margin-bottom: 0; }
+
+    .rx-idea { background: linear-gradient(135deg, var(--ys-navy) 0%, var(--rx-deep) 100%); color: #fff; border-radius: 16px; padding: 34px 36px; }
+    .rx-idea h3 { color: #fff; font-family: var(--ys-font-display); font-size: 1.5rem; margin: 0 0 14px; letter-spacing: 0.01em; }
+    .rx-idea p { color: rgba(255,255,255,0.92); margin: 0 0 12px; font-size: 1.04rem; line-height: 1.62; }
+    .rx-idea p:last-child { margin-bottom: 0; }
+    .rx-idea strong { color: #fff; }
+
+    /* two-outcome split */
+    .rx-two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 22px 0 4px; }
+    @media (max-width: 640px) { .rx-two { grid-template-columns: 1fr; } }
+    .rx-two-card { background: #fff; border: 1px solid var(--ys-line); border-radius: 12px; padding: 22px 24px; }
+    .rx-two-card.fast { border-top: 4px solid var(--rx-teal); }
+    .rx-two-card.slot { border-top: 4px solid var(--rx-accent); }
+    .rx-two-card .rx-two-tag { font-family: var(--ys-font-display); letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.72rem; margin-bottom: 6px; }
+    .rx-two-card.fast .rx-two-tag { color: var(--rx-teal-deep); }
+    .rx-two-card.slot .rx-two-tag { color: var(--rx-accent-deep); }
+    .rx-two-card h4 { margin: 0 0 8px; font-family: var(--ys-font-display); color: var(--ys-navy); font-size: 1.14rem; }
+    .rx-two-card p { margin: 0; font-size: 0.95rem; color: var(--ys-muted); line-height: 1.55; }
+
+    /* step chips */
+    .rx-step { display: grid; grid-template-columns: 44px 1fr; gap: 16px; padding: 12px 0; border-top: 1px solid var(--ys-line); align-items: start; }
+    .rx-step:first-of-type { border-top: 0; }
+    .rx-step .rx-step-n { font-family: var(--ys-font-display); font-weight: 800; font-size: 1.6rem; color: var(--rx-accent); line-height: 1; }
+    .rx-step h4 { margin: 0 0 4px; font-family: var(--ys-font-display); color: var(--ys-navy); font-size: 1.06rem; }
+    .rx-step p { margin: 0; font-size: 0.94rem; color: var(--ys-muted); line-height: 1.55; }
+
+    /* pricing */
+    .rx-price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; max-width: 900px; margin: 0 auto; }
+    @media (max-width: 700px) { .rx-price-grid { grid-template-columns: 1fr; } }
+    .rx-price { background: #fff; border: 1px solid var(--ys-line); border-radius: 14px; padding: 26px 28px; box-shadow: 0 1px 3px rgba(47,45,86,0.06); display: flex; flex-direction: column; }
+    .rx-price.featured { border: 0; background: linear-gradient(135deg, var(--rx-deep) 0%, var(--rx-accent) 100%); color: #fff; }
+    .rx-price.featured h3, .rx-price.featured .rx-price-amount, .rx-price.featured li { color: #fff; }
+    .rx-price-meta { font-family: var(--ys-font-display); letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.7rem; color: var(--rx-accent-deep); margin-bottom: 8px; }
+    .rx-price.featured .rx-price-meta { color: rgba(255,255,255,0.85); }
+    .rx-price h3 { font-family: var(--ys-font-display); color: var(--ys-navy); margin: 0 0 4px; font-size: 1.26rem; }
+    .rx-price-amount { font-family: var(--ys-font-display); font-weight: 800; font-size: 2.2rem; color: var(--ys-navy); line-height: 1; margin: 6px 0 14px; }
+    .rx-price-amount span { font-size: 0.9rem; font-weight: 600; color: var(--ys-muted); }
+    .rx-price.featured .rx-price-amount span { color: rgba(255,255,255,0.75); }
+    .rx-price ul { list-style: none; padding: 0; margin: 0 0 18px; flex: 1; }
+    .rx-price li { padding: 7px 0 7px 24px; position: relative; font-size: 0.94rem; color: var(--ys-navy); line-height: 1.45; border-top: 1px solid rgba(47,45,86,0.08); }
+    .rx-price li:first-child { border-top: 0; }
+    .rx-price.featured li { border-top-color: rgba(255,255,255,0.18); }
+    .rx-price li::before { content: "\2713"; position: absolute; left: 0; color: var(--rx-accent); font-weight: 700; }
+    .rx-price.featured li::before { color: #fff; }
+
+    .rx-faq { max-width: 820px; margin: 0 auto; }
+    .rx-faq-item { border-top: 1px solid var(--ys-line); padding: 16px 2px; }
+    .rx-faq-item:last-child { border-bottom: 1px solid var(--ys-line); }
+    .rx-faq-item h3 { font-family: var(--ys-font-display); color: var(--ys-navy); font-size: 1.05rem; margin: 0 0 6px; }
+    .rx-faq-item p { margin: 0; color: var(--ys-navy); line-height: 1.6; }
+  </style>
+</head>
+<body>
+
+  <!-- ============ SITE HEADER ============ -->
+  <header class="ys-site-header">
+    <div class="ys-container">
+      <div class="ys-site-header-inner">
+        <a class="ys-site-brand" href="https://www.yousuli.co/" target="_top" aria-label="Yousuli home">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" />
+        </a>
+        <nav class="ys-site-nav" aria-label="Primary navigation">
+          <a href="https://www.yousuli.co/performancelab" target="_top">Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Programs</a>
+          <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+          <a href="https://hub.yousuli.co/" target="_top" rel="noopener">Hub &#x2197;</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
+        </nav>
+        <a class="ys-site-cta" href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        <button class="ys-site-mobile-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">&#9776;</button>
+      </div>
+    </div>
+  </header>
+  <script>
+    (function(){
+      var t = document.querySelector('.ys-site-mobile-toggle');
+      if (!t) return;
+      t.addEventListener('click', function(){
+        var h = t.closest('.ys-site-header');
+        var open = h.classList.toggle('open');
+        t.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    })();
+  </script>
+
+  <!-- ============ HERO ============ -->
+  <section class="wf-hero">
+    <div class="ys-container">
+      <span class="wf-eyebrow">Race selection &middot; a Yousuli service</span>
+      <h1>Find your race.</h1>
+      <div class="wf-subhead">The one you go fastest at, and the one where you can actually podium</div>
+      <p class="lede">Choosing the wrong race can cost you a season. Same fitness, wrong course, and a podium or a qualifying slot quietly slips out of reach before the gun even goes off. I hold performance data on every IRONMAN and 70.3 course and read it against your training profile, your strengths, and your weaknesses, so you line up at the race that fits you, not just the one your friends signed up for.</p>
+      <div class="ys-btn-row" style="margin-top: 6px;">
+        <a class="ys-btn ys-btn-coral" href="#pricing">See the two ways to work with me &darr;</a>
+        <a class="ys-btn ys-btn-ghost" href="#how">How it works</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ QUICK-NAV ============ -->
+  <nav class="ys-quicknav" aria-label="Section navigation">
+    <div class="ys-container ys-quicknav-row">
+      <span class="ys-quicknav-label">Jump to</span>
+      <a href="#idea">The idea</a>
+      <a href="#two">Two questions</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#limits">Honest limits</a>
+      <a href="#faq">FAQ</a>
+    </div>
+  </nav>
+
+  <!-- ============ THE IDEA ============ -->
+  <section class="wf-section" id="idea">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>The idea</h2>
+        <div class="ys-rule"></div>
+        <p>Not every race suits every athlete. The course chooses winners as much as the training does.</p>
+      </div>
+
+      <div class="rx-idea">
+        <h3>The right race is a performance decision, not a travel decision</h3>
+        <p>Two courses at the same distance can ask completely different things of you. A flat, still-water, fast course rewards a big sustainable engine and a sharp aero position. A hilly, hot, technical course rewards durability, heat tolerance, and the ability to surge and recover. Put the same athlete on both and the finish times, and the places, can be worlds apart.</p>
+        <p>Most athletes pick a race for the destination, the date, or because a training partner is doing it. Then they train for a year and find out on race morning that the course never suited them. <strong>Choosing the course that fits your physiology is one of the highest-leverage decisions in your whole season, and it happens before you run a single session.</strong></p>
+        <p>That is what this is. I match you to your course using data, then we build the plan around the choice.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TWO QUESTIONS ============ -->
+  <section class="wf-section alt" id="two">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Two questions, two answers</h2>
+        <div class="ys-rule"></div>
+        <p>Depending on your goal, you usually want one of these, sometimes both.</p>
+      </div>
+
+      <div class="rx-two">
+        <div class="rx-two-card fast">
+          <div class="rx-two-tag">Question one</div>
+          <h4>Where do I go fastest?</h4>
+          <p>The course that flatters your strengths and hides your weaknesses, for an outright personal best. If the goal is a time, a finish, or a story to tell, this is the one. We find the profile of course your numbers are built to attack.</p>
+        </div>
+        <div class="rx-two-card slot">
+          <div class="rx-two-tag">Question two</div>
+          <h4>Where can I podium or qualify?</h4>
+          <p>A fast time and a slot are not the same target. A slot depends on your age group, the depth of the field, the gender pool, and how the course thins that field. Sometimes the smart move is a slower course where your relative strengths matter more and the fast specialists stay home.</p>
+        </div>
+      </div>
+
+      <div class="rx-callout">
+        <div class="rx-callout-tag">Why the two answers can differ</div>
+        <p>Your fastest course and your best slot course are often not the same race. A pancake-flat, competitive event might be where you clock a PB, while a brutal, hot, hilly one might be where your durability drags you onto the podium as the fast-but-fragile athletes fall apart. Knowing the difference, and choosing on purpose, is the whole point.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="wf-section" id="how">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>How it works</h2>
+        <div class="ys-rule"></div>
+        <p>Three inputs, one recommendation you can act on.</p>
+      </div>
+
+      <div style="max-width: 760px; margin: 0 auto;">
+        <div class="rx-step">
+          <div class="rx-step-n">1</div>
+          <div>
+            <h4>Your profile</h4>
+            <p>A questionnaire on your goals, history, life, and constraints, plus your training data and any Performance Lab numbers you have (VO<sub>2</sub>max, thresholds, aero, heat and sweat, critical power). Together these describe what kind of athlete you actually are, not what you wish you were.</p>
+          </div>
+        </div>
+        <div class="rx-step">
+          <div class="rx-step-n">2</div>
+          <div>
+            <h4>The course data</h4>
+            <p>I hold performance data on every IRONMAN and 70.3 course: how they ride and run, how times spread, what the fields and conditions look like. That is the reference I read your profile against.</p>
+          </div>
+        </div>
+        <div class="rx-step">
+          <div class="rx-step-n">3</div>
+          <div>
+            <h4>Your shortlist</h4>
+            <p>A ranked short list of races with the reasoning behind each: which fit you for a personal best, which fit you for a slot, and what each one will ask of you. Then, if you are coached, we build the season around the target.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="rx-callout coach">
+        <div class="rx-callout-tag">Coach note</div>
+        <p>This is not a spreadsheet of slot counts you could look up yourself. Plenty of good analysts will tell you where the slots are. What I add is <strong>you</strong>: your physiology, read against the course, so the recommendation is about which race your body is built for, not just which race hands out the most tickets.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRICING ============ -->
+  <section class="wf-section alt" id="pricing">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Two ways to work with me</h2>
+        <div class="ys-rule"></div>
+        <p>Book a one-off review, or fold it into a full season. Both start with a message, not a checkout.</p>
+      </div>
+
+      <div class="rx-price-grid">
+        <div class="rx-price">
+          <div class="rx-price-meta">One-off</div>
+          <h3>Race Selection Review</h3>
+          <div class="rx-price-amount">$179</div>
+          <ul>
+            <li>Intake questionnaire and profile review</li>
+            <li>Your training and lab data read against the course database</li>
+            <li>Ranked shortlist of 3 to 4 races: a personal-best pick and a slot pick</li>
+            <li>Written reasoning for each race, and what it will ask of you</li>
+            <li>A short call to talk it through</li>
+          </ul>
+          <a class="ys-btn ys-btn-dark" href="https://www.yousuli.co/contact?subject=Race%20Selection%20Review" target="_top">Enquire about a review</a>
+        </div>
+
+        <div class="rx-price featured">
+          <div class="rx-price-meta">Season</div>
+          <h3>Qualification Strategy</h3>
+          <div class="rx-price-amount">$399</div>
+          <ul>
+            <li>Everything in the Race Selection Review</li>
+            <li>A season plan built around your target race</li>
+            <li>Slot and roll-down realism for your age group and field</li>
+            <li>A re-check after your next test or key result</li>
+            <li>Direct line to me through the process</li>
+          </ul>
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/contact?subject=Qualification%20Strategy" target="_top">Enquire about a strategy</a>
+        </div>
+      </div>
+
+      <div class="rx-callout teal" style="max-width: 900px; margin: 22px auto 0;">
+        <div class="rx-callout-tag">Already working with me? It is included</div>
+        <p>Race selection is a standard part of <a href="https://www.yousuli.co/coaching" target="_top" style="color: var(--rx-teal-deep); font-weight: 600;">coaching</a>, at no extra charge, because choosing the right race is part of building the right season. And if you book a <a href="https://www.yousuli.co/performancelab" target="_top" style="color: var(--rx-teal-deep); font-weight: 600;">VO<sub>2</sub>max or Full-Stack test</a>, ask me to fold a review in, the data is already on the table.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HONEST LIMITS ============ -->
+  <section class="wf-section" id="limits">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>What this is, and what it is not</h2>
+        <div class="ys-rule"></div>
+        <p>I would rather set the expectation straight than oversell it.</p>
+      </div>
+
+      <div class="rx-callout warn">
+        <div class="rx-callout-tag">Not a guarantee</div>
+        <p>No analysis can promise you a slot or a podium. Fields change, conditions change, and on the day you still have to race well. What this does is stack the odds in your favour by putting you on a course that suits you, instead of leaving the choice to chance.</p>
+      </div>
+
+      <div class="rx-callout warn">
+        <div class="rx-callout-tag">Only as good as the inputs</div>
+        <p>The more I know about you, the sharper the recommendation. Real lab numbers beat estimates, and honest answers on the questionnaire beat flattering ones. If you have never tested, we can still do good work from training data, it is just a slightly wider aim.</p>
+      </div>
+
+      <div class="rx-callout warn">
+        <div class="rx-callout-tag">A decision tool, not a booking service</div>
+        <p>I help you choose the race and understand why. Entering it, travel, and logistics are yours to arrange. If you are coached, the choice flows straight into your plan.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="wf-section alt" id="faq">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Common questions</h2>
+        <div class="ys-rule"></div>
+        <p>The ones I hear most.</p>
+      </div>
+
+      <div class="rx-faq">
+        <div class="rx-faq-item">
+          <h3>Do I need to have done a lab test first?</h3>
+          <p>No, but it helps. With VO<sub>2</sub>max, aero, heat, or critical-power data the match is sharper. Without it, we work from your training data and race history, which is still plenty to point you in the right direction.</p>
+        </div>
+        <div class="rx-faq-item">
+          <h3>Is this just IRONMAN and 70.3?</h3>
+          <p>The course database is built out fullest for IRONMAN and 70.3, so those are where the analysis is strongest. If you are targeting other events, get in touch and I will tell you honestly how much I can add.</p>
+        </div>
+        <div class="rx-faq-item">
+          <h3>How is this different from the slot-counting analysts out there?</h3>
+          <p>They tell you where the slots are, which is genuinely useful. I read the course against your physiology, so the answer is about which race you are built for, not just which one hands out the most tickets. Different question, and for most athletes the more useful one.</p>
+        </div>
+        <div class="rx-faq-item">
+          <h3>How do I pay?</h3>
+          <p>Start with a message, not a checkout. Tell me your goal and where you are in your season, and I will confirm which option fits and how to settle it. Coached athletes pay nothing extra.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CTA ============ -->
+  <section class="wf-section" id="cta">
+    <div class="ys-container" style="max-width: 820px;">
+      <div class="ys-cta-card" style="display: block; text-align: center;">
+        <div class="ys-meta" style="color: var(--wf-coral);">Ready when you are</div>
+        <h2 style="margin-top: 4px;">Tell me your goal, I&rsquo;ll find your race.</h2>
+        <p style="max-width: 620px; margin: 8px auto 0;">Send a short note with your target season, your goal (a time, a finish, a podium, a slot), and any testing you have done. I will reply with which option fits and the next step.</p>
+        <div class="ys-btn-row" style="justify-content: center; margin-top: 18px;">
+          <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/contact?subject=Find%20My%20Race" target="_top">Get in touch</a>
+          <a class="ys-btn ys-btn-ghost" href="https://www.yousuli.co/coaching" target="_top">See coaching</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SITE FOOTER ============ -->
+  <footer class="ys-site-footer">
+    <div class="ys-container">
+      <div class="ys-site-footer-grid">
+        <div class="ys-site-footer-brand">
+          <img src="assets/yousuli-logo.png" alt="Yousuli" style="filter: brightness(0) invert(1); max-width: 160px; height: auto; margin-bottom: 14px;" />
+          <p>Endurance performance lab, coaching, and community. Greater Los Angeles &middot; serving athletes worldwide.</p>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Services</h5>
+          <a href="https://www.yousuli.co/performancelab" target="_top">Performance Lab</a>
+          <a href="https://www.yousuli.co/coaching" target="_top">Coaching</a>
+          <a href="https://www.yousuli.co/plans-courses" target="_top">Online programs</a>
+          <a href="https://www.yousuli.co/on-site-swim-coaching" target="_top">Swim Coaching</a>
+          <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>Community</h5>
+          <a href="https://www.yousuli.co/social-club" target="_top">Social Club</a>
+          <a href="https://www.yousuli.co/mission" target="_top">Mission</a>
+          <a href="https://www.yousuli.co/supported-athletes" target="_top">Supported Athletes</a>
+          <a href="https://www.yousuli.co/paratriathlon" target="_top">Paratriathlon</a>
+          <a href="https://www.yousuli.co/sponsors" target="_top">Sponsors</a>
+        </div>
+        <div class="ys-site-footer-col">
+          <h5>About</h5>
+          <a href="https://www.yousuli.co/about-coach-fred" target="_top">Coach Fred</a>
+          <a href="https://www.yousuli.co/science" target="_top">Science</a>
+          <a href="https://www.yousuli.co/partners" target="_top">Partner Program (B2B)</a>
+          <a href="https://www.yousuli.co/contact" target="_top">Contact</a>
+        </div>
+      </div>
+      <div class="ys-site-footer-bottom">
+        <span>&copy; 2025-26 Yousuli LLC &middot; Walnut, CA</span>
+        <span><a href="mailto:fred@yousuli.co">fred@yousuli.co</a> &middot; (909) 979-4118</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
