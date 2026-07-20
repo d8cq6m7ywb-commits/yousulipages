@@ -35,7 +35,7 @@ For the full project handoff doc, see the parent folder's `README.md`.
 | `race-week-packing.html`   | `/packing`                        | yes (free for all, linked from `/calculators`) |
 | `swim-course.html`         | `/swim-course`                    | unlisted (`noindex,nofollow`), co-branded Slipstream mini-course, linked from `/sponsors` + `/on-site-swim-coaching` |
 | `referral.html`            | `/referral`                       | unlisted (`noindex,nofollow`), referral program landing page for current Bespoke + Structured clients; companion MJML email templates live in project-root `referral-program-content.md` |
-| `referral-add.html`        | `/referral-add`                   | unlisted (`noindex,nofollow`), 14-day self-service form for athletes who forgot to name their referrer at signup; submits via mailto to fred@yousuli.co |
+| `referral-add.html`        | `/referral-add`                   | unlisted (`noindex,nofollow`), 14-day self-service form for late referral attribution; POSTs to a Cloudflare Worker proxy (`yousuli-referral-proxy`) that forwards to a Wix Automations webhook (fires an admin notification + Email D); mailto is the fallback if the POST fails. Backend documented in project-root `automation/` |
 | `membership.html`          | (not actively served on Wix)      | standalone tier-comparison + testimonials page. og:url in the file says `/pricing-plans/membership` but the live Wix slug there uses the sandwich pair below |
 | `vo2max-explained.html`    | `/vo2max-explained`               | unlisted (`noindex,nofollow`), post-test "explain your results" mini-course for the VO2max test; handed to athletes after testing |
 | `cda-explained.html`       | `/cda-explained`                  | unlisted (`noindex,nofollow`), post-test results explainer for the Bike CdA / Field Aero test |
@@ -43,7 +43,7 @@ For the full project handoff doc, see the parent folder's `README.md`.
 | `fullstack-explained.html` | `/fullstack-explained`            | unlisted (`noindex,nofollow`), post-test results explainer for PRO Full-Stack Profiling; cross-links the four single-test explainers |
 | `dark-explained.html`      | `/dark-explained`                 | unlisted (`noindex,nofollow`), post-test results explainer for the DARK 3-min blindfolded all-out test (CP / W'); CTA points to `/contact` until a booking URL exists |
 | `rmr-explained.html`       | `/rmr-explained`                  | unlisted (`noindex,nofollow`), post-test results explainer for the Metabolic Assessment (RMR + body composition); covers RED-S / LEA screening and fuelling targets |
-| `paratriathlon.html`       | `/paratriathlon`                  | yes (public, indexable), plain-language guide to paratriathlon: format, divisions (Championship vs ATD1/open), classifications (PTWC/PTS/PTVI), handlers/guides, getting started. Built from USA Triathlon L2 para clinic material; needs a Wix page |
+| `paratriathlon.html`       | `/paratriathlon`                  | yes (public, indexable), plain-language guide to paratriathlon: format, divisions (Championship vs ATD1/open), classifications (PTWC/PTS/PTVI), handlers/guides, getting started. Built from USA Triathlon L2 para clinic material; needs a Wix page. Linked sitewide from the footer Community column and from `/ucla` |
 | `partners-onepager.html`   | (not embedded in Wix)             | printable one-page leave-behind for gym / facility partner visits (`noindex,nofollow`). Print directly from the GitHub Pages URL (US Letter, one page); QR on it points to `/partners` |
 
 ## Sandwich wrappers
@@ -58,7 +58,7 @@ Each pair brackets a Wix native widget on a specific page:
 | `/plans-courses` | `programs-top.html` · `programs-bottom.html`      |
 | each course page | `program-header.html` · `program-footer.html`     |
 
-## Calculator slugs (32)
+## Calculator slugs (33)
 
 | File                                       | Wix slug |
 |--------------------------------------------|----------|
@@ -102,16 +102,51 @@ Each pair brackets a Wix native widget on a specific page:
   `https://www.yousuli.co/challenge-page/42edf6c0-be10-4449-85bd-b62bbfb8b06e`
 - TrainingPeaks coach-attach (UCLA roster):
   `https://home.trainingpeaks.com/attachtocoach?sharedKey=QE635X7ECWI7E`
+- Referral webhook proxy (Cloudflare Worker):
+  `https://yousuli-referral-proxy.soft-band-e1e3.workers.dev/`
+- UCLA IronBruin opener registration:
+  `https://losangeles.californiatriathlon.org/Race/Register/?raceId=69215&eventId=1180584`
+
+## Project-root working docs (not deployed, one level up from `/site`)
+
+Source-of-truth notes and backends, not pages:
+
+- `referral-program-content.md` — full referral content pack: the 6 MJML
+  emails (A-F), T&Cs, launch email, Google Sheet schema.
+- `automation/` — referral backend: `cloudflare-worker.js` (the CORS proxy),
+  `wix-config.md` (webhook URL + payload schema + automation steps),
+  `emails/` (admin + Email D bodies), `migration-checklist.md` (leaving Wix).
+- `swim-course-framework.md` — free + paid swim course plan and salvaged content.
+- `strength-course-framework.md` — S&C course positioning + framework.
+- `vo2-course-framework.md` — VO2 physiology course plan, Fred's salvaged VO2
+  content, and the age/sex VO2max norm tables.
 
 ## Conventions
 
 - Every internal `<a href="https://www.yousuli.co/…">` carries
-  `target="_top"`.
-- No em-dashes in body copy. Use `:`, `,`, `.` or parens.
+  `target="_top"` (breaks out of the Wix iframe). **External** links
+  (non-yousuli.co: usatriathlon.org, race registration, etc.) use
+  `target="_blank" rel="noopener"` instead.
+- No literal em-dash character in prose. Use `:`, `,`, `.` or parens.
+  The HTML entities `&ndash;` (ranges/dividers) and `&mdash;` (a table
+  "n/a" marker) are fine, the guardrail `grep -c '—'` only catches the
+  literal character, not entities.
 - No `TSB` / `CTL` / `ATL` / "Training Stress Balance" /
-  "Chronic Training Load" / "Acute Training Load" — TrainingPeaks
-  trademarks.
+  "Chronic Training Load" / "Acute Training Load", TrainingPeaks
+  trademarks. (CP, W', VT1/VT2, MLSS, LTHR, FTP are all fine.)
 - "I" for Coach Fred, "you" for athletes.
+
+### Content-page component system
+
+The six `*-explained.html` result pages and `paratriathlon.html` share a
+recipe: copy an existing page's `<head>` + scoped `<style>` block and swap
+the per-page `--rx-accent` / `--rx-accent-deep` / `--rx-deep` palette. The
+scoped classes are `rx-callout` (variants `.teal`/`.warn`/`.coach`), `rx-idea`
+(the big-idea allegory panel), `rx-bands` + `rx-band` (reference ranges),
+`rx-normtable` (responsive norm tables), `rx-faq`, and `rx-cta-*`. Body uses
+the global `wf-hero`, `wf-section`(`.alt`), `ys-container`, `ys-section-head`,
+`ys-grid`, `ys-card`, `ys-bigstat`, `ys-quicknav`, `ys-btn` classes. The site
+header and footer are pasted verbatim from any existing page.
 
 ## Deploy
 
@@ -124,3 +159,12 @@ git push          # uses macOS keychain
 GitHub Pages serves `/site` from this repo at
 `https://d8cq6m7ywb-commits.github.io/yousulipages/`. Wix iframes point
 there. Hard-refresh after a push.
+
+### Guardrail checks before committing a content page
+
+```bash
+grep -c '—' <file>                    # want 0 (no literal em-dash)
+grep -nE '\b(TSB|CTL|ATL)\b' <file>   # want no matches
+# spot-check: every yousuli.co link has target="_top";
+# external links have target="_blank" rel="noopener".
+```
