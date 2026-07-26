@@ -366,7 +366,7 @@
           <a href="https://www.yousuli.co/plans-courses" target="_top">Programs</a>
           <a href="https://www.yousuli.co/social-club" target="_top">Club</a>
           <a href="https://www.yousuli.co/calculators" target="_top">Calculators</a>
-          <a href="https://hub.yousuli.co/" target="_top" rel="noopener">Hub &#x2197;</a>
+          <a href="https://grepiac.com/" target="_top" rel="noopener">Grepiac &#x2197;</a>
           <a href="https://www.yousuli.co/science" target="_top">Science</a>
           <a href="https://www.yousuli.co/about-coach-fred" target="_top">About</a>
         </nav>
@@ -463,9 +463,9 @@
 
           <!-- Case 2 hub upgrade callout -->
           <div class="merge-hub-callout">
-            <div class="merge-hub-callout-tag">For multi-device merges: full functionality on the hub</div>
+            <div class="merge-hub-callout-tag">For multi-device merges: full functionality on Grepiac</div>
             <p>This tool covers the <strong>sequential case</strong>: one activity split across two or more files in time. If you&rsquo;re trying to combine data <strong>recorded simultaneously on two or more devices</strong> (e.g. one head unit has power + HR, another has power + Stryd running power + Moxy SmO<sub>2</sub>), that&rsquo;s the parallel-merge case and it needs clock alignment, sampling-rate matching, per-field conflict resolution, and developer-field preservation.</p>
-            <p>That belongs on the <a href="https://hub.yousuli.co/" target="_top" rel="noopener"><strong>Yousuli hub</strong></a> where merges can be saved to your athlete profile and replayed on future activities. It&rsquo;s coming as part of the hub data-tools build.</p>
+            <p>That belongs on <a href="https://grepiac.com/" target="_top" rel="noopener"><strong>Grepiac</strong></a> where merges can be saved to your athlete profile and replayed on future activities. It&rsquo;s coming as part of the Grepiac data-tools build.</p>
           </div>
 
         </div>
@@ -476,7 +476,7 @@
           <ul style="margin: 0; padding-left: 18px;">
             <li>v1 preserves the standard record fields: timestamp, GPS lat/long, altitude, heart rate, cadence, distance, speed, power, temperature. Distance is re-accumulated across files for a continuous total.</li>
             <li>Lap, session, and event messages from the input files are <strong>not</strong> carried across; the merged file emits a fresh activity record. TrainingPeaks / Strava / intervals.icu will recompute their own laps + summaries on re-upload.</li>
-            <li>Developer fields (Stryd form power, Moxy SmO<sub>2</sub>, EO SwimBETTER force vectors, etc.) are <strong>not</strong> preserved in v1. They live in the parallel-merge case on the hub.</li>
+            <li>Developer fields (Stryd form power, Moxy SmO<sub>2</sub>, EO SwimBETTER force vectors, etc.) are <strong>not</strong> preserved in v1. They live in the parallel-merge case on Grepiac.</li>
             <li>Multi-sport stitching (a swim file followed by a bike file) is out of scope: the output is a single-sport activity. For multi-sport, use the <a href="https://www.yousuli.co/multisport-fit-breaker" target="_top">multisport splitter</a> in reverse, then merge legs of the same sport.</li>
             <li>Everything runs in your browser. Your files don&rsquo;t leave your device.</li>
           </ul>
