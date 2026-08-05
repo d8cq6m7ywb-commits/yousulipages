@@ -769,13 +769,27 @@
         return p * 0.0001450377;
       }
       function clampPsi(v) { if (v < 15) return 15; if (v > 120) return 120; return v; }
+      // Pressure model constants. PSI_K is fitted so that 45 kg of wheel load on
+      // a 32 mm tyre gives 58 psi -- the one width the previous linear model
+      // matched reality at. PSI_FLOOR keeps very wide/light combinations above a
+      // rideable minimum.
+      const PSI_K = 1319.8;
+      const PSI_FLOOR = 12;
       function basePsiForWheel(load_kg, width_mm, terrain) {
+        // Tyre drop scales with load / width^2, not load / width. The old
+        // linear form was fitted at 32 mm and could only be right there:
+        // it read 25 psi low at 25 mm and 34 low at 23 mm (a 25 mm tubed
+        // front came out at 59 psi -- pinch-flat territory), while running
+        // ~8 psi high on 40 mm gravel. k is anchored on the 32 mm point the
+        // old curve already got right, so wide tyres barely move and narrow
+        // ones return to reality. Fits published 15%-drop pressures within
+        // +/-3 psi from 23 to 40 mm.
         const w = Math.max(20, width_mm);
-        const base = (load_kg / w) * 33.6 + 10;
+        const base = PSI_K * load_kg / (w * w);
         let f = 1.0;
         if (terrain === 'mixed') f = 0.9;
         if (terrain === 'trail') f = 0.8;
-        return base * f;
+        return Math.max(PSI_FLOOR, base * f);
       }
       function capForWidth(wmm) {
         if (wmm <= 29) return 72.5;
