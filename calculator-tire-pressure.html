@@ -842,6 +842,8 @@
         const wetPct = wetActive ? ((parseFloat($('wetPct').value) || 7) / 100) : 0;
 
         let baseF = 0, baseR = 0, baseR_each = 0;
+        // Whether the hookless ceiling actually bound, so the warning can fire.
+        let softCapF = false, softCapR = false;
         if (posture === 'handcycle') {
           const fKg = totalKg * frontFrac;
           const rKg = totalKg * (1 - frontFrac);
@@ -862,6 +864,28 @@
           if (posture === 'handcycle') { baseF += nF; baseR_each += nR; }
           else                          { baseF += nF; baseR += nR; }
 
+          // Apply the hookless ETRTO ceiling to the BASE, before the wet and
+          // speed reductions, rather than after everything. Previously the cap
+          // ran last, so for any rider whose base pressure exceeded it (heavier
+          // riders on narrow hookless tyres) the wet and speed adjustments were
+          // silently swallowed: wet and dry both clamped to the same number and
+          // the wet control appeared to do nothing. Capping first keeps the
+          // safety ceiling and lets the reductions move the result below it.
+          if (rimType === 'tubelessHookless') {
+            var bF = baseF;
+            baseF = softHooklessBase(baseF, fW);
+            softCapF = baseF < bF;
+            if (posture === 'handcycle') {
+              var bRe = baseR_each;
+              baseR_each = softHooklessBase(baseR_each, rW);
+              softCapR = baseR_each < bRe;
+            } else {
+              var bR = baseR;
+              baseR = softHooklessBase(baseR, rW);
+              softCapR = baseR < bR;
+            }
+          }
+
           if (wetPct > 0) {
             baseF *= (1 - wetPct);
             if (posture === 'handcycle') baseR_each *= (1 - wetPct);
@@ -876,35 +900,32 @@
           else baseR -= speedAdj;
         }
 
-        let effF = baseF, effR = baseR, effR_each = baseR_each;
-        if (isAdv && rimType === 'tubelessHookless') {
-          effF = softHooklessBase(baseF, fW);
-          if (posture === 'handcycle') effR_each = softHooklessBase(baseR_each, rW);
-          else effR = softHooklessBase(baseR, rW);
-        }
-
         const ranges = x => {
           const m = clampPsi(Math.round(x));
           return [clampPsi(Math.round(m * 0.94)), m, clampPsi(Math.round(m * 1.06))];
         };
 
-        let F = ranges(effF);
-        let R = posture === 'handcycle' ? [0,0,0] : ranges(effR);
-        let Reach = posture === 'handcycle' ? ranges(effR_each) : [0,0,0];
+        let F = ranges(baseF);
+        let R = posture === 'handcycle' ? [0,0,0] : ranges(baseR);
+        let Reach = posture === 'handcycle' ? ranges(baseR_each) : [0,0,0];
 
-        let frontCapped = false, rearCapped = false;
+        // Hard ETRTO clamp on the published range, so nothing shown (including
+        // the top of the range) can exceed the rim limit. The flags start from
+        // whether the soft cap already bound, so the warning is truthful: the
+        // old check compared against the hard cap only and could never fire.
+        let frontCapped = softCapF, rearCapped = softCapR;
         if (isAdv && rimType === 'tubelessHookless') {
           const capF = capForWidth(fW);
           F = F.map(v => Math.min(v, capF));
-          frontCapped = (F[1] === capF || F[2] === capF);
+          frontCapped = frontCapped || (F[1] === capF || F[2] === capF);
           if (posture === 'handcycle') {
             const capR = capForWidth(rW);
             Reach = Reach.map(v => Math.min(v, capR));
-            rearCapped = (Reach[1] === capR || Reach[2] === capR);
+            rearCapped = rearCapped || (Reach[1] === capR || Reach[2] === capR);
           } else {
             const capR = capForWidth(rW);
             R = R.map(v => Math.min(v, capR));
-            rearCapped = (R[1] === capR || R[2] === capR);
+            rearCapped = rearCapped || (R[1] === capR || R[2] === capR);
           }
         }
 
@@ -960,6 +981,31 @@
       }
 
       $('calcBtn').addEventListener('click', calc);
+
+      // Live recalculation. Without this the results only update on a Calculate
+      // click, so changing a dropdown (dry to wet, terrain, rim type) appeared
+      // to do nothing and the wet penalty looked broken. Only recalculates once
+      // results are already on screen, so the first view still waits for the
+      // button and an incomplete form does not flash errors while typing.
+      (function wireLiveRecalc() {
+        const ids = [
+          'riderWeight', 'stokerWeight', 'bikeWeight', 'frontTireWidth', 'rearTireWidth',
+          'terrain', 'rimType', 'roadCondition', 'speed', 'wetPct', 'frontLoadPct',
+          'pumpAlt', 'rideAlt', 'pumpTemp', 'rideTemp'
+        ];
+        const recalc = () => {
+          if ($('resultBlock') && $('resultBlock').classList.contains('active')) calc();
+        };
+        ids.forEach(id => {
+          const el = $(id);
+          if (!el) return;
+          el.addEventListener('change', recalc);
+          el.addEventListener('input', recalc);
+        });
+        if (postureEl) postureEl.addEventListener('change', recalc);
+        document.querySelectorAll('.preset-btn').forEach(b => b.addEventListener('click', recalc));
+      })();
+
       $('resetBtn').addEventListener('click', () => {
         $('riderWeight').value = unit === 'metric' ? 75 : (75 * 2.20462).toFixed(1);
         $('stokerWeight').value = '';
