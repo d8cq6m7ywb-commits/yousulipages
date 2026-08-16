@@ -431,18 +431,6 @@
                 </div>
               </div>
 
-              <div>
-                <label>Average speed (km/h)</label>
-                <select id="speed">
-                  <option value="below20">Below 20</option>
-                  <option value="20-35" selected>20–35</option>
-                  <option value="36-39">36–39</option>
-                  <option value="40-45">40–45</option>
-                  <option value="46-49">46–49</option>
-                  <option value="50-60">50–60</option>
-                </select>
-              </div>
-
               <div class="full">
                 <label>Environment correction (optional)</label>
                 <div class="field-help" style="margin-bottom: 10px;">If you pump in the garage and ride at altitude (or in heat), the gauge changes. Enter pump and ride conditions to compute the gauge to set <em>at the pump</em>.</div>
@@ -864,13 +852,13 @@
           if (posture === 'handcycle') { baseF += nF; baseR_each += nR; }
           else                          { baseF += nF; baseR += nR; }
 
-          // Apply the hookless ETRTO ceiling to the BASE, before the wet and
-          // speed reductions, rather than after everything. Previously the cap
-          // ran last, so for any rider whose base pressure exceeded it (heavier
-          // riders on narrow hookless tyres) the wet and speed adjustments were
-          // silently swallowed: wet and dry both clamped to the same number and
-          // the wet control appeared to do nothing. Capping first keeps the
-          // safety ceiling and lets the reductions move the result below it.
+          // Apply the hookless ETRTO ceiling to the BASE, before the wet
+          // reduction, rather than after it. Previously the cap ran last, so for
+          // any rider whose base pressure exceeded it (heavier riders on narrow
+          // hookless tyres) the wet adjustment was silently swallowed: wet and
+          // dry both clamped to the same number and the wet control appeared to
+          // do nothing. Capping first keeps the safety ceiling and lets the
+          // reduction move the result below it.
           if (rimType === 'tubelessHookless') {
             var bF = baseF;
             baseF = softHooklessBase(baseF, fW);
@@ -891,13 +879,6 @@
             if (posture === 'handcycle') baseR_each *= (1 - wetPct);
             else baseR *= (1 - wetPct);
           }
-
-          const speedMap = { below20: 15, '20-35': 30, '36-39': 38, '40-45': 43, '46-49': 48, '50-60': 55 };
-          const numSpeed = speedMap[$('speed').value] || 30;
-          const speedAdj = Math.max(0, numSpeed - 30) * 0.03;
-          baseF -= speedAdj;
-          if (posture === 'handcycle') baseR_each -= speedAdj;
-          else baseR -= speedAdj;
         }
 
         const ranges = x => {
@@ -990,7 +971,7 @@
       (function wireLiveRecalc() {
         const ids = [
           'riderWeight', 'stokerWeight', 'bikeWeight', 'frontTireWidth', 'rearTireWidth',
-          'terrain', 'rimType', 'roadCondition', 'speed', 'wetPct', 'frontLoadPct',
+          'terrain', 'rimType', 'roadCondition', 'wetPct', 'frontLoadPct',
           'pumpAlt', 'rideAlt', 'pumpTemp', 'rideTemp'
         ];
         const recalc = () => {
@@ -1017,7 +998,6 @@
         postureEl.value = 'road';
         syncPosture();
         $('roadCondition').value = 'dry';
-        $('speed').value = '20-35';
         $('wetPct').value = 7;
         $('wetPctText').textContent = '7%';
         ['pumpAlt','rideAlt','pumpTemp','rideTemp'].forEach(id => $(id).value = '');
