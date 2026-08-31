@@ -1,5 +1,44 @@
 # NIRS course framework — "Muscle Oxygen in Practice"
 
+## BUILD STATUS (2026-08-31, for Fred's and Sol's review)
+
+Four of eight modules are written and deployed. The course landing page is
+public; the paid-arc drafts are private (page-level noindex, not linked from
+the landing, shared by direct URL only).
+
+| # | Module | State | URL (new.yousuli.co) |
+|---|---|---|---|
+| — | Landing / sales page | Public | `/nirs-course` |
+| 1 | What the sensor sees | Public, free | `/nirs-course/what-the-sensor-sees` |
+| 2 | Reading a trace | Public, free | `/nirs-course/reading-a-trace` |
+| 3 | Placement, repeatability, signal quality | **Private draft** | `/nirs-course/placement` |
+| 4 | Your personal baseline | **Private draft** | `/nirs-course/personal-baseline` |
+| 5 | Intervals by reoxygenation | Not started | — |
+| 6 | Breakpoints and zones | Not started | — |
+| 7 | Limiter case studies | Not started | — |
+| 8 | Routine and season tracking | Not started | — |
+
+**Video workflow:** Fred records himself demonstrating practice; the drafts
+contain styled placeholder blocks with per-video shot lists and private
+notes-to-self (framing, what to demonstrate, which take carries the module).
+Placeholders are swapped for players when footage exists. Five shot lists so
+far: module 3 has three (finding the VL, strap tension wrong/wrong/right, the
+sixty-second ritual), module 4 has two (the baseline session ridden on
+camera, two-sessions-side-by-side including a comparison that deliberately
+means nothing).
+
+**What modules 3-4 teach** (for review against the module table below):
+module 3 covers site choice with vastus lateralis default, the pinch test,
+strap pressure failing both directions, marking the site, a sixty-second
+setup ritual with signal check, and an ordered artefact diagnosis. Module 4
+defines the three personal references (settled easy value, working floor,
+refill signature), the six matched conditions, a 30-minute repeatable
+baseline session, the six-item log row, and refresh triggers. Every module
+ends with the agreed template: learned / decision / protocol / record / when
+not to trust.
+
+---
+
 Positioning (revised after Sol's review): **outcome-led, not technology-led.**
 Course title: *Muscle Oxygen in Practice*. Sales line: *Stop staring at SmO2.
 Learn to use it to pace intervals, judge recovery, and understand what is
