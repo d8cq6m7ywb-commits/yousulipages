@@ -1,4 +1,11 @@
-# NIRS course framework — "Train by the muscle"
+# NIRS course framework — "Muscle Oxygen in Practice"
+
+Positioning (revised after Sol's review): **outcome-led, not technology-led.**
+Course title: *Muscle Oxygen in Practice*. Sales line: *Stop staring at SmO2.
+Learn to use it to pace intervals, judge recovery, and understand what is
+limiting you.* "Train by the muscle" survives as the tagline. The line that
+anchors the sales page: **"You saw your curve. Now learn what to do with it."**
+Practical decision-making course, not general NIRS education.
 
 Working document for Fred's review, same pattern as the swim / VO2 / strength
 frameworks. Nothing here is deployed; every section is open for edit.
@@ -40,48 +47,73 @@ the engine room is being drained right now.)
 
 ### Measured, not felt (house differentiator)
 
-Same stance as the swim course: feel lies, the curve does not. "You feel
-recovered while your muscle oxygen is still in a hole" is already on the PRP
-page; this course teaches athletes to check the hole themselves.
+Revised stance (Sol, adopted): the sensor can mislead too, through placement,
+movement, temperature, light leak, adipose tissue. So not "the curve does not
+lie" but: **"Feel gives you one signal. The curve gives you another. Good
+decisions come from knowing when to trust each one."** That framing also makes
+the placement and baseline modules load-bearing instead of housekeeping.
 
-## 3. Modules (draft order)
+## 3. Modules (revised order)
 
-| # | Module | The one thing it teaches | Lab tie-in |
-|---|---|---|---|
-| 1 | What the sensor sees | SmO2/tHb in plain words, what NIRS is NOT (not lactate, not effort, not a smartwatch guess) | science page |
-| 2 | Reading a trace | The four basic shapes: steady, falling, rising, floor. Warm-up dip, the plateau, what noise looks like | any test report |
-| 3 | Placement and pitfalls | Site choice, adipose layer, light leak, cold muscle, moving sensors between sessions and why numbers are not comparable across sites | extra-NIRS add-on |
-| 4 | Find your zones | The SmO2 breakpoint during a ramp, how it relates to VT1/VT2 and lactate; a self-test protocol (5-1-5) for athletes without a lab | VO2max & Zones test |
-| 5 | Intervals by refill | Reoxygenation as the honest recovery gauge: start the next rep when the muscle is ready, not when the clock says so | PRP |
-| 6 | Name your limiter | The supply-vs-utilisation split: what SmO2 + lactate + VO2 together reveal that any one alone cannot | Full-Stack |
-| 7 | Pacing with a ceiling | Holding the highest SmO2-stable effort; the drain-and-hold logic of the 3-min all-out | DARK, critical power |
-| 8 | Make it routine | Getting SmO2 into your files (fit-merge), season tracking, when to re-test | Grepiac, fit-merge |
+Sol proposed placement-before-trace-reading, which is right for the PAID arc
+but collided with his own free-tier spec (free = what it measures + basic
+shapes). Resolution: the two FREE modules stay as built (they already carry a
+signal-vs-artefact section, so "trust before interpretation" is not ignored),
+and the paid arc opens with placement, then the new baseline module.
 
-Eight modules, each a short page in the explainer voice: allegory first, then
-the metric, then a protocol the athlete can run this week.
+| # | Tier | Module | The one thing it teaches | Lab tie-in |
+|---|---|---|---|---|
+| 1 | Free | What the sensor sees | SmO2/tHb plainly, what NIRS is NOT | science page |
+| 2 | Free | Reading a trace | The four shapes, the three real traces, signal vs artefact | any test report |
+| 3 | Paid | Placement, repeatability, signal quality | Site choice, skinfold, light leak, sensor pressure, why yesterday may not compare to today | extra-NIRS add-on |
+| 4 | Paid | Your personal baseline (NEW, Sol) | Build a reference library: same muscle, position, warm-up, pressure, environment, repeatable ramp. Within-athlete comparison is the whole game | VO2max & Zones |
+| 5 | Paid | Intervals by reoxygenation | Refill speed as the honest recovery gauge; rest by readiness, not clock | PRP |
+| 6 | Paid | Breakpoints and zones | The ramp breakpoint, its relation to VT1/VT2 and lactate, the 5-1-5 self-test | VO2max & Zones |
+| 7 | Paid | Limiter case studies | What SmO2 can SUGGEST alone, and what requires lactate + VO2 before concluding. Case-study format, explicitly sells Full-Stack | Full-Stack |
+| 8 | Paid | Routine and season tracking | fit-merge into your files, tracking across a season, when to re-test | Grepiac, fit-merge |
 
-## 4. Free vs paid (Fred decides)
+Module 7 is deliberately no longer "Name your limiter": SmO2 alone cannot
+always separate delivery from utilisation, and overpromising there costs the
+exact credibility the course trades on.
 
-Options, not a recommendation disguised as one:
+### Every module ends the same way (Sol, adopted)
 
-- **A. Free teaser + paid course.** Module 1-2 as a public explainer-style
-  page (SEO: "how to read SmO2" has real search volume and almost no good
-  answers), modules 3-8 paid.
-- **B. All free, drives testing.** The course as top-of-funnel for PRP /
-  Full-Stack / extra-NIRS ("the lab does this FOR you, with reference data").
-- **C. Paid from module 1**, sold as the companion to owning a sensor.
+What you just learned · what decision it helps you make · one protocol to run
+· what to record · when NOT to trust the result.
 
-Payment stays on Wix for now (per current plan): sell via a Wix payment link,
-deliver as unlisted noindex pages on new.yousuli.co, exactly like the test
-explainers. No new infrastructure needed to launch.
+### Format (binding, not aspirational)
+
+The Programs page promises video, worksheets and calculators for every
+program, free or paid. The paid tier must meet that bar: short videos,
+annotated traces, printable protocol cards. The free pages may stay text +
+figures. Video production is on Fred; pages and worksheets can be built here.
+
+## 4. Free vs paid: DECIDED (Option A) and bundling
+
+Free: modules 1-2 (live). Each free page should deliver a real win but leave
+the reader asking "how do I apply this to MY training", which is the paid arc.
+
+Distribution (Sol, adopted):
+- Included with PRP and Full-Stack packages ("you saw your curve" is literal).
+- Included in relevant coaching memberships.
+- Sold standalone to sensor owners worldwide (beyond the lab's geography).
+- Sensor rental / loaner block: a separate lab package, NOT required for the
+  course.
+
+Payment via Wix link for now; delivery as unlisted pages, same as the
+explainers. Commercial role: authority product and bridge (free guide -> paid
+course -> lab test or coaching -> Grepiac), not the mainstream flagship. NIRS
+ownership is still a narrow audience and the course should not pretend
+otherwise.
 
 ## 5. Open questions for Fred
 
-1. Device scope: Moxy-first (what the lab runs) with a "other sensors differ"
-   note, or vendor-neutral throughout?
+1. Device scope: SETTLED (Sol). Moxy-led, sensor-aware: "Demonstrations use
+   Moxy because that is what we run in the lab. The principles apply broadly;
+   values and behaviour differ between devices."
 2. Does the course assume the athlete OWNS a sensor, or do we offer a rental /
    loaner block through the lab as part of the paid tier?
-3. Free/paid split: A, B, or C above?
+3. Free/paid split: SETTLED, Option A.
 4. Format: text + figures like the explainers, or with short videos like the
    swim course plan?
 5. Anything from your coaching scripts / past athlete debriefs to fold in
