@@ -8,7 +8,7 @@ Canonical copies are in `site/` (git-tracked, pushed to the yousulipages
 repo); the repo-root copies are a working mirror kept identical. Review the
 site/ history for diffs.
 
-Last updated: 2026-08-31.
+Last updated: 2026-08-31 (module 5 shipped).
 
 ## Page state
 
@@ -19,7 +19,7 @@ Last updated: 2026-08-31.
 | 2 | Reading a trace | Public, free | `/nirs-course/reading-a-trace` |
 | 3 | Placement, repeatability, signal quality | Private draft | `/nirs-course/placement` |
 | 4 | Your personal baseline | Private draft | `/nirs-course/personal-baseline` |
-| 5 | Intervals by reoxygenation | Not started | — |
+| 5 | Intervals by reoxygenation | Private draft | `/nirs-course/intervals-by-reoxygenation` |
 | 6 | Breakpoints and zones | Not started | — |
 | 7 | Limiter case studies | Not started | — |
 | 8 | Routine and season tracking | Not started | — |
@@ -32,7 +32,7 @@ modules 3-8 as "In build". Fred shares draft URLs directly.
 
 Placeholder blocks in the drafts carry shot lists and private notes-to-self;
 each is swapped for a real player when footage exists. Recorded so far: none.
-Outstanding shot lists:
+Outstanding shot lists (seven):
 
 | Module | Video | Core of the take |
 |---|---|---|
@@ -41,6 +41,8 @@ Outstanding shot lists:
 | 3 | The 60-second ritual, real time | One unbroken take, filmed before a real session |
 | 4 | The baseline session, ridden | The 30-minute protocol with the three references pointed out live |
 | 4 | Two sessions side by side | One meaningful comparison, one deliberately meaningless one |
+| 5 | A refill-gated session, ridden | Calling reps off the refill knee instead of the timer; note-to-self: film on a day the drift actually shows, do not fake it |
+| 5 | Two sets, two goals | Quality set with level tops vs resistance set with deliberate drift; reuse both traces as module 7 case material |
 
 ## Review state
 
@@ -52,9 +54,10 @@ Outstanding shot lists:
 
 ## Next actions
 
-1. Fred + Sol review of modules 3-4 voice and structure (pattern-setting for
-   5-8).
-2. Build module 5 (intervals by reoxygenation) after that review.
-3. Fred records the five outstanding videos; placeholders swapped as footage
+1. Fred + Sol review of modules 3-5 (Fred asked for 5 ahead of the review).
+2. Build modules 6-8 (breakpoints and zones carries the evidence boundary
+   from the framework; limiter case studies can reuse module 5's two-sets
+   traces; routine closes the arc).
+3. Fred records the seven outstanding videos; placeholders swapped as footage
    lands.
 4. Payment link + bundling once the paid arc is complete enough to sell.
