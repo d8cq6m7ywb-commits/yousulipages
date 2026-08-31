@@ -24,6 +24,7 @@ and how to get it back.
 | Caddy 2.11 | `caddy.service` | Owns 443, auto TLS, reverse proxy to 3000 |
 | Referral triggers | `yousuli-referral-cron.timer` | Daily 08:05 America/Los_Angeles |
 | Database backup | `yousuli-backup.timer` | Daily 02:30 LA, 14-day retention |
+| Health self-heal | `yousuli-health.timer` | Every 5 min; restarts the app if it stops answering, logs to `journalctl -t yousuli-health` |
 
 Firewall: UFW, inbound 22/80/443 only. `fail2ban` and unattended security
 upgrades are on.
@@ -119,15 +120,51 @@ account holder). To grant staff to someone else:
 UPDATE athletes SET staff = true WHERE email = 'them@example.com';
 ```
 
+## Backups: the full picture
+
+Three layers, all verified working on 2026-08-31:
+
+1. **On the server**, `yousuli-backup.timer`, nightly 02:30 LA, 14 days kept in
+   `/var/backups/yousuli/`. Protects against "I deleted the wrong rows".
+2. **On Fred's Mac**, `~/.local/bin/yousuli-backup-pull.sh` via the launchd
+   agent `co.yousuli.backup-pull`, daily 12:30, 60 days kept in
+   `~/YousuliBackups/`. This is the genuinely offsite copy: different machine,
+   city and provider, so it survives losing the server. The script verifies the
+   gzip and counts tables after transfer, because a silently truncated backup is
+   worse than none.
+3. **Restore, rehearsed.** Both the server dump and the Mac copy have been
+   restored into throwaway databases end to end: 23 tables, the admin account
+   with its `staff` flag, and intact password hashes (so login works after a
+   restore). Production was untouched, verified identical before and after.
+
+Re-rehearse after any schema change worth worrying about:
+
+```bash
+# on the server, into a throwaway db, never touching production
+sudo -u postgres dropdb --if-exists restore_test && sudo -u postgres createdb restore_test
+gunzip -c $(ls -t /var/backups/yousuli/*.sql.gz | head -1) | sudo -u postgres psql -q -d restore_test
+sudo -u postgres psql -d restore_test -c "SELECT count(*) FROM athletes;"
+sudo -u postgres dropdb restore_test
+```
+
+To pull a copy to the Mac on demand: `~/.local/bin/yousuli-backup-pull.sh`
+(log at `/tmp/yousuli-backup-pull.log`). To stop the schedule:
+`launchctl unload ~/Library/LaunchAgents/co.yousuli.backup-pull.plist`.
+
+Cloud object storage (R2/B2) would add a third location that does not depend on
+the Mac being switched on. Worth doing, but the Mac copy already removes the
+single-point-of-failure that mattered.
+
 ## Known gaps
 
 - **Email is in dry mode.** No `RESEND_API_KEY`, so booking confirmations and
-  referral mail are logged, not sent. See `email-setup.md`.
-- **Backups are local only.** A dump on the same disk as the database does not
-  survive losing the disk. Offsite copy to Cloudflare R2 or Backblaze B2 is the
-  next backup task. Contabo's $2/mo Auto Backup is a reasonable stopgap.
-- **Restore untested** (see above).
-- **No uptime monitoring.** UptimeRobot on `https://new.yousuli.co` is five
-  minutes of work and tells you before an athlete does.
+  referral mail are logged, not sent. See `email-setup.md`. This is the last
+  thing stopping the beta from being usable end to end.
+- **Monitoring is self-monitoring.** `yousuli-health.timer` restarts the app if
+  it stops answering, which handles a wedged process, but a box that is fully
+  down cannot alert on itself. Five minutes on UptimeRobot pointed at
+  `https://new.yousuli.co` closes that.
+- **Backups depend partly on the Mac being on.** See above; cloud object
+  storage would make the offsite copy unconditional.
 - **The `noindex` header must be removed at cutover**, and the DNS record for
   www/apex repointed. Both are noted in the Caddyfile and `dns-yousuli.md`.
