@@ -8,7 +8,17 @@ Canonical copies are in `site/` (git-tracked, pushed to the yousulipages
 repo); the repo-root copies are a working mirror kept identical. Review the
 site/ history for diffs.
 
-Last updated: 2026-08-31. **All eight modules are now drafted**; the paid arc
+Last updated: 2026-09-01, Sol round six. Module 7's four corrections applied
+(case 1 no longer contradicts module 3's attenuation teaching; the warm-up
+verdict is no longer binary; case 3 describes only what was observed instead
+of importing module 5's old overclaim; exploratory hypotheses are legitimate
+but must be tested prospectively on new data; "only way to answer" softened
+to complementary signals improving confidence). Module 8's refill series
+demoted from preferred season metric to a conditional experimental series
+alongside repeat output and feel, plus the seven smaller certainty-language
+fixes. Framework gains explicit propagation clauses (the module-5 and
+meaningful-change boundaries bind module 8's season tracking).
+**All eight modules are drafted**; the paid arc
 (3-8) is complete and behind auth, awaiting Fred's full course review plus
 Sol and Fable passes on modules 7-8. Previously: Sol round five. The round-four status claim about
 the 2025 citations was WRONG: two framework patches had silently no-opped
@@ -40,7 +50,7 @@ content stays out of search permanently), not linked from the landing page
 (which shows modules 3-8 as "In build"), and HTTP basic auth at the proxy,
 because noindex controls indexing, not access. Credentials are stored outside
 git; retrieval and proxy configuration live in the private ops runbook, not
-in this public document. Extend the auth matcher when modules 7-8 gain pages.
+in this public document. The auth matcher covers all six draft paths (3-8); extend only if new private pages are added.
 
 ## Video production (Fred on camera)
 
@@ -82,7 +92,7 @@ Outstanding shot lists (twelve):
   draft pages moved behind real access control (basic auth), since noindex
   controls indexing, not access. Round four applied: see Last updated line.
   For Sol's protected-prose review WITHOUT the credential entering chat, the
-  authenticated HTML of modules 3-6 is exported to
+  authenticated HTML of all six draft modules (3-8) is exported to
   `../nirs-review-export/` (repo root, NOT in site/, so it is never pushed to
   the public pages repo); Fred hands those files to Sol directly and can
   delete the folder afterwards.

@@ -126,13 +126,22 @@ result.**
   The module's stance: one experimental cue used alongside planned recovery,
   repeat output and feel, with the athlete recording whether it improves
   session quality before letting it change any prescription. Within-session
-  comparisons are less confounded than between-day ones, not "safe".
+  comparisons are less confounded than between-day ones, not "safe". **This
+  boundary propagates into module 8**: season tracking may present the
+  rest-duration series only as an experimental series conditional on
+  demonstrated repeatability, never as the course's preferred metric, and it
+  does not displace baseline sessions or ordinary performance data.
 - **Modules 3-4 respect meaningful-change thresholds.** Wearable SmO2 can
   hold decent relative reliability while individual comparisons still need a
   materially-larger-than-noise change before they mean anything (test-retest
   work reports minimum detectable changes in the low-to-mid teens of percent,
   PMID 37601168, device- and protocol-specific). Course copy avoids exact
   thresholds and teaches "material shift under matched conditions" instead.
+  **This propagates into module 8's season reading**: small movements cannot
+  be confidently distinguished from measurement variation, several agreeing
+  observations are a repeated pattern worth investigating rather than a
+  finding, and season changes are judged "large and consistent enough to
+  investigate", never simply "real".
 - **Module 7 stays case-study framed.** SmO2 alone cannot reliably separate
   delivery from utilisation; the module teaches what it can suggest and when
   Full-Stack-style multi-signal testing is required before concluding.
