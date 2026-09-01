@@ -8,7 +8,16 @@ Canonical copies are in `site/` (git-tracked, pushed to the yousulipages
 repo); the repo-root copies are a working mirror kept identical. Review the
 site/ history for diffs.
 
-Last updated: 2026-08-31 (Sol round four applied: module 6 agreement rule made operational with a no-anchor failure outcome, checks-vs-sensor reworded to investigate-not-override, three public leftovers fixed on the landing, two 2025 studies added to the evidence boundary).
+Last updated: 2026-08-31, Sol round five. The round-four status claim about
+the 2025 citations was WRONG: two framework patches had silently no-opped
+(replace without assert) while the status doc claimed them done. Root cause
+fixed (all doc patches now assert) and the citations, module-5 evidence
+boundary, module-6 row and audience wording are now verifiably in the
+framework. Round five also applied: module 5's full evidence pass
+(experimental cue framing throughout, not just in the callout), module 6's
+protocol honesty block (coaching convention, candidate upper anchor, not
+validated VT1/VT2/LT/CP), modules 3-4 soft-language fixes, meaningful-change
+teaching, and the ops-details scrub from this public doc.
 
 ## Page state
 
@@ -27,10 +36,9 @@ Last updated: 2026-08-31 (Sol round four applied: module 6 agreement rule made o
 Private = three layers: page-level noindex (survives the beta cutover; paid
 content stays out of search permanently), not linked from the landing page
 (which shows modules 3-8 as "In build"), and HTTP basic auth at the proxy,
-because noindex controls indexing, not access. Username `fred`; the password
-is on the VPS at /root/nirs-drafts-password.txt (never in chat or git):
-`ssh root@94.72.125.157 cat /root/nirs-drafts-password.txt`. Extend the
-Caddyfile matcher when modules 6-8 gain pages.
+because noindex controls indexing, not access. Credentials are stored outside
+git; retrieval and proxy configuration live in the private ops runbook, not
+in this public document. Extend the auth matcher when modules 7-8 gain pages.
 
 ## Video production (Fred on camera)
 

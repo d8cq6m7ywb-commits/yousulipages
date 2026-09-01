@@ -32,11 +32,11 @@ similar) or are deciding whether to buy one, plus lab clients who have seen
 their own curves in a test and want to keep training with them.
 
 **Demonstrations are cycling-led** because that is how Fred films them and
-because the trainer makes live traces filmable. **The principles carry to
-running and triathlon unchanged; protocols are adapted, not reinvented**:
-where a protocol needs a sport-specific change (surface, site, how to hold a
-steady effort), the module says so explicitly rather than leaving the runner
-to guess. Swim NIRS is named honestly as mostly a lab matter.
+because the trainer makes live traces filmable. **The interpretation principles transfer across sports; site selection,
+protocol details and sport-specific meaning require adaptation**: where a
+protocol needs a sport-specific change (surface, site, how to hold a steady
+effort), the module says so explicitly rather than leaving the runner to
+guess. Swim NIRS is named honestly as mostly a lab matter.
 
 Device scope: Moxy-led, sensor-aware. Demonstrations use Moxy because that is
 what the lab runs; the physiology applies broadly, but values and behaviour
@@ -82,7 +82,7 @@ this to MY training."
 | 3 | Paid | Placement, repeatability, signal quality | Site choice, the pinch test, strap pressure failing both directions, marking, the 60-second ritual | extra-NIRS add-on |
 | 4 | Paid | Your personal baseline | Three references (settled value, working floor, refill signature), six matched conditions, a repeatable 30-minute baseline session, the log row | VO2max & Zones |
 | 5 | Paid | Intervals by reoxygenation | The refill as a practical, noisy-but-useful ready cue; rest by readiness, not clock alone | PRP |
-| 6 | Paid | Breakpoints and zones | Finding YOUR breakpoint and anchoring zones to it, with the evidence boundary below | VO2max & Zones |
+| 6 | Paid | Breakpoints and zones | Finding and verifying a candidate upper breakpoint, then deciding whether it deserves use as an anchor (evidence boundary below) | VO2max & Zones |
 | 7 | Paid | Limiter case studies | What SmO2 can SUGGEST alone; what requires lactate + VO2 before concluding | Full-Stack |
 | 8 | Paid | Routine and season tracking | SmO2 into your files (fit-merge), season tracking, re-test triggers | Grepiac, fit-merge |
 
@@ -107,7 +107,32 @@ result.**
   device and protocol (PMID 35021246). The module's honest frame: find your
   breakpoint, verify it against feel and performance, and treat lab
   confirmation as the upgrade, which is also the natural VO2max & Zones
-  tie-in.
+  tie-in. Two 2025 primary studies from Sol's reviews point the same
+  direction, that method and protocol matter: weak-to-moderate agreement with
+  ventilatory thresholds and notable individual variability in one (Arnet et
+  al., PMID 39778576), excellent reliability under a specific four-stage
+  zero-slope protocol in the other (PMID 41121574). Neither validates
+  Yousuli's home protocol specifically, so the module labels its stage
+  lengths, resets and increments as a coaching convention, states that the
+  result is a candidate upper training anchor and not the validated
+  equivalent of VT1, VT2, lactate threshold or critical power, and carries a
+  precommitted agreement rule: two ramps agree when they bracket the same
+  step; disagreement rides a third with a two-of-three verdict; all three
+  differing is a no-anchor outcome, never an average.
+- **Module 5 must frame refill gating as an unvalidated coaching heuristic,
+  never a readiness test.** Reported day-to-day variation of post-exercise
+  reoxygenation indices is large (Buchheit et al., PMID 21771251, CVs in the
+  tens of percent), and no study validates starting intervals off the refill.
+  The module's stance: one experimental cue used alongside planned recovery,
+  repeat output and feel, with the athlete recording whether it improves
+  session quality before letting it change any prescription. Within-session
+  comparisons are less confounded than between-day ones, not "safe".
+- **Modules 3-4 respect meaningful-change thresholds.** Wearable SmO2 can
+  hold decent relative reliability while individual comparisons still need a
+  materially-larger-than-noise change before they mean anything (test-retest
+  work reports minimum detectable changes in the low-to-mid teens of percent,
+  PMID 37601168, device- and protocol-specific). Course copy avoids exact
+  thresholds and teaches "material shift under matched conditions" instead.
 - **Module 7 stays case-study framed.** SmO2 alone cannot reliably separate
   delivery from utilisation; the module teaches what it can suggest and when
   Full-Stack-style multi-signal testing is required before concluding.
