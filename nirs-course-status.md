@@ -8,7 +8,9 @@ Canonical copies are in `site/` (git-tracked, pushed to the yousulipages
 repo); the repo-root copies are a working mirror kept identical. Review the
 site/ history for diffs.
 
-Last updated: 2026-08-31, Sol round five. The round-four status claim about
+Last updated: 2026-08-31. **All eight modules are now drafted**; the paid arc
+(3-8) is complete and behind auth, awaiting Fred's full course review plus
+Sol and Fable passes on modules 7-8. Previously: Sol round five. The round-four status claim about
 the 2025 citations was WRONG: two framework patches had silently no-opped
 (replace without assert) while the status doc claimed them done. Root cause
 fixed (all doc patches now assert) and the citations, module-5 evidence
@@ -30,8 +32,8 @@ teaching, and the ops-details scrub from this public doc.
 | 4 | Your personal baseline | Private draft | `/nirs-course/personal-baseline` |
 | 5 | Intervals by reoxygenation | Private draft | `/nirs-course/intervals-by-reoxygenation` |
 | 6 | Breakpoints and zones | Private draft | `/nirs-course/breakpoints-and-zones` |
-| 7 | Limiter case studies | Not started | — |
-| 8 | Routine and season tracking | Not started | — |
+| 7 | Limiter case studies | Private draft | `/nirs-course/limiter-case-studies` |
+| 8 | Routine and season tracking | Private draft | `/nirs-course/routine-and-season` |
 
 Private = three layers: page-level noindex (survives the beta cutover; paid
 content stays out of search permanently), not linked from the landing page
@@ -44,7 +46,7 @@ in this public document. Extend the auth matcher when modules 7-8 gain pages.
 
 Placeholder blocks in the drafts carry shot lists and private notes-to-self;
 each is swapped for a real player when footage exists. Recorded so far: none.
-Outstanding shot lists (nine):
+Outstanding shot lists (twelve):
 
 | Module | Video | Core of the take |
 |---|---|---|
@@ -57,10 +59,16 @@ Outstanding shot lists (nine):
 | 5 | Two sets, two goals | Quality set with level tops vs fatigue-tolerance set with deliberate drift; reuse both traces as module 7 case material |
 | 6 | The step ramp, ridden | Settling vs refusing steps named live; Fred's real breakpoint stays in even if unflattering |
 | 6 | Two ramps and a verdict | Repeatability side-by-side, laid against existing power zones, closing on a real lab chart (permissioned data only, never mock) |
+| 7 | Reading two real sets, out loud | REUSES module 5's two traces: for each, what it suggests then two alternatives, ending on the next test. Note-to-self: say "I do not know yet" at least once and mean it |
+| 8 | The whole workflow, end to end | Ritual, key session, FIT merge, log row, under four minutes and deliberately boring |
+| 8 | A season, in one screen | A real log across a block: one material change, one inside-the-noise change, including a period where numbers went nowhere and training was still correct |
 
 ## Review state
 
-- Fred: reviewing modules 3-6 online (current round).
+- Fred: full course review pending, now that all eight exist.
+- Modules 7-8: written, not yet reviewed by Sol or Fable. Module 7 is the one
+  to check hardest: it makes inferential claims about causes, under the
+  framework's boundary that SmO2 cannot separate delivery from utilisation.
 - Sol: round one applied (positioning, order, baseline module, limiter
   reframe, softened stance). Round two applied (drift fixed by clean rewrite,
   framework/status split, spine qualifier, audience declaration, module 6
@@ -90,11 +98,10 @@ Outstanding shot lists (nine):
 
 ## Next actions
 
-1. Fred + Sol review of modules 3-6 (module 6 is the first written under the
-   candidate-threshold evidence boundary, so it is the one to check hardest
-   against the framework).
-2. Build modules 7-8 (limiter case studies reuses module 5's two-sets traces
-   and formalises the multi-signal stance; routine closes the arc).
-3. Fred records the nine outstanding videos; placeholders swapped as footage
+1. Sol and Fable review modules 7-8, then Fred's complete course review.
+2. Editorial consistency pass across all eight now that the arc exists: check
+   the module-ending template, the may/can language, and that no module
+   promises what a later one walks back.
+3. Fred records the twelve outstanding videos; placeholders swapped as footage
    lands.
 4. Payment link + bundling once the paid arc is complete enough to sell.
