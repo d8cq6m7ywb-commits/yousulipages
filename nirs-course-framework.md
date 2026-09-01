@@ -16,8 +16,9 @@ rather than annotated.
 
 Outcome-led, not technology-led. Title: **Muscle Oxygen in Practice**.
 Tagline: *Train by the muscle*. Sales line: *Stop staring at SmO2. Learn to
-use it to pace intervals, judge recovery, and understand what is limiting
-you.* Anchor of the sales page: **"You saw your curve. Now learn what to do
+use it to pace intervals, judge recovery, and close in on what is limiting
+you.* ("Close in", not "understand": one sensor narrows the field, module 7
+and the lab finish the job, and the sales copy must not promise otherwise.) Anchor of the sales page: **"You saw your curve. Now learn what to do
 with it."** A practical decision-making course, not general NIRS education.
 
 The pitch in one line: almost nobody teaches athletes how to actually use a
@@ -80,7 +81,7 @@ this to MY training."
 | 2 | Free | Reading a trace | The four shapes, the three real traces, signal vs artefact | any test report |
 | 3 | Paid | Placement, repeatability, signal quality | Site choice, the pinch test, strap pressure failing both directions, marking, the 60-second ritual | extra-NIRS add-on |
 | 4 | Paid | Your personal baseline | Three references (settled value, working floor, refill signature), six matched conditions, a repeatable 30-minute baseline session, the log row | VO2max & Zones |
-| 5 | Paid | Intervals by reoxygenation | Refill as the honest recovery gauge; rest by readiness, not clock | PRP |
+| 5 | Paid | Intervals by reoxygenation | The refill as a practical, noisy-but-useful ready cue; rest by readiness, not clock alone | PRP |
 | 6 | Paid | Breakpoints and zones | Finding YOUR breakpoint and anchoring zones to it, with the evidence boundary below | VO2max & Zones |
 | 7 | Paid | Limiter case studies | What SmO2 can SUGGEST alone; what requires lactate + VO2 before concluding | Full-Stack |
 | 8 | Paid | Routine and season tracking | SmO2 into your files (fit-merge), season tracking, re-test triggers | Grepiac, fit-merge |

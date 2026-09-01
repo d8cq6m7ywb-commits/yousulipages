@@ -8,7 +8,7 @@ Canonical copies are in `site/` (git-tracked, pushed to the yousulipages
 repo); the repo-root copies are a working mirror kept identical. Review the
 site/ history for diffs.
 
-Last updated: 2026-08-31 (module 6 draft deployed under the candidate-threshold evidence boundary; auth matcher extended to cover it).
+Last updated: 2026-08-31 (Sol round four applied: module 6 agreement rule made operational with a no-anchor failure outcome, checks-vs-sensor reworded to investigate-not-override, three public leftovers fixed on the landing, two 2025 studies added to the evidence boundary).
 
 ## Page state
 
@@ -64,7 +64,12 @@ Outstanding shot lists (nine):
   single-trace claim reconciled with the free tier and the once/twice
   contradiction fixed, refresh cadence labelled a coaching convention, and
   draft pages moved behind real access control (basic auth), since noindex
-  controls indexing, not access.
+  controls indexing, not access. Round four applied: see Last updated line.
+  For Sol's protected-prose review WITHOUT the credential entering chat, the
+  authenticated HTML of modules 3-6 is exported to
+  `../nirs-review-export/` (repo root, NOT in site/, so it is never pushed to
+  the public pages repo); Fred hands those files to Sol directly and can
+  delete the folder afterwards.
 
 ## Release definition (per module, before paid beta)
 
