@@ -8,7 +8,15 @@ Canonical copies are in `site/` (git-tracked, pushed to the yousulipages
 repo); the repo-root copies are a working mirror kept identical. Review the
 site/ history for diffs.
 
-Last updated: 2026-09-01, Sol round six. Module 7's four corrections applied
+Last updated: 2026-09-01, Fable review (after Sol round six). Five fixes:
+module 7's opening promise now reads "the next test that could prove it
+wrong" instead of "that would confirm it", which contradicted the module's
+own falsification thesis; two stray uses of "finding" removed from cases 2
+and 4 per the round-six standard; module 8's endcard record row made
+conditional ("any refill-gated session you run"); module 5's "promising
+fitness signal" softened to "promising sign" so it cannot be read against
+module 8's "not a fitness score". Whole-arc check: no module promises what
+a later one walks back. Previously: Sol round six. Module 7's four corrections applied
 (case 1 no longer contradicts module 3's attenuation teaching; the warm-up
 verdict is no longer binary; case 3 describes only what was observed instead
 of importing module 5's old overclaim; exploratory hypotheses are legitimate
@@ -76,9 +84,9 @@ Outstanding shot lists (twelve):
 ## Review state
 
 - Fred: full course review pending, now that all eight exist.
-- Modules 7-8: written, not yet reviewed by Sol or Fable. Module 7 is the one
-  to check hardest: it makes inferential claims about causes, under the
-  framework's boundary that SmO2 cannot separate delivery from utilisation.
+- Modules 7-8: reviewed by Sol (round six, all corrections applied and
+  verified live) and by Fable (five consistency fixes, applied). Awaiting
+  Fred's complete course review.
 - Sol: round one applied (positioning, order, baseline module, limiter
   reframe, softened stance). Round two applied (drift fixed by clean rewrite,
   framework/status split, spine qualifier, audience declaration, module 6
@@ -108,10 +116,10 @@ Outstanding shot lists (twelve):
 
 ## Next actions
 
-1. Sol and Fable review modules 7-8, then Fred's complete course review.
-2. Editorial consistency pass across all eight now that the arc exists: check
-   the module-ending template, the may/can language, and that no module
-   promises what a later one walks back.
+1. Fred's complete course review (Sol and Fable passes on 7-8 are done; the
+   whole-arc consistency check ran as part of the Fable pass).
+2. After Fred's review: record the twelve videos, then decide the free/paid
+   cutover mechanics.
 3. Fred records the twelve outstanding videos; placeholders swapped as footage
    lands.
 4. Payment link + bundling once the paid arc is complete enough to sell.
