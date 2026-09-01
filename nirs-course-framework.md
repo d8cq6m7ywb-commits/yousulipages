@@ -62,6 +62,12 @@ House differentiator, stated honestly: **"Feel gives you one signal. The
 curve gives you another. Good decisions come from knowing when to trust each
 one."**
 
+**Multi-signal stance (Fred, binding):** the course approaches NIRS the way
+the lab does, as one instrument in an assessment stack beside breath-by-breath
+gas exchange (VO2Master), lactate and power/pace. SmO2 is taught as strongest
+in company and honest about what it cannot resolve alone; module 7 formalises
+this, and the free landing page states it up front.
+
 ## 4. Module architecture
 
 Free tier teaches interpretation; paid tier teaches application. The free

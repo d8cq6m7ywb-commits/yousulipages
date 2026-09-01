@@ -8,7 +8,7 @@ Canonical copies are in `site/` (git-tracked, pushed to the yousulipages
 repo); the repo-root copies are a working mirror kept identical. Review the
 site/ history for diffs.
 
-Last updated: 2026-08-31 (module 5 shipped).
+Last updated: 2026-08-31 (module 5 draft deployed; Sol round three applied).
 
 ## Page state
 
@@ -24,9 +24,13 @@ Last updated: 2026-08-31 (module 5 shipped).
 | 7 | Limiter case studies | Not started | — |
 | 8 | Routine and season tracking | Not started | — |
 
-Private = page-level noindex (survives the beta cutover; paid content stays
-out of search permanently) and not linked from the landing page, which shows
-modules 3-8 as "In build". Fred shares draft URLs directly.
+Private = three layers: page-level noindex (survives the beta cutover; paid
+content stays out of search permanently), not linked from the landing page
+(which shows modules 3-8 as "In build"), and HTTP basic auth at the proxy,
+because noindex controls indexing, not access. Username `fred`; the password
+is on the VPS at /root/nirs-drafts-password.txt (never in chat or git):
+`ssh root@94.72.125.157 cat /root/nirs-drafts-password.txt`. Extend the
+Caddyfile matcher when modules 6-8 gain pages.
 
 ## Video production (Fred on camera)
 
@@ -46,11 +50,28 @@ Outstanding shot lists (seven):
 
 ## Review state
 
-- Fred: reviewing modules 1-4 online.
+- Fred: reviewing modules 3-5 online (current round).
 - Sol: round one applied (positioning, order, baseline module, limiter
   reframe, softened stance). Round two applied (drift fixed by clean rewrite,
   framework/status split, spine qualifier, audience declaration, module 6
-  evidence boundary). Outstanding from round two: nothing.
+  evidence boundary). Round three applied: module 5 evidence pass (plateau =
+  trace levelled, not muscle proven full; refill framed as useful-but-noisy
+  cue with a conspicuous uncertainty callout; "resistance" renamed
+  "fatigue-tolerance"), module 2's zones line carries the candidate-threshold
+  caveat now, module 3 fold wording made optically honest, module 4
+  single-trace claim reconciled with the free tier and the once/twice
+  contradiction fixed, refresh cadence labelled a coaching convention, and
+  draft pages moved behind real access control (basic auth), since noindex
+  controls indexing, not access.
+
+## Release definition (per module, before paid beta)
+
+1. Evidence pass done (claims within the framework's boundaries).
+2. Editorial pass done (Fred's voice, guardrails clean).
+3. Videos recorded and placeholders swapped; "Note to self" blocks removed.
+4. Protocol card / worksheet exists (Programs-page format bar).
+5. Access control verified for the tier it ships in.
+6. Fred sign-off.
 
 ## Next actions
 
