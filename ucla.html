@@ -226,6 +226,13 @@
     [data-ucla-mode="summer"] [data-season="season"] { display: none !important; }
     .ucla-mode-note { text-align: center; font-size: 0.84rem; color: var(--ys-muted); margin: 10px auto 0; }
     .ucla-mode-note a { color: var(--wf-coral); font-weight: 600; }
+    .ucla-week { display: grid; grid-template-columns: repeat(auto-fit, minmax(148px, 1fr)); gap: 10px; }
+    .ucla-day { background: #fff; border: 1px solid #e3e8ee; border-radius: 10px; padding: 12px 12px 10px; }
+    .ucla-day h4 { margin: 0 0 8px; font-size: 0.95rem; color: var(--ys-navy, #16324f); border-bottom: 2px solid #ffd100; padding-bottom: 6px; }
+    .ucla-day ul { list-style: none; margin: 0; padding: 0; }
+    .ucla-day li { font-size: 0.85rem; margin: 0 0 8px; }
+    .ucla-day li .t { font-weight: 700; color: var(--ys-navy, #16324f); display: block; font-size: 0.78rem; }
+    .ucla-day li.rest { color: var(--ys-muted, #5a6b7c); font-style: italic; }
   </style>
 
   <!-- ============ HERO ============ -->
@@ -640,26 +647,60 @@
       <div class="ys-section-head">
         <h2>Your week, in season</h2>
         <div class="ys-rule"></div>
-        <p>Two team sessions anchor the week; your own plan carries the rest.</p>
+        <p>The standing weekly schedule, Monday to Sunday. Anything marked unofficial or TBD gets confirmed in Slack week by week.</p>
       </div>
 
-      <div class="ys-grid" style="justify-content: center;">
-        <article class="ys-card featured">
-          <div class="ys-meta">Anchor 01 &middot; team session</div>
-          <h3>Tuesday evening swim</h3>
-          <p style="font-size: 0.92rem; color: var(--ys-muted);">The technique session. Show up even on a tired week: the drills are where pool speed actually comes from.</p>
-        </article>
-        <article class="ys-card featured">
-          <div class="ys-meta">Anchor 02 &middot; team session</div>
-          <h3>Friday track</h3>
-          <p style="font-size: 0.92rem; color: var(--ys-muted);">The quality run of the week. Pacing discipline matters more than heroics; the session works when the last rep looks like the first.</p>
-        </article>
-        <article class="ys-card">
-          <div class="ys-meta">Everything else</div>
-          <h3>Your plan on Grepiac</h3>
-          <p style="font-size: 0.92rem; color: var(--ys-muted);">The rest of your week lives in your own plan, and it flexes with your race calendar and how you&rsquo;re recovering. The Sunday email tells you what&rsquo;s coming; ask me when something doesn&rsquo;t fit.</p>
-        </article>
+      <div class="ucla-week">
+        <div class="ucla-day">
+          <h4>Monday</h4>
+          <ul>
+            <li><span class="t">7:00&ndash;8:30am</span>Swim</li>
+            <li><span class="t">5:00pm</span>Recovery run</li>
+          </ul>
+        </div>
+        <div class="ucla-day">
+          <h4>Tuesday</h4>
+          <ul>
+            <li><span class="t">7:00am</span>Trainer ride</li>
+            <li><span class="t">6:00&ndash;7:30pm</span>Swim</li>
+          </ul>
+        </div>
+        <div class="ucla-day">
+          <h4>Wednesday</h4>
+          <ul>
+            <li><span class="t">7:00am</span>Long run</li>
+          </ul>
+        </div>
+        <div class="ucla-day">
+          <h4>Thursday</h4>
+          <ul>
+            <li><span class="t">7:00&ndash;8:00am</span>Swim</li>
+            <li><span class="t">7:00am</span>Mandy bike</li>
+            <li><span class="t">6:00&ndash;7:30pm</span>Swim</li>
+          </ul>
+        </div>
+        <div class="ucla-day">
+          <h4>Friday</h4>
+          <ul>
+            <li><span class="t">8:00am</span>Swim (unofficial)</li>
+            <li><span class="t">5:00pm</span>Track</li>
+          </ul>
+        </div>
+        <div class="ucla-day">
+          <h4>Saturday</h4>
+          <ul>
+            <li><span class="t">Time TBD</span>Long ride (depends on the ride)</li>
+          </ul>
+        </div>
+        <div class="ucla-day">
+          <h4>Sunday</h4>
+          <ul>
+            <li class="rest">Recovery (maybe a Sidecar bike ride)</li>
+          </ul>
+        </div>
       </div>
+
+      <p style="font-size: 0.9rem; color: var(--ys-muted); margin: 14px 0 0;">The rest of your training lives in <strong>your own plan on Grepiac</strong>, which flexes with your race calendar and how you&rsquo;re recovering. The Sunday email tells you what&rsquo;s coming; ask me when something doesn&rsquo;t fit.</p>
 
       <div class="ys-grid" style="justify-content: center; margin-top: 18px;">
         <div class="video-ph">
