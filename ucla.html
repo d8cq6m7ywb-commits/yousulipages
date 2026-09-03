@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>UCLA Triathlon, summer playbook with Coach Fred</title>
+  <title>UCLA Triathlon team hub with Coach Fred</title>
   <meta name="description" content="UCLA Triathlon Team summer training playbook from Coach Fred: roster perks, weekly minimums, off-season strength, fueling to avoid RED-S, the 20 high-efficiency levers course, calculator companions, TrainingPeaks coach attach, and Grepiac access." />
 
   <link rel="icon" type="image/png" href="assets/yousuli-mountain.png" />
@@ -164,6 +164,25 @@
   </script>
 </head>
 <body>
+<script>
+  (function () {
+    var MODE = 'season'; // coach switch: 'summer' or 'season'
+    try {
+      var q = new URLSearchParams(window.location.search).get('mode');
+      if (q === 'summer' || q === 'season') MODE = q;
+    } catch (e) {}
+    document.body.setAttribute('data-ucla-mode', MODE);
+    try {
+      if (window.top !== window.self) {
+        window.top.location.replace('https://new.yousuli.co/ucla');
+      }
+    } catch (e) {}
+  })();
+</script>
+<div style="background: #16324f; color: #fff; text-align: center; padding: 10px 16px; font-size: 0.95rem;">
+  This page has moved to the new Yousuli site:
+  <a href="https://new.yousuli.co/ucla" target="_top" style="color: #ffd100; font-weight: 700;">new.yousuli.co/ucla &#x2197;</a>
+</div>
 
   <!-- ============ SITE HEADER ============ -->
   <header class="ys-site-header">
@@ -202,17 +221,29 @@
   <!-- UCLA accent stripe right under the header -->
   <div class="ucla-stripe" aria-hidden="true"></div>
 
+  <style>
+    [data-ucla-mode="season"] [data-season="summer"] { display: none !important; }
+    [data-ucla-mode="summer"] [data-season="season"] { display: none !important; }
+    .ucla-mode-note { text-align: center; font-size: 0.84rem; color: var(--ys-muted); margin: 10px auto 0; }
+    .ucla-mode-note a { color: var(--wf-coral); font-weight: 600; }
+  </style>
+
   <!-- ============ HERO ============ -->
   <section class="wf-hero">
     <div class="ys-container">
-      <span class="wf-eyebrow"><span class="ucla-badge">UCLA Triathlon</span> &nbsp; Summer 2026 playbook</span>
+      <span class="wf-eyebrow"><span class="ucla-badge">UCLA Triathlon</span> &nbsp; <span data-season="summer">Summer playbook</span><span data-season="season">2026&ndash;27 season hub</span></span>
       <h1>Welcome to the team.</h1>
-      <div class="wf-subhead">Off-season groundwork &middot; in-season speed &middot; less guessing</div>
-      <p class="lede">Hi, I&rsquo;m Coach Fred. This is a non-mandatory summer playbook I put together for the team. Read what&rsquo;s useful, skip the rest, pass it around if it helps.</p>
+      <div class="wf-subhead" data-season="summer">Off-season groundwork &middot; in-season speed &middot; less guessing</div>
+      <div class="wf-subhead" data-season="season">Team sessions &middot; conference races &middot; the road to Nationals</div>
+      <p class="lede" data-season="summer">Hi, I&rsquo;m Coach Fred. This is a non-mandatory summer playbook I put together for the team. Read what&rsquo;s useful, skip the rest, pass it around if it helps.</p>
+      <p class="lede" data-season="season">Hi, I&rsquo;m Coach Fred. This is the team&rsquo;s season hub: how we train, how the conference season and Nationals work, and the tools you get on the roster. Read what&rsquo;s useful, skip the rest, pass it around if it helps.</p>
       <div class="ys-btn-row">
         <a class="ys-btn ys-btn-coral" href="#perks">What you get on the roster &darr;</a>
-        <a class="ys-btn ys-btn-ghost" href="#weekly">Weekly minimums</a>
+        <a class="ys-btn ys-btn-ghost" href="#weekly" data-season="summer">Weekly minimums</a>
+        <a class="ys-btn ys-btn-ghost" href="#nationals" data-season="season">The road to Nationals</a>
       </div>
+      <p class="ucla-mode-note" data-season="season">You are viewing the in-season hub. The <a href="?mode=summer">summer playbook</a> is still here.</p>
+      <p class="ucla-mode-note" data-season="summer">You are viewing the summer playbook. The <a href="?mode=season">in-season hub</a> is here too.</p>
     </div>
   </section>
 
@@ -222,12 +253,14 @@
       <span class="ys-quicknav-label">Jump to</span>
       <a href="#perks">Roster perks</a>
       <a href="#nationals">Nationals path</a>
-      <a href="#weekly">Weekly mins</a>
+      <a href="#conference" data-season="season">Conference</a>
+      <a href="#seasonweek" data-season="season">Your week</a>
+      <a href="#weekly" data-season="summer">Weekly mins</a>
       <a href="#sports">Swim &middot; Bike &middot; Run</a>
-      <a href="#challenges">Challenges</a>
-      <a href="#strength">Strength</a>
+      <a href="#challenges" data-season="summer">Challenges</a>
+      <a href="#strength" data-season="summer">Strength</a>
       <a href="#fueling">Fueling &amp; RED-S</a>
-      <a href="#course">The 20 levers</a>
+      <a href="#course" data-season="summer">The 20 levers</a>
       <a href="#calcs">Calculators</a>
       <a href="#reading">Reading</a>
       <a href="#hub">Grepiac &amp; TP</a>
@@ -237,7 +270,7 @@
   </nav>
 
   <!-- ============ SUMMER MISSION ============ -->
-  <section class="wf-section alt" id="mission">
+  <section class="wf-section alt" id="mission" data-season="summer">
     <div class="ys-container">
       <div class="ys-section-head">
         <h2>What summer is actually for</h2>
@@ -366,7 +399,7 @@
       </p>
 
       <!-- 0a. CONFERENCE CAMPAIGN: RACE / QUALIFY / RANK -->
-      <div class="ucla-callout" style="border-left: 4px solid var(--wf-coral);">
+      <div class="ucla-callout" style="border-left: 4px solid var(--wf-coral);" data-season="season">
         <div class="ucla-callout-tag">New this season, from the conference: race, qualify, rank</div>
         <p style="margin: 0 0 8px;"><strong>Your Nationals race starts before Nationals.</strong> USAT and the conference are running a season-long campaign on this, and the message fits in three words:</p>
         <ul style="margin: 0 0 8px; padding-left: 20px;">
@@ -579,7 +612,66 @@
   </section>
 
   <!-- ============ WEEKLY MINIMUMS ============ -->
-  <section class="wf-section" id="weekly">
+  <section class="wf-section" id="conference" data-season="season">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Latest from the conference</h2>
+        <div class="ys-rule"></div>
+        <p>USAT and the conference send updates through the season. The ones that affect you land here, newest first.</p>
+      </div>
+
+      <div class="ucla-callout blue">
+        <div class="ucla-callout-tag">September 2026 &middot; race, qualify, rank</div>
+        <p style="margin: 0;">The season-long education campaign is live: one eligible in-season conference race is required before Nationals, in-season results build the ranking that decides the seeded waves, and every club athlete needs to <a href="https://forms.cloud.microsoft/r/aJTHN9Lejz" target="_blank" rel="noopener" style="color: var(--wf-coral); font-weight: 600;">register with USAT as a collegiate club triathlete &#x2197;</a>. The full breakdown lives in the <a href="#nationals" style="color: var(--wf-coral); font-weight: 600;">Nationals section</a> above. Expect a fresh reminder here every month or two; the message will not change: your Nationals race starts before Nationals.</p>
+      </div>
+
+      <div class="ys-grid" style="justify-content: center; margin-top: 18px;">
+        <div class="video-ph">
+          <div class="ph-eyebrow">Season video</div>
+          <h4>How the Nationals ranking actually works</h4>
+          <p class="ph-note">Pending upload</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wf-section alt" id="seasonweek" data-season="season">
+    <div class="ys-container">
+      <div class="ys-section-head">
+        <h2>Your week, in season</h2>
+        <div class="ys-rule"></div>
+        <p>Two team sessions anchor the week; your own plan carries the rest.</p>
+      </div>
+
+      <div class="ys-grid" style="justify-content: center;">
+        <article class="ys-card featured">
+          <div class="ys-meta">Anchor 01 &middot; team session</div>
+          <h3>Tuesday evening swim</h3>
+          <p style="font-size: 0.92rem; color: var(--ys-muted);">The technique session. Show up even on a tired week: the drills are where pool speed actually comes from.</p>
+        </article>
+        <article class="ys-card featured">
+          <div class="ys-meta">Anchor 02 &middot; team session</div>
+          <h3>Friday track</h3>
+          <p style="font-size: 0.92rem; color: var(--ys-muted);">The quality run of the week. Pacing discipline matters more than heroics; the session works when the last rep looks like the first.</p>
+        </article>
+        <article class="ys-card">
+          <div class="ys-meta">Everything else</div>
+          <h3>Your plan on Grepiac</h3>
+          <p style="font-size: 0.92rem; color: var(--ys-muted);">The rest of your week lives in your own plan, and it flexes with your race calendar and how you&rsquo;re recovering. The Sunday email tells you what&rsquo;s coming; ask me when something doesn&rsquo;t fit.</p>
+        </article>
+      </div>
+
+      <div class="ys-grid" style="justify-content: center; margin-top: 18px;">
+        <div class="video-ph">
+          <div class="ph-eyebrow">Season video</div>
+          <h4>My race-week routine, start to finish</h4>
+          <p class="ph-note">Pending upload</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wf-section" id="weekly" data-season="summer">
     <div class="ys-container">
       <div class="ys-section-head">
         <h2>Weekly minimum standard</h2>
@@ -669,7 +761,7 @@
       <div class="ys-section-head">
         <h2>Sport-specific essentials</h2>
         <div class="ys-rule"></div>
-        <p>What matters most in each discipline this summer: technique, tools, injury prevention, and skills the team will be tested on.</p>
+        <p>What matters most in each discipline: technique, tools, injury prevention, and skills the team will be tested on.</p>
       </div>
 
       <!-- ───── SWIM ───── -->
@@ -907,7 +999,7 @@
   </section>
 
   <!-- ============ SUMMER CHALLENGES ============ -->
-  <section class="wf-section alt" id="challenges">
+  <section class="wf-section alt" id="challenges" data-season="summer">
     <div class="ys-container">
       <div class="ys-section-head">
         <h2>Big-stretch summer challenges (optional, fun)</h2>
@@ -997,7 +1089,7 @@
       <div class="ys-section-head">
         <h2>Walk-throughs &middot; how I actually run a week</h2>
         <div class="ys-rule"></div>
-        <p>Short videos, recording these over the summer.</p>
+        <p>Short videos, added as I record them.</p>
       </div>
 
       <div class="ys-grid" style="justify-content: center;">
@@ -1021,7 +1113,7 @@
   </section>
 
   <!-- ============ STRENGTH IN THE OFF-SEASON ============ -->
-  <section class="wf-section alt" id="strength">
+  <section class="wf-section alt" id="strength" data-season="summer">
     <div class="ys-container">
       <div class="ys-section-head">
         <h2>Strength training: the off-season superpower</h2>
@@ -1064,7 +1156,7 @@
   </section>
 
   <!-- ============ VIDEO PLACEHOLDER ROW 2 ============ -->
-  <section class="wf-section" id="videos-2">
+  <section class="wf-section" id="videos-2" data-season="summer">
     <div class="ys-container">
       <div class="ys-section-head">
         <h2>Strength walk-throughs</h2>
@@ -1247,7 +1339,7 @@
   </section>
 
   <!-- ============ REQUIRED COURSE ============ -->
-  <section class="wf-section" id="course" style="padding: 18px 0 28px;">
+  <section class="wf-section" id="course" style="padding: 18px 0 28px;" data-season="summer">
     <div class="ys-container">
       <a href="https://www.yousuli.co/challenge-page/42edf6c0-be10-4449-85bd-b62bbfb8b06e" target="_top"
          style="display: block; text-decoration: none; color: inherit;
@@ -1574,7 +1666,7 @@
       </div>
 
       <p style="text-align:center; margin-top: 28px; font-style: italic; color: var(--ys-muted);">
-        Looking forward to a strong summer.<br/>
+        <span data-season="summer">Looking forward to a strong summer.</span><span data-season="season">Looking forward to a strong season.</span><br/>
         <span style="color: var(--ys-navy); font-weight: 700;">Coach Fred</span>
       </p>
     </div>
