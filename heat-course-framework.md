@@ -14,7 +14,11 @@ Operational state (page URLs, video shot lists, review rounds) lives in
 `heat-course-status.md`. Nothing operational belongs here.
 
 Written 2026-09-04 from Sol's outline of the same day and Fred's three
-decisions, recorded in section 2.
+decisions, recorded in section 2. Same evening Fred chose to build and test
+in parallel rather than wait for review: modules are drafted, and he runs
+each module's protocol on himself with his own CORE sensor as it is
+written. Sol reviews framework and drafts together; the order below still
+governs what a module may claim.
 
 ---
 
@@ -337,9 +341,13 @@ module 3 of the NIRS course before comparing it to anything.
 
 ### Module 7: Racing hot
 
-Purpose: from adaptation to a race plan. Event heat profile by segment;
-translating the heat-response test into realistic race output; heart-rate
-and RPE caps; pre-cooling and per-cooling; clothing and equipment;
+Purpose: from adaptation to a race plan. **Cooling strategies during the
+race carry explicit weight here (Fred, 2026-09-04)**: pre-cooling before
+the start, per-cooling during (ice, cold fluids, water on skin, shade and
+airflow where the course offers them), when cooling beats drinking more,
+and how to read a day that turns out hotter than forecast. Event heat
+profile by segment; translating the heat-response test into realistic race
+output; heart-rate and RPE caps; clothing and equipment;
 aid-station strategy; fluid and sodium planning (linking the UCLA page's
 sprint-format fuelling position); when cooling matters more than drinking
 more; heat-specific warm-up; travel and final acclimatisation; race-day
@@ -369,18 +377,20 @@ chases temperature, dehydrates, loses quality). Real, permissioned or
 Fred's own data only; where none exists, the case is described, never
 charted.
 
-## 9. Videos
+## 9. Videos and tests
 
-Fred on camera, same production discipline as the NIRS course. Provisional
-slot list, to be finalised in the status doc: the stop signs said out loud
+Fred on camera, same production discipline as the NIRS course, with one
+difference: the slots are labelled "Test to run and film" because each one
+is a protocol Fred runs on himself with his own CORE sensor while the
+module is written, and the module changes where his data disagrees with
+it. Provisional slot list, finalised in the status doc: the stop signs said out loud
 (module 1); CORE setup and a session where skin runs ahead of core (module
 2); the heat-response test ridden (module 3); the windcutter session with
 live core trace, the basement setup, and a runner's version (module 4);
 one protocol week on screen (module 5); a real training week with heat
 subtracted from somewhere (module 6); a race heat plan built from a test
 (module 7); the UCLA Nationals case talked through (module 8). Fred's own
-CORE data from a heat block is the primary source; if no block has been
-recorded, the status doc schedules one before filming.
+CORE data, generated as the course is built, is the primary source.
 
 ## 10. What this course is not
 
