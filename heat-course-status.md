@@ -4,7 +4,21 @@ Strategy and evidence boundaries live in `heat-course-framework.md`. This
 file is the operational state: what exists, where, in what review state,
 and what happens next. Credentials are stored outside git.
 
-Last updated: 2026-09-04, evening. Fred chose to build from the ground up
+Last updated: 2026-09-23. Five further CORE help articles read and
+applied (the five-week introductory plan, indoor heat training, heat versus
+altitude, sauna in the off-season, the triathlete indoor plan), with the
+primary studies they cite verified on PubMed. Changes: module 1 no longer
+says "you adapt to core" (the dose is raised core with hot skin); decay is
+fast, per Cubel 2024; haemoglobin mass is stated at its studied dose; two
+stop signs, a base-first rule and a morning-after rule added. Module 2
+gains the sensor-out-of-the-sauna rule and a muscle-oxygen paragraph.
+Module 3 adds a measured-path sign and a prompt retest. Module 4 teaches two
+raise methods (Fred's steady raise and CORE's intervals cool, then heat),
+the extended warm-down, run cool and ride hot, a proper sauna section, and
+a rewritten intensity rule. A comparison test slot is added for Fred to run
+later, with Moxy SmO2 and tHb as an optional channel.
+
+Previously, 2026-09-04, evening. Fred chose to build from the ground up
 and test as we go rather than wait for Sol's framework review, so the
 landing page and modules 1 to 4 now exist as private drafts (Sol can review
 framework and drafts together). Fred runs every protocol on himself with
@@ -54,8 +68,9 @@ release.
 
 ## Review state
 
-- Framework: drafted 2026-09-04, awaiting Sol's review (five open
-  questions listed at the end of the framework).
+- Framework: drafted 2026-09-04, updated 2026-09-23 with the CORE articles
+  and seven newly verified studies; awaiting Sol's review (eight open
+  questions at the end of the framework).
 - Fred: to confirm the framework reflects his three decisions and his
   coaching conventions as he practises them, especially module 4.
 
@@ -67,12 +82,16 @@ release.
 | 2 | A session where skin runs ahead of core (both traces from minute zero) |
 | 3 | The heat-response test, ridden on camera, BEFORE the block; retest filmed later becomes the closing comparison |
 | 4 | The windcutter session, live core on screen (including a deliberate unzip) |
-| 4 | The basement version and the runner's version (two separate days) |
+| 4 | The basement version, the runner's version, and run cool, ride hot (separate days) |
+| 4 | Two raise methods compared, to run later: steady raise vs intervals cool then heat; optional Moxy SmO2 and tHb channel |
+| 2 | Optional add-on to the skin-versus-core session: Moxy SmO2 and tHb next to skin temperature, labelled exploratory |
 
 ## Next actions
 
 1. Fred reads modules 1 to 4 and runs the first tests (module 3 before-test,
-   module 4 sessions); the writing changes where his data disagrees.
+   module 4 sessions); the writing changes where his data disagrees. The
+   two-method comparison, with the optional Moxy channel, comes after the
+   windcutter and basement sessions.
 2. Sol reviews the framework and the four drafts together.
 3. Modules 5 to 8 (protocols, integration, racing hot with cooling
    strategies, mistakes and cases) once the first tests inform protocols.
