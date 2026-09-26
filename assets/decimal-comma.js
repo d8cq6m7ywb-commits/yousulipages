@@ -23,6 +23,16 @@
  * A comma typed key by key is a dot at once (the digits after it aren't
  * known yet) and regrouped on `change` if it ends up that shape.
  *
+ * Restored values. A browser puts typed values back on a reload or a
+ * back/forward (a phone reloads a tab it evicted) WITHOUT an input event,
+ * so a calculator that ran its first pass on the defaults keeps showing
+ * the defaults' results beside the athlete's numbers: Leo, 2026-09-26,
+ * saw 4.00 L/h and 7.5 % "Extreme" next to 77.2 / 1.3 / 0.31 / 75.8 —
+ * (80-74+2)/2 and 6/80, the defaults — for a 1.32 L/h, 1.8 % test. On
+ * calculator pages (every-text-box pages), `pageshow` replays input and
+ * change on every box the browser changed from its default. Never on
+ * ordinary forms, where a change handler may save or navigate.
+ *
  * This file is the source. The calculator bridge (calculators/
  * yousuli-bridge.js) carries a byte-identical copy because the static
  * calculators load nothing else; a test keeps the two equal. Edit here,
@@ -133,4 +143,45 @@
     } else {
         sweep();
     }
+
+    function restored(el) {
+        if (el.disabled || el.readOnly) return false;
+        if (el.tagName === 'SELECT') {
+            for (var k = 0; k < el.options.length; k++) {
+                if (el.options[k].selected !== el.options[k].defaultSelected) return true;
+            }
+            return false;
+        }
+        var t = (el.getAttribute('type') || 'text').toLowerCase();
+        if (t === 'checkbox' || t === 'radio') return el.checked !== el.defaultChecked;
+        if (t === 'number' || t === 'text' || t === 'search' || t === 'tel') return el.value !== el.defaultValue;
+        return false;
+    }
+    // Browsers restore form values only on a reload or back/forward; a
+    // fresh visit may still see boxes the page's own start-up code set
+    // (a route picker), and replaying those could re-run its side effects.
+    function wasRestored(e) {
+        if (e && e.persisted) return true;
+        try {
+            var nav = performance.getEntriesByType('navigation')[0];
+            if (nav && nav.type) return nav.type === 'reload' || nav.type === 'back_forward';
+            if (performance.navigation) return performance.navigation.type === 1 || performance.navigation.type === 2;
+        } catch (err) {}
+        return true;
+    }
+    function replayRestored(e) {
+        if (!everyTextBox || !wasRestored(e)) return;
+        var boxes = document.querySelectorAll('input, select');
+        for (var i = 0; i < boxes.length; i++) {
+            var el = boxes[i];
+            if (!restored(el)) continue;
+            normalise(el);
+            el.dispatchEvent(new Event('input', { bubbles: true }));
+            el.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+    }
+    window.addEventListener('pageshow', replayRestored);
+    // Loaded after the page was shown (new.yousuli.co injects it after
+    // hydration): the first pageshow has gone by, so replay now.
+    if (document.readyState === 'complete') replayRestored();
 })();
