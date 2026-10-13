@@ -6,53 +6,53 @@ labelled as a draft convention, and corrected by you afterwards. Items
 already asked on the pages (modules 1 to 3 input boxes) are listed once
 here too, so this file is the single list.
 
-Written 2026-10-13.
+Written 2026-10-13. Items 1 to 11 answered by Fred the same day; 12 to 28 still open.
 
 ## A. Blocks all three modules
 
 1. BLOCKING. Devices the lab owns beyond the RSI contact mat: force plate
    (make), bar-speed sensor (make), flywheel, weight releasers, none.
-   Answer: ____
+   Answer: ANSWERED 2026-10-13: none. No force plate, no bar-speed sensor, no flywheel. The lab has Moxy and VO2 devices (and the RSI contact mat). The course must not be written with bar-speed sensors or force plates in mind; it must be accessible: weights, bands, pull-up bars, kettlebells. Chains possible but bands do the same job. A frame-mounted controlled-resistance machine was considered and rejected for the course (maybe for Fred's own training or 1:1).
 2. BLOCKING. What ForcePhase is (product, method, coach, plate system).
-   Answer: ____
+   Answer: ANSWERED 2026-10-13: ForcePhase is a system in beta that Fred's team created; it generates a training framework on grepiac.com. No videos. Fred will try to get a markdown; artifact: https://claude.ai/code/artifact/d222b266-e3c2-4495-91c7-0042c10ad88a
 3. Equipment default for athletes: home-minimal with a gym variant, or gym
    as default. [Default: home-minimal, gym variant shown alongside.]
-   Answer: ____
+   Answer: ANSWERED: pull-up bars, weighted balls, kettlebells, medicine and yoga balls, resistance bands, other basic things. Home and gym variants side by side; adaptability matters; curate exercises that are meaningful and specific to triathletes.
 4. Sport routing: one course for runners, cyclists and triathletes with
    routed emphasis, or runner-first. [Default: one course, routed.]
-   Answer: ____
+   Answer: ANSWERED: one course, with side notes flagging why each piece matters for triathletes and the issues triathletes have, perhaps with the sport highlighted.
 5. Open question 10: should the strength intensity guide's phase bands and
    coach note, and the UCLA page's summer phases, move toward the course's
    position (short on-ramp, then heavier low-volume work)? Module 4's
    on-ramp has to agree with the calculator it links to.
-   Answer: ____
+   Answer: ANSWERED: yes. Once the course is complete and clean it is offered to UCLA students; the strength calculators (RSI included) should link to the course. Free for UCLA students with a code; for everyone else a few modules free, then paid. Needs many videos (Fred talking and showing).
 
 ## B. Module 4: Foundations and tendons
 
 6. On-ramp length and dose. [Default: 4 weeks, 2 sessions of 35 to 45
    minutes, 2 to 3 sets of 6 to 8 reps at a controlled 3-1-1-0 tempo,
    loads light enough that form never breaks.]
-   Answer: ____
+   Answer: ANSWERED: default accepted. Fred's own preference is short sessions under 30 minutes, 3 times a week, or 4 x 20; a 2 x schedule must also be possible. The course is instructional, not a scheduler: express the dose as weekly work with scheduling options.
 7. Your default exercise per pattern, home and gym: hinge, squat, split
    stance, push, pull, carry, anti-rotation. [Default: from the
    calculator's 49-exercise library: RDL / goblet squat / Bulgarian split
    squat / push-up / single-arm row / farmer carry / Pallof press, with the
    gym versions trap-bar deadlift, front squat, bench, pull-up.]
-   Answer: ____
+   Answer: ANSWERED, more to come: stability exercises matter most in Fred's view: controlled lunges, rotation with weight, step-ups, plank rows, Pallof press, and others. Fred will send the full list.
 8. BLOCKING for the isometric section. Your isometric protocol: which
    holds, at which joint angles, how long, how many sets, where in the
    session. [Draft: split-squat and single-leg wall-sit holds at about 90
    degrees, 3 sets of 30 to 45 seconds, after the main lifts.]
-   Answer: ____
+   Answer: ANSWERED: individualised. Angle and depth depend on the athlete's stability, flexibility, morphology and injuries; low squats are not always necessary; high (partial) squats are a strong stimulus for runners, especially for power; bands add progressive resistance through the movement. Isometrics are valuable but frustrating if held too long or done too often: keep them short and infrequent.
 9. Your rule for isometrics on a sore tendon (the Rio 2015 use): load,
    sets x seconds, how often, and when it is NOT used. Ties to the module 1
-   pain rule. Answer: ____
+   pain rule. Answer: ANSWERED: generally fine if there is no acute injury; specific protocols if inflamed; can help healing if done correctly and if nutrition, hydration, rest and recovery are right. Better than letting it sit. Label as Fred's clinical convention.
 10. Which of the nine UCLA strength videos are already filmed (shoulder,
     thoracic and lower-body mobility; chair sits; bridges; dead bug;
     reverse fly and row; tippy-toe walk; hinge), and whether they become
-    module 4's demo library. Answer: ____
+    module 4's demo library. Answer: ANSWERED: would not use them. The demo library is new.
 11. Mobility: an optional third day, folded into the two sessions, or left
-    out. [Default: folded in as a 5-minute opener.] Answer: ____
+    out. [Default: folded in as a 5-minute opener.] Answer: ANSWERED: included.
 
 ## C. Module 5: Getting strong
 
