@@ -6,7 +6,7 @@ sequence, ten open questions) is preserved in
 `strength-course-launch.md`. This file is the operational state.
 Credentials are stored outside git.
 
-Last updated: 2026-10-13. Fred answered items 1 to 11 of the fill-in list.
+Last updated: 2026-10-13, later. Module 4 drafted and deployed from Fred's answers 6 to 11 (dose as weekly work, session shape, the seven families from the ForcePhase library, stability bias, tendon and hold rules, three triathlete notes), with one input box for what only Fred can settle (the ForcePhase state the on-ramp maps to, the family list and extra stability movements, hold prescriptions, the inflamed-tendon protocol, illustration permission). Earlier the same day: Fred answered items 1 to 11 of the fill-in list.
 Two things changed the course's shape. First, no force plate and no
 bar-speed sensor: the course is written for accessible equipment, and
 modules 2 and 3 plus the landing page were re-scoped accordingly (paths
@@ -60,7 +60,7 @@ domain, no product found) and is open question 1. Pages now exist; see below.
 | 1 | Strength for people whose sport is not strength (free at release) | Private draft | `/strength-course/why-strength` |
 | 2 | The four strength qualities, and how to measure them | Private draft | `/strength-course/measuring-strength` |
 | 3 | Assess before prescribing (the strength screen) | Private draft | `/strength-course/strength-screen` |
-| 4 | Foundations and tendons | Not started | `/strength-course/foundations-and-tendons` (proposed) |
+| 4 | Foundations and tendons | Private draft | `/strength-course/foundations-and-tendons` |
 | 5 | Getting strong | Not started | `/strength-course/getting-strong` (proposed) |
 | 6 | Elastic | Not started | `/strength-course/elastic` (proposed) |
 | 7 | The endurance week | Not started | `/strength-course/the-endurance-week` (proposed) |

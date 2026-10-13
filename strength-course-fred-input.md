@@ -116,6 +116,16 @@ Written 2026-10-13. Items 1 to 11 answered by Fred the same day; 12 to 28 still 
     filmed: the screen, the RSI mat-versus-phone comparison, a strength
     working set. Answer: ____
 
+## E1. Module 4 is drafted; its input box asks for
+
+32. Which ForcePhase state the four foundation weeks map to. Answer: ____
+33. Confirm the seven families and entry-level movements as the course's
+    list, plus any stability movements not yet in the library (loaded
+    rotation at the bottom of a lunge, plank rows). Answer: ____
+34. Hold prescriptions in your own words (seconds, sets, frequency, the
+    angle rule); the inflamed-tendon protocol, if it belongs in the
+    course at all. Answer: ____
+
 ## E2. New, from the ForcePhase discovery (2026-10-13)
 
 29. BLOCKING for modules 5 and 6. The methodology document, Endurance
