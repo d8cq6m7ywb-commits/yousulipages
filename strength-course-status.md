@@ -6,7 +6,17 @@ sequence, ten open questions) is preserved in
 `strength-course-launch.md`. This file is the operational state.
 Credentials are stored outside git.
 
-Last updated: 2026-10-12, late. Fable review of modules 1 to 3 applied and
+Last updated: 2026-10-12, night. Codex review applied and deployed (the
+injury claim at its runner-specific size, the measurement promise
+corrected, RSI fixes, screen entry rules and order, a sort-based weak-link
+map, a twenty-minute athlete version, a softened retest standard); Fred's
+RSI decision recorded (one bounce, flat surface); the RSI calculator's hop
+wording corrected; and a rendering defect fixed across all three courses
+(entities converted to characters after the JSX transform was found to
+drop spaces; live scan zero). Export refreshed. Both reviews are now
+applied; next is Fred's input boxes and modules 4 to 6.
+
+Earlier: Fable review of modules 1 to 3 applied and
 deployed: the course no longer contradicts the strength intensity guide or
 the UCLA page (the on-ramp is now explicit; those two live pages are
 unchanged, open question 10 in the framework); five overclaims softened or
@@ -71,7 +81,7 @@ Landing page: private draft at `/strength-course`. The whole
 | 1 | Your pain rule | The 0 to 10 ceiling during and after sessions, settling time, tendon versus joint or bone, who each red flag routes to |
 | 2 | From Strength Deficit | Caron's measurement method, large versus small gap, routing rules, whether the step-down proxy stands |
 | 2 | From Developing Explosive Athletes (4th ed.) | Mann's zone names and boundaries, velocity-loss guidance, the lab's bar-speed device |
-| 3 | Your screen standards | Norms for the five capacity tests and their sources, the left-right threshold, reference photos, adaptations for swimmers, masters, injury histories |
+| 3 | Your screen standards | Norms for the five capacity tests and their sources, the left-right threshold, the hold angles (draft: about 90 degrees at the knee) and the calf-raise count below which the drop jump is deferred, reference photos, adaptations for swimmers, masters, injury histories |
 
 Still needed for modules 4 to 6 (not yet on a page): Triphasic block
 lengths and loading ranges, and which Triphasic II methods Fred uses.
@@ -99,8 +109,8 @@ lengths and loading ranges, and which Triphasic II methods Fred uses.
 1. Fred fills the four FredInput boxes and answers what ForcePhase is
    and which devices the lab owns.
 2. Fred runs the module 3 screen and the drop-jump comparison on himself.
-3. Codex reviews modules 1 to 3 and the framework (Fable done). Fred
-   decides open question 10 (site consistency).
+3. Fred decides open question 10 (site consistency) and confirms the
+   hold angles and the drop-jump deferral count in module 3's input box.
 4. Modules 4 to 6 once Triphasic specifics arrive; then 7 and 8, the
    athlete path, and the program appendix.
 5. Decide access (UCLA, paid) jointly with the NIRS and heat courses.

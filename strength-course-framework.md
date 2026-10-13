@@ -13,6 +13,36 @@ pricing, delivery, the ten open questions) is preserved whole in
 `strength-course-launch.md` and is not repeated here. Operational state
 (pages, tests, review rounds) lives in `strength-course-status.md`.
 
+Codex review applied 2026-10-12 (after Fable's). Accepted: the injury
+claim is now stated at its runner-specific size (Wu 2024: no significant
+reduction in injury risk or rate across nine trials; supervision helped
+post hoc; low quality), and "the direction is not in doubt" is gone; the
+measurement promise is "four assessment areas, direct where a device
+allows, labelled field proxies elsewhere", with quality 3 renamed
+isometric force and holding capacity and explosive force explained as a
+separate, unpromised quality; eccentric control kept apart from Caron's
+ratio until a paired protocol exists; the RFD rejection narrowed; the RSI
+arithmetic corrected; hops described as a different protocol, not a
+different formula; 240 fps stated as the course standard; Epley on a set
+with reps in reserve called a conservative estimate; load-velocity
+predictions given their overestimate (Greig 2023); the screen gained entry
+rules, a published order, a sort-based weak-link map with up to two
+priorities, defined hold angles, a bilateral wall sit, a twenty-minute
+athlete version, and a softened retest standard (familiarisation, repeat
+baseline, fixed trial rule, agreement as context). **Fred's decision
+(2026-10-12): Yousuli's RSI is one drop, one contact, one bounce on a flat
+surface; repeated hops are training, not the test.** The RSI calculator
+page's hop wording was corrected to match.
+
+Rendering defect found and fixed the same day: the JSX transform in Next
+16 drops the space after an inline tag when the following multi-line text
+contains an HTML entity (upstream swc issue #11541; fix in progress). It
+affected 14 places on live course pages, one of them public. All HTML
+entities in the three courses' pages were converted to literal characters,
+and the live scan now shows zero. House rule from here: **no HTML entities
+in course JSX; use the characters.** The UCLA, calculator and other ported
+pages render from HTML strings and are unaffected.
+
 Fable review applied 2026-10-12. The main finding: module 1 called
 high-rep, light-load work a wrong belief while two live Yousuli pages (the
 strength intensity guide's phase bands and coach note, and the UCLA page's
@@ -311,6 +341,11 @@ section (whose three summer phases map cleanly onto modules 4 to 7).
 
 | Key | Reference | Used for |
 |---|---|---|
+| Wu 2024 | Wu H et al. Do exercise-based prevention programs reduce injury in endurance runners? A systematic review and meta-analysis. Sports Med 2024. PMID 38261240 | Injury claim, runner-specific size |
+| Llanos-Lagos 2024 | Llanos-Lagos C et al. Effect of strength training programs in middle- and long-distance runners' economy at different running speeds: systematic review with meta-analysis. Sports Med 2024. PMID 38165636 | Which method at which speed; isometric and submaximal: no economy gain |
+| Greig 2023 | Greig L et al. The predictive validity of individualised load-velocity relationships for predicting 1RM: systematic review and meta-analysis. Sports Med 2023. PMID 37493929 | Load-velocity overestimates 1RM (~3.7 percent) |
+| Healy 2016 | Healy R et al. Assessing reactive strength measures in jumping and hopping using the Optojump system. J Hum Kinet 2016. PMID 28031754 | Hops use the same arithmetic; different protocol |
+| Stojiljković 2024 | Stojiljković N et al. Validity and reliability of the My Jump 2 app for detecting interlimb asymmetry in young female basketball players. Front Sports Act Living 2024. PMID 38638447 | Phone app versus force plate for drop-jump height and contact time |
 | Mountjoy 2023 | Mountjoy M et al. 2023 International Olympic Committee's (IOC) consensus statement on Relative Energy Deficiency in Sport (REDs). Br J Sports Med 2023. PMID 37752011 | Under-fuelling red flag, all athletes |
 | Maffiuletti 2016 | Maffiuletti NA et al. Rate of force development: physiological and methodological considerations. Eur J Appl Physiol 2016. PMID 26941023 | RFD hard to measure validly and reliably; trainable by explosive and heavy work |
 | Lauersen 2014 | Lauersen JB et al. The effectiveness of exercise interventions to prevent sports injuries: systematic review and meta-analysis of randomised controlled trials. Br J Sports Med 2014. PMID 24100287 | Durability lever, injury reduction |
@@ -533,6 +568,9 @@ professional where the red flags say so.
    50-percent perk?
 8. **Build order.** As with heat, build and test as we go (Fred runs the
    screen and RSI on himself first), or Sol reviews this framework first?
+11. **swc upgrade.** When the upstream fix for the entity whitespace bug
+    ships in a Next release, decide whether to upgrade; the entity
+    conversion makes the courses safe either way.
 10. **Site consistency (from the Fable review).** Should the strength
     intensity guide's phase bands and coach note, and the UCLA page's two
     summer phases, move toward the course's position (short on-ramp, then
