@@ -38,7 +38,7 @@ Written 2026-10-13. Items 1 to 11 answered by Fred the same day; 12 to 28 still 
    calculator's 49-exercise library: RDL / goblet squat / Bulgarian split
    squat / push-up / single-arm row / farmer carry / Pallof press, with the
    gym versions trap-bar deadlift, front squat, bench, pull-up.]
-   Answer: ANSWERED, more to come: stability exercises matter most in Fred's view: controlled lunges, rotation with weight, step-ups, plank rows, Pallof press, and others. Fred will send the full list.
+   Answer: ANSWERED, more to come: stability exercises matter most in Fred's view: controlled lunges, rotation with weight, step-ups, plank rows, Pallof press, and others. Fred will send the full list. NOTE 2026-10-13: the ForcePhase library (46 movements on The Hub, with Sol's illustrations and cues) is the curated list; confirm it stands as the course's exercise list.
 8. BLOCKING for the isometric section. Your isometric protocol: which
    holds, at which joint angles, how long, how many sets, where in the
    session. [Draft: split-squat and single-leg wall-sit holds at about 90
@@ -66,7 +66,7 @@ Written 2026-10-13. Items 1 to 11 answered by Fred the same day; 12 to 28 still 
     (exercise, equipment, eccentric-only or supramaximal), what counts as
     a large or small gap, the routing rules, and whether the step-down
     stays as the accessible proxy. Answer: ____
-14. From Developing Explosive Athletes (4th ed.): the velocity zone names
+14. NO LONGER BLOCKING (decision 4: no bar-speed sensor; VBT is a mention, not a method). From Developing Explosive Athletes (4th ed.): the velocity zone names
     and boundaries, the velocity-loss guidance per set, and which lifts
     you would run bar-speed on. Answer: ____
 15. Heavy-phase dose. [Default: weeks 5 to 8, 2 sessions, 3 to 5 sets of
@@ -115,6 +115,16 @@ Written 2026-10-13. Items 1 to 11 answered by Fred the same day; 12 to 28 still 
 26. Which of your own tests will exist by the time modules 4 to 6 are
     filmed: the screen, the RSI mat-versus-phone comparison, a strength
     working set. Answer: ____
+
+## E2. New, from the ForcePhase discovery (2026-10-13)
+
+29. BLOCKING for modules 5 and 6. The methodology document, Endurance
+    Athlete Strength System v0.4, as markdown. Answer: ____
+30. The library export (seed_library: families, prescriptions, pathways,
+    decision rules, phase ceilings), or confirmation that the Graphics
+    folder's 46 movements and cues are the list. Answer: ____
+31. May the course use Sol's nine-view illustrations and cues as its demo
+    library, approved sets only, until the videos exist? Answer: ____
 
 ## F. Not blocking, but decides the landing page
 

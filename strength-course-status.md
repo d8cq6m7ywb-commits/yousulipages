@@ -6,7 +6,22 @@ sequence, ten open questions) is preserved in
 `strength-course-launch.md`. This file is the operational state.
 Credentials are stored outside git.
 
-Last updated: 2026-10-12, night. Codex review applied and deployed (the
+Last updated: 2026-10-13. Fred answered items 1 to 11 of the fill-in list.
+Two things changed the course's shape. First, no force plate and no
+bar-speed sensor: the course is written for accessible equipment, and
+modules 2 and 3 plus the landing page were re-scoped accordingly (paths
+are now "in the lab" and "at home"; device methods are mentions, not
+methods). Second, ForcePhase turned out to be Yousuli's own strength
+decision system (section 2.4 of the framework): the course is now its
+teaching layer, using relative strength and RSI-with-parts for placement,
+the four phases for dose, the ten families for exercises, and the 8 and 5
+percent noise floors for retests. The 46-exercise library with Sol's
+illustrations and cues is on The Hub (ForcePhase Graphics). Still needed
+before modules 5 and 6: the methodology document (Endurance Athlete
+Strength System v0.4), the library export, permission to show the
+illustrations, and answers 12 to 28 (14 no longer blocking).
+
+Previously, 2026-10-12, night. Codex review applied and deployed (the
 injury claim at its runner-specific size, the measurement promise
 corrected, RSI fixes, screen entry rules and order, a sort-based weak-link
 map, a twenty-minute athlete version, a softened retest standard); Fred's

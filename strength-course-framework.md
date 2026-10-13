@@ -188,13 +188,55 @@ and checked against Fred's edition; velocity-loss effects well supported
 in trained men (Pareja-Blanco 2017); endurance-specific validation
 conditional.
 
-### 2.4 ForcePhase
+### 2.4 ForcePhase (identified 2026-10-13)
 
-**Unidentified as of 2026-10-12.** The domain forcephase.com is parked and
-for sale; searches return nothing relevant. Nothing from it enters the
-course until Fred says what it is (a product, a method, a coach, a
-force-plate system?). If it is a force-velocity profiling tool, section
-2.5 already covers the science it would rest on. Open question 1.
+ForcePhase is Yousuli's own strength and conditioning decision system for
+endurance athletes (app.forcephase.co, Yousuli LLC, separate from Grepiac
+and talking to it through Grepiac's API). It turns a few measurements
+(lift tests, jump tests, a core battery, known issues) plus the season
+phase into a prescription: movement families, sets, reps, intensity as a
+share of 1RM, plyometric contacts, and placement in the week. A pure,
+versioned engine (0.3.1) makes every recommendation; the methodology
+document is the **Endurance Athlete Strength System, v0.4**, which the
+course has not yet seen (open question 12). The Graphics folder on The
+Hub holds the 46-exercise library as nine-view illustrations by Sol with
+companion cues, 45 of 46 still drafts awaiting Fred's review.
+
+**The course is the teaching layer of that system.** It teaches the
+reasoning the engine automates, in the engine's vocabulary, and never
+contradicts its constants. Concretely:
+
+- **Placement.** Relative strength (estimated 1RM divided by body mass)
+  against lower and higher reference bands, and drop-jump RSI always shown
+  with its parts (contact time and jump output), place the athlete in one
+  of four quadrants. Foundation before expression: a weak athlete builds
+  strength before reactive work is promoted.
+- **Phases and dose.** Develop (2 to 3 sessions a week, 70 to 87 percent),
+  Convert (2, 80 to 90), Express (1 to 2, 75 to 88), Restore (2 to 3, 60
+  to 75); weeks to the priority race, high endurance load and a short
+  training history pull the dose down. Course modules 4 to 7 map onto
+  these states.
+- **Families.** Ten: mobility, trunk control, squat, hinge, single-leg,
+  foot and ankle, upper body, landing, jumping, reactive plyometrics.
+  Exercise is separate from dose; each family has progression pathways
+  with entry criteria, advancement criteria and when to stop or refer.
+- **Retest.** A change smaller than the noise floor (8 percent for RSI, 5
+  percent for relative strength) is treated as unchanged, not as progress.
+  This is the course's measurement-error rule.
+- **The twelve binding rules** become course principles where they are
+  not already: never diagnose, a red flag blocks prescription entirely;
+  describe adaptations, not conditions ("ankle plantar-flexor capacity",
+  never "corrects pronation"); a test must be able to change a decision;
+  the athlete's own baseline outranks any band; never show RSI without its
+  parts; minimum effective dose, strength serves the endurance training;
+  missing input is not guessed input; coach disagreement is a first-class
+  output.
+- **Content safety**, from the library brief: no claims in images or
+  text ("prevents injury", "fixes", "corrects", "cures"); no medical
+  framing; the library's claim gate applies to course copy too.
+
+**Label:** ForcePhase constants are **reference values**, provisional,
+and copy says so; they are never physiology claims.
 
 ### 2.5 The biomechanics approach (Fred's own, with the force-velocity literature)
 
@@ -238,6 +280,48 @@ outcomes and conditional for endurance transfer.
 - **Capacity tests** from the July screen (single-leg calf raises,
   single-leg squat, side plank, wall sit, dead hang): no device needed.
 
+Decisions recorded 2026-10-13 (Fred's answers to items 1 to 11 of
+`strength-course-fred-input.md`):
+
+4. **Accessible equipment only.** The lab owns no force plate and no
+   bar-speed sensor (it has the RSI contact mat, Moxy and VO2 devices).
+   The course is written for weights, bands, pull-up bars, kettlebells,
+   medicine and yoga balls, and basic home or gym equipment. Device-based
+   methods (velocity-based training, force-velocity profiling, force-plate
+   metrics) are mentioned once as terms the reader may meet elsewhere and
+   are not used. The "measured path" is the Yousuli lab (contact mat RSI,
+   gait analysis); the other path is home.
+5. **One course, triathlete side notes.** All three sports, with marginal
+   notes flagging why a point matters for triathletes and the issues they
+   have, the sport highlighted.
+6. **Access and links.** Once complete and clean, the course is offered to
+   UCLA students free with a code; everyone else gets a few modules free,
+   then pays. The strength calculators (RSI included) link to the course.
+   The strength intensity guide and the UCLA page move toward the course's
+   position (open question 10 answered yes).
+7. **Dose is instructional, not a schedule.** Default on-ramp accepted (4
+   weeks, 2 to 3 sets of 6 to 8 at a 3-1-1-0 tempo). Fred's own preference
+   is short sessions: under 30 minutes three times a week, or four of 20;
+   a two-session week must also work. Copy states weekly work and offers
+   the scheduling options.
+8. **Exercises.** The ForcePhase library (46 movements, Sol's nine-view
+   illustrations and cues, Fred's review pending) is the course's exercise
+   list; stability work (controlled lunges, rotation under load, step-ups,
+   plank rows, Pallof press) is emphasised. The nine UCLA strength videos
+   are not used; the demo library is new.
+9. **Isometrics are individualised.** Angle and depth depend on the
+   athlete's stability, flexibility, morphology and injuries; low squats
+   are not always necessary; high (partial) squats are a strong stimulus
+   for runners, especially for power; bands add progressive resistance
+   through the movement. Holds are kept short and infrequent because
+   athletes find them frustrating otherwise.
+10. **Sore tendons.** Isometrics are generally fine with no acute injury,
+    with specific protocols if inflamed, and can help if done correctly
+    alongside nutrition, hydration, rest and recovery; better than letting
+    it sit. Fred's clinical convention; the module 1 red flags still
+    override it.
+11. **Mobility** is included, folded into the sessions.
+
 ## 3. Audience and access (from July, with one addition)
 
 Primary: self-coached endurance athletes, 30 to 60, runners, cyclists,
@@ -273,12 +357,13 @@ every number quoted from a book has been checked against the book.**
 
 ## 5. The two-path template, strength version
 
-- **Measured path:** force plate or contact mat (RSI, jump height,
-  force-velocity profile), bar-speed device (velocity zones, velocity
-  loss), lab gait and biomechanics.
-- **Accessible path:** the two calculators, a phone camera at 240 fps or
-  better for drop jumps, filmed tempo for eccentric control, RPE and reps
-  in reserve for autoregulation, the capacity tests.
+- **In the lab (Yousuli):** the contact mat for drop-jump RSI with its
+  parts, gait analysis and biomechanics, muscle oxygen and VO2 where a
+  question needs them.
+- **At home:** the two calculators, a phone camera at 240 fps for drop
+  jumps, filmed tempo for eccentric control, RPE and reps in reserve for
+  autoregulation, the capacity tests. No force plate, no bar-speed sensor,
+  by decision 4.
 
 Each two-path card ends with what the accessible path cannot know and the
 margin it keeps. In strength the gap is smaller than in heat: a camera
@@ -328,9 +413,14 @@ section (whose three summer phases map cleanly onto modules 4 to 7).
   techniques; Caron's strength deficit; Mann's velocity zones. Attributed
   by name every time, specifics from Fred's copies, never presented as
   findings.
-- **Device or published-band figure.** RSI category bands; VBT zone
-  boundaries; NSCA percentage bands in the calculator; force-plate metric
-  definitions. Quoted with their source and dated.
+- **Device or published-band figure.** RSI category bands; NSCA
+  percentage bands in the calculator. Quoted with their source and dated.
+  Device-only methods (VBT zones, force-velocity profiles, force-plate
+  metrics) are mentioned as terms the reader may meet, not used.
+- **ForcePhase reference value.** The engine's constants: phase doses,
+  relative-strength bands, the 8 percent RSI and 5 percent relative-strength
+  noise floors. Provisional, labelled, and the athlete's own baseline
+  outranks them.
 - **Yousuli coaching convention.** Fred's exercise-selection logic, the
   screen, the capacity tests, the eccentric-deficit field proxy, the
   session placement rules, the in-season dose, the taper rules. Labelled
@@ -548,11 +638,19 @@ professional where the red flags say so.
 
 ## 11. Open questions for Fred (and then Sol)
 
-1. **What is ForcePhase?** A product, a method, a coach, a plate system?
-   Nothing from it is in the framework until answered.
-2. **Devices.** Does the lab own a force plate (beyond the RSI contact
-   mat), a bar-speed sensor, a flywheel? The measured path is written as
-   if a contact mat exists and the rest is optional; confirm.
+1. ~~What is ForcePhase?~~ Answered 2026-10-13: section 2.4.
+2. ~~Devices.~~ Answered 2026-10-13: none beyond the contact mat;
+   decision 4.
+12. **The methodology document.** The Endurance Athlete Strength System
+    v0.4 (Fred to supply as markdown): the course aligns its vocabulary,
+    phases, quadrant bands and pathways to it. Blocks modules 5 and 6.
+13. **The library export.** The 46 exercise records with families,
+    prescriptions, pathways and decision rules (seed_library), so modules
+    4 to 6 prescribe the same movements and doses as the app.
+14. **Illustrations in the course.** May the course pages use Sol's
+    nine-view illustrations and companion cues as the demo library until
+    Fred's videos exist? They are Yousuli assets; 45 of 46 await Fred's
+    review in ForcePhase, and the course would show only approved sets.
 3. **Caron's measurement.** How does *Strength Deficit* measure the
    deficit, and what are its routing rules? Needed before module 5 copy.
 4. **Triphasic specifics.** Block lengths, loading ranges, and which of
