@@ -13,6 +13,10 @@ pricing, delivery, the ten open questions) is preserved whole in
 `strength-course-launch.md` and is not repeated here. Operational state
 (pages, tests, review rounds) lives in `strength-course-status.md`.
 
+Decision 2026-10-12 (Fred): build and test as we go, modules 1 to 3 first;
+reviews by Fable and Codex; Fred supplies the book specifics and his own
+input into the FredInput boxes on the draft pages.
+
 Written 2026-10-12 from Fred's brief: a course on strength training for
 endurance athletes and triathletes, taking ideas from ForcePhase, Tim
 Caron's *Strength Deficit*, Cal Dietz's *Triphasic Training* I and II,
@@ -261,8 +265,12 @@ section (whose three summer phases map cleanly onto modules 4 to 7).
   moderated by modality, frequency and session design (Wilson 2012; Fyfe
   2014), and the 2022 update finds hypertrophy and maximal strength
   largely compatible with concurrent training, with explosive strength
-  the quality most at risk (Schumann 2022; wording to be confirmed from
-  full text, open question 9). Tendons adapt to high-magnitude loading
+  the quality most at risk (Schumann 2022, confirmed from the abstract:
+  explosive strength SMD -0.28, attenuation clearest in same-session
+  training and not significant when sessions were at least 3 h apart).
+  Strength training reduced sports injuries to less than a third in a
+  meta-analysis of randomised trials, mostly in non-endurance populations
+  (Lauersen 2014). Tendons adapt to high-magnitude loading
   over months, not weeks (Bohm 2015). Eccentric training produces
   distinct adaptations (Douglas 2017). The eccentric-to-concentric ratio
   averages about 1.4 (Nuzzo 2023). Drop-jump RSI is reliable (Flanagan
@@ -292,6 +300,7 @@ section (whose three summer phases map cleanly onto modules 4 to 7).
 
 | Key | Reference | Used for |
 |---|---|---|
+| Lauersen 2014 | Lauersen JB et al. The effectiveness of exercise interventions to prevent sports injuries: systematic review and meta-analysis of randomised controlled trials. Br J Sports Med 2014. PMID 24100287 | Durability lever, injury reduction |
 | Rønnestad 2014 | Rønnestad BR, Mujika I. Optimizing strength training for running and cycling endurance performance: a review. Scand J Med Sci Sports 2014. PMID 23914932 | Core evidence, dose, programming |
 | Beattie 2014 | Beattie K et al. The effect of strength training on performance in endurance athletes. Sports Med 2014. PMID 24532151 | Core evidence |
 | Balsalobre 2016 | Balsalobre-Fernández C et al. Effects of strength training on running economy in highly trained runners: systematic review with meta-analysis. J Strength Cond Res 2016. PMID 26694507 | Running economy |
@@ -333,7 +342,11 @@ adaptations, PMID 35088396); Chilibeck 1995 (exercise and bone density,
 PMID 7747001, old and general). Not found on PubMed and not used: a
 triathlon-specific strength review; an intra-session order meta-analysis
 (Murlasits 2018 is believed to exist, Sol to locate); Weakley's VBT review
-(Strength and Conditioning Journal, not indexed).
+(Strength and Conditioning Journal, not indexed). Silbernagel's 2007
+pain-monitoring model could not be found on PubMed by title, so the pain
+rule in module 1 is Fred's input, not a citation. A claim that calf fibres
+work near-isometrically in running stance was removed from module 2 until
+a source is read in full.
 
 Sources read outside PubMed (publisher and listing pages only, not the
 books): Caron, *Strength Deficit* (2022, 215 pp.); Caron, *Training Sport
@@ -507,6 +520,7 @@ professional where the red flags say so.
    50-percent perk?
 8. **Build order.** As with heat, build and test as we go (Fred runs the
    screen and RSI on himself first), or Sol reviews this framework first?
-9. **For Sol.** Confirm the Schumann 2022 wording on explosive strength
-   and same-session training; locate an intra-session order meta-analysis;
-   any mis-filed label.
+9. **For the reviewers (Fable, Codex).** Schumann 2022 wording is now
+   confirmed from the abstract. Still open: locate an intra-session order
+   meta-analysis; a source for near-isometric fascicle behaviour in
+   running stance; any mis-filed label.
