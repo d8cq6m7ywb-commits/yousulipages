@@ -13,6 +13,17 @@ pricing, delivery, the ten open questions) is preserved whole in
 `strength-course-launch.md` and is not repeated here. Operational state
 (pages, tests, review rounds) lives in `strength-course-status.md`.
 
+Fable review applied 2026-10-12. The main finding: module 1 called
+high-rep, light-load work a wrong belief while two live Yousuli pages (the
+strength intensity guide's phase bands and coach note, and the UCLA page's
+anatomical-adaptation and hypertrophy phases) prescribe it. Resolved inside
+the course only: a short lighter on-ramp is sensible (module 4), the
+mistake is never leaving it, heavier loads did best where compared, and
+moderate-rep growth work is not harmful. **The two live pages are
+unchanged; whether their emphasis should move toward the course's is
+Fred's decision (open question 10).** Lauersen 2014's trial populations
+could not be checked (not open access), so the pages no longer name them.
+
 Decision 2026-10-12 (Fred): build and test as we go, modules 1 to 3 first;
 reviews by Fable and Codex; Fred supplies the book specifics and his own
 input into the FredInput boxes on the draft pages.
@@ -300,6 +311,8 @@ section (whose three summer phases map cleanly onto modules 4 to 7).
 
 | Key | Reference | Used for |
 |---|---|---|
+| Mountjoy 2023 | Mountjoy M et al. 2023 International Olympic Committee's (IOC) consensus statement on Relative Energy Deficiency in Sport (REDs). Br J Sports Med 2023. PMID 37752011 | Under-fuelling red flag, all athletes |
+| Maffiuletti 2016 | Maffiuletti NA et al. Rate of force development: physiological and methodological considerations. Eur J Appl Physiol 2016. PMID 26941023 | RFD hard to measure validly and reliably; trainable by explosive and heavy work |
 | Lauersen 2014 | Lauersen JB et al. The effectiveness of exercise interventions to prevent sports injuries: systematic review and meta-analysis of randomised controlled trials. Br J Sports Med 2014. PMID 24100287 | Durability lever, injury reduction |
 | Rønnestad 2014 | Rønnestad BR, Mujika I. Optimizing strength training for running and cycling endurance performance: a review. Scand J Med Sci Sports 2014. PMID 23914932 | Core evidence, dose, programming |
 | Beattie 2014 | Beattie K et al. The effect of strength training on performance in endurance athletes. Sports Med 2014. PMID 24532151 | Core evidence |
@@ -520,6 +533,11 @@ professional where the red flags say so.
    50-percent perk?
 8. **Build order.** As with heat, build and test as we go (Fred runs the
    screen and RSI on himself first), or Sol reviews this framework first?
+10. **Site consistency (from the Fable review).** Should the strength
+    intensity guide's phase bands and coach note, and the UCLA page's two
+    summer phases, move toward the course's position (short on-ramp, then
+    heavier, low-volume work)? The course no longer contradicts them, but
+    their emphasis differs.
 9. **For the reviewers (Fable, Codex).** Schumann 2022 wording is now
    confirmed from the abstract. Still open: locate an intra-session order
    meta-analysis; a source for near-isometric fascicle behaviour in

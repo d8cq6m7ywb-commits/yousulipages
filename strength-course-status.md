@@ -6,7 +6,16 @@ sequence, ten open questions) is preserved in
 `strength-course-launch.md`. This file is the operational state.
 Credentials are stored outside git.
 
-Last updated: 2026-10-12, evening. Fred chose build and test as we go:
+Last updated: 2026-10-12, late. Fable review of modules 1 to 3 applied and
+deployed: the course no longer contradicts the strength intensity guide or
+the UCLA page (the on-ramp is now explicit; those two live pages are
+unchanged, open question 10 in the framework); five overclaims softened or
+labelled as Fred's convention; two new verified citations (Mountjoy 2023
+REDs, Maffiuletti 2016 RFD); unverifiable trial populations removed;
+input boxes restyled amber so they never read as video slots. Next: the
+Codex review, from the refreshed export.
+
+Earlier that evening: Fred chose build and test as we go:
 the landing page and modules 1 to 3 are live as private drafts behind the
 drafts auth. Reviews will be by Fable and Codex. Fred supplies book
 specifics and his own input into the FredInput boxes on the pages.
@@ -82,15 +91,16 @@ lengths and loading ranges, and which Triphasic II methods Fred uses.
   we go). Still open: ForcePhase, devices, the book specifics, July
   questions, UCLA access.
 - Modules 1 to 3: drafted and deployed 2026-10-12; every cited number
-  checked against its abstract. Awaiting Fred's input boxes, then the
-  Fable and Codex reviews.
+  checked against its abstract. Fable review done and applied the same
+  day. Awaiting Fred's input boxes and the Codex review.
 
 ## Next actions
 
 1. Fred fills the four FredInput boxes and answers what ForcePhase is
    and which devices the lab owns.
 2. Fred runs the module 3 screen and the drop-jump comparison on himself.
-3. Fable and Codex review modules 1 to 3 and the framework.
+3. Codex reviews modules 1 to 3 and the framework (Fable done). Fred
+   decides open question 10 (site consistency).
 4. Modules 4 to 6 once Triphasic specifics arrive; then 7 and 8, the
    athlete path, and the program appendix.
 5. Decide access (UCLA, paid) jointly with the NIRS and heat courses.
