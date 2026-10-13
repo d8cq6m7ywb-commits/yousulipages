@@ -93,4 +93,4 @@ lengths and loading ranges, and which Triphasic II methods Fred uses.
 3. Fable and Codex review modules 1 to 3 and the framework.
 4. Modules 4 to 6 once Triphasic specifics arrive; then 7 and 8, the
    athlete path, and the program appendix.
-6. Decide access (UCLA, paid) jointly with the NIRS and heat courses.
+5. Decide access (UCLA, paid) jointly with the NIRS and heat courses.
