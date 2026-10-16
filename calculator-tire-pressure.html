@@ -808,8 +808,13 @@
         let rider  = parseFloat($('riderWeight').value) || 0;
         let stoker = (posture === 'tandem') ? (parseFloat($('stokerWeight').value) || 0) : 0;
         let bike   = parseFloat($('bikeWeight').value) || 0;
-        let fW     = parseFloat($('frontTireWidth').value) || 25;
-        let rW     = parseFloat($('rearTireWidth').value)  || 25;
+        // An empty width means 25 mm — in lb/in that is 25 / 25.4 in. A bare
+        // `|| 25` here was applied BEFORE the inch conversion below: 25
+        // INCHES, ~15 psi for a 160 lb rider instead of ~76 (fixed 2026-10-15,
+        // same fix as grepiac.com and new.yousuli.co).
+        const defaultWidth = (unit === 'imperial') ? 25 / 25.4 : 25;
+        let fW     = parseFloat($('frontTireWidth').value) || defaultWidth;
+        let rW     = parseFloat($('rearTireWidth').value)  || defaultWidth;
 
         if (rider <= 0) return showError('Enter a valid rider weight.');
         if (bike  <= 0) return showError('Enter a valid bike weight.');
