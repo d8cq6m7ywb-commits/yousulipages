@@ -27,7 +27,7 @@
 
     .gear-calc-host .field-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 14px;
       background: var(--ys-bg-soft);
       padding: 18px;
@@ -293,6 +293,13 @@
               <label>Cadence (rpm)</label>
               <input type="number" id="cadence" min="40" max="140" step="1" value="90" />
             </div>
+            <div>
+              <label>Speed in</label>
+              <select id="speedUnit">
+                <option value="kmh" selected>km/h</option>
+                <option value="mph">mph</option>
+              </select>
+            </div>
           </div>
 
           <div class="results-grid">
@@ -308,15 +315,15 @@
             </div>
             <div class="result-tile">
               <span class="result-label">Speed at <span id="cadDisplay">90</span> rpm</span>
-              <span class="result-value"><span id="speedKmh">—</span> km/h</span>
-              <span class="result-aux"><span id="speedMph">—</span> mph</span>
+              <span class="result-value"><span id="speedKmh">—</span> <span id="speedUnitMain">km/h</span></span>
+              <span class="result-aux"><span id="speedMph">—</span> <span id="speedUnitAux">mph</span></span>
             </div>
           </div>
 
           <div class="table-tabs" role="tablist">
             <button class="table-tab active" type="button" data-table="ratio">Gear ratio</button>
             <button class="table-tab" type="button" data-table="development">Development (m)</button>
-            <button class="table-tab" type="button" data-table="speed">Speed (km/h)</button>
+            <button class="table-tab" type="button" data-table="speed" id="speedTab">Speed (km/h)</button>
           </div>
 
           <div class="table-wrap">
@@ -529,6 +536,12 @@
       const sprocSel = document.getElementById('sprocket');
       const wheelSel = document.getElementById('wheel');
       const cadEl    = document.getElementById('cadence');
+      // Speed in km/h or mph (Fred, 2026-10-18: the table had no mph). The
+      // choice is remembered on this browser; #speedKmh / #speedMph keep their
+      // ids but now hold the chosen unit and the other one.
+      const unitSel  = document.getElementById('speedUnit');
+      try { const u = localStorage.getItem('ys-gear-speed-unit'); if (u === 'mph' || u === 'kmh') unitSel.value = u; } catch (e) {}
+      const isMph = () => unitSel.value === 'mph';
 
       // populate chainring/sprocket selects
       for (let t = MAX_CHAIN; t >= MIN_CHAIN; t--) {
@@ -569,8 +582,11 @@
         document.getElementById('gearRatioAux').textContent = fmt(r, 3) + ' : 1  ·  ' + c + ' × ' + s;
         document.getElementById('developmentM').textContent = fmt(dev, 2);
         document.getElementById('cadDisplay').textContent = cad;
-        document.getElementById('speedKmh').textContent = fmt(km, 1);
-        document.getElementById('speedMph').textContent = fmt(mi, 1);
+        document.getElementById('speedKmh').textContent = fmt(isMph() ? mi : km, 1);
+        document.getElementById('speedMph').textContent = fmt(isMph() ? km : mi, 1);
+        document.getElementById('speedUnitMain').textContent = isMph() ? 'mph' : 'km/h';
+        document.getElementById('speedUnitAux').textContent = isMph() ? 'km/h' : 'mph';
+        document.getElementById('speedTab').textContent = 'Speed (' + (isMph() ? 'mph' : 'km/h') + ')';
       }
 
       // ---------- render table ----------
@@ -606,7 +622,7 @@
           fmtCell  = v => v.toFixed(2) + ' m';
         } else {
           captionText = 'Speed at ' + cad + ' rpm. Change the cadence input to see speed at your chosen rpm.';
-          getValue = (cc, ss) => speedKmh(cc, ss, w, cad);
+          getValue = (cc, ss) => speedKmh(cc, ss, w, cad) / (isMph() ? 1.609344 : 1);
           fmtCell  = v => v.toFixed(1);
         }
         cap.textContent = captionText;
@@ -669,7 +685,11 @@
       });
 
       // hook up inputs
-      [chainSel, sprocSel, wheelSel, cadEl].forEach(el => {
+      unitSel.addEventListener('change', () => {
+        try { localStorage.setItem('ys-gear-speed-unit', unitSel.value); } catch (e) {}
+      });
+
+      [chainSel, sprocSel, wheelSel, cadEl, unitSel].forEach(el => {
         el.addEventListener('input', renderAll);
         el.addEventListener('change', renderAll);
       });
