@@ -326,7 +326,7 @@
               <span>Units</span>
               <span class="switch">
                 <button type="button" class="active" data-unit="metric">kg / mm</button>
-                <button type="button" data-unit="imperial">lb / in</button>
+                <button type="button" data-unit="imperial">lb / mm</button>
               </span>
             </div>
           </div>
@@ -354,20 +354,20 @@
               </div>
             </div>
             <div>
-              <label>Front tire width</label>
+              <label>Front tyre width (mm)</label>
               <div class="row">
                 <input type="number" id="frontTireWidth" step="0.5" min="0" value="25" />
-                <span class="unit unit-width">mm</span>
+                <span class="unit">mm</span>
               </div>
-              <div class="field-help">Road 23–32 · Gravel 35–50 · MTB 50+ mm</div>
+              <div class="field-help">MTB tyre labelled in inches, e.g. 2.1? Type it as is — anything under 5 is read as inches.</div>
             </div>
             <div>
-              <label>Rear tire width</label>
+              <label>Rear tyre width (mm)</label>
               <div class="row">
                 <input type="number" id="rearTireWidth" step="0.5" min="0" value="25" />
-                <span class="unit unit-width">mm</span>
+                <span class="unit">mm</span>
               </div>
-              <div class="field-help">For handcycles, this is each rear wheel.</div>
+              <div class="field-help">MTB tyre labelled in inches, e.g. 2.1? Type it as is — anything under 5 is read as inches. For handcycles, this is each rear wheel.</div>
             </div>
           </div>
 
@@ -699,24 +699,18 @@
         b.addEventListener('click', () => {
           if (b.classList.contains('active')) return;
           const newUnit = b.getAttribute('data-unit');
-          const ids = ['riderWeight','stokerWeight','bikeWeight','frontTireWidth','rearTireWidth'];
+          // Tyre widths stay in mm in both unit systems; only weights convert.
+          const ids = ['riderWeight','stokerWeight','bikeWeight'];
           ids.forEach(id => {
             const el = $(id);
             const v = parseFloat(el.value);
             if (!Number.isFinite(v)) return;
-            if (newUnit === 'imperial') {
-              if (id.endsWith('Weight')) el.value = (v * 2.20462).toFixed(1);
-              else el.value = (v / 25.4).toFixed(2);
-            } else {
-              if (id.endsWith('Weight')) el.value = (v / 2.20462).toFixed(1);
-              else el.value = (v * 25.4).toFixed(1);
-            }
+            el.value = (newUnit === 'imperial' ? v * 2.20462 : v / 2.20462).toFixed(1);
           });
           unit = newUnit;
           document.querySelectorAll('.tp-calc-host .unit-toggle button').forEach(x => x.classList.remove('active'));
           b.classList.add('active');
           document.querySelectorAll('.unit-mass').forEach(el => el.textContent = unit === 'metric' ? 'kg' : 'lb');
-          document.querySelectorAll('.unit-width').forEach(el => el.textContent = unit === 'metric' ? 'mm' : 'in');
         });
       });
 
@@ -808,24 +802,24 @@
         let rider  = parseFloat($('riderWeight').value) || 0;
         let stoker = (posture === 'tandem') ? (parseFloat($('stokerWeight').value) || 0) : 0;
         let bike   = parseFloat($('bikeWeight').value) || 0;
-        // An empty width means 25 mm — in lb/in that is 25 / 25.4 in. A bare
-        // `|| 25` here was applied BEFORE the inch conversion below: 25
-        // INCHES, ~15 psi for a 160 lb rider instead of ~76 (fixed 2026-10-15,
-        // same fix as grepiac.com and new.yousuli.co).
-        const defaultWidth = (unit === 'imperial') ? 25 / 25.4 : 25;
-        let fW     = parseFloat($('frontTireWidth').value) || defaultWidth;
-        let rW     = parseFloat($('rearTireWidth').value)  || defaultWidth;
+        // Tyre width is mm in BOTH unit systems: road and gravel tyres are
+        // labelled in mm, only MTB tyres in inches. Under 5 can only be inches
+        // (2.1, 2.25), so it is converted; an empty width is 25 mm (2026-10-18,
+        // same rule as grepiac.com and new.yousuli.co).
+        const tyreMm = w => (w < 5 ? w * 25.4 : w);
+        let fW     = parseFloat($('frontTireWidth').value) || 25;
+        let rW     = parseFloat($('rearTireWidth').value)  || 25;
 
         if (rider <= 0) return showError('Enter a valid rider weight.');
         if (bike  <= 0) return showError('Enter a valid bike weight.');
         if (fW <= 0 || rW <= 0) return showError('Enter valid tire widths.');
+        fW = tyreMm(fW);
+        rW = tyreMm(rW);
 
         if (unit === 'imperial') {
           rider  /= 2.20462;
           stoker /= 2.20462;
           bike   /= 2.20462;
-          fW     *= 25.4;
-          rW     *= 25.4;
         }
 
         const totalKg = rider + stoker + bike;
@@ -997,8 +991,8 @@
         $('riderWeight').value = unit === 'metric' ? 75 : (75 * 2.20462).toFixed(1);
         $('stokerWeight').value = '';
         $('bikeWeight').value = unit === 'metric' ? 8 : (8 * 2.20462).toFixed(1);
-        $('frontTireWidth').value = unit === 'metric' ? 25 : (25 / 25.4).toFixed(2);
-        $('rearTireWidth').value  = unit === 'metric' ? 25 : (25 / 25.4).toFixed(2);
+        $('frontTireWidth').value = 25;
+        $('rearTireWidth').value  = 25;
         $('terrain').value = 'road';
         $('rimType').value = 'tubed';
         postureEl.value = 'road';
