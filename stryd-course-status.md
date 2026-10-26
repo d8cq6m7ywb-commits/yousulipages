@@ -11,12 +11,19 @@ public by virtue of that repo, so it carries no operational detail: no server
 addresses, no ssh targets, no credential paths. Credentials are stored outside
 git and the proxy configuration lives in the private ops runbook.
 
-Last updated: 2026-10-23. All six pages built from Fable's framework skeleton
-in one pass (Opus 5). Nothing reviewed yet: every page is a draft and carries
-page-level noindex, including the landing page and the two intended-free
-modules, and the landing page is not linked from the site nav. Modules 3 to 5
-are additionally behind the same basic auth as the NIRS and strength drafts.
-Awaiting Fred's full review, which is the first gate for everything below.
+Last updated: 2026-10-26, deploy verified live. All six pages built from
+Fable's framework skeleton in one pass on 2026-10-23 (Opus 5). Nothing
+reviewed yet: every page is a draft and carries page-level noindex, including
+the landing page and the two intended-free modules, and the landing page is not
+linked from the site nav. Modules 3 to 5 are additionally behind the same basic
+auth as the NIRS and strength drafts. Awaiting Fred's full review, which is the
+first gate for everything below.
+
+Deploy verification, 2026-10-26: landing page and modules 1 to 2 return 200
+with the noindex meta present; modules 3 to 5 return 401 unauthenticated and
+200 authenticated, also with noindex; the NIRS course and the strength course
+drafts behave exactly as before, with their free pages at 200 and all six NIRS
+private modules still at 401.
 
 ## Page state
 
