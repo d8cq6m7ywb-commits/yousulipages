@@ -650,11 +650,13 @@
         // calculator (2026-10-28).
         const ratio = d2 / d1;
         const sdiScaled = Math.abs(ratio - 2) < 1e-9 ? sdi : Math.pow(sdi, Math.log(2) / Math.log(ratio));
+        // Rated on the figure shown (two decimals): a printed 1.12 is always Balanced.
+        const sdiRated = Number(sdiScaled.toFixed(2));
         let sdiRating;
-        if (sdiScaled > 1.12)      sdiRating = 'Endurance-limited';
-        else if (sdiScaled > 1.06) sdiRating = 'Balanced';
-        else if (sdiScaled > 1.0)  sdiRating = 'Strength-limited';
-        else                       sdiRating = 'Invalid (check inputs)';
+        if (sdiRated > 1.12)      sdiRating = 'Endurance-limited';
+        else if (sdiRated > 1.06) sdiRating = 'Balanced';
+        else if (sdiRated > 1.0)  sdiRating = 'Strength-limited';
+        else                      sdiRating = 'Invalid (check inputs)';
 
         lastResult = { d1, d2, t1, t2, p1m, p1y, p2m, p2y, cssM, cssY, sdi, sdiScaled, sdiRating };
         renderResults(lastResult);
