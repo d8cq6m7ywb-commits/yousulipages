@@ -383,7 +383,7 @@
         <div class="ys-step">
           <div class="ys-step-num">02</div>
           <h3>The 1500 + 100 (longer-leaning)</h3>
-          <p>Better for triathletes targeting 70.3+. <strong>1500 m time trial</strong>, recovery, then <strong>100 m flat-out</strong>. Gives a more endurance-anchored CSS but the SDI fade index is more dramatic (and informative).</p>
+          <p>Better for triathletes targeting 70.3+. <strong>1500 m time trial</strong>, recovery, then <strong>100 m flat-out</strong>. Gives a more endurance-anchored CSS. Its raw SDI reads much higher (a 15&times; jump in distance), so the calculator also rates it on the 200 + 400 scale, where the bands below apply.</p>
         </div>
         <div class="ys-step">
           <div class="ys-step-num">03</div>
@@ -407,6 +407,7 @@
           <li><strong>SDI 1.00&ndash;1.06, Strength/sprint-limited</strong> &middot; You fade so little it suggests you couldn&rsquo;t go faster on the short distance. Add power work: short fast intervals, dryland strength, paddles, technique-at-pace.</li>
           <li><strong>SDI &le; 1.00, Invalid</strong> &middot; The longer effort can&rsquo;t be faster per 100 than the shorter one. Re-check your inputs (Distance 1 must be the shorter swim).</li>
         </ul>
+        <p style="margin-top: 16px;"><strong>These bands are for a 200 + 400 test,</strong> where the long swim is twice the short one. Over a wider pair the same swimmer fades more &mdash; a 100 + 500 (common in yards pools) is five times longer &mdash; so the calculator also shows your SDI <em>on the 200 + 400 scale</em> and rates that number: SDI<sup>ln&nbsp;2&nbsp;&divide;&nbsp;ln(long&nbsp;&divide;&nbsp;short)</sup>. A 1.27 on a 100 + 500 is 1.11 on the 200 + 400 scale: balanced, not endurance-limited.</p>
       </div>
     </div>
   </section>
@@ -642,13 +643,20 @@
 
         // SDI (unit invariant, same in metric or imperial)
         const sdi = p2m / p1m;
+        // The bands below (and the Good / Poor predictions) are set for a
+        // 200 + 400 test, the long swim twice the short one. A wider pair
+        // fades more for the same swimmer, so rate it on the 200 + 400
+        // scale: SDI ^ (ln 2 / ln(d2 / d1)). Same rule as Grepiac's
+        // calculator (2026-10-28).
+        const ratio = d2 / d1;
+        const sdiScaled = Math.abs(ratio - 2) < 1e-9 ? sdi : Math.pow(sdi, Math.log(2) / Math.log(ratio));
         let sdiRating;
-        if (sdi > 1.12)      sdiRating = 'Endurance-limited';
-        else if (sdi > 1.06) sdiRating = 'Balanced';
-        else if (sdi > 1.0)  sdiRating = 'Strength-limited';
-        else                 sdiRating = 'Invalid (check inputs)';
+        if (sdiScaled > 1.12)      sdiRating = 'Endurance-limited';
+        else if (sdiScaled > 1.06) sdiRating = 'Balanced';
+        else if (sdiScaled > 1.0)  sdiRating = 'Strength-limited';
+        else                       sdiRating = 'Invalid (check inputs)';
 
-        lastResult = { d1, d2, t1, t2, p1m, p1y, p2m, p2y, cssM, cssY, sdi, sdiRating };
+        lastResult = { d1, d2, t1, t2, p1m, p1y, p2m, p2y, cssM, cssY, sdi, sdiScaled, sdiRating };
         renderResults(lastResult);
       }
 
@@ -671,7 +679,8 @@
         document.getElementById('pace2Aux').textContent = `${r.d2} ${u} in ${fmtHMS(r.t2)}`;
 
         document.getElementById('sdiScore').textContent = r.sdi.toFixed(3);
-        document.getElementById('sdiRating').textContent = r.sdiRating;
+        document.getElementById('sdiRating').textContent = r.sdiRating
+          + (r.sdiScaled !== r.sdi ? ` · ${r.sdiScaled.toFixed(2)} on the 200 + 400 scale` : '');
 
         // CSS splits
         const cssSec = cssPrimary;
@@ -685,7 +694,7 @@
           ? [750, 1500, 1900, 3800, 5000, 10000]
           : [820, 1640, 2078, 4156, 5468, 10936];
         const cssPer100 = cssPrimary;
-        const factors = { Current: r.sdi, Perfect: 1.00, Good: 1.03, Poor: 1.06 };
+        const factors = { Current: r.sdiScaled, Perfect: 1.00, Good: 1.03, Poor: 1.06 };
 
         const tbody = document.getElementById('predictionBody');
         tbody.innerHTML = '';
