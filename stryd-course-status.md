@@ -145,10 +145,12 @@ during the build:
   credential entering chat, the NIRS pattern applies: export the authenticated
   HTML of the three private modules to a folder at the repo root, outside
   `site/`, hand the files over, and delete the folder when the review ends.
-- Known cross-course finding from the build, not acted on: the NIRS course
-  landing page links to a `/contact` route that does not exist in the site
-  application. Flagged for Fred rather than fixed, since the NIRS pages were
-  out of scope.
+- Cross-course finding from the build: the NIRS course landing page linked
+  to a `/contact` route that does not exist in the site application. That
+  one link was fixed on Fred's instruction and is live: it now opens a mail
+  to the site's contact address. The site header and about twenty other
+  pages still link to the missing route; that site-wide decision is open and
+  recorded in the site application's handoff notes.
 
 ## Release definition (per module, before paid beta)
 
