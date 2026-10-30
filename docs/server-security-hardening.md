@@ -11,6 +11,40 @@ This document has two purposes:
 
 ---
 
+## Status addendum (recorded 2026-10-30; state as last verified 2026-07-21)
+
+Written so the remediation status survives outside any one conversation. Items below were done or left open as of the end of the incident-response session on **2026-07-21**; anything done since then is not reflected here.
+
+### ThinkChinese (`45.137.194.237`) — remediation COMPLETE ✅
+
+- ✅ Outbound port 25 blocked via ufw (persistent across reboots)
+- ✅ SSH hardened: key-only login, `PasswordAuthentication no` everywhere (including the `50-cloud-init.conf` drop-in that silently re-enabled it), `PermitRootLogin` key-only, fail2ban installed and enabled
+- ✅ All secrets rotated: `AUTH_SECRET` (rotated twice — the first replacement value was accidentally exposed in a chat transcript and re-rotated), `STRIPE_SECRET_KEY` (rolled), `STRIPE_WEBHOOK_SECRET` (rolled)
+- ✅ Exposed GitHub PAT revoked (was in `/root/.bash_history` and `.git/config`)
+- ✅ Site restored and verified (HTTP 200); `pm2-thinkchinese.service` enabled so the app auto-starts on boot
+- ✅ Contabo abuse thread answered with findings
+
+### ThinkFrench (`66.94.114.146`) — recon done, hardening NOT CONFIRMED ⚠️
+
+Recon on 2026-07-21 came back clean (no outbound mail, only owner logins, no rogue cron/keys; owner's SSH key already installed; ufw active with inbound 22/80/443 only). The hardening steps were issued but their completion was **never confirmed**. Verify/do, in order (commands in Parts B–C):
+
+- [ ] `ufw deny out 25/tcp && ufw reload` (outbound SMTP block)
+- [ ] Disable SSH password auth — including the `50-cloud-init.conf` drop-in — then confirm with `sshd -T | grep -i passwordauthentication`
+- [ ] Install + enable fail2ban
+- [ ] Confirm the app runs under the `thinkfrench` user's PM2 and that a `pm2-thinkfrench` boot service exists (`systemctl is-enabled pm2-thinkfrench`)
+- [ ] Check `/root/.bash_history` and `~thinkfrench/app/.git/config` for embedded GitHub tokens (the same slip that burned ThinkChinese); revoke and replace with a read-only deploy key if found
+- [ ] Add a nightly DB backup cron — **ThinkFrench has none** (ThinkChinese backs up `prod.db` daily at 03:00)
+
+### Open follow-ups (both servers)
+
+- [ ] Update Next.js `16.1.6` → latest 16.x (≥ `16.2.6`; post-16.1.6 CVEs: DoS, request smuggling) and next-auth → ≥ `5.0.0-beta.31`, then rebuild and restart
+- [ ] Off-server backups — ThinkChinese's daily DB backups live on the same box they protect
+- [ ] Migrate Stripe from the standard secret key to a scoped **restricted key** (deliberate change; test carefully — under-scoping breaks live payments)
+- [ ] Replace any embedded-token git remotes with per-repo read-only deploy keys
+- [ ] This document lives on branch `claude/think-chinese-issue-0iy9qx` — merge it to the default branch so it's findable
+
+---
+
 ## Part A — Incident Report: ThinkChinese SMTP spam (July 2026)
 
 ### Summary
