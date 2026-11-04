@@ -43,17 +43,23 @@
       display: grid;
       grid-template-columns: 80px 1fr 1fr;
       gap: 10px;
-      align-items: end;
+      align-items: start;
       margin-bottom: 10px;
     }
-    @media (max-width: 540px) { .cp-calc-host .effort-row { grid-template-columns: 60px 1fr 1fr; gap: 6px; } }
+    /* The tag repeats the effort heading, so phones drop it and give the fields the width */
+    @media (max-width: 540px) {
+      .cp-calc-host .effort-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .cp-calc-host .effort-tag { display: none; }
+    }
     .cp-calc-host .effort-tag {
       font-family: var(--ys-font-display);
       letter-spacing: 0.12em; text-transform: uppercase;
       font-size: 0.74rem;
       color: var(--ys-navy);
-      padding-bottom: 10px;
-      text-align: center;
+      /* Same height as the field label above the inputs, so the text lines up with the input's middle */
+      margin-top: calc(0.7rem * 1.7 + 6px);
+      height: 42px;
+      display: flex; align-items: center; justify-content: center;
     }
     .cp-calc-host label {
       display: block;
@@ -65,7 +71,8 @@
       margin-bottom: 6px;
     }
     .cp-calc-host .row { display: flex; align-items: stretch; }
-    .cp-calc-host input[type="number"] {
+    .cp-calc-host input[type="number"],
+    .cp-calc-host input[type="text"] {
       width: 100%;
       padding: 10px 12px;
       border: 1.5px solid var(--ys-line);
@@ -91,6 +98,14 @@
       display: flex; align-items: center;
       border-radius: 0 6px 6px 0;
       min-width: 40px; justify-content: center;
+    }
+    .cp-calc-host .time-hint {
+      display: block;
+      min-height: 1.2em;
+      margin-top: 4px;
+      font-size: 0.78rem;
+      color: var(--ys-navy);
+      opacity: 0.65;
     }
 
     .cp-calc-host .err {
@@ -158,7 +173,7 @@
     @media (max-width: 600px) { .cp-calc-host .target-grid { grid-template-columns: 1fr; } }
     .cp-calc-host .target-tile {
       display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
-      align-items: center;
+      align-items: start;
     }
     .cp-calc-host .target-tile .target-out {
       background: var(--ys-navy); color: #fff;
@@ -299,7 +314,8 @@
               <span class="effort-tag">Short</span>
               <div>
                 <label>Time</label>
-                <div class="row"><input type="number" id="time1" min="30" step="1" value="120" /><span class="unit">s</span></div>
+                <div class="row"><input type="text" id="time1" inputmode="text" autocomplete="off" spellcheck="false" placeholder="2:30 or 150" value="2:00" /><span class="unit" id="time1Unit">m:ss</span></div>
+                <small class="time-hint" id="time1Hint"></small>
               </div>
               <div>
                 <label>Power</label>
@@ -312,11 +328,12 @@
               <span class="effort-tag">Mid</span>
               <div>
                 <label>Time</label>
-                <div class="row"><input type="number" id="time2" min="60" step="1" value="480" /><span class="unit">s</span></div>
+                <div class="row"><input type="text" id="time2" inputmode="text" autocomplete="off" spellcheck="false" placeholder="2:30 or 150" value="6:00" /><span class="unit" id="time2Unit">m:ss</span></div>
+                <small class="time-hint" id="time2Hint"></small>
               </div>
               <div>
                 <label>Power</label>
-                <div class="row"><input type="number" id="power2" min="0" step="1" value="306" /><span class="unit">W</span></div>
+                <div class="row"><input type="number" id="power2" min="0" step="1" value="316" /><span class="unit">W</span></div>
               </div>
             </div>
 
@@ -325,7 +342,8 @@
               <span class="effort-tag">Long</span>
               <div>
                 <label>Time</label>
-                <div class="row"><input type="number" id="time3" min="120" step="1" value="900" /><span class="unit">s</span></div>
+                <div class="row"><input type="text" id="time3" inputmode="text" autocomplete="off" spellcheck="false" placeholder="2:30 or 150" value="15:00" /><span class="unit" id="time3Unit">m:ss</span></div>
+                <small class="time-hint" id="time3Hint"></small>
               </div>
               <div>
                 <label>Power</label>
@@ -364,13 +382,14 @@
               </div>
               <div class="target-out">
                 <span id="outTimeAtPower">—</span>
-                <small>time-to-exhaustion (s)</small>
+                <small>time-to-exhaustion</small>
               </div>
             </div>
             <div class="target-tile">
               <div>
                 <label>Target time</label>
-                <div class="row"><input type="number" id="tempInp" min="30" step="1" value="285" /><span class="unit">s</span></div>
+                <div class="row"><input type="text" id="tempInp" inputmode="text" autocomplete="off" spellcheck="false" placeholder="2:30 or 150" value="4:45" /><span class="unit" id="tempInpUnit">m:ss</span></div>
+                <small class="time-hint" id="tempInpHint"></small>
               </div>
               <div class="target-out">
                 <span id="outPowerAtTime">—</span>
@@ -404,7 +423,7 @@
           <div class="ys-step-num">01</div>
           <h3>Two-parameter model</h3>
           <p><code style="background: var(--ys-bg-soft); padding: 2px 8px; border-radius: 4px;">P = W&prime; / t + CP</code></p>
-          <p style="margin-top: 8px;">CP is the asymptote of the power-duration curve, the highest sustainable power. W&prime; is a finite work capacity above CP; spend it and you crack. Linear regression of <em>P vs 1/t</em> from your three efforts gives both numbers.</p>
+          <p style="margin-top: 8px;">CP is the asymptote of the power-duration curve, the highest sustainable power. W&prime; is a finite work capacity above CP; spend it and you crack. Fitting the work you did (<em>P&times;t</em>) against time across your three efforts gives both numbers: the slope is CP, the intercept is W&prime;. Same model as <em>P vs 1/t</em>, but the shortest effort can&rsquo;t drag the fit around on its own.</p>
         </div>
         <div class="ys-step">
           <div class="ys-step-num">02</div>
@@ -431,7 +450,7 @@
           <li><strong>Spacing.</strong> Three efforts at <strong>different durations</strong> spread across the curve. Two efforts that are too close (e.g. 4 min + 5 min) make the regression unstable. Stick to ~2-3 / ~5-7 / ~12-15 min.</li>
           <li><strong>Recovery.</strong> Same day is OK with 30+ min between efforts, but <em>fatigue</em> from the first effort drags down the others. Better: spread across 2-3 days at the start of a training block when fresh.</li>
         </ul>
-        <p style="margin-top: 12px;">The math also assumes constant-power steady efforts, not surges. Use a smart trainer or a flat road with no traffic. And keep your 5-min effort somewhere near 5 min, the calculator uses the closest-to-5-min effort to anchor the VO<sub>2</sub>max zone, so a 3-min "5-min" effort biases the top zone.</p>
+        <p style="margin-top: 12px;">The math also assumes constant-power steady efforts, not surges. Use a smart trainer or a flat road with no traffic. The VO<sub>2</sub>max zone is anchored on your 5-min power read off the fitted curve, so a bad effort anywhere on the curve shifts the top zones too.</p>
         <p style="margin-top: 10px;">For the lab-grade version, our cycling protocol pairs CP testing with lactate sampling and gas analysis, you walk out with measured CP, MLSS, fat oxidation crossover, and VO<sub>2</sub>max in one session.</p>
         <div class="ys-btn-row" style="margin-top: 16px;">
           <a class="ys-btn ys-btn-coral" href="https://www.yousuli.co/performancelab" target="_top">Bike lab testing</a>
@@ -573,8 +592,50 @@
       const $ = id => document.getElementById(id);
       const errEl = $('errorMsg');
 
+      // The two-parameter model holds for roughly 2-20 min efforts
+      const MIN_EFFORT_S = 120;
+      const LONG_EFFORT_S = 1200;
+      const MAX_TTE_S = 1800;
+
       function safeNum(v) { const x = parseFloat(v); return Number.isFinite(x) ? x : NaN; }
-      function showError(msg) { errEl.textContent = msg; errEl.classList.add('active'); }
+
+      // Times come in as seconds ("150") or clock time ("2:30", "1:02:30")
+      function parseTime(v) {
+        const s = String(v).trim();
+        if (/^\d+(\.\d+)?$/.test(s)) return parseFloat(s);
+        const m = s.match(/^(?:(\d+):)?(\d+):(\d{1,2}(?:\.\d+)?)$/);
+        if (!m || parseFloat(m[3]) >= 60 || (m[1] !== undefined && parseInt(m[2], 10) >= 60)) return NaN;
+        return (parseInt(m[1] || '0', 10) * 3600) + (parseInt(m[2], 10) * 60) + parseFloat(m[3]);
+      }
+      // 45 -> "45 s", 150 -> "2:30", 3750 -> "1:02:30"
+      function fmtTime(sec) {
+        const t = Math.round(sec);
+        if (t < 60) return `${t} s`;
+        const h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60), s = String(t % 60).padStart(2, '0');
+        return h ? `${h}:${String(m).padStart(2, '0')}:${s}` : `${m}:${s}`;
+      }
+      // "2:" is a clock time still being typed, not a mistake
+      function midClock(v) { return /^[\d:.]*:$/.test(String(v).trim()); }
+      // Unit chip follows what was typed; the hint shows the other form
+      function updateTimeHints() {
+        ['time1', 'time2', 'time3', 'tempInp'].forEach(id => {
+          const raw = $(id).value.trim();
+          const clock = raw.includes(':');
+          const sec = parseTime(raw);
+          $(id + 'Unit').textContent = !clock ? 's' : (raw.split(':').length > 2 ? 'h:m:s' : 'm:ss');
+          if (!raw || midClock(raw)) $(id + 'Hint').textContent = '';
+          else if (!Number.isFinite(sec)) $(id + 'Hint').textContent = 'type seconds (150) or m:ss (2:30)';
+          else $(id + 'Hint').textContent = clock ? `= ${Math.round(sec)} s` : (sec >= 60 ? `= ${fmtTime(sec)}` : '');
+        });
+      }
+      function showError(msg) {
+        errEl.textContent = msg;
+        errEl.classList.add('active');
+        // Blank the results so the last good fit is not read as this one
+        ['outCP', 'outWp', 'outAeT', 'outTimeAtPower', 'outPowerAtTime'].forEach(id => { $(id).textContent = '—'; });
+        $('fitMeta').textContent = '—';
+        $('zonesContainer').innerHTML = '';
+      }
       function clearError() { errEl.classList.remove('active'); errEl.textContent = ''; }
 
       function mean(a) { return a.reduce((s, v) => s + v, 0) / a.length; }
@@ -584,40 +645,22 @@
         const xs = points.map(p => p[0]);
         const ys = points.map(p => p[1]);
         const xm = mean(xs), ym = mean(ys);
-        let num = 0, den = 0, ssTot = 0;
+        let num = 0, den = 0;
         xs.forEach((x, i) => {
           num += (x - xm) * (ys[i] - ym);
           den += (x - xm) ** 2;
-          ssTot += (ys[i] - ym) ** 2;
         });
         if (den < 1e-12) return null;
         const slope = num / den;
         const intercept = ym - slope * xm;
-        // R²
-        let ssRes = 0;
-        xs.forEach((x, i) => {
-          const yhat = intercept + slope * x;
-          ssRes += (ys[i] - yhat) ** 2;
-        });
-        const r2 = ssTot > 0 ? 1 - ssRes / ssTot : 1;
-        return { slope, intercept, r2 };
+        return { slope, intercept };
       }
 
-      function bestEffortNear(seconds) {
-        // Pick the test effort with time closest to `seconds`
-        const t = [safeNum($('time1').value), safeNum($('time2').value), safeNum($('time3').value)];
-        const p = [safeNum($('power1').value), safeNum($('power2').value), safeNum($('power3').value)];
-        let idx = 0, bestDiff = Math.abs(t[0] - seconds);
-        for (let i = 1; i < t.length; i++) {
-          const d = Math.abs(t[i] - seconds);
-          if (d < bestDiff) { bestDiff = d; idx = i; }
-        }
-        return Number.isFinite(p[idx]) ? p[idx] : 0;
-      }
-
-      function renderZones(cp) {
+      function renderZones(cp, wj) {
         const cpInt = Math.max(0, Math.floor(cp));
-        const best5 = Math.floor(bestEffortNear(300));
+        // 5-min power read off the fitted curve, so it uses all three efforts
+        // rather than whichever one happens to sit nearest 5 min
+        const best5 = Math.floor(cp + wj / 300);
 
         const zones = [
           { name: 'Easy',                sub: '< 60% CP',          lo: 0,                                 hi: Math.floor(cpInt * 0.59) },
@@ -627,8 +670,8 @@
           { name: 'Endurance',            sub: '77-89% CP',         lo: Math.floor(cpInt * 0.77),          hi: Math.floor(cpInt * 0.89) },
           { name: 'Threshold',            sub: '90-100% CP',        lo: Math.floor(cpInt * 0.90),          hi: cpInt, featured: true },
           { name: 'Suprathreshold',       sub: '101% CP → just below VO₂max', lo: cpInt + 1, hi: Math.max(cpInt + 1, Math.floor(best5 * 0.98) - 1) },
-          { name: 'VO₂max',               sub: '~ best 5-min effort ±2%', lo: Math.floor(best5 * 0.98), hi: Math.floor(best5 * 1.02) },
-          { name: 'Power',                sub: '> 102% best 5-min',  lo: Math.floor(best5 * 1.02) + 1, hi: '∞' }
+          { name: 'VO₂max',               sub: '~ 5-min power on your curve ±2%', lo: Math.floor(best5 * 0.98), hi: Math.floor(best5 * 1.02) },
+          { name: 'Power',                sub: '> 102% 5-min power',  lo: Math.floor(best5 * 1.02) + 1, hi: '∞' }
         ];
 
         const wrap = $('zonesContainer');
@@ -646,32 +689,44 @@
 
       function calc() {
         clearError();
-        const t1 = safeNum($('time1').value), p1 = safeNum($('power1').value);
-        const t2 = safeNum($('time2').value), p2 = safeNum($('power2').value);
-        const t3 = safeNum($('time3').value), p3 = safeNum($('power3').value);
+        updateTimeHints();
+        // Keep the last result on screen until the clock time is finished
+        if (['time1', 'time2', 'time3'].some(id => midClock($(id).value))) return;
+        const t1 = parseTime($('time1').value), p1 = safeNum($('power1').value);
+        const t2 = parseTime($('time2').value), p2 = safeNum($('power2').value);
+        const t3 = parseTime($('time3').value), p3 = safeNum($('power3').value);
 
         const all = [t1, p1, t2, p2, t3, p3];
         if (!all.every(v => Number.isFinite(v) && v > 0)) {
-          return showError('Enter all six values (3 times in seconds, 3 powers in watts).');
+          return showError('Enter all six values (3 times as seconds or m:ss, 3 powers in watts).');
         }
         // Sort efforts to enforce ordering
         const efforts = [[t1, p1], [t2, p2], [t3, p3]].sort((a, b) => a[0] - b[0]);
-        // Sanity: powers should generally drop with longer time
-        if (!(efforts[0][1] > efforts[1][1] && efforts[1][1] >= efforts[2][1])) {
-          // not strict but warn
-          // (still allow calc, might be valid for some athletes)
+        const [tShort] = efforts[0];
+        const [tLong, pLong] = efforts[2];
+        if (tShort < MIN_EFFORT_S) {
+          return showError(`The shortest effort is ${fmtTime(tShort)}. The CP model does not hold under 2 min, use a ~2-3 min effort.`);
+        }
+        if (!(efforts[0][1] > efforts[1][1] && efforts[1][1] > efforts[2][1])) {
+          return showError('Power must drop as the efforts get longer. Check each effort was maximal and each time sits with its own power.');
         }
 
-        const points = efforts.map(([t, p]) => [1 / t, p]);
+        // Work-time model, W = CP·t + W′: slope is CP, intercept is W′.
+        // Fitting P vs 1/t instead lets the shortest effort set the line on its own.
+        const points = efforts.map(([t, p]) => [t, p * t]);
         const fit = regress(points);
         if (!fit) return showError('Times must differ, same time twice gives a degenerate fit.');
 
-        const cp = fit.intercept;
-        const wj = fit.slope;     // J
+        const cp = fit.slope;
+        const wj = fit.intercept; // J
         const wkj = wj / 1000;     // kJ
 
         if (cp <= 0 || wj <= 0) {
           return showError('Negative CP or W′, re-check inputs (durations and powers must drop together as time grows).');
+        }
+        // Every maximal effort sits above CP, so a CP above the longest one means the inputs disagree
+        if (cp >= pLong) {
+          return showError(`CP came out at ${Math.floor(cp)} W, above the ${pLong} W you held for ${fmtTime(tLong)}. At least one effort was not maximal, re-test.`);
         }
 
         // ---- render
@@ -682,29 +737,45 @@
         const aeHi = Math.floor(cp * 0.76);
         $('outAeT').textContent = `${aeLo} – ${aeHi} W`;
 
-        // fit quality
-        const r2 = Math.max(0, fit.r2);
+        // fit quality: how far the curve misses the worst effort. R² over 3 points
+        // reads "excellent" even when two efforts are 50 W off the curve.
+        const misses = efforts.map(([t, p]) => ({ t, miss: Math.abs(p - (cp + wj / t)) / p }));
+        const worst = misses.reduce((a, b) => (b.miss > a.miss ? b : a));
+        const missPct = worst.miss * 100;
         let qClass = 'good', qText = 'excellent';
-        if (r2 < 0.95) { qClass = 'ok'; qText = 'fair, tighten effort spacing'; }
-        if (r2 < 0.85) { qClass = 'poor'; qText = 'poor, re-test with cleaner efforts'; }
-        $('fitMeta').innerHTML = `Fit quality: <strong>R² = ${r2.toFixed(3)}</strong> <span class="fit-quality ${qClass}">(${qText})</span>. Above 0.95 = solid CP estimate.`;
+        if (missPct > 2) { qClass = 'ok'; qText = 'fair, one effort may not have been maximal'; }
+        if (missPct > 4) { qClass = 'poor'; qText = 'poor, re-test with cleaner efforts'; }
+        let fitNote = `Fit quality: the curve misses your ${fmtTime(worst.t)} effort by <strong>${missPct.toFixed(1)}%</strong> <span class="fit-quality ${qClass}">(${qText})</span>. Under 2% = solid CP estimate.`;
+        if (wj < 5000 || wj > 35000) {
+          fitNote += ` <span class="fit-quality poor">W&prime; of ${wkj.toFixed(1)} kJ is implausibly ${wj < 5000 ? 'low' : 'high'} (typical range 10-30 kJ), check each effort was maximal.</span>`;
+        }
+        if (tLong > LONG_EFFORT_S) {
+          fitNote += ' Efforts past ~20 min sit below the two-parameter curve and pull CP down, a 12-15 min effort is better.';
+        }
+        $('fitMeta').innerHTML = fitNote;
 
         // Targets
         const tgtP = safeNum($('powerInp').value);
-        const tgtT = safeNum($('tempInp').value);
+        const tgtT = parseTime($('tempInp').value);
         if (Number.isFinite(tgtP)) {
           if (tgtP > cp) {
             const tte = wj / (tgtP - cp);
-            $('outTimeAtPower').textContent = Math.floor(tte);
+            // Just above CP the model gives hours, which no athlete holds
+            $('outTimeAtPower').textContent = tte > MAX_TTE_S ? '> 30 min' : fmtTime(Math.floor(tte));
           } else {
-            $('outTimeAtPower').textContent = '∞';
+            // Below CP, W′ does not set the limit (glycogen, heat and fatigue do)
+            $('outTimeAtPower').textContent = 'below CP';
           }
+        } else {
+          $('outTimeAtPower').textContent = '—';
         }
         if (Number.isFinite(tgtT) && tgtT > 0) {
-          $('outPowerAtTime').textContent = Math.floor(wj / tgtT + cp);
+          $('outPowerAtTime').textContent = tgtT < MIN_EFFORT_S ? 'under 2 min' : Math.floor(wj / tgtT + cp);
+        } else {
+          $('outPowerAtTime').textContent = '—';
         }
 
-        renderZones(cp);
+        renderZones(cp, wj);
       }
 
       // wire inputs
