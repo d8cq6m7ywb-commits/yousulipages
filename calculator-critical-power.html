@@ -46,11 +46,6 @@
       align-items: start;
       margin-bottom: 10px;
     }
-    /* The tag repeats the effort heading, so phones drop it and give the fields the width */
-    @media (max-width: 540px) {
-      .cp-calc-host .effort-row { grid-template-columns: 1fr 1fr; gap: 8px; }
-      .cp-calc-host .effort-tag { display: none; }
-    }
     .cp-calc-host .effort-tag {
       font-family: var(--ys-font-display);
       letter-spacing: 0.12em; text-transform: uppercase;
@@ -60,6 +55,12 @@
       margin-top: calc(0.7rem * 1.7 + 6px);
       height: 42px;
       display: flex; align-items: center; justify-content: center;
+    }
+    /* The tag repeats the effort heading, so phones drop it and give the fields the width.
+       Keep this after the tag rule, or its display: flex wins. */
+    @media (max-width: 540px) {
+      .cp-calc-host .effort-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .cp-calc-host .effort-tag { display: none; }
     }
     .cp-calc-host label {
       display: block;
@@ -243,6 +244,7 @@
       color: var(--ys-muted);
     }
     .cp-calc-host .fit-meta strong { color: var(--ys-navy); }
+    .cp-calc-host .fit-meta:empty { display: none; }
     .cp-calc-host .fit-quality.good    { color: #2e7d4f; }
     .cp-calc-host .fit-quality.ok      { color: var(--wf-coral); }
     .cp-calc-host .fit-quality.poor    { color: #c93939; }
@@ -350,6 +352,21 @@
                 <div class="row"><input type="number" id="power3" min="0" step="1" value="290" /><span class="unit">W</span></div>
               </div>
             </div>
+
+            <div class="efforts-head" style="margin-top: 16px;">Sprint, optional (best 5-30 s)</div>
+            <div class="effort-row">
+              <span class="effort-tag">Sprint</span>
+              <div>
+                <label>Time</label>
+                <div class="row"><input type="text" id="sprintTime" inputmode="text" autocomplete="off" spellcheck="false" placeholder="15 or 0:15" /><span class="unit" id="sprintTimeUnit">s</span></div>
+                <small class="time-hint" id="sprintTimeHint"></small>
+              </div>
+              <div>
+                <label>Power</label>
+                <div class="row"><input type="number" id="sprintPower" min="0" step="1" placeholder="optional" /><span class="unit">W</span></div>
+              </div>
+            </div>
+            <small class="time-hint">Fills in the curve under 2 min. CP and W&prime; still come from the three efforts above.</small>
           </div>
 
           <div class="err" id="errorMsg"></div>
@@ -373,6 +390,7 @@
           </div>
 
           <p class="fit-meta" id="fitMeta">—</p>
+          <p class="fit-meta" id="sprintMeta"></p>
 
           <div class="target-grid">
             <div class="target-tile">
@@ -618,7 +636,7 @@
       function midClock(v) { return /^[\d:.]*:$/.test(String(v).trim()); }
       // Unit chip follows what was typed; the hint shows the other form
       function updateTimeHints() {
-        ['time1', 'time2', 'time3', 'tempInp'].forEach(id => {
+        ['time1', 'time2', 'time3', 'sprintTime', 'tempInp'].forEach(id => {
           const raw = $(id).value.trim();
           const clock = raw.includes(':');
           const sec = parseTime(raw);
@@ -634,6 +652,7 @@
         // Blank the results so the last good fit is not read as this one
         ['outCP', 'outWp', 'outAeT', 'outTimeAtPower', 'outPowerAtTime'].forEach(id => { $(id).textContent = '—'; });
         $('fitMeta').textContent = '—';
+        $('sprintMeta').textContent = '';
         $('zonesContainer').innerHTML = '';
       }
       function clearError() { errEl.classList.remove('active'); errEl.textContent = ''; }
@@ -654,6 +673,36 @@
         const slope = num / den;
         const intercept = ym - slope * xm;
         return { slope, intercept };
+      }
+
+      // Short end of the curve: P = CP + W″/(t + k) with the same CP, running from the
+      // sprint to the two-parameter curve at 2 min. k stays above 0 only if the sprint
+      // spent less than W′ above CP, which any real effort must.
+      function sprintCurve(cp, wj, tS, pS) {
+        const pAt2 = cp + wj / MIN_EFFORT_S;
+        const spent = (pS - cp) * tS;
+        if (tS >= MIN_EFFORT_S) return { issue: `The sprint row is for efforts under 2 min, a ${fmtTime(tS)} effort goes in the rows above.` };
+        if (pS <= pAt2) return { issue: `A ${pS} W sprint sits at or below the ${Math.floor(pAt2)} W your curve gives at 2:00, so it is left out. Check the sprint power.` };
+        if (spent >= wj) return { issue: `That sprint spent ${(spent / 1000).toFixed(1)} kJ above CP, more than your ${(wj / 1000).toFixed(1)} kJ W′, so it is left out. W′ is probably too low, check the three efforts were maximal.` };
+        const k = (wj - spent) / ((pS - cp) - wj / MIN_EFFORT_S);
+        const w2 = (pS - cp) * (tS + k);
+        const powerAt = t => cp + w2 / (t + k);
+        let note = `Sprint: ${fmtTime(tS)} at ${pS} W spent ${(spent / 1000).toFixed(1)} kJ above CP, ${Math.round(spent / wj * 100)}% of W′.`;
+        if (tS < 60) note += ` Under 2 min the curve now runs up to it, so 1:00 reads ${Math.floor(powerAt(60))} W.`;
+        return { tS, pS, powerAt, timeAt: p => w2 / (p - cp) - k, note };
+      }
+      // Target power to time; under 2 min only the sprint curve can answer
+      function timeAtPower(cp, wj, p, sprint) {
+        const tte = wj / (p - cp);
+        if (tte >= MIN_EFFORT_S) return tte > MAX_TTE_S ? null : fmtTime(Math.floor(tte));
+        if (!sprint) return 'under 2 min';
+        return p > sprint.pS ? `under ${fmtTime(sprint.tS)}` : fmtTime(sprint.timeAt(p));
+      }
+      // Target time to power, same split at 2 min
+      function powerAtTime(cp, wj, t, sprint) {
+        if (t >= MIN_EFFORT_S) return Math.floor(wj / t + cp);
+        if (!sprint) return 'under 2 min';
+        return t < sprint.tS ? `under ${fmtTime(sprint.tS)}` : Math.floor(sprint.powerAt(t));
       }
 
       function renderZones(cp, wj) {
@@ -691,7 +740,7 @@
         clearError();
         updateTimeHints();
         // Keep the last result on screen until the clock time is finished
-        if (['time1', 'time2', 'time3'].some(id => midClock($(id).value))) return;
+        if (['time1', 'time2', 'time3', 'sprintTime'].some(id => midClock($(id).value))) return;
         const t1 = parseTime($('time1').value), p1 = safeNum($('power1').value);
         const t2 = parseTime($('time2').value), p2 = safeNum($('power2').value);
         const t3 = parseTime($('time3').value), p3 = safeNum($('power3').value);
@@ -705,7 +754,7 @@
         const [tShort] = efforts[0];
         const [tLong, pLong] = efforts[2];
         if (tShort < MIN_EFFORT_S) {
-          return showError(`The shortest effort is ${fmtTime(tShort)}. The CP model does not hold under 2 min, use a ~2-3 min effort.`);
+          return showError(`The shortest effort is ${fmtTime(tShort)}. The CP model does not hold under 2 min, use a ~2-3 min effort here. Sprints go in the optional row.`);
         }
         if (!(efforts[0][1] > efforts[1][1] && efforts[1][1] > efforts[2][1])) {
           return showError('Power must drop as the efforts get longer. Check each effort was maximal and each time sits with its own power.');
@@ -754,14 +803,19 @@
         }
         $('fitMeta').innerHTML = fitNote;
 
+        // Optional sprint: extends the curve under 2 min, leaves CP and W′ alone
+        const tS = parseTime($('sprintTime').value), pS = safeNum($('sprintPower').value);
+        const sprintFit = (tS > 0 && pS > 0) ? sprintCurve(cp, wj, tS, pS) : null;
+        const sprint = sprintFit && !sprintFit.issue ? sprintFit : null;
+        $('sprintMeta').textContent = sprintFit ? (sprintFit.issue || sprintFit.note) : '';
+
         // Targets
         const tgtP = safeNum($('powerInp').value);
         const tgtT = parseTime($('tempInp').value);
         if (Number.isFinite(tgtP)) {
           if (tgtP > cp) {
-            const tte = wj / (tgtP - cp);
             // Just above CP the model gives hours, which no athlete holds
-            $('outTimeAtPower').textContent = tte > MAX_TTE_S ? '> 30 min' : fmtTime(Math.floor(tte));
+            $('outTimeAtPower').textContent = timeAtPower(cp, wj, tgtP, sprint) || '> 30 min';
           } else {
             // Below CP, W′ does not set the limit (glycogen, heat and fatigue do)
             $('outTimeAtPower').textContent = 'below CP';
@@ -770,7 +824,7 @@
           $('outTimeAtPower').textContent = '—';
         }
         if (Number.isFinite(tgtT) && tgtT > 0) {
-          $('outPowerAtTime').textContent = tgtT < MIN_EFFORT_S ? 'under 2 min' : Math.floor(wj / tgtT + cp);
+          $('outPowerAtTime').textContent = powerAtTime(cp, wj, tgtT, sprint);
         } else {
           $('outPowerAtTime').textContent = '—';
         }
@@ -779,7 +833,7 @@
       }
 
       // wire inputs
-      ['time1','time2','time3','power1','power2','power3','powerInp','tempInp'].forEach(id => {
+      ['time1','time2','time3','power1','power2','power3','sprintTime','sprintPower','powerInp','tempInp'].forEach(id => {
         $(id).addEventListener('input', calc);
         $(id).addEventListener('change', calc);
       });
