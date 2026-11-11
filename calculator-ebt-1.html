@@ -79,6 +79,10 @@
     .ebt-calc-host .field-help {
       font-size: 0.78rem; color: var(--ys-muted); margin-top: 6px;
     }
+    /* Imperial height: feet box + inches box side by side */
+    .ebt-calc-host .row.height-imp > input { flex: 1 1 0; min-width: 0; border-radius: 6px 0 0 6px; }
+    .ebt-calc-host .row.height-imp > .unit:first-of-type { margin-right: 8px; }
+    .ebt-calc-host .dps-aux { font-size: 0.78em; color: var(--ys-muted); font-weight: 400; margin-left: 4px; }
 
     .ebt-calc-host .unit-toggle {
       display: flex; align-items: center; gap: 12px;
@@ -298,9 +302,15 @@
             </div>
             <div>
               <label>Height</label>
-              <div class="row">
+              <div class="row" id="heightMetricRow">
                 <input type="number" id="height" step="0.01" min="0" value="1.81" />
-                <span class="unit unit-height">m</span>
+                <span class="unit">m</span>
+              </div>
+              <div class="row height-imp" id="heightImpRow" style="display: none;">
+                <input type="number" id="heightFt" step="1" min="0" value="5" />
+                <span class="unit">ft</span>
+                <input type="number" id="heightIn" step="0.5" min="0" max="11.5" value="11" />
+                <span class="unit">in</span>
               </div>
               <div class="field-help">Your height anchors the DPS rating bands.</div>
             </div>
@@ -334,9 +344,9 @@
             <div class="results-grid">
               <div class="result-block">
                 <h4>DPS &amp; height</h4>
-                <div class="res-row"><span class="res-label">DPS reference low</span><span class="res-value"><span id="outDpsLow">—</span> <span class="unit-dist-text">m</span> / stroke</span></div>
-                <div class="res-row"><span class="res-label">DPS reference high</span><span class="res-value"><span id="outDpsHigh">—</span> <span class="unit-dist-text">m</span> / stroke</span></div>
-                <div class="res-row"><span class="res-label">DPS current</span><span class="res-value featured"><span id="outDpsCurrent">—</span> <span class="unit-dist-text">m</span> / stroke</span></div>
+                <div class="res-row"><span class="res-label">DPS reference low</span><span class="res-value"><span id="outDpsLow">—</span> m / stroke<span class="dps-aux" id="outDpsLowAux"></span></span></div>
+                <div class="res-row"><span class="res-label">DPS reference high</span><span class="res-value"><span id="outDpsHigh">—</span> m / stroke<span class="dps-aux" id="outDpsHighAux"></span></span></div>
+                <div class="res-row"><span class="res-label">DPS current</span><span class="res-value featured"><span id="outDpsCurrent">—</span> m / stroke<span class="dps-aux" id="outDpsCurrentAux"></span></span></div>
                 <div class="res-row"><span class="res-label">DPS / height ratio</span><span class="res-value"><span id="outDpsRatio">—</span>%</span></div>
               </div>
               <div class="result-block">
@@ -599,44 +609,57 @@
           if (b.classList.contains('active')) return;
           const newUnit = b.getAttribute('data-unit');
           const d = parseFloat($('distance').value);
-          const h = parseFloat($('height').value);
+          const hM = heightMeters();   // read in the unit we are leaving
           if (newUnit === 'imperial') {
             if (Number.isFinite(d)) $('distance').value = (d / 0.9144).toFixed(0);    // m → yd
-            if (Number.isFinite(h)) $('height').value   = (h / 0.0254).toFixed(0);     // m → in (total inches)
           } else {
             if (Number.isFinite(d)) $('distance').value = (d * 0.9144).toFixed(0);    // yd → m
-            if (Number.isFinite(h)) $('height').value   = (h * 0.0254).toFixed(2);     // in → m
           }
           unit = newUnit;
+          setHeightMeters(hM);
           document.querySelectorAll('.ebt-calc-host .unit-toggle button').forEach(x => x.classList.remove('active'));
           b.classList.add('active');
           document.querySelectorAll('.unit-dist').forEach(el => el.textContent = unit === 'metric' ? 'm' : 'yd');
           document.querySelectorAll('.unit-dist-text').forEach(el => el.textContent = unit === 'metric' ? 'm' : 'yd');
-          document.querySelectorAll('.unit-height').forEach(el => el.textContent = unit === 'metric' ? 'm' : 'in');
           if (resultsBlock.style.display !== 'none') calc();
         });
       });
+
+      // Height: metres in Metric, feet + inches in Imperial. Always returns metres.
+      function heightMeters() {
+        if (unit === 'metric') return parseFloat($('height').value);
+        const ft = parseFloat($('heightFt').value) || 0;
+        const inch = parseFloat($('heightIn').value) || 0;
+        const total = ft * 12 + inch;
+        return total > 0 ? total * 0.0254 : NaN;
+      }
+      function setHeightMeters(m) {
+        $('heightMetricRow').style.display = unit === 'metric' ? '' : 'none';
+        $('heightImpRow').style.display = unit === 'metric' ? 'none' : '';
+        if (!Number.isFinite(m) || m <= 0) return;
+        if (unit === 'metric') { $('height').value = m.toFixed(2); return; }
+        let totalIn = Math.round(m / 0.0254 * 2) / 2;   // nearest half inch
+        let ft = Math.floor(totalIn / 12);
+        $('heightFt').value = ft;
+        $('heightIn').value = +(totalIn - ft * 12).toFixed(1);
+      }
 
       function calc() {
         clearError();
         let distance = parseFloat($('distance').value);
         const tMin = parseInt($('timeMin').value, 10) || 0;
         const tSec = parseInt($('timeSec').value, 10) || 0;
-        let height = parseFloat($('height').value);
+        const heightM = heightMeters();
         let srInput = $('sr').value.trim();
         let strokesInput = $('strokes').value.trim();
 
         const totalSec = tMin * 60 + tSec;
         if (!(distance > 0)) return showError('Enter a positive distance.');
         if (totalSec <= 0)   return showError('Enter a positive time (mm:ss).');
-        if (!(height > 0))   return showError('Enter a positive height.');
+        if (!(heightM > 0))  return showError('Enter a positive height.');
 
-        // Convert to metric internally (so SR table matches)
-        let distM = distance, heightM = height;
-        if (unit === 'imperial') {
-          distM = distance * 0.9144;     // yd → m
-          heightM = height * 0.0254;     // in → m
-        }
+        // Distance to metric for the DPS math (pace stays in the user's unit)
+        const distM = unit === 'imperial' ? distance * 0.9144 : distance;   // yd → m
 
         // SR / strokes auto-fill: prefer whichever has a value
         let sr = parseFloat(srInput);
@@ -677,12 +700,16 @@
         }
 
         // ---- render
-        const dpsUnitText = unit === 'metric' ? '' : ''; // already shown via .unit-dist-text spans
-        // Display DPS values back in user's unit (m or yd)
-        const toDisp = vM => unit === 'metric' ? vM : vM / 0.9144;
-        $('outDpsLow').textContent     = toDisp(dpsLowM).toFixed(2);
-        $('outDpsHigh').textContent    = toDisp(dpsHighM).toFixed(2);
-        $('outDpsCurrent').textContent = toDisp(dpsCurrentM).toFixed(2);
+        // DPS is quoted in metres per stroke in both units (the usual
+        // convention, and what the height bands are built on). Imperial
+        // adds the yard figure alongside.
+        const yd = vM => unit === 'metric' ? '' : ' (' + (vM / 0.9144).toFixed(2) + ' yd)';
+        $('outDpsLow').textContent     = dpsLowM.toFixed(2);
+        $('outDpsHigh').textContent    = dpsHighM.toFixed(2);
+        $('outDpsCurrent').textContent = dpsCurrentM.toFixed(2);
+        $('outDpsLowAux').textContent     = yd(dpsLowM);
+        $('outDpsHighAux').textContent    = yd(dpsHighM);
+        $('outDpsCurrentAux').textContent = yd(dpsCurrentM);
         $('outDpsRatio').textContent   = dpsRatio.toFixed(1);
         $('outSr').textContent         = sr.toFixed(1);
         $('outSecPerStroke').textContent = (60 / sr).toFixed(2);
@@ -704,7 +731,7 @@
         $('distance').value = unit === 'metric' ? 400 : 437;
         $('timeMin').value = 6;
         $('timeSec').value = 30;
-        $('height').value = unit === 'metric' ? 1.81 : 71;
+        setHeightMeters(1.81);
         $('sr').value = 55;
         $('strokes').value = 357;
         clearError();
@@ -712,7 +739,7 @@
       });
 
       // re-calc on input change once results are showing
-      ['distance','timeMin','timeSec','height','sr','strokes'].forEach(id => {
+      ['distance','timeMin','timeSec','height','heightFt','heightIn','sr','strokes'].forEach(id => {
         $(id).addEventListener('input', () => { if (resultsBlock.style.display !== 'none') calc(); });
       });
 

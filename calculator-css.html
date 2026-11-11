@@ -151,6 +151,10 @@
     .css-calc-host .err.active { display: block; }
 
     .css-calc-host .css-table-wrap { overflow-x: auto; margin-top: 22px; }
+    .css-calc-host .race-name {
+      display: block; font-size: 0.74rem; font-weight: 400;
+      color: var(--ys-muted); letter-spacing: 0.02em; margin-top: 2px;
+    }
     .css-calc-host table {
       width: 100%;
       border-collapse: collapse;
@@ -553,7 +557,9 @@
         unit = b.getAttribute('data-unit');
         const u = unit === 'metric' ? 'm' : 'yd';
         document.querySelectorAll('.unit-secondary').forEach(el => el.textContent = u);
-        if (lastResult) renderResults(lastResult);
+        // The unit says what the typed distances are, so recalculate from the
+        // inputs. Re-rendering the old result relabelled metres as yards.
+        if (lastResult) calculate();
       }));
 
       const errEl = document.getElementById('errorMsg');
@@ -691,22 +697,28 @@
         document.getElementById('split100').textContent = fmtPace(cssSec);
         document.getElementById('split200').textContent = fmtPace(cssSec * 2);
 
-        // Predictions
-        const distances = unit === 'metric'
-          ? [750, 1500, 1900, 3800, 5000, 10000]
-          : [820, 1640, 2078, 4156, 5468, 10936];
+        // Predictions. Race swims are set in metres whatever pool you test
+        // in, so the distances stay metric and the times run off CSS per 100 m.
+        const races = [
+          { d: 750,   name: 'Sprint tri' },
+          { d: 1500,  name: 'Olympic tri' },
+          { d: 1900,  name: '70.3' },
+          { d: 3800,  name: 'Ironman' },
+          { d: 5000,  name: '5K open water' },
+          { d: 10000, name: '10K open water' }
+        ];
         const cssPer100 = cssPrimary;
         const factors = { Current: r.sdiScaled, Perfect: 1.00, Good: 1.03, Poor: 1.06 };
 
         const tbody = document.getElementById('predictionBody');
         tbody.innerHTML = '';
-        distances.forEach(d => {
+        races.forEach(({ d, name }) => {
           const tr = document.createElement('tr');
-          const cur = cssPer100 * factors.Current * (d / 100);
-          const per = cssPer100 * factors.Perfect * (d / 100);
-          const goo = cssPer100 * factors.Good * (d / 100);
-          const poo = cssPer100 * factors.Poor * (d / 100);
-          tr.innerHTML = `<td>${d} ${u}</td><td>${fmtHMS(cur)}</td><td>${fmtHMS(per)}</td><td>${fmtHMS(goo)}</td><td>${fmtHMS(poo)}</td>`;
+          const cur = r.cssM * factors.Current * (d / 100);
+          const per = r.cssM * factors.Perfect * (d / 100);
+          const goo = r.cssM * factors.Good * (d / 100);
+          const poo = r.cssM * factors.Poor * (d / 100);
+          tr.innerHTML = `<td>${d.toLocaleString('en-US')} m<span class="race-name">${name}</span></td><td>${fmtHMS(cur)}</td><td>${fmtHMS(per)}</td><td>${fmtHMS(goo)}</td><td>${fmtHMS(poo)}</td>`;
           tbody.appendChild(tr);
         });
 
