@@ -118,6 +118,17 @@
       display: none;
     }
     .ebt-calc-host .err.active { display: block; }
+    .ebt-calc-host .warn {
+      color: #8a5a00;
+      background: rgba(232, 160, 32, 0.12);
+      border-left: 4px solid #e8a020;
+      padding: 10px 14px;
+      margin-top: 12px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      display: none;
+    }
+    .ebt-calc-host .warn.active { display: block; }
 
     .ebt-calc-host .results-grid {
       display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
@@ -213,6 +224,12 @@
       font-size: 1.4rem;
       color: var(--wf-coral);
       letter-spacing: 0.04em;
+    }
+    .ebt-calc-host .verdict-sub {
+      display: block;
+      margin-top: 4px;
+      font-size: 0.86rem;
+      color: rgba(255,255,255,0.75);
     }
   </style>
   <script src="assets/decimal-comma.js?v=20260926" defer data-every-text-box></script>
@@ -338,6 +355,7 @@
           </div>
 
           <div class="err" id="errorMsg"></div>
+          <div class="warn" id="warnMsg"></div>
 
           <div id="resultsBlock" style="display: none;">
 
@@ -367,8 +385,9 @@
             </div>
 
             <div class="verdict">
-              <span class="verdict-label">Yousuli verdict</span>
+              <span class="verdict-label">Yousuli verdict &middot; stroke rate for your pace</span>
               <span class="verdict-value" id="outVerdict">—</span>
+              <span class="verdict-sub" id="outVerdictDps"></span>
             </div>
 
           </div>
@@ -401,7 +420,7 @@
         <div class="ys-step">
           <div class="ys-step-num">03</div>
           <h3>The verdict</h3>
-          <p>If your SR is below the acceptable range for your pace &rarr; <strong>Increase SR</strong>. If above &rarr; <strong>Increase DPS</strong> (you&rsquo;re thrashing). If inside &rarr; <strong>Balanced</strong>, you&rsquo;re using the right combination for that speed.</p>
+          <p>If your SR is below the acceptable range for your pace &rarr; <strong>Increase SR</strong>. If above &rarr; <strong>Increase DPS</strong> (you&rsquo;re thrashing). If inside &rarr; <strong>Balanced</strong>, you&rsquo;re using the right combination for that speed. The verdict checks stroke rate only; the DPS band is a separate rating, so a Balanced verdict next to a Very high DPS is possible (a long stroke at a normal tempo).</p>
         </div>
       </div>
     </div>
@@ -600,8 +619,19 @@
       const errEl = $('errorMsg');
       const resultsBlock = $('resultsBlock');
 
+      const warnEl = $('warnMsg');
       function showError(msg) { errEl.textContent = msg; errEl.classList.add('active'); resultsBlock.style.display = 'none'; }
-      function clearError() { errEl.classList.remove('active'); errEl.textContent = ''; }
+      function clearError() {
+        errEl.classList.remove('active'); errEl.textContent = '';
+        warnEl.classList.remove('active'); warnEl.textContent = '';
+      }
+
+      // The box the page last filled in itself (SR or total strokes) and the
+      // value it wrote. While it still holds that value it is not the
+      // swimmer's number, so it is worked out again from the other box;
+      // otherwise a change of time leaves it stale. The default 357 strokes
+      // are SR 55 over 6:30.
+      let autoFill = { id: 'strokes', value: '357' };
 
       // ---- unit toggle (kg/lb-style for distance + height)
       document.querySelectorAll('.ebt-calc-host .unit-toggle button').forEach(b => {
@@ -662,18 +692,37 @@
         const distM = unit === 'imperial' ? distance * 0.9144 : distance;   // yd → m
 
         // SR / strokes auto-fill: prefer whichever has a value
+        if (autoFill && $(autoFill.id).value.trim() === autoFill.value) {
+          if (autoFill.id === 'strokes' && srInput) strokesInput = '';
+          if (autoFill.id === 'sr' && strokesInput) srInput = '';
+        }
         let sr = parseFloat(srInput);
         let strokes = parseFloat(strokesInput);
         if (Number.isFinite(sr) && !Number.isFinite(strokes)) {
           strokes = sr * (totalSec / 60);
           $('strokes').value = strokes.toFixed(0);
+          autoFill = { id: 'strokes', value: $('strokes').value };
         } else if (Number.isFinite(strokes) && !Number.isFinite(sr)) {
           sr = strokes / (totalSec / 60);
           $('sr').value = sr.toFixed(2);
+          autoFill = { id: 'sr', value: $('sr').value };
         } else if (!Number.isFinite(sr) && !Number.isFinite(strokes)) {
           return showError('Enter SR (strokes/min) or total strokes, we auto-fill the other.');
+        } else {
+          autoFill = null;   // both typed by the swimmer
         }
         if (!(sr > 0) || !(strokes > 0)) return showError('SR and strokes must be positive.');
+
+        // Both typed: speed = SR x DPS only holds if they agree. DPS uses the
+        // count and the verdict uses the rate, so say when they don't.
+        const impliedStrokes = sr * (totalSec / 60);
+        if (Math.abs(impliedStrokes - strokes) / strokes > 0.05) {
+          const mmss = tMin + ':' + String(tSec).padStart(2, '0');
+          warnEl.textContent = 'Stroke rate and total strokes don\u2019t agree: ' + sr + ' a minute for '
+            + mmss + ' is about ' + Math.round(impliedStrokes) + ' strokes, not ' + Math.round(strokes)
+            + '. DPS uses the stroke count and the verdict uses the stroke rate. Clear the one you are less sure of and we\u2019ll work it out from the other.';
+          warnEl.classList.add('active');
+        }
 
         // ---- DPS calcs (always in metric for the band math)
         const dpsCurrentM = distM / strokes;
@@ -722,6 +771,8 @@
         if (activeBand) activeBand.classList.add('active');
 
         $('outVerdict').textContent = verdict;
+        $('outVerdictDps').textContent = 'DPS for your height: ' + band.name.toLowerCase()
+          + ' (' + dpsRatio.toFixed(1) + '% of height)';
 
         resultsBlock.style.display = 'block';
       }
@@ -734,6 +785,7 @@
         setHeightMeters(1.81);
         $('sr').value = 55;
         $('strokes').value = 357;
+        autoFill = { id: 'strokes', value: '357' };
         clearError();
         resultsBlock.style.display = 'none';
       });
